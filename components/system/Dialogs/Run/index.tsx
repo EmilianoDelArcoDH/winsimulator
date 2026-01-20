@@ -88,7 +88,6 @@ const Run: FC<ComponentProcessProps> = ({ id }) => {
 
       const isNostr = resourcePath.startsWith("nostr:");
 
-      if (isNostr) open("Messenger", { url: resourcePath });
 
       const isIpfs = resourcePath.startsWith("ipfs://");
 

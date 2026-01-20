@@ -371,10 +371,10 @@ export const TASKBAR_HEIGHT = 30;
 export const PACKAGE_DATA = {
   alias: "DH console",
   author: {
-    email: "dustinbrett@gmail.com",
+    email: "info@digitalhouse.com",
     name: "Emiliano Del Arco",
     npub: "npub10uc7hg6wdxhhd7ee8x9c5lr9d0ux7272rv2m0mc03ds54q7quxjss02r3p",
-    url: "https://dustinbrett.com",
+    url: "https://digitalhouse.com",
   },
   description: "Desktop environment in the browser",
   license: "MIT",

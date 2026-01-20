@@ -131,12 +131,6 @@
 
 - Markdown Viewer
 
-### Messenger
-
-- Encrypted direct messaging client
-- Utilizes [Nostr Protocol](https://nostr.com/) ([NIP-04](https://github.com/nostr-protocol/nips/blob/master/04.md))
-- Automatic public/private key creation
-
 ### [Monaco Editor](https://microsoft.github.io/monaco-editor/)
 
 - Code/text editor
@@ -265,7 +259,3 @@ yarn serve
 docker build -t dhconsole .
 docker run -dp 3000:3000 --rm --name dhconsole dhconsole
 ```
-
-##### Notes
-
-- If during `yarn install` you receive the error `digital envelope routines::unsupported`, you need to set `NODE_OPTIONS` to `--openssl-legacy-provider` ([1](https://github.com/DustinBrett/daedalOS/blob/main/Dockerfile#L3), [2](https://github.com/DustinBrett/daedalOS/blob/main/.github/workflows/main.yml#L17), [3](https://stackoverflow.com/a/69699772/5895982))

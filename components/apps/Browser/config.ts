@@ -23,7 +23,7 @@ export const bookmarks: Bookmark[] = [
   {
     icon: FAVICON_BASE_PATH,
     name: "DH console",
-    url: "https://dustinbrett.com/",
+    url: "https://digitalhouse.com/",
   },
   {
     icon: "/System/Icons/Favicons/dir.webp",

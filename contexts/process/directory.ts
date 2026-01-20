@@ -3,6 +3,17 @@ import { type Processes } from "contexts/process/types";
 import { FOLDER_ICON, TASKBAR_HEIGHT } from "utils/constants";
 
 const directory: Processes = {
+  GitBash: {
+    Component: dynamic(() => import("components/apps/GitBash/GitBashApp")),
+    backgroundColor: "#1d1f21",
+    defaultSize: {
+      height: 400,
+      width: 650,
+    },
+    icon: "/System/Icons/48x48/xterm.webp", // Icono existente para terminal
+    singleton: false,
+    title: "Git Bash",
+  },
   ExplorerTrainer: {
     Component: dynamic(() => import("components/apps/trainer/ExplorerTrainer")),
     backgroundColor: "#222",
@@ -11,16 +22,6 @@ const directory: Processes = {
       width: 480,
     },
     icon: "/System/Icons/trainer_explorer.png",
-    title: "Explorer Trainer",
-  },
-  TerminalTrainer: {
-    Component: dynamic(() => import("components/apps/trainer/TerminalTrainer")),
-    backgroundColor: "#111",
-    defaultSize: {
-      height: 340,
-      width: 600,
-    },
-    icon: "/System/Icons/trainer_terminal.png",
     title: "Terminal Trainer",
   },
   BoxedWine: {
@@ -155,17 +156,7 @@ const directory: Processes = {
     ],
     title: "Marked",
   },
-  Messenger: {
-    Component: dynamic(() => import("components/apps/Messenger")),
-    backgroundColor: "#242526",
-    defaultSize: {
-      height: 500,
-      width: 425,
-    },
-    icon: "/System/Icons/messenger.webp",
-    singleton: true,
-    title: "Messenger",
-  },
+
   MonacoEditor: {
     Component: dynamic(() => import("components/apps/MonacoEditor")),
     backgroundColor: "#1E1E1E",

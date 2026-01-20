@@ -69,13 +69,11 @@ export const EXCLUDED_CONSOLE_LOGS = (
       "Failed to load resource: the server responded with a status of 404 (Not Found)",
       'Error: "Content-Security-Policy:',
       "an ancestor violates the following Content Security Policy directive",
-      // Messenger
       "WebSocket connection to 'wss://public.relaying.io/' failed:"
     );
 
     if (browserName === "firefox") {
       excludedConsoleLogs.push(
-        // Messenger
         "Firefox can’t establish a connection to the server at wss://"
       );
     } else if (browserName === "webkit") {
@@ -177,8 +175,8 @@ export const DRAG_HEADLESS_NOT_SUPPORTED_BROWSERS = new Set(["webkit"]);
 export const WEBGL_OFFSCREEN_NOT_SUPPORTED_BROWSERS = new Set(
   process.platform === "win32"
     ? [
-      "webkit", // https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas#browser_compatibility
-    ]
+        "webkit", // https://developer.mozilla.org/en-US/docs/Web/API/OffscreenCanvas#browser_compatibility
+      ]
     : []
 );
 export const MEDIA_RECORDER_HEADLESS_NOT_SUPPORTED_BROWSERS = new Set([
@@ -250,7 +248,7 @@ export const START_MENU_APPS = [
   /^DevTools$/,
   /^IRC$/,
   /^Marked$/,
-  /^Messenger$/,
+  /^Git Bash$/,
   /^Monaco Editor$/,
   /^Paint$/,
   /^PDF$/,
