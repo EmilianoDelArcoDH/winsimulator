@@ -14,7 +14,11 @@ export const useMenuPreload = (
 
     initalizedPreload.current = true;
 
-    preloadCallback().then(() => setPreloaded(true));
+    preloadCallback()
+      .then(() => setPreloaded(true))
+      .catch(() => {
+        initalizedPreload.current = false;
+      });
   }, [preloadCallback]);
 
   return preloaded ? {} : { onMouseOverCapture: preloadMenu };

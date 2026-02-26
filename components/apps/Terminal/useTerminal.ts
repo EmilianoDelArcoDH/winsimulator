@@ -55,7 +55,13 @@ const useTerminal = ({
   const [initialCommand, setInitialCommand] = useState("");
   const [prompted, setPrompted] = useState(false);
   const processCommand = useCommandInterpreter(id, cd, terminal, localEcho);
-  const autoFit = useCallback(() => fitAddon?.fit(), [fitAddon]);
+  const autoFit = useCallback(() => {
+    if (closing || !fitAddon || !containerRef.current?.isConnected) return;
+
+    try {
+      fitAddon.fit();
+    } catch {}
+  }, [closing, containerRef, fitAddon]);
   const { foregroundId } = useSession();
 
   useEffect(() => {
@@ -99,7 +105,9 @@ const useTerminal = ({
       terminal.loadAddon(newLocalEcho);
       terminal.loadAddon(newFitAddon);
       terminal.open(containerRef.current);
-      newFitAddon.fit();
+      try {
+        newFitAddon.fit();
+      } catch {}
 
       setFitAddon(newFitAddon);
       setLocalEcho(newLocalEcho);
