@@ -26,7 +26,7 @@ const StyledMonacoEditor = styled.div`
     border-bottom: 1px solid rgb(39 39 39);
     display: flex;
     grid-column: 1 / -1;
-    overflow: hidden;
+    overflow: visible;
     padding: 0 8px;
 
     ol {
@@ -41,7 +41,7 @@ const StyledMonacoEditor = styled.div`
         background: transparent;
         border: 0;
         color: rgb(230 230 230);
-        cursor: default;
+        cursor: pointer;
         font-size: 12px;
         padding: 4px 6px;
 
@@ -60,7 +60,7 @@ const StyledMonacoEditor = styled.div`
         padding: 4px;
         position: absolute;
         top: 24px;
-        z-index: 5;
+        z-index: 10000;
 
         li {
           width: 100%;
@@ -69,6 +69,7 @@ const StyledMonacoEditor = styled.div`
             background: transparent;
             border: 0;
             color: rgb(235 235 235);
+            cursor: pointer;
             padding: 6px 8px;
             text-align: left;
             width: 100%;
@@ -130,6 +131,24 @@ const StyledMonacoEditor = styled.div`
       color: rgb(138 138 138);
       font-size: 11px;
       margin: 8px 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .section-title {
+      color: rgb(140 140 140);
+      font-size: 10px;
+      letter-spacing: 0.8px;
+      margin: 10px 10px 4px;
+      text-transform: uppercase;
+    }
+
+    .folder-title {
+      color: rgb(220 220 220);
+      font-size: 12px;
+      font-weight: 600;
+      margin: 0 10px 8px;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;

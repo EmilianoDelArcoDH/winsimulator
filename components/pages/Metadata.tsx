@@ -154,7 +154,7 @@ const Metadata: FC = () => {
               dynamicIcon
                 ? imageSrcs(icon, 48, extension)
                 : isSubIcon
-                  ? imageSrcs(icon.replace("16x16/", ""), 16, extension)
+                  ? imageSrcs(icon, 16, extension)
                   : undefined
             }
             rel="preload"

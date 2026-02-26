@@ -131,7 +131,13 @@ export const imageSrc = (
   ratio: number,
   extension: string
 ): string => {
-  const imageName = basename(imagePath, extension);
+  // Remove any existing size directory from the path (e.g., 16x16, 32x32, etc.)
+  let basePath = imagePath;
+  const sizePattern = SUPPORTED_ICON_SIZES.map((s) => `${s}x${s}`).join("|");
+  const sizeRegex = new RegExp(`/(${sizePattern})/`);
+  basePath = basePath.replace(sizeRegex, "/");
+
+  const imageName = basename(basePath, extension);
   const [expectedSize, maxIconSize] = MAX_RES_ICON_OVERRIDE[imageName] || [];
   const ratioSize = size * ratio;
   const imageSize = Math.min(
@@ -140,7 +146,7 @@ export const imageSrc = (
   );
 
   return `${join(
-    dirname(imagePath),
+    dirname(basePath),
     `${ICON_RES_MAP[imageSize] || imageSize}x${
       ICON_RES_MAP[imageSize] || imageSize
     }`,

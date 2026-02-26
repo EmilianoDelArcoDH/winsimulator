@@ -21,8 +21,17 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     open,
     url: setProcessUrl,
   } = useProcesses();
-  const { exists, lstat, mkdir, readdir, rmdir, unlink, updateFolder, writeFile } =
-    useFileSystem();
+  const {
+    exists,
+    lstat,
+    mkdir,
+    readdir,
+    rename,
+    rmdir,
+    unlink,
+    updateFolder,
+    writeFile,
+  } = useFileSystem();
   const currentUrl = process?.url || DEFAULT_TEXT_FILE_SAVE_PATH;
   const currentEditor = process?.editor;
   const explorerRoot = useMemo(() => dirname(currentUrl), [currentUrl]);
@@ -34,6 +43,11 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [activeView, setActiveView] = useState<"explorer" | "search" | "git">(
     "explorer"
   );
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+  const [creatingEntry, setCreatingEntry] = useState<"file" | "folder" | null>(null);
+  const [renamingPath, setRenamingPath] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState<string>("");
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const normalizeFsPath = useCallback((value: string): string => value.replace(/\/+/g, "/"), []);
   const openFile = useCallback(
     (filePath: string): void => {
@@ -96,7 +110,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     } catch {
       setEntries([]);
     }
-  }, [explorerRoot, lstat, normalizeFsPath, readdir]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [explorerRoot]);
 
   useEffect(() => {
     const normalizedUrl = normalizeFsPath(currentUrl);
@@ -113,59 +128,199 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     loadEntries().catch(() => {
       // Ignore explorer refresh failures
     });
-  }, [loadEntries]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [explorerRoot]);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.menu-bar') && !target.closest('.context-menu')) {
+        setContextMenu(null);
+        setActiveMenu("");
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const getTemplateContent = useCallback((fileType: string): string => {
+    const templates: Record<string, string> = {
+      html: `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Hello World</h1>
+  <script src="script.js"><\/script>
+</body>
+</html>`,
+      css: `/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  line-height: 1.6;
+  color: #333;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}`,
+      js: `// JavaScript Template
+console.log('Hello World');
+
+function example() {
+  // Add your code here
+}
+
+// Export for use in modules
+// module.exports = { example };`,
+    };
+    return templates[fileType] || "";
+  }, []);
 
   const createEntry = useCallback(
-    async (isDirectory: boolean): Promise<void> => {
-      const inputName = window.prompt(isDirectory ? "Folder name" : "File name");
+    async (isDirectory: boolean, fileName?: string): Promise<void> => {
+      if (!fileName) {
+        setCreatingEntry(isDirectory ? "folder" : "file");
+        return;
+      }
 
-      if (!inputName) return;
-
-      const nextPath = normalizeFsPath(`${explorerRoot}/${inputName}`);
+      const nextPath = normalizeFsPath(`${explorerRoot}/${fileName}`);
 
       try {
         if (isDirectory) {
           await mkdir(nextPath);
         } else {
-          await writeFile(nextPath, "");
+          const extension = fileName.split(".").pop()?.toLowerCase() || "";
+          const fileType =
+            extension === "html"
+              ? "html"
+              : extension === "css"
+                ? "css"
+                : extension === "js"
+                  ? "js"
+                  : "";
+          const content = fileType ? getTemplateContent(fileType) : "";
+          await writeFile(nextPath, content);
           openFile(nextPath);
         }
 
         await loadEntries();
+        setSelectedPath(nextPath);
+        setRenamingPath(nextPath);
+        setRenameValue(fileName);
+        setCreatingEntry(null);
       } catch (error) {
-        window.alert(
-          `Could not create ${isDirectory ? "folder" : "file"}: ${error instanceof Error ? error.message : "Unknown error"
-          }`
+        // Error handling without alert
+        console.error(
+          `Could not create ${isDirectory ? "folder" : "file"}:`,
+          error
         );
+        setCreatingEntry(null);
       }
     },
-    [explorerRoot, loadEntries, mkdir, normalizeFsPath, openFile, writeFile]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [explorerRoot, getTemplateContent, mkdir, normalizeFsPath, openFile, writeFile]
   );
-  const deleteSelectedEntry = useCallback(async (): Promise<void> => {
-    if (!selectedPath) {
-      window.alert("Select a file or folder first.");
+
+  const startRename = useCallback((path: string): void => {
+    setRenamingPath(path);
+    setRenameValue(basename(path));
+  }, []);
+  const deleteSelectedEntry = useCallback(
+    async (confirmed = false): Promise<void> => {
+      if (!selectedPath) return;
+
+      if (!confirmed) {
+        setConfirmDelete(selectedPath);
+        return;
+      }
+
+      try {
+        const selectedStats = await lstat(selectedPath);
+
+        if (selectedStats.isDirectory()) {
+          await rmdir(selectedPath);
+        } else {
+          await unlink(selectedPath);
+          closeFile(selectedPath);
+        }
+
+        await loadEntries();
+        setConfirmDelete(null);
+      } catch (error) {
+        console.error("Could not delete entry:", error);
+        setConfirmDelete(null);
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [closeFile, lstat, rmdir, selectedPath, unlink]
+  );
+
+  const commitRename = useCallback(async (): Promise<void> => {
+    if (!renamingPath) return;
+
+    const nextName = renameValue.trim();
+
+    if (!nextName) {
+      setRenamingPath(null);
+      setRenameValue("");
       return;
     }
 
-    if (!window.confirm(`Delete '${basename(selectedPath)}'?`)) return;
+    const nextPath = normalizeFsPath(`${dirname(renamingPath)}/${nextName}`);
+
+    if (nextPath === renamingPath) {
+      setRenamingPath(null);
+      setRenameValue("");
+      return;
+    }
 
     try {
-      const selectedStats = await lstat(selectedPath);
+      if (await exists(nextPath)) {
+        console.error("Could not rename entry: name already exists.");
+        return;
+      }
 
-      if (selectedStats.isDirectory()) {
-        await rmdir(selectedPath);
-      } else {
-        await unlink(selectedPath);
-        closeFile(selectedPath);
+      const renamed = await rename(renamingPath, nextPath);
+
+      if (!renamed) {
+        console.error("Could not rename entry.");
+        return;
+      }
+
+      setOpenFiles((currentFiles) =>
+        currentFiles.map((openFilePath) =>
+          openFilePath === renamingPath ? nextPath : openFilePath
+        )
+      );
+
+      if (selectedPath === renamingPath) {
+        setSelectedPath(nextPath);
+      }
+
+      if (currentUrl === renamingPath) {
+        setProcessUrl(id, nextPath);
       }
 
       await loadEntries();
+      setRenamingPath(null);
+      setRenameValue("");
     } catch (error) {
-      window.alert(
-        `Could not delete entry: ${error instanceof Error ? error.message : "Unknown error"}`
-      );
+      console.error("Could not rename entry:", error);
     }
-  }, [closeFile, loadEntries, lstat, rmdir, selectedPath, unlink]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUrl, exists, id, normalizeFsPath, rename, renameValue, renamingPath, selectedPath]);
   const saveCurrentFile = useCallback(async (): Promise<void> => {
     const [saveUrl, saveData] = getSaveFileInfo(currentUrl, currentEditor);
 
@@ -174,7 +329,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
       updateFolder(dirname(saveUrl), basename(saveUrl));
       await loadEntries();
     }
-  }, [currentEditor, currentUrl, loadEntries, updateFolder, writeFile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentEditor, currentUrl, updateFolder, writeFile]);
   const runMenuAction = useCallback(
     async (menuAction: string): Promise<void> => {
       setActiveMenu("");
@@ -186,6 +342,21 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
 
       if (menuAction === "new-folder") {
         await createEntry(true);
+        return;
+      }
+
+      if (menuAction === "open-folder") {
+        try {
+          const handles = await (window as any).showDirectoryPicker?.();
+          if (handles) {
+            setProcessUrl(id, "/Users/Documents");
+            await loadEntries();
+          }
+        } catch (error) {
+          if (error instanceof Error && error.name !== "AbortError") {
+            console.error("Could not open folder:", error);
+          }
+        }
         return;
       }
 
@@ -225,14 +396,16 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
         open("GitBash", { url: explorerRoot });
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       createEntry,
       currentEditor,
       deleteSelectedEntry,
       explorerRoot,
-      loadEntries,
+      id,
       open,
       saveCurrentFile,
+      setProcessUrl,
     ]
   );
 
@@ -257,61 +430,74 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
               <li>
                 <button
                   className={activeMenu === "file" ? "active" : ""}
-                  onClick={() => setActiveMenu((currentMenu) => (currentMenu === "file" ? "" : "file"))}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveMenu((currentMenu) => (currentMenu === "file" ? "" : "file"));
+                  }}
                   type="button"
                 >
                   File
                 </button>
                 {activeMenu === "file" && (
                   <menu>
-                    <li><button onClick={() => runMenuAction("new-file")} type="button">New File</button></li>
-                    <li><button onClick={() => runMenuAction("new-folder")} type="button">New Folder</button></li>
-                    <li><button onClick={() => runMenuAction("save")} type="button">Save</button></li>
-                    <li><button onClick={() => runMenuAction("delete")} type="button">Delete Selected</button></li>
-                    <li><button onClick={() => runMenuAction("refresh")} type="button">Refresh Explorer</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("new-file"); }} type="button">New File</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("new-folder"); }} type="button">New Folder</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("open-folder"); }} type="button">Open Folder</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("save"); }} type="button">Save</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("delete"); }} type="button">Delete Selected</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("refresh"); }} type="button">Refresh Explorer</button></li>
                   </menu>
                 )}
               </li>
               <li>
                 <button
                   className={activeMenu === "edit" ? "active" : ""}
-                  onClick={() => setActiveMenu((currentMenu) => (currentMenu === "edit" ? "" : "edit"))}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveMenu((currentMenu) => (currentMenu === "edit" ? "" : "edit"));
+                  }}
                   type="button"
                 >
                   Edit
                 </button>
                 {activeMenu === "edit" && (
                   <menu>
-                    <li><button onClick={() => runMenuAction("palette")} type="button">Command Palette</button></li>
-                    <li><button onClick={() => runMenuAction("format")} type="button">Format Document</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("palette"); }} type="button">Command Palette</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("format"); }} type="button">Format Document</button></li>
                   </menu>
                 )}
               </li>
               <li>
                 <button
                   className={activeMenu === "view" ? "active" : ""}
-                  onClick={() => setActiveMenu((currentMenu) => (currentMenu === "view" ? "" : "view"))}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveMenu((currentMenu) => (currentMenu === "view" ? "" : "view"));
+                  }}
                   type="button"
                 >
                   View
                 </button>
                 {activeMenu === "view" && (
                   <menu>
-                    <li><button onClick={() => runMenuAction("toggle-sidebar")} type="button">Toggle Side Bar</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("toggle-sidebar"); }} type="button">Toggle Side Bar</button></li>
                   </menu>
                 )}
               </li>
               <li>
                 <button
                   className={activeMenu === "terminal" ? "active" : ""}
-                  onClick={() => setActiveMenu((currentMenu) => (currentMenu === "terminal" ? "" : "terminal"))}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveMenu((currentMenu) => (currentMenu === "terminal" ? "" : "terminal"));
+                  }}
                   type="button"
                 >
                   Terminal
                 </button>
                 {activeMenu === "terminal" && (
                   <menu>
-                    <li><button onClick={() => runMenuAction("open-gitbash")} type="button">Open Git Bash</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("open-gitbash"); }} type="button">Open Git Bash</button></li>
                   </menu>
                 )}
               </li>
@@ -363,14 +549,44 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
           {panelOpen && (
             <aside className="side-panel">
               <header>
-                {activeView === "explorer" && "EXPLORER"}
-                {activeView === "search" && "SEARCH"}
-                {activeView === "git" && "SOURCE CONTROL"}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                  <span>
+                    {activeView === "explorer" && "EXPLORER"}
+                    {activeView === "search" && "SEARCH"}
+                    {activeView === "git" && "SOURCE CONTROL"}
+                  </span>
+                  {activeView === "explorer" && (
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("new-file");
+                        }}
+                        type="button"
+                        title="New File"
+                        style={{ padding: "0.25rem 0.5rem", fontSize: "0.875rem" }}
+                      >
+                        📄
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("new-folder");
+                        }}
+                        type="button"
+                        title="New Folder"
+                        style={{ padding: "0.25rem 0.5rem", fontSize: "0.875rem" }}
+                      >
+                        📁
+                      </button>
+                    </div>
+                  )}
+                </div>
               </header>
 
               {activeView === "explorer" && (
                 <>
-                  <p className="location">OPEN EDITORS</p>
+                  <p className="section-title">Open Editors</p>
                   <ol className="open-editors">
                     {openFiles.map((openFilePath) => (
                       <li key={openFilePath}>
@@ -397,12 +613,119 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
                       </li>
                     ))}
                   </ol>
-                  <p className="location">{basename(explorerRoot).toUpperCase() || "ROOT"}</p>
-                  <ol>
-                    {entries.length === 0 && <li className="placeholder">No files</li>}
+                  <p className="section-title">Folder</p>
+                  <p className="folder-title">{basename(explorerRoot) || "Root"}</p>
+                  <ol
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      setContextMenu({ x: e.clientX, y: e.clientY });
+                    }}
+                    onMouseDown={(e) => {
+                      const target = e.target as HTMLElement;
+                      if (!target.closest('input')) {
+                        setContextMenu(null);
+                      }
+                    }}
+                  >
+                    {creatingEntry && (
+                      <li>
+                        <div
+                          style={{
+                            padding: "4px 8px",
+                            display: "flex",
+                            alignItems: "center",
+                            gap: "6px",
+                          }}
+                        >
+                          <span style={{ color: "rgb(135 135 135)" }}>
+                            {creatingEntry === "folder" ? "📁" : "📄"}
+                          </span>
+                          <input
+                            type="text"
+                            autoFocus
+                            placeholder={
+                              creatingEntry === "folder"
+                                ? "Folder name"
+                                : "File name (e.g., index.html)"
+                            }
+                            onBlur={() => setCreatingEntry(null)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                const fileName = e.currentTarget.value.trim();
+                                if (fileName) {
+                                  createEntry(
+                                    creatingEntry === "folder",
+                                    fileName
+                                  );
+                                }
+                              } else if (e.key === "Escape") {
+                                setCreatingEntry(null);
+                              }
+                            }}
+                            style={{
+                              flex: 1,
+                              padding: "4px 6px",
+                              background: "rgb(60 60 60)",
+                              border: "1px solid rgb(14 99 156)",
+                              borderRadius: "2px",
+                              color: "rgb(255 255 255)",
+                              fontSize: "12px",
+                              outline: "none",
+                            }}
+                          />
+                        </div>
+                      </li>
+                    )}
+                    {entries.length === 0 && !creatingEntry && (
+                      <li className="placeholder">No files</li>
+                    )}
                     {entries.map(({ isDirectory, name }) => {
                       const itemPath = `${explorerRoot}/${name}`.replace(/\/+/g, "/");
                       const isActive = !isDirectory && itemPath === currentUrl;
+
+                      if (renamingPath === itemPath) {
+                        return (
+                          <li key={itemPath}>
+                            <div
+                              style={{
+                                padding: "4px 8px",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: "6px",
+                              }}
+                            >
+                              <span style={{ color: "rgb(135 135 135)" }}>
+                                {isDirectory ? "▸" : ""}
+                              </span>
+                              <input
+                                type="text"
+                                autoFocus
+                                value={renameValue}
+                                onChange={(e) => setRenameValue(e.currentTarget.value)}
+                                onBlur={commitRename}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Enter") {
+                                    commitRename();
+                                  } else if (e.key === "Escape") {
+                                    setRenamingPath(null);
+                                    setRenameValue("");
+                                  }
+                                }}
+                                style={{
+                                  flex: 1,
+                                  padding: "4px 6px",
+                                  background: "rgb(60 60 60)",
+                                  border: "1px solid rgb(14 99 156)",
+                                  borderRadius: "2px",
+                                  color: "rgb(255 255 255)",
+                                  fontSize: "12px",
+                                  outline: "none",
+                                }}
+                              />
+                            </div>
+                          </li>
+                        );
+                      }
 
                       return (
                         <li key={itemPath}>
@@ -417,6 +740,11 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
                                 if (!(await exists(itemPath))) return;
                                 openFile(itemPath);
                               }
+                            }}
+                            onContextMenu={(e) => {
+                              e.preventDefault();
+                              setSelectedPath(itemPath);
+                              setContextMenu({ x: e.clientX, y: e.clientY });
                             }}
                             type="button"
                             title={itemPath}
@@ -439,6 +767,194 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
                 <p className="placeholder">
                   Source control simulated. Open GitBash for full git workflow.
                 </p>
+              )}
+
+              {confirmDelete && (
+                <>
+                  <div
+                    onClick={() => setConfirmDelete(null)}
+                    style={{
+                      position: "fixed",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      backgroundColor: "rgba(0, 0, 0, 0.4)",
+                      zIndex: 10001,
+                    }}
+                  />
+                  <div
+                    onKeyDown={(e) => {
+                      if (e.key === "Escape") setConfirmDelete(null);
+                      if (e.key === "Enter") deleteSelectedEntry(true);
+                    }}
+                    style={{
+                      position: "fixed",
+                      top: "50%",
+                      left: "50%",
+                      transform: "translate(-50%, -50%)",
+                      backgroundColor: "#2d2d2d",
+                      border: "1px solid #555",
+                      borderRadius: "4px",
+                      padding: "1.5rem",
+                      zIndex: 10002,
+                      minWidth: "300px",
+                      boxShadow: "0 4px 16px rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    <p style={{ color: "#fff", marginBottom: "1rem", fontSize: "14px" }}>
+                      Delete '{basename(confirmDelete)}'?
+                    </p>
+                    <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                      <button
+                        onClick={() => setConfirmDelete(null)}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          background: "rgb(60 60 60)",
+                          border: "1px solid rgb(80 80 80)",
+                          borderRadius: "2px",
+                          color: "#fff",
+                          cursor: "pointer",
+                          fontSize: "12px",
+                        }}
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => deleteSelectedEntry(true)}
+                        style={{
+                          padding: "0.5rem 1rem",
+                          background: "rgb(180 50 50)",
+                          border: "1px solid rgb(200 70 70)",
+                          borderRadius: "2px",
+                          color: "#fff",
+                          cursor: "pointer",
+                          fontSize: "12px",
+                        }}
+                        type="button"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {contextMenu && (
+                <div
+                  className="context-menu"
+                  style={{
+                    position: "fixed",
+                    top: `${contextMenu.y}px`,
+                    left: `${contextMenu.x}px`,
+                    backgroundColor: "#2d2d2d",
+                    border: "1px solid #555",
+                    borderRadius: "4px",
+                    zIndex: 10000,
+                    minWidth: "150px",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                  }}
+                >
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      runMenuAction("new-file");
+                      setContextMenu(null);
+                    }}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "0.5rem 1rem",
+                      border: "none",
+                      background: "none",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      color: "#ccc",
+                      fontSize: "0.875rem",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3d3d3d")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                    type="button"
+                  >
+                    New File
+                  </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      runMenuAction("new-folder");
+                      setContextMenu(null);
+                    }}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "0.5rem 1rem",
+                      border: "none",
+                      background: "none",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      color: "#ccc",
+                      fontSize: "0.875rem",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3d3d3d")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                    type="button"
+                  >
+                    New Folder
+                  </button>
+                  {selectedPath && (
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        startRename(selectedPath);
+                        setContextMenu(null);
+                      }}
+                      style={{
+                        display: "block",
+                        width: "100%",
+                        padding: "0.5rem 1rem",
+                        border: "none",
+                        background: "none",
+                        textAlign: "left",
+                        cursor: "pointer",
+                        color: "#ccc",
+                        fontSize: "0.875rem",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor = "#3d3d3d")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "transparent")
+                      }
+                      type="button"
+                    >
+                      Rename
+                    </button>
+                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      runMenuAction("delete");
+                      setContextMenu(null);
+                    }}
+                    style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "0.5rem 1rem",
+                      border: "none",
+                      background: "none",
+                      textAlign: "left",
+                      cursor: "pointer",
+                      color: "#ccc",
+                      fontSize: "0.875rem",
+                    }}
+                    onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3d3d3d")}
+                    onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
+                    type="button"
+                  >
+                    Delete
+                  </button>
+                </div>
               )}
             </aside>
           )}

@@ -13,6 +13,7 @@ import {
   getSaveFileInfo,
   relocateShadowRoot,
 } from "components/apps/MonacoEditor/functions";
+import { registerEmmetSnippets } from "components/apps/MonacoEditor/emmet";
 import { type Model } from "components/apps/MonacoEditor/types";
 import { type ContainerHookProps } from "components/system/Apps/AppContainer";
 import useTitle from "components/system/Window/useTitle";
@@ -145,6 +146,12 @@ const useMonaco = ({
       strict: false,
       target: monaco.languages.typescript.ScriptTarget.ESNext,
     });
+  }, [monaco]);
+
+  useEffect(() => {
+    if (monaco) {
+      registerEmmetSnippets(monaco);
+    }
   }, [monaco]);
 
   useEffect(() => {
