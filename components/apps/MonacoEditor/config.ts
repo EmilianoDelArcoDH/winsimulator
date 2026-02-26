@@ -27,9 +27,6 @@ export const editorOptions: Monaco.editor.IStandaloneEditorConstructionOptions =
     bracketPairs: true,
     indentation: true,
   },
-  lightbulb: {
-    enabled: true,
-  },
   lineNumbers: "on",
   minimap: {
     enabled: true,
