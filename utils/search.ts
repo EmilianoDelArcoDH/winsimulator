@@ -95,7 +95,8 @@ const buildDynamicIndex = async (
   readFile: (path: string) => Promise<Buffer>,
   rootFs?: RootFileSystem
 ): Promise<Index> => {
-  const overlayFs = rootFs?._getFs("/")?.fs as any;
+  const fsResult = rootFs?._getFs?.("/");
+  const overlayFs = fsResult?.fs as any;
   const overlayedFileSystems = overlayFs?.getOverlayedFileSystems();
   const writable = overlayedFileSystems?.writable as IWritableFs;
 

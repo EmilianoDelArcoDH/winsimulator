@@ -157,8 +157,11 @@ const useAsyncFs = (): AsyncFSModule => {
                 }
               );
             } else if (renameError.code === "EISDIR") {
-              rootFs?.umount(oldPath);
-              asyncFs.rename(oldPath, newPath).then(resolve, reject);
+              rootFs?.umount?.(oldPath);
+              // Retry after unmounting
+              fs?.rename(oldPath, newPath, (retryError) => {
+                retryError ? reject(retryError) : resolve(true);
+              });
             } else if (UNKNOWN_STATE_CODES.has(renameError.code)) {
               resolve(false);
             } else {
@@ -181,15 +184,7 @@ const useAsyncFs = (): AsyncFSModule => {
 
             return resolve(
               stats.size === -1 && isExistingFile(stats)
-                ? new Stats(
-                    FileType.FILE,
-                    get9pSize(path),
-                    stats.mode,
-                    (stats as any).atimeMs,
-                    (stats as any).mtimeMs,
-                    (stats as any).ctimeMs,
-                    (stats as any).birthtimeMs
-                  )
+                ? new Stats(FileType.FILE, get9pSize(path), stats.mode)
                 : stats
             );
           });

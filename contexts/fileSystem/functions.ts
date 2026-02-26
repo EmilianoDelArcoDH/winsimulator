@@ -98,7 +98,8 @@ export const resetStorage = (rootFs?: RootFileSystem): Promise<void> =>
     window.sessionStorage.clear();
 
     const clearFs = (): void => {
-      const overlayFs = rootFs?._getFs("/")?.fs as any;
+      const fsResult = rootFs?._getFs?.("/");
+      const overlayFs = fsResult?.fs as any;
       const overlayedFileSystems = overlayFs?.getOverlayedFileSystems();
       const readable = overlayedFileSystems?.readable as any;
       const writable = overlayedFileSystems?.writable as any;

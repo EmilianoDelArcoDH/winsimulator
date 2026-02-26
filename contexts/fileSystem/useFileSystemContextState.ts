@@ -310,16 +310,20 @@ const useFileSystemContextState = (): FileSystemContextState => {
         throw new Error("Invalid HTTPRequest FS object.");
       }
 
-      const {
-        FileSystem: { HTTPRequest },
-      } = (await import(
+      const BrowserFSModule = (await import(
         "public/System/BrowserFS/browserfs.min.js"
-      )) as typeof IBrowserFS;
+      )) as any;
+
+      const HTTPRequest = BrowserFSModule?.FileSystem?.HTTPRequest;
+
+      if (!HTTPRequest) {
+        throw new Error("HTTPRequest not available in BrowserFS.");
+      }
 
       return new Promise((resolve, reject) => {
-        HTTPRequest?.Create(
+        HTTPRequest.Create(
           { baseUrl, index: parseDirectory(index.fsroot as FS9PV4[]) },
-          (error, newFs) => {
+          (error: any, newFs: any) => {
             if (error || !newFs) {
               reject(new Error("Error while mounting HTTPRequest FS."));
             } else {
