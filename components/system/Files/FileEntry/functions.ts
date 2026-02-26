@@ -77,8 +77,12 @@ type VideoElementWithSeek = HTMLVideoElement & {
 };
 
 export const isExistingFile = (
-  { birthtimeMs, ctimeMs }: Stats = {} as Stats
-): boolean => Boolean(birthtimeMs && birthtimeMs === ctimeMs);
+  stats: Stats = {} as Stats
+): boolean => {
+  const birthtimeMs = (stats as any).birthtimeMs;
+  const ctimeMs = (stats as any).ctimeMs;
+  return Boolean(birthtimeMs && birthtimeMs === ctimeMs);
+};
 
 export const getModifiedTime = (path: string, stats: FileStat): number => {
   const { mtimeMs } = stats;
