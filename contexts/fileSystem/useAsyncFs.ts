@@ -187,10 +187,10 @@ const useAsyncFs = (): AsyncFSModule => {
                     FileType.FILE,
                     get9pSize(path),
                     stats.mode,
-                    stats.atimeMs,
-                    stats.mtimeMs,
-                    stats.ctimeMs,
-                    stats.birthtimeMs
+                    (stats as any).atimeMs,
+                    (stats as any).mtimeMs,
+                    (stats as any).ctimeMs,
+                    (stats as any).birthtimeMs
                   )
                 : stats
             );
