@@ -3,8 +3,6 @@ import { type FSModule } from "browserfs/dist/node/core/FS";
 import Stats, { FileType } from "browserfs/dist/node/core/node_fs_stats";
 import { useEffect, useMemo, useRef, useState } from "react";
 import type * as IBrowserFS from "browserfs";
-import type EmscriptenFileSystem from "browserfs/dist/node/backend/Emscripten";
-import type MountableFileSystem from "browserfs/dist/node/backend/MountableFileSystem";
 import {
   ICON_CACHE,
   ICON_CACHE_EXTENSION,
@@ -43,7 +41,7 @@ export type EmscriptenFS = {
   DB_STORE_NAME: string;
 };
 
-export type ExtendedEmscriptenFileSystem = Omit<EmscriptenFileSystem, "_FS"> & {
+export type ExtendedEmscriptenFileSystem = {
   _FS?: EmscriptenFS;
 };
 
@@ -53,10 +51,10 @@ export type Mount = {
   getName: () => string;
 };
 
-export type RootFileSystem = Omit<
-  MountableFileSystem,
-  "mntMap" | "mountList"
-> & {
+export type RootFileSystem = {
+  _getFs?: (path: string) => { fs: any } | null;
+  mount?: (path: string, fs: any) => void;
+  umount?: (path: string) => void;
   mntMap: Record<string, Mount>;
   mountList: string[];
 };

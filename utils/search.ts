@@ -1,8 +1,6 @@
 import { basename, extname } from "path";
 import { useEffect, useState } from "react";
 import { type Index } from "lunr";
-import type OverlayFS from "browserfs/dist/node/backend/OverlayFS";
-import type IndexedDBFileSystem from "browserfs/dist/node/backend/IndexedDB";
 import { useFileSystem } from "contexts/fileSystem";
 import { type RootFileSystem } from "contexts/fileSystem/useAsyncFs";
 import SEARCH_EXTENSIONS from "scripts/searchExtensions.json";
@@ -87,7 +85,7 @@ const search = async (
   return [];
 };
 
-interface IWritableFs extends Omit<IndexedDBFileSystem, "_cache"> {
+interface IWritableFs {
   _cache: {
     map: Map<string, unknown>;
   };
@@ -97,7 +95,7 @@ const buildDynamicIndex = async (
   readFile: (path: string) => Promise<Buffer>,
   rootFs?: RootFileSystem
 ): Promise<Index> => {
-  const overlayFs = rootFs?._getFs("/")?.fs as OverlayFS;
+  const overlayFs = rootFs?._getFs("/")?.fs as any;
   const overlayedFileSystems = overlayFs?.getOverlayedFileSystems();
   const writable = overlayedFileSystems?.writable as IWritableFs;
 

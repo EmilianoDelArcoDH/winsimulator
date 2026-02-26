@@ -6,8 +6,6 @@ import {
 } from "browserfs/dist/node/core/file_system";
 import { type ApiError } from "browserfs/dist/node/core/api_error";
 import { type FSModule } from "browserfs/dist/node/core/FS";
-import type IZipFS from "browserfs/dist/node/backend/ZipFS";
-import type IIsoFS from "browserfs/dist/node/backend/IsoFS";
 import type * as IBrowserFS from "browserfs";
 import useTransferDialog from "components/system/Dialogs/Transfer/useTransferDialog";
 import {
@@ -435,7 +433,7 @@ const useFileSystemContextState = (): FileSystemContextState => {
 
       return new Promise((resolve, reject) => {
         const isIso = getExtension(url) === ".iso";
-        const createFs: BFSCallback<IIsoFS | IZipFS> = (createError, newFs) => {
+        const createFs: BFSCallback<any> = (createError, newFs) => {
           if (createError) {
             reject(
               new Error(`Error while mounting ${isIso ? "ISO" : "ZIP"} FS.`)

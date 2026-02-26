@@ -1,8 +1,4 @@
 import { join } from "path";
-import type HTTPRequest from "browserfs/dist/node/backend/HTTPRequest";
-import type IndexedDBFileSystem from "browserfs/dist/node/backend/IndexedDB";
-import type OverlayFS from "browserfs/dist/node/backend/OverlayFS";
-import type InMemoryFileSystem from "browserfs/dist/node/backend/InMemory";
 import { type FileSystemObserver } from "contexts/fileSystem/useFileSystemContextState";
 import { FS_HANDLES } from "utils/constants";
 import { type RootFileSystem } from "contexts/fileSystem/useAsyncFs";
@@ -102,19 +98,17 @@ export const resetStorage = (rootFs?: RootFileSystem): Promise<void> =>
     window.sessionStorage.clear();
 
     const clearFs = (): void => {
-      const overlayFs = rootFs?._getFs("/")?.fs as OverlayFS;
+      const overlayFs = rootFs?._getFs("/")?.fs as any;
       const overlayedFileSystems = overlayFs?.getOverlayedFileSystems();
-      const readable = overlayedFileSystems?.readable as HTTPRequest;
-      const writable = overlayedFileSystems?.writable as
-        | IndexedDBFileSystem
-        | InMemoryFileSystem;
+      const readable = overlayedFileSystems?.readable as any;
+      const writable = overlayedFileSystems?.writable as any;
 
       readable?.empty();
 
       if (writable?.getName() === "InMemory" || !writable?.empty) {
         resolve();
       } else {
-        writable.empty((apiError) => (apiError ? reject(apiError) : resolve()));
+        writable.empty((apiError: any) => (apiError ? reject(apiError) : resolve()));
       }
     };
 
