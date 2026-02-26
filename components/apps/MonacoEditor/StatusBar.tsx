@@ -66,8 +66,7 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
         : "";
 
       setPosition(
-        `Ln ${positionLineNumber}, Col ${positionColumn}${
-          selectedText ? ` (${selectedText.length} selected)` : ""
+        `Ln ${positionLineNumber}, Col ${positionColumn}${selectedText ? ` (${selectedText.length} selected)` : ""
         }`
       );
     };
@@ -151,6 +150,67 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
                 </Button>
               </li>
             )}
+            <li className="clickable">
+              <Button
+                onClick={() => {
+                  editor?.focus();
+                  editor?.getAction("editor.action.quickCommand")?.run();
+                }}
+                {...label("Command Palette (Ctrl+Shift+P)")}
+              >
+                Cmd
+              </Button>
+            </li>
+            <li className="clickable">
+              <Button
+                onClick={() => {
+                  editor?.focus();
+                  editor?.getAction("editor.action.formatDocument")?.run();
+                }}
+                {...label("Format Document (Shift+Alt+F)")}
+              >
+                Format
+              </Button>
+            </li>
+            <li className="clickable">
+              <Button
+                onClick={() => {
+                  const currentWrap = editor?.getOption(
+                    window.monaco.editor.EditorOption.wordWrap
+                  );
+                  const nextWrap = currentWrap === "off" ? "on" : "off";
+
+                  editor?.updateOptions({ wordWrap: nextWrap });
+                  addNotification(
+                    `Word Wrap: ${nextWrap === "on" ? "ON" : "OFF"}`,
+                    "info"
+                  );
+                }}
+                {...label("Toggle Word Wrap (Alt+Z)")}
+              >
+                Wrap
+              </Button>
+            </li>
+            <li className="clickable">
+              <Button
+                onClick={() => {
+                  const minimapOption = editor?.getOption(
+                    window.monaco.editor.EditorOption.minimap
+                  );
+
+                  editor?.updateOptions({
+                    minimap: { enabled: !minimapOption?.enabled },
+                  });
+                  addNotification(
+                    `Minimap: ${minimapOption?.enabled ? "OFF" : "ON"}`,
+                    "info"
+                  );
+                }}
+                {...label("Toggle Minimap (Ctrl+B)")}
+              >
+                Minimap
+              </Button>
+            </li>
             {position && (
               <li className="clickable">
                 <Button

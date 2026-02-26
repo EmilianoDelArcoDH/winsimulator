@@ -1,12 +1,12 @@
 import styled from "styled-components";
 
 const StyledStatusBar = styled.footer`
-  background-color: rgb(25 25 25);
-  border-top: 1px solid rgb(19 19 19);
+  background-color: rgb(0 122 204);
+  border-top: 0;
   bottom: 0;
-  color: rgb(108 103 106);
+  color: rgb(255 255 255);
   display: flex;
-  font-size: 16px;
+  font-size: 12px;
   height: 30px;
   place-content: space-between;
   position: fixed;
@@ -42,18 +42,18 @@ const StyledStatusBar = styled.footer`
         }
 
         svg {
-          fill: rgb(108 103 106);
+          fill: rgb(255 255 255);
           height: 16px;
           width: 16px;
         }
       }
 
       &:hover {
-        background-color: rgb(37 37 37);
+        background-color: rgb(25 137 214);
       }
 
       &:active {
-        background-color: rgb(34 34 34);
+        background-color: rgb(0 111 186);
       }
 
       &.clickable {

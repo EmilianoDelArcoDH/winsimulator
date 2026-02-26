@@ -52,6 +52,9 @@ const useTerminal = ({
   const [fitAddon, setFitAddon] = useState<FitAddon>();
   const [localEcho, setLocalEcho] = useState<LocalEcho>();
   const cd = useRef((!localEcho && url && !extname(url) ? url : "") || HOME);
+  const promptCharacter = id.startsWith("GitBash")
+    ? "$"
+    : PROMPT_CHARACTER;
   const [initialCommand, setInitialCommand] = useState("");
   const [prompted, setPrompted] = useState(false);
   const processCommand = useCommandInterpreter(id, cd, terminal, localEcho);
@@ -161,7 +164,7 @@ const useTerminal = ({
     if (localEcho && terminal && !prompted) {
       const prompt = (): Promise<void> =>
         localEcho
-          .read(`\r\n${cd.current}${PROMPT_CHARACTER}`)
+          .read(`\r\n${cd.current}${promptCharacter}`)
           .then((command) => processCommand.current?.(command).then(prompt));
 
       localEcho.println(`${alias} [Version ${displayVersion()}]`);
@@ -169,7 +172,7 @@ const useTerminal = ({
 
       if (initialCommand) {
         localEcho.println(
-          `\r\n${cd.current}${PROMPT_CHARACTER}${initialCommand}\r\n`
+          `\r\n${cd.current}${promptCharacter}${initialCommand}\r\n`
         );
         localEcho.history.entries = [initialCommand];
         processCommand.current(initialCommand).then(prompt);
@@ -188,6 +191,7 @@ const useTerminal = ({
     initialCommand,
     localEcho,
     processCommand,
+    promptCharacter,
     prompted,
     readdir,
     terminal,

@@ -5,6 +5,7 @@ import type * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 import {
   URL_DELIMITER,
   config,
+  editorOptions,
   theme,
 } from "components/apps/MonacoEditor/config";
 import {
@@ -48,6 +49,62 @@ const useMonaco = ({
     },
     [monaco?.Uri, monaco?.editor]
   );
+  const registerVsCodeLikeCommands = useCallback(
+    (currentEditor: Monaco.editor.IStandaloneCodeEditor): void => {
+      if (!monaco) return;
+
+      currentEditor.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyP,
+        () => {
+          currentEditor.getAction("editor.action.quickCommand")?.run();
+        }
+      );
+
+      currentEditor.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyMod.Shift | monaco.KeyCode.KeyP,
+        () => {
+          currentEditor.getAction("editor.action.quickCommand")?.run();
+        }
+      );
+
+      currentEditor.addCommand(
+        monaco.KeyMod.Shift | monaco.KeyMod.Alt | monaco.KeyCode.KeyF,
+        () => {
+          currentEditor.getAction("editor.action.formatDocument")?.run();
+        }
+      );
+
+      currentEditor.addAction({
+        id: "winsim.toggleWordWrap",
+        keybindings: [monaco.KeyMod.Alt | monaco.KeyCode.KeyZ],
+        label: "Toggle Word Wrap",
+        run: (editorInstance) => {
+          const currentWrap = editorInstance.getOption(
+            monaco.editor.EditorOption.wordWrap
+          );
+          const nextWrap = currentWrap === "off" ? "on" : "off";
+
+          editorInstance.updateOptions({ wordWrap: nextWrap });
+        },
+      });
+
+      currentEditor.addAction({
+        id: "winsim.toggleMinimap",
+        keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyB],
+        label: "Toggle Minimap",
+        run: (editorInstance) => {
+          const minimapOption = editorInstance.getOption(
+            monaco.editor.EditorOption.minimap
+          );
+
+          editorInstance.updateOptions({
+            minimap: { enabled: !minimapOption.enabled },
+          });
+        },
+      });
+    },
+    [monaco]
+  );
   const createModel = useCallback(async () => {
     const newModel = monaco?.editor.createModel(
       (await readFile(url)).toString(),
@@ -77,6 +134,20 @@ const useMonaco = ({
   }, [monaco]);
 
   useEffect(() => {
+    if (!monaco?.languages.typescript?.typescriptDefaults) return;
+
+    monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
+      allowJs: true,
+      esModuleInterop: true,
+      jsx: monaco.languages.typescript.JsxEmit.React,
+      module: monaco.languages.typescript.ModuleKind.ESNext,
+      moduleResolution: monaco.languages.typescript.ModuleResolutionKind.NodeJs,
+      strict: false,
+      target: monaco.languages.typescript.ScriptTarget.ESNext,
+    });
+  }, [monaco]);
+
+  useEffect(() => {
     editor?.onKeyDown(async (event) => {
       const { ctrlKey, code, keyCode } = event;
 
@@ -96,10 +167,18 @@ const useMonaco = ({
 
   useEffect(() => {
     if (monaco && !editor && containerRef.current) {
-      const currentEditor = monaco.editor.create(containerRef.current, {
-        automaticLayout: true,
+      const monacoHost = containerRef.current.querySelector<HTMLDivElement>(
+        "[data-monaco-editor-host]"
+      );
+
+      if (!monacoHost) return;
+
+      const currentEditor = monaco.editor.create(monacoHost, {
+        ...editorOptions,
         theme,
       });
+
+      registerVsCodeLikeCommands(currentEditor);
 
       containerRef.current
         ?.closest("section")
@@ -123,7 +202,15 @@ const useMonaco = ({
         editor.dispose();
       }
     };
-  }, [containerRef, editor, id, monaco, setArgument, setLoading]);
+  }, [
+    containerRef,
+    editor,
+    id,
+    monaco,
+    registerVsCodeLikeCommands,
+    setArgument,
+    setLoading,
+  ]);
 
   useEffect(() => {
     if (monaco && editor && url) {
