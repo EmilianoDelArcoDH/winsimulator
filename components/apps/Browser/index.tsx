@@ -18,11 +18,13 @@ import {
 } from "components/apps/Browser/NavigationIcons";
 import StyledBrowser from "components/apps/Browser/StyledBrowser";
 import {
+  BLOCKED_ADULT_CONTENT,
   DINO_GAME,
   HOME_PAGE,
   NOT_FOUND,
   PROXIES,
   bookmarks,
+  isBlockedAdultUrl,
 } from "components/apps/Browser/config";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import useTitle from "components/system/Window/useTitle";
@@ -142,6 +144,13 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
           prependFileToTitle(`${DINO_GAME.url}/`);
         } else if (!isHtml) {
           const processedUrl = await getUrlOrSearch(addressInput);
+
+          if (isBlockedAdultUrl(processedUrl)) {
+            setSrcDoc(BLOCKED_ADULT_CONTENT);
+            prependFileToTitle("Blocked content");
+
+            return;
+          }
 
           if (
             LOCAL_HOST.has(processedUrl.host) ||
@@ -304,12 +313,12 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
                 directory === "/"
                   ? dirStats
                   : [
-                      {
-                        href: resolve(directory, ".."),
-                        icon: "back",
-                      },
-                      ...dirStats,
-                    ]
+                    {
+                      href: resolve(directory, ".."),
+                      icon: "back",
+                    },
+                    ...dirStats,
+                  ]
               );
 
               newTitle = `Index of ${directory}`;
@@ -339,9 +348,8 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
               setIcon(id, "/System/Icons/Favicons/ipfs.webp");
             } else {
               const favicon = new Image();
-              const faviconUrl = `${
-                new URL(addressUrl).origin
-              }${FAVICON_BASE_PATH}`;
+              const faviconUrl = `${new URL(addressUrl).origin
+                }${FAVICON_BASE_PATH}`;
 
               favicon.addEventListener(
                 "error",
