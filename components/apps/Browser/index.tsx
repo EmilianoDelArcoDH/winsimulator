@@ -24,6 +24,8 @@ import {
   NOT_FOUND,
   PROXIES,
   bookmarks,
+  isBlockedAdultSearchInput,
+  isBlockedAdultSearchUrl,
   isBlockedAdultUrl,
 } from "components/apps/Browser/config";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
@@ -143,9 +145,19 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
           );
           prependFileToTitle(`${DINO_GAME.url}/`);
         } else if (!isHtml) {
+          if (isBlockedAdultSearchInput(addressInput)) {
+            setSrcDoc(BLOCKED_ADULT_CONTENT);
+            prependFileToTitle("Blocked content");
+
+            return;
+          }
+
           const processedUrl = await getUrlOrSearch(addressInput);
 
-          if (isBlockedAdultUrl(processedUrl)) {
+          if (
+            isBlockedAdultUrl(processedUrl) ||
+            isBlockedAdultSearchUrl(processedUrl)
+          ) {
             setSrcDoc(BLOCKED_ADULT_CONTENT);
             prependFileToTitle("Blocked content");
 

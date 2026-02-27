@@ -38,6 +38,24 @@ const ADULT_HOST_PATTERNS = [
   "onlyfans",
 ] as const;
 
+const ADULT_SEARCH_PATTERNS = [
+  "porn",
+  "porno",
+  "xxx",
+  "xvideos",
+  "xnxx",
+  "xhamster",
+  "redtube",
+  "youporn",
+  "hentai",
+  "rule34",
+  "onlyfans",
+  "nsfw",
+  "sexo",
+  "desnuda",
+  "desnudo",
+] as const;
+
 export const DINO_GAME = {
   icon: "/System/Icons/Favicons/dino.webp",
   name: "T-Rex Chrome Dino Game",
@@ -102,6 +120,25 @@ export const isBlockedAdultUrl = (url: URL): boolean => {
       normalizedHost.includes(pattern) ||
       normalizedPath.includes(`/${pattern}`) ||
       normalizedPath.includes(`-${pattern}`)
+  );
+};
+
+const hasBlockedSearchTerm = (value = ""): boolean => {
+  const normalizedValue = decodeURIComponent(value).toLowerCase();
+
+  return ADULT_SEARCH_PATTERNS.some((pattern) =>
+    normalizedValue.includes(pattern)
+  );
+};
+
+export const isBlockedAdultSearchInput = (addressInput: string): boolean =>
+  hasBlockedSearchTerm(addressInput);
+
+export const isBlockedAdultSearchUrl = (url: URL): boolean => {
+  const query = new URLSearchParams(url.search.replace(";", "&"));
+
+  return ["q", "query", "p", "search", "wd", "text"].some((key) =>
+    hasBlockedSearchTerm(query.get(key) || "")
   );
 };
 
