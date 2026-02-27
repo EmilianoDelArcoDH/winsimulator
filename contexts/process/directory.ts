@@ -3,6 +3,16 @@ import { type Processes } from "contexts/process/types";
 import { FOLDER_ICON, TASKBAR_HEIGHT } from "utils/constants";
 
 const directory: Processes = {
+  Activities: {
+    Component: dynamic(() => import("components/apps/Activities/ActivitiesApp")),
+    backgroundColor: "#111",
+    defaultSize: {
+      height: 620,
+      width: 900,
+    },
+    icon: "/System/Icons/monaco.webp",
+    title: "Activities",
+  },
   GitBash: {
     Component: dynamic(() => import("components/apps/GitBash/GitBashApp")),
     backgroundColor: "#1d1f21",

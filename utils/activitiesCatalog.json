@@ -1,0 +1,793 @@
+{
+  "version": "1.0.0",
+  "app": "Activities",
+  "routing": {
+    "appRoute": "/?app=Activities&activityId={id}",
+    "standaloneRoute": "/activities/{id}/index.html"
+  },
+  "classes": [
+    {
+      "classId": "sch_git_c01",
+      "title": "Control de versiones y trabajo colaborativo",
+      "activities": [
+        {
+          "id": "sch_git_c01_a01",
+          "classId": "sch_git_c01",
+          "title": "Versiones vs copias",
+          "objective": "Distinguir control de versiones de una estrategia de copias desordenadas.",
+          "mode": "classify",
+          "ui": {
+            "submitLabel": "Validar",
+            "retryLabel": "Reintentar"
+          },
+          "data": {
+            "columns": ["Control de versiones", "Copias/caos"],
+            "cards": [
+              { "id": "c1", "text": "Puedo ver el historial de cambios y volver a una versión anterior." },
+              { "id": "c2", "text": "Me paso archivos por WhatsApp con nombres tipo final_final2." },
+              { "id": "c3", "text": "Veo quién hizo cada cambio y cuándo." },
+              { "id": "c4", "text": "Guardo una carpeta por día y espero no equivocarme." },
+              { "id": "c5", "text": "Puedo comparar cambios entre versiones (diff)." },
+              { "id": "c6", "text": "No sé cuál es el último archivo correcto." },
+              { "id": "c7", "text": "Trabajo en paralelo sin pisar el trabajo de otros." },
+              { "id": "c8", "text": "Si algo se rompe, no puedo volver atrás con seguridad." },
+              { "id": "c9", "text": "Puedo crear versiones con mensajes (commits) y entender el contexto." },
+              { "id": "c10", "text": "Cada integrante guarda su copia y después se juntan como se pueda." }
+            ],
+            "answerKey": {
+              "Control de versiones": ["c1", "c3", "c5", "c7", "c9"],
+              "Copias/caos": ["c2", "c4", "c6", "c8", "c10"]
+            },
+            "freeText": {
+              "id": "justificacion",
+              "label": "Explicá 2 casos (mínimo 20 caracteres cada uno).",
+              "minLength": 20,
+              "minItems": 2
+            }
+          },
+          "validation": {
+            "okThreshold": { "cardsCorrectMin": 10 },
+            "checks": [
+              {
+                "checkId": "c01_a01_cards_exact",
+                "type": "CLASSIFY_EXACT",
+                "target": "cards",
+                "messageOk": "Clasificación correcta.",
+                "messageFail": "Revisá: algunas tarjetas quedaron en la columna equivocada."
+              },
+              {
+                "checkId": "c01_a01_justificacion_min",
+                "type": "TEXT_LIST_MIN",
+                "target": "justificacion",
+                "rules": { "minItems": 2, "minLengthEach": 20 },
+                "messageOk": "Justificaciones completas.",
+                "messageFail": "Escribí 2 justificaciones, con al menos 20 caracteres cada una."
+              },
+              {
+                "checkId": "c01_a01_keywords",
+                "type": "TEXT_KEYWORDS",
+                "target": "justificacion",
+                "rules": { "mustIncludeAny": ["historia", "version", "cambio", "decisión"] },
+                "messageOk": "Tus justificaciones reflejan el concepto.",
+                "messageFail": "Sumá idea de historia/versiones/cambios en tu justificación."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c01_a02",
+          "classId": "sch_git_c01",
+          "title": "Git vs GitHub",
+          "objective": "Diferenciar herramienta (Git) de plataforma (GitHub).",
+          "mode": "classify",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "columns": ["Git", "GitHub"],
+            "cards": [
+              { "id": "g1", "text": "Funciona en tu computadora (local) para llevar historial." },
+              { "id": "g2", "text": "Permite alojar repositorios en la nube." },
+              { "id": "g3", "text": "Usa commits para registrar cambios." },
+              { "id": "g4", "text": "Sirve para colaborar mediante repos remotos y PRs." },
+              { "id": "g5", "text": "Te deja volver a una versión anterior en tu máquina." },
+              { "id": "g6", "text": "Es una empresa/plataforma web de hosting de repos." },
+              { "id": "g7", "text": "Maneja ramas y merges (branch/merge)." },
+              { "id": "g8", "text": "Se usa para compartir y revisar código con otras personas." }
+            ],
+            "answerKey": {
+              "Git": ["g1", "g3", "g5", "g7"],
+              "GitHub": ["g2", "g4", "g6", "g8"]
+            },
+            "freeText": {
+              "id": "explicacion",
+              "label": "Explicá con tus palabras la diferencia (mínimo 30 caracteres).",
+              "minLength": 30
+            }
+          },
+          "validation": {
+            "okThreshold": { "cardsCorrectMin": 7 },
+            "checks": [
+              {
+                "checkId": "c01_a02_cards_threshold",
+                "type": "CLASSIFY_THRESHOLD",
+                "target": "cards",
+                "rules": { "minCorrect": 7, "total": 8 },
+                "messageOk": "Muy bien: distinguís Git de GitHub.",
+                "messageFail": "Te faltó distinguir algunas afirmaciones entre Git y GitHub."
+              },
+              {
+                "checkId": "c01_a02_explicacion_min",
+                "type": "TEXT_MIN_LENGTH",
+                "target": "explicacion",
+                "rules": { "minLength": 30 },
+                "messageOk": "Explicación completa.",
+                "messageFail": "Tu explicación es muy corta. Sumá un poco más."
+              },
+              {
+                "checkId": "c01_a02_explicacion_keywords",
+                "type": "TEXT_KEYWORDS_GROUPS",
+                "target": "explicacion",
+                "rules": {
+                  "mustSatisfyGroups": [
+                    { "any": ["local", "computadora", "mi pc", "mi máquina"] },
+                    { "any": ["plataforma", "nube", "web", "internet", "hosting"] }
+                  ]
+                },
+                "messageOk": "Incluiste la idea de local vs plataforma.",
+                "messageFail": "Tu explicación debe mencionar que Git es local y GitHub es una plataforma en la nube/web."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c01_a03",
+          "classId": "sch_git_c01",
+          "title": "Ordenar la historia de cambios",
+          "objective": "Comprender cómo se construye un historial coherente con versiones.",
+          "mode": "order",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "items": [
+              { "id": "t1", "text": "Creé el proyecto inicial." },
+              { "id": "t2", "text": "Agregué una sección de contacto." },
+              { "id": "t3", "text": "Corregí un error en el formulario." },
+              { "id": "t4", "text": "Mejoré estilos del botón principal." },
+              { "id": "t5", "text": "Publiqué la primera versión estable." }
+            ],
+            "answerOrder": ["t1", "t2", "t3", "t4", "t5"],
+            "question": {
+              "id": "culpable",
+              "label": "¿Cuál cambio podría haber roto algo? (elegí 1) ",
+              "options": ["t2", "t3", "t4"]
+            },
+            "freeText": { "id": "justificacion", "label": "Justificá tu elección (mínimo 15 caracteres).", "minLength": 15 }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c01_a03_order_exact",
+                "type": "ORDER_EXACT",
+                "target": "items",
+                "messageOk": "Orden correcto.",
+                "messageFail": "El orden no refleja una historia coherente. Revisá la secuencia."
+              },
+              {
+                "checkId": "c01_a03_justificacion_min",
+                "type": "TEXT_MIN_LENGTH",
+                "target": "justificacion",
+                "rules": { "minLength": 15 },
+                "messageOk": "Justificación completa.",
+                "messageFail": "Justificá un poco más (mínimo 15 caracteres)."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c01_a04",
+          "classId": "sch_git_c01",
+          "title": "Conflicto no es “error”",
+          "objective": "Identificar conflictos y elegir una estrategia de resolución.",
+          "mode": "decision",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Dos personas cambiaron la misma línea del título.",
+            "options": [
+              { "id": "keepA", "label": "Me quedo con la versión A" },
+              { "id": "keepB", "label": "Me quedo con la versión B" },
+              { "id": "combine", "label": "Combino ambas ideas en una nueva frase" }
+            ],
+            "required": {
+              "checkboxId": "detectoConflicto",
+              "checkboxLabel": "Detecto que hay un conflicto (cambios sobre lo mismo)."
+            },
+            "freeText": {
+              "id": "explicacion",
+              "label": "Explicá por qué tu resolución tiene sentido (mínimo 20 caracteres).",
+              "minLength": 20
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c01_a04_checkbox",
+                "type": "BOOLEAN_TRUE",
+                "target": "detectoConflicto",
+                "messageOk": "Correcto: identificaste el conflicto.",
+                "messageFail": "Marcá la casilla indicando que identificás el conflicto."
+              },
+              {
+                "checkId": "c01_a04_option_selected",
+                "type": "REQUIRED_SELECTION",
+                "target": "resolution",
+                "messageOk": "Elegiste una resolución.",
+                "messageFail": "Elegí una forma de resolver el conflicto."
+              },
+              {
+                "checkId": "c01_a04_text_min",
+                "type": "TEXT_MIN_LENGTH",
+                "target": "explicacion",
+                "rules": { "minLength": 20 },
+                "messageOk": "Explicación completa.",
+                "messageFail": "Tu explicación es muy corta. Sumá detalles."
+              },
+              {
+                "checkId": "c01_a04_text_keywords",
+                "type": "TEXT_KEYWORDS",
+                "target": "explicacion",
+                "rules": { "mustIncludeAny": ["conflicto", "resolver", "decidir", "combinar"] },
+                "messageOk": "Explicación alineada al concepto.",
+                "messageFail": "Mencioná la idea de conflicto/resolución en tu explicación."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classId": "sch_git_c02",
+      "title": "Crear y guardar cambios",
+      "activities": [
+        {
+          "id": "sch_git_c02_a01",
+          "classId": "sch_git_c02",
+          "title": "Inicializar repo",
+          "objective": "Ejecutar git init en el lugar correcto.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "terminal": {
+              "expectedWorkingDir": "/repo",
+              "allowedCommands": ["pwd", "ls", "cd", "git init", "git status", "help"]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c02_a01_ran_git_init",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git init"] },
+                "messageOk": "Ejecutaste git init.",
+                "messageFail": "Tenés que ejecutar: git init"
+              },
+              {
+                "checkId": "c02_a01_correct_dir",
+                "type": "TERMINAL_IN_DIR",
+                "target": "cwd",
+                "rules": { "equals": "/repo" },
+                "messageOk": "Lo hiciste en el directorio correcto.",
+                "messageFail": "Ejecutá git init dentro de /repo (no en otra carpeta)."
+              },
+              {
+                "checkId": "c02_a01_repo_initialized",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "initialized": true },
+                "messageOk": "Repo inicializado correctamente.",
+                "messageFail": "No se detecta un repo inicializado (.git)."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c02_a02",
+          "classId": "sch_git_c02",
+          "title": "3 estados: working / staging / commit",
+          "objective": "Entender qué cambia con status, add y commit.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": {
+              "preloadedChanges": [
+                { "path": "index.html", "type": "modified" },
+                { "path": "style.css", "type": "modified" }
+              ],
+              "mustStageOnly": ["index.html"],
+              "mustNotStage": ["style.css"]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c02_a02_status_used_twice",
+                "type": "TERMINAL_COMMAND_COUNT_MIN",
+                "target": "commands",
+                "rules": { "command": "git status", "minCount": 2 },
+                "messageOk": "Usaste git status en el proceso.",
+                "messageFail": "Usá git status al menos 2 veces (antes y después de add)."
+              },
+              {
+                "checkId": "c02_a02_add_specific",
+                "type": "TERMINAL_COMMAND_MATCH",
+                "target": "commands",
+                "rules": { "mustMatchAny": ["git add index.html"] },
+                "messageOk": "Preparaste el archivo correcto.",
+                "messageFail": "Tenés que preparar solo index.html (git add index.html)."
+              },
+              {
+                "checkId": "c02_a02_not_added_other",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "stagedIncludes": ["index.html"], "stagedExcludes": ["style.css"] },
+                "messageOk": "Staging correcto: solo index.html.",
+                "messageFail": "Staging incorrecto: no debe entrar style.css."
+              },
+              {
+                "checkId": "c02_a02_commit_contains_only_staged",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "lastCommitIncludes": ["index.html"], "lastCommitExcludes": ["style.css"] },
+                "messageOk": "Commit correcto: solo index.html.",
+                "messageFail": "El commit no cumple: debe incluir index.html y NO incluir style.css."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c02_a03",
+          "classId": "sch_git_c02",
+          "title": "Mensaje de commit profesional",
+          "objective": "Escribir un mensaje claro y específico.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "rules": {
+              "forbiddenMessages": ["cambios", "fix", "arreglo", "asdf", "update"],
+              "mustStartWithAny": ["Agrega", "Corrige", "Elimina", "Actualiza", "Mejora", "Refactoriza"],
+              "minLength": 15
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c02_a03_commit_with_m",
+                "type": "TERMINAL_REGEX",
+                "target": "commands",
+                "rules": { "pattern": "git\\s+commit\\s+-m\\s+\"(.+)\"" },
+                "messageOk": "Usaste git commit -m correctamente.",
+                "messageFail": "Tenés que commitear con: git commit -m \"mensaje\""
+              },
+              {
+                "checkId": "c02_a03_message_quality",
+                "type": "COMMIT_MESSAGE_RULES",
+                "target": "repo.lastCommit.message",
+                "rules": {
+                  "minLength": 15,
+                  "mustStartWithAny": ["Agrega", "Corrige", "Elimina", "Actualiza", "Mejora", "Refactoriza"],
+                  "forbiddenExact": ["cambios", "fix", "arreglo", "asdf", "update"]
+                },
+                "messageOk": "Mensaje de commit claro.",
+                "messageFail": "Tu mensaje debe ser específico, empezar con un verbo (Agrega/Corrige/...) y no ser genérico."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c02_a04",
+          "classId": "sch_git_c02",
+          "title": "Evitar el git add . ciego",
+          "objective": "No commitear archivos basura.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": {
+              "junkFile": "notes.tmp",
+              "mustNotCommit": ["notes.tmp"]
+            },
+            "policy": { "warnOnAddDot": true }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c02_a04_no_junk_in_commit",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "lastCommitExcludes": ["notes.tmp"] },
+                "messageOk": "Bien: no commiteaste el archivo basura.",
+                "messageFail": "El commit incluye notes.tmp. Tenés que excluirlo del commit."
+              },
+              {
+                "checkId": "c02_a04_status_before_commit",
+                "type": "TERMINAL_COMMAND_COUNT_MIN",
+                "target": "commands",
+                "rules": { "command": "git status", "minCount": 1, "mustOccurBefore": "git commit" },
+                "messageOk": "Verificaste el estado antes de commitear.",
+                "messageFail": "Usá git status antes de hacer git commit."
+              },
+              {
+                "checkId": "c02_a04_add_dot_warning",
+                "type": "TERMINAL_WARNING_IF_MATCH",
+                "target": "commands",
+                "rules": { "pattern": "git\\s+add\\s+\\." },
+                "messageOk": "OK.",
+                "messageFail": "Warning: evitá git add . sin revisar qué se está agregando."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classId": "sch_git_c03",
+      "title": "Revisar historial y versiones",
+      "activities": [
+        {
+          "id": "sch_git_c03_a01",
+          "classId": "sch_git_c03",
+          "title": "Leer el historial (git log)",
+          "objective": "Identificar autor y mensaje del último commit.",
+          "mode": "terminal+form",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "expected": { "lastCommit": { "author": "__FROM_REPO__", "message": "__FROM_REPO__" } },
+            "form": [
+              { "id": "author", "label": "Autor del último commit" },
+              { "id": "message", "label": "Mensaje del último commit" }
+            ]
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c03_a01_used_log",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git log"] },
+                "messageOk": "Usaste git log.",
+                "messageFail": "Tenés que usar git log para ver el historial."
+              },
+              {
+                "checkId": "c03_a01_answer_author",
+                "type": "ANSWER_EQUALS_REPO_VALUE",
+                "target": "form.author",
+                "rules": { "repoPath": "repo.lastCommit.author" },
+                "messageOk": "Autor correcto.",
+                "messageFail": "Autor incorrecto. Revisá el output de git log."
+              },
+              {
+                "checkId": "c03_a01_answer_message",
+                "type": "ANSWER_EQUALS_REPO_VALUE",
+                "target": "form.message",
+                "rules": { "repoPath": "repo.lastCommit.message" },
+                "messageOk": "Mensaje correcto.",
+                "messageFail": "Mensaje incorrecto. Revisá el output de git log."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c03_a02",
+          "classId": "sch_git_c03",
+          "title": "Vista resumida (git log --oneline)",
+          "objective": "Reconocer hash corto + mensaje en oneline.",
+          "mode": "terminal+form",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "form": [
+              { "id": "commit1", "label": "Copiá el 1er commit (hash + mensaje)" },
+              { "id": "commit2", "label": "Copiá el 2do commit (hash + mensaje)" }
+            ]
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c03_a02_used_oneline",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git log --oneline"] },
+                "messageOk": "Usaste git log --oneline.",
+                "messageFail": "Tenés que usar git log --oneline."
+              },
+              {
+                "checkId": "c03_a02_hash_format_1",
+                "type": "TEXT_REGEX",
+                "target": "form.commit1",
+                "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
+                "messageOk": "Formato correcto (hash + mensaje).",
+                "messageFail": "Formato incorrecto. Debe ser: <hash> <mensaje> (hash de 7+ caracteres)."
+              },
+              {
+                "checkId": "c03_a02_hash_format_2",
+                "type": "TEXT_REGEX",
+                "target": "form.commit2",
+                "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
+                "messageOk": "Formato correcto (hash + mensaje).",
+                "messageFail": "Formato incorrecto. Debe ser: <hash> <mensaje>."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c03_a03",
+          "classId": "sch_git_c03",
+          "title": "git diff antes del commit",
+          "objective": "Usar diff para entender cambios antes de confirmar.",
+          "mode": "terminal+form",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "form": [{ "id": "linea", "label": "¿Qué línea cambió? (copiala)" }]
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c03_a03_used_diff",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git diff"] },
+                "messageOk": "Usaste git diff.",
+                "messageFail": "Tenés que usar git diff para ver cambios antes de commitear."
+              },
+              {
+                "checkId": "c03_a03_diff_before_commit",
+                "type": "TERMINAL_ORDER",
+                "target": "commands",
+                "rules": { "before": "git commit", "mustAppear": "git diff" },
+                "messageOk": "Primero comparaste cambios y después commiteaste.",
+                "messageFail": "Usá git diff antes de hacer git commit."
+              },
+              {
+                "checkId": "c03_a03_line_matches_expected",
+                "type": "ANSWER_INCLUDES_REPO_DIFF_SNIPPET",
+                "target": "form.linea",
+                "rules": { "repoPath": "repo.currentDiff.expectedLine" },
+                "messageOk": "Línea correcta.",
+                "messageFail": "No coincide la línea. Revisá el output de git diff."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c03_a04",
+          "classId": "sch_git_c03",
+          "title": "Debugging histórico (git show)",
+          "objective": "Usar log + show para encontrar el commit culpable.",
+          "mode": "terminal+form",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "form": [
+              { "id": "hash", "label": "Pegá el hash del commit culpable" },
+              { "id": "queCambio", "label": "¿Qué cambió? (2 ideas)" }
+            ]
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c03_a04_used_oneline",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git log --oneline"] },
+                "messageOk": "Usaste git log --oneline.",
+                "messageFail": "Primero usá git log --oneline para encontrar el commit."
+              },
+              {
+                "checkId": "c03_a04_used_show",
+                "type": "TERMINAL_COMMAND_REGEX_EXECUTED",
+                "target": "commands",
+                "rules": { "pattern": "git\\s+show\\s+[0-9a-f]{7,}" },
+                "messageOk": "Usaste git show con un hash.",
+                "messageFail": "Tenés que usar git show <hash> (hash corto o largo)."
+              },
+              {
+                "checkId": "c03_a04_hash_correct",
+                "type": "ANSWER_EQUALS_REPO_VALUE",
+                "target": "form.hash",
+                "rules": { "repoPath": "repo.exercise.culpritHash", "normalizeHash": true },
+                "messageOk": "Hash correcto.",
+                "messageFail": "No es el commit culpable. Revisá el show del commit."
+              },
+              {
+                "checkId": "c03_a04_explanation_min",
+                "type": "TEXT_MIN_LENGTH",
+                "target": "form.queCambio",
+                "rules": { "minLength": 30 },
+                "messageOk": "Explicación completa.",
+                "messageFail": "Explicá un poco más qué cambió (mínimo 30 caracteres)."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classId": "sch_git_c04",
+      "title": "Repositorios remotos y trabajo compartido",
+      "activities": [
+        {
+          "id": "sch_git_c04_a01",
+          "classId": "sch_git_c04",
+          "title": "Configurar origin",
+          "objective": "Agregar un remoto y verificarlo.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "remote": {
+              "requiredName": "origin",
+              "urlPattern": "^(https://|git@).+"
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c04_a01_remote_add",
+                "type": "TERMINAL_COMMAND_REGEX_EXECUTED",
+                "target": "commands",
+                "rules": { "pattern": "git\\s+remote\\s+add\\s+origin\\s+(.+)" },
+                "messageOk": "Agregaste origin.",
+                "messageFail": "Usá: git remote add origin <URL>"
+              },
+              {
+                "checkId": "c04_a01_remote_v",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git remote -v"] },
+                "messageOk": "Verificaste con remote -v.",
+                "messageFail": "Verificá el remoto con: git remote -v"
+              },
+              {
+                "checkId": "c04_a01_origin_registered",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "remotesIncludes": ["origin"] },
+                "messageOk": "origin registrado.",
+                "messageFail": "No se detecta el remoto origin en el repo."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c04_a02",
+          "classId": "sch_git_c04",
+          "title": "Primer push con upstream",
+          "objective": "Publicar la rama y configurar tracking.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": { "expected": { "branch": "main", "remote": "origin" } },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c04_a02_push_u",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustIncludeAny": ["git push -u origin main", "git push --set-upstream origin main"] },
+                "messageOk": "Hiciste el push con upstream.",
+                "messageFail": "Tenés que hacer: git push -u origin main"
+              },
+              {
+                "checkId": "c04_a02_tracking_set",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "branchTracking": { "branch": "main", "remote": "origin" } },
+                "messageOk": "Tracking configurado.",
+                "messageFail": "No se detecta upstream/tracking para main."
+              },
+              {
+                "checkId": "c04_a02_second_push_simple",
+                "type": "TERMINAL_COMMAND_EXECUTED_AFTER",
+                "target": "commands",
+                "rules": { "mustInclude": ["git push"], "afterMustIncludeAny": ["git push -u origin main", "git push --set-upstream origin main"] },
+                "messageOk": "Luego pudiste pushear con git push sin argumentos.",
+                "messageFail": "Después del -u, hacé otro push usando solo: git push"
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c04_a03",
+          "classId": "sch_git_c04",
+          "title": "Pull antes de push",
+          "objective": "Evitar rechazos por estar desactualizado.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": {
+              "remoteHasNewCommits": true,
+              "requiredPull": "git pull origin main"
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c04_a03_pull_done",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git pull origin main"] },
+                "messageOk": "Hiciste pull correctamente.",
+                "messageFail": "Tenés que hacer: git pull origin main"
+              },
+              {
+                "checkId": "c04_a03_pull_before_push",
+                "type": "TERMINAL_ORDER",
+                "target": "commands",
+                "rules": { "before": "git push", "mustAppear": "git pull origin main" },
+                "messageOk": "Hiciste pull antes de push.",
+                "messageFail": "Primero hacé pull y después push."
+              },
+              {
+                "checkId": "c04_a03_remote_updated",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "remoteInSync": true },
+                "messageOk": "Quedó sincronizado.",
+                "messageFail": "Aún no está sincronizado. Revisá pull/push."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c04_a04",
+          "classId": "sch_git_c04",
+          "title": "Flujo completo con remoto",
+          "objective": "Seguir el ciclo pull → cambios → status → add → commit → push.",
+          "mode": "terminal+rubric",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "requiredSequence": ["git pull", "git status", "git add", "git commit", "git push"],
+            "commitMessageRules": { "minLength": 12 }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c04_a04_pull_before_push",
+                "type": "TERMINAL_ORDER",
+                "target": "commands",
+                "rules": { "before": "git push", "mustAppearAny": ["git pull origin main", "git pull"] },
+                "messageOk": "Pull antes de push.",
+                "messageFail": "Primero hacé pull y recién después push."
+              },
+              {
+                "checkId": "c04_a04_status_used",
+                "type": "TERMINAL_COMMAND_COUNT_MIN",
+                "target": "commands",
+                "rules": { "command": "git status", "minCount": 1 },
+                "messageOk": "Usaste status para chequear el estado.",
+                "messageFail": "Usá git status en algún momento del flujo."
+              },
+              {
+                "checkId": "c04_a04_commit_exists",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "hasAtLeastCommits": 1 },
+                "messageOk": "Hay un commit realizado.",
+                "messageFail": "No se detecta ningún commit. Hacé git commit."
+              },
+              {
+                "checkId": "c04_a04_commit_message_min",
+                "type": "COMMIT_MESSAGE_RULES",
+                "target": "repo.lastCommit.message",
+                "rules": { "minLength": 12 },
+                "messageOk": "Mensaje de commit ok.",
+                "messageFail": "El mensaje del commit es muy corto (mínimo 12 caracteres)."
+              },
+              {
+                "checkId": "c04_a04_remote_synced",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "remoteInSync": true },
+                "messageOk": "Repo remoto actualizado.",
+                "messageFail": "El remoto no quedó actualizado. Revisá el push."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

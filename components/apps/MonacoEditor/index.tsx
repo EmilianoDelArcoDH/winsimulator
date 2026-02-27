@@ -8,6 +8,7 @@ import AppContainer from "components/system/Apps/AppContainer";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
+import { trackActivityEvent } from "utils/activityRuntime";
 import { DEFAULT_TEXT_FILE_SAVE_PATH } from "utils/constants";
 
 type ExplorerEntry = {
@@ -735,9 +736,12 @@ function example() {
       await writeFile(saveUrl, saveData, true);
       updateFolder(dirname(saveUrl), basename(saveUrl));
       await loadEntries();
+      trackActivityEvent({
+        path: saveUrl,
+        type: "fileSaved",
+      });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentEditor, currentUrl, updateFolder, writeFile]);
+  }, [currentEditor, currentUrl, loadEntries, updateFolder, writeFile]);
 
   const runTerminalCommand = useCallback(
     (value: string): void => {

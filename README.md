@@ -89,6 +89,8 @@
   - Examples:
     - `/?url=/CREDITS.md`
     - `/?app=Browser`
+    - `/?app=Activities&activityId=sch_git_c01_a01`
+    - `/activities/sch_git_c01_a01`
 
 # Apps 🧪
 

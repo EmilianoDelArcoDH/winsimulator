@@ -3,6 +3,7 @@ import { getProcessByFileExtension } from "components/system/Files/FileEntry/fun
 import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
 import processDirectory from "contexts/process/directory";
+import { setCurrentActivityId } from "utils/activityRuntime";
 import { getExtension, getSearchParam } from "utils/functions";
 
 const isBrowserUrl = (url: string): boolean =>
@@ -22,6 +23,11 @@ const useUrlLoader = (): void => {
 
     const app = getSearchParam("app");
     const url = getSearchParam("url");
+    const activityId = getSearchParam("activityId");
+
+    if (activityId) {
+      setCurrentActivityId(activityId);
+    }
 
     const loadInitialApp = async (initialApp: string): Promise<void> => {
       if (!initialApp) return;

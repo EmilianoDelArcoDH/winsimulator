@@ -1,0 +1,850 @@
+import activitiesCatalog from "utils/activitiesCatalog.json";
+import { getSearchParam } from "utils/functions";
+
+const ACTIVE_ACTIVITY_ID_KEY = "winsim_active_activity_id";
+const ACTIVITY_STATE_PREFIX = "winsim_activity_state_";
+const TELEMETRY_PREFIX = "winsim_activity_telemetry_";
+
+export type ActivityCheck = {
+  checkId: string;
+  messageFail: string;
+  messageOk: string;
+  rules?: Record<string, unknown>;
+  target: string;
+  type: string;
+};
+
+export type ActivityDefinition = {
+  classId: string;
+  data: Record<string, unknown>;
+  id: string;
+  mode: string;
+  objective: string;
+  title: string;
+  ui?: {
+    retryLabel?: string;
+    submitLabel?: string;
+  };
+  validation: {
+    checks: ActivityCheck[];
+  };
+};
+
+export type ActivityClass = {
+  activities: ActivityDefinition[];
+  classId: string;
+  title: string;
+};
+
+export type ActivityCard = {
+  id: string;
+  text: string;
+};
+
+export type ActivityOption = {
+  id: string;
+  label: string;
+};
+
+type ActivityState = {
+  answers: Record<string, unknown>;
+  completed: boolean;
+  completedCheckIds: string[];
+  lastValidatedAt?: number;
+};
+
+type TrackedCommand = {
+  command: string;
+  cwd: string;
+  timestamp: number;
+};
+
+type InferredRepoState = {
+  author: string;
+  commitsCount: number;
+  initialized: boolean;
+  lastCommitIncludes: string[];
+  lastCommitMessage: string;
+  remoteInSync: boolean;
+  remotes: Record<string, string>;
+  staged: string[];
+  tracking?: {
+    branch: string;
+    remote: string;
+  };
+};
+
+type ActivityTelemetry = {
+  commands: TrackedCommand[];
+  fileSavedPaths: string[];
+  inferredRepo: InferredRepoState;
+};
+
+export type ActivityEvent =
+  | {
+      activityId?: string;
+      command: string;
+      cwd?: string;
+      type: "commandExecuted";
+    }
+  | {
+      activityId?: string;
+      path: string;
+      type: "fileSaved";
+    };
+
+export type ValidationResult = {
+  checkId: string;
+  message: string;
+  passed: boolean;
+};
+
+const canUseStorage = (): boolean => typeof window !== "undefined";
+
+const normalize = (value: string): string => value.trim().toLowerCase();
+
+const normalizePath = (value: string): string =>
+  value.replace(/\\/g, "/").replace(/\/+/g, "/").toLowerCase();
+
+const asString = (value: unknown): string => (typeof value === "string" ? value : "");
+
+const asNumber = (value: unknown): number => (typeof value === "number" ? value : 0);
+
+const asRecord = (value: unknown): Record<string, unknown> =>
+  value && typeof value === "object" ? (value as Record<string, unknown>) : {};
+
+const asStringArray = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? value.filter((entry): entry is string => typeof entry === "string")
+    : [];
+
+const containsAny = (text: string, words: string[]): boolean => {
+  const normalizedText = normalize(text);
+
+  return words.some((word) => normalizedText.includes(normalize(word)));
+};
+
+const getStateKey = (activityId: string): string => `${ACTIVITY_STATE_PREFIX}${activityId}`;
+
+const getTelemetryKey = (activityId: string): string =>
+  `${TELEMETRY_PREFIX}${activityId}`;
+
+const readJson = <T>(key: string, fallback: T): T => {
+  if (!canUseStorage()) return fallback;
+
+  try {
+    const raw = window.localStorage.getItem(key);
+
+    if (!raw) return fallback;
+
+    return JSON.parse(raw) as T;
+  } catch {
+    return fallback;
+  }
+};
+
+const writeJson = (key: string, data: unknown): void => {
+  if (!canUseStorage()) return;
+
+  window.localStorage.setItem(key, JSON.stringify(data));
+};
+
+const getDefaultRepoState = (): InferredRepoState => ({
+  author: "user",
+  commitsCount: 0,
+  initialized: false,
+  lastCommitIncludes: [],
+  lastCommitMessage: "",
+  remoteInSync: false,
+  remotes: {},
+  staged: [],
+});
+
+const getDefaultTelemetry = (): ActivityTelemetry => ({
+  commands: [],
+  fileSavedPaths: [],
+  inferredRepo: getDefaultRepoState(),
+});
+
+const getActivityClasses = (): ActivityClass[] =>
+  (activitiesCatalog.classes as ActivityClass[]) || [];
+
+const getActivitiesMap = (): Record<string, ActivityDefinition> =>
+  Object.fromEntries(
+    getActivityClasses().flatMap(({ activities }) =>
+      activities.map((activity) => [activity.id, activity])
+    )
+  );
+
+const parseCommitMessage = (command: string): string => {
+  const marker = "-m";
+  const markerIndex = command.indexOf(marker);
+
+  if (markerIndex === -1) return "";
+
+  const fromMarker = command.slice(markerIndex + marker.length).trim();
+
+  if (fromMarker.startsWith("\"") && fromMarker.endsWith("\"")) {
+    return fromMarker.slice(1, -1);
+  }
+
+  if (fromMarker.startsWith("'") && fromMarker.endsWith("'")) {
+    return fromMarker.slice(1, -1);
+  }
+
+  return fromMarker;
+};
+
+const inferRepoFromCommand = (
+  command: string,
+  currentState: InferredRepoState
+): InferredRepoState => {
+  const next: InferredRepoState = {
+    ...currentState,
+    remotes: { ...currentState.remotes },
+    staged: [...currentState.staged],
+  };
+  const trimmed = command.trim();
+  const lowered = normalize(trimmed);
+  const tokens = trimmed.split(/\s+/);
+
+  if (lowered === "git init") {
+    next.initialized = true;
+  }
+
+  if (tokens[0] === "git" && tokens[1] === "add") {
+    const target = tokens.slice(2).join(" ").trim();
+
+    if (target) {
+      next.staged = [...new Set([...next.staged, target])];
+    }
+  }
+
+  if (tokens[0] === "git" && tokens[1] === "remote" && tokens[2] === "add") {
+    const name = tokens[3] || "";
+    const url = tokens[4] || "";
+
+    if (name && url) {
+      next.remotes[name] = url;
+    }
+  }
+
+  if (
+    tokens[0] === "git" &&
+    tokens[1] === "config" &&
+    tokens[2] === "--global" &&
+    tokens[3] === "user.name"
+  ) {
+    const userName = tokens.slice(4).join(" ").replace(/^"|"$/g, "");
+
+    if (userName) {
+      next.author = userName;
+    }
+  }
+
+  if (
+    tokens[0] === "git" &&
+    tokens[1] === "push" &&
+    (tokens[2] === "-u" || tokens[2] === "--set-upstream") &&
+    tokens[3] === "origin" &&
+    tokens[4] === "main"
+  ) {
+    next.tracking = { branch: "main", remote: "origin" };
+    next.remoteInSync = true;
+  }
+
+  if (tokens[0] === "git" && tokens[1] === "pull") {
+    next.remoteInSync = true;
+  }
+
+  if (tokens[0] === "git" && tokens[1] === "push") {
+    next.remoteInSync = true;
+  }
+
+  if (tokens[0] === "git" && tokens[1] === "commit") {
+    next.commitsCount += 1;
+    next.lastCommitMessage = parseCommitMessage(trimmed);
+    next.lastCommitIncludes = [...next.staged];
+    next.staged = [];
+  }
+
+  return next;
+};
+
+const findCommandIndex = (commands: TrackedCommand[], fragment: string): number =>
+  commands.findIndex(({ command }) => normalize(command).includes(normalize(fragment)));
+
+const hasCommand = (commands: TrackedCommand[], fragment: string): boolean =>
+  findCommandIndex(commands, fragment) >= 0;
+
+const countCommand = (commands: TrackedCommand[], fragment: string): number =>
+  commands.filter(({ command }) => normalize(command).includes(normalize(fragment))).length;
+
+const resolveExpectedRepoValue = (
+  repoPath: string,
+  telemetry: ActivityTelemetry
+): string => {
+  if (repoPath === "repo.lastCommit.author") {
+    return telemetry.inferredRepo.author;
+  }
+
+  if (repoPath === "repo.lastCommit.message") {
+    return telemetry.inferredRepo.lastCommitMessage;
+  }
+
+  if (repoPath === "repo.exercise.culpritHash") {
+    const showCommand = telemetry.commands
+      .map(({ command }) => command)
+      .find((command) => normalize(command).startsWith("git show "));
+
+    if (!showCommand) return "";
+
+    return showCommand.split(/\s+/)[2] || "";
+  }
+
+  return "";
+};
+
+const evaluateCheck = (
+  activity: ActivityDefinition,
+  answers: Record<string, unknown>,
+  telemetry: ActivityTelemetry,
+  check: ActivityCheck
+): ValidationResult => {
+  const rules = asRecord(check.rules);
+  const {commands} = telemetry;
+  const repo = telemetry.inferredRepo;
+
+  switch (check.type) {
+    case "CLASSIFY_EXACT": {
+      const cardAnswers = asRecord(answers.cards);
+      const answerKey = asRecord(activity.data.answerKey);
+      const expectedPairs = Object.entries(answerKey).flatMap(([column, cardIds]) =>
+        asStringArray(cardIds).map((cardId) => ({ cardId, column }))
+      );
+      const passed = expectedPairs.every(
+        ({ cardId, column }) => normalize(asString(cardAnswers[cardId])) === normalize(column)
+      );
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "CLASSIFY_THRESHOLD": {
+      const cardAnswers = asRecord(answers.cards);
+      const answerKey = asRecord(activity.data.answerKey);
+      const expectedPairs = Object.entries(answerKey).flatMap(([column, cardIds]) =>
+        asStringArray(cardIds).map((cardId) => ({ cardId, column }))
+      );
+      const correct = expectedPairs.filter(
+        ({ cardId, column }) => normalize(asString(cardAnswers[cardId])) === normalize(column)
+      ).length;
+      const passed = correct >= asNumber(rules.minCorrect);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TEXT_LIST_MIN": {
+      const list = asStringArray(answers[check.target]);
+      const minItems = asNumber(rules.minItems);
+      const minLengthEach = asNumber(rules.minLengthEach);
+      const passed =
+        list.length >= minItems &&
+        list.every((value) => normalize(value).length >= minLengthEach);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TEXT_KEYWORDS": {
+      const textValue = asString(answers[check.target]);
+      const listValue = asStringArray(answers[check.target]).join(" ");
+      const text = listValue || textValue;
+      const passed = containsAny(text, asStringArray(rules.mustIncludeAny));
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TEXT_KEYWORDS_GROUPS": {
+      const text = asString(answers[check.target]);
+      const groups = (rules.mustSatisfyGroups as { any?: string[] }[]) || [];
+      const passed = groups.every((group) => containsAny(text, group.any || []));
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TEXT_MIN_LENGTH": {
+      const text = asString(answers[check.target]);
+      const passed = normalize(text).length >= asNumber(rules.minLength);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "ORDER_EXACT": {
+      const expected = asStringArray(activity.data.answerOrder);
+      const actual = asStringArray(answers.itemsOrder);
+      const passed =
+        expected.length === actual.length &&
+        expected.every((value, index) => value === actual[index]);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "BOOLEAN_TRUE": {
+      const passed = Boolean(answers[check.target]);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "REQUIRED_SELECTION": {
+      const passed = normalize(asString(answers[check.target])).length > 0;
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TERMINAL_COMMAND_EXECUTED": {
+      const mustInclude = asStringArray(rules.mustInclude);
+      const mustIncludeAny = asStringArray(rules.mustIncludeAny);
+      const allIncluded =
+        mustInclude.every((entry) => hasCommand(commands, entry));
+      const anyIncluded =
+        mustIncludeAny.length === 0 ||
+        mustIncludeAny.some((entry) => hasCommand(commands, entry));
+      const passed = allIncluded && anyIncluded;
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TERMINAL_COMMAND_REGEX_EXECUTED":
+    case "TERMINAL_REGEX": {
+      const pattern = asString(rules.pattern);
+      const regex = new RegExp(pattern, "i");
+      const passed = commands.some(({ command }) => regex.test(command));
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TERMINAL_COMMAND_MATCH": {
+      const matches = asStringArray(rules.mustMatchAny);
+      const passed = matches.some((entry) =>
+        commands.some(({ command }) => normalize(command) === normalize(entry))
+      );
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TERMINAL_COMMAND_COUNT_MIN": {
+      const command = asString(rules.command);
+      const minCount = asNumber(rules.minCount);
+      const count = countCommand(commands, command);
+      let passed = count >= minCount;
+
+      if (passed && typeof rules.mustOccurBefore === "string") {
+        const left = findCommandIndex(commands, command);
+        const right = findCommandIndex(commands, rules.mustOccurBefore);
+
+        passed = left >= 0 && right >= 0 && left < right;
+      }
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TERMINAL_IN_DIR": {
+      const expectedDir = normalizePath(asString(rules.equals));
+      const commandEvent = commands.find(({ command }) => normalize(command) === "git init");
+      const passed = Boolean(commandEvent) && normalizePath(commandEvent?.cwd || "") === expectedDir;
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TERMINAL_ORDER": {
+      const before = asString(rules.before);
+      const mustAppear = asString(rules.mustAppear);
+      const mustAppearAny = asStringArray(rules.mustAppearAny);
+      const beforeIndex = findCommandIndex(commands, before);
+      const candidateIndexes = mustAppear
+        ? [findCommandIndex(commands, mustAppear)]
+        : mustAppearAny.map((entry) => findCommandIndex(commands, entry));
+      const validIndexes = candidateIndexes.filter((index) => index >= 0);
+      const firstMustIndex = validIndexes.length > 0 ? Math.min(...validIndexes) : -1;
+      const passed = beforeIndex >= 0 && firstMustIndex >= 0 && firstMustIndex < beforeIndex;
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TERMINAL_COMMAND_EXECUTED_AFTER": {
+      const afterAny = asStringArray(rules.afterMustIncludeAny);
+      const mustInclude = asStringArray(rules.mustInclude);
+      const afterIndexes = afterAny
+        .map((entry) => findCommandIndex(commands, entry))
+        .filter((index) => index >= 0);
+      const baseIndex = afterIndexes.length > 0 ? Math.max(...afterIndexes) : -1;
+      const passed =
+        baseIndex >= 0 &&
+        mustInclude.some((entry) =>
+          commands.some(
+            ({ command }, index) =>
+              index > baseIndex && normalize(command).startsWith(normalize(entry))
+          )
+        );
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "TERMINAL_WARNING_IF_MATCH": {
+      const regex = new RegExp(asString(rules.pattern), "i");
+      const found = commands.some(({ command }) => regex.test(command));
+
+      return {
+        checkId: check.checkId,
+        message: found ? check.messageFail : check.messageOk,
+        passed: !found,
+      };
+    }
+
+    case "TEXT_REGEX": {
+      const regex = new RegExp(asString(rules.pattern), "i");
+      const passed = regex.test(asString(answers[check.target]));
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "ANSWER_EQUALS_REPO_VALUE": {
+      const repoPath = asString(rules.repoPath);
+      const normalizeHash = Boolean(rules.normalizeHash);
+      const key = check.target.replace("form.", "");
+      const answerValue = asString(answers[key]);
+      const expected = resolveExpectedRepoValue(repoPath, telemetry);
+      const passed = normalizeHash
+        ? normalize(answerValue).startsWith(normalize(expected))
+        : normalize(answerValue) === normalize(expected);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "ANSWER_INCLUDES_REPO_DIFF_SNIPPET": {
+      const answerText = asString(answers[check.target.replace("form.", "")]);
+      const passed = hasCommand(commands, "git diff") && normalize(answerText).length > 1;
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "COMMIT_MESSAGE_RULES": {
+      const message = repo.lastCommitMessage;
+      const minLength = asNumber(rules.minLength);
+      const mustStartWithAny = asStringArray(rules.mustStartWithAny);
+      const forbiddenExact = asStringArray(rules.forbiddenExact);
+      const startsOk =
+        mustStartWithAny.length === 0 ||
+        mustStartWithAny.some((prefix) => message.startsWith(prefix));
+      const forbidden = forbiddenExact.some(
+        (word) => normalize(word) === normalize(message)
+      );
+      const passed = normalize(message).length >= minLength && startsOk && !forbidden;
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "REPO_STATE": {
+      const stagedIncludes = asStringArray(rules.stagedIncludes);
+      const stagedExcludes = asStringArray(rules.stagedExcludes);
+      const lastCommitIncludes = asStringArray(rules.lastCommitIncludes);
+      const lastCommitExcludes = asStringArray(rules.lastCommitExcludes);
+      const remotesIncludes = asStringArray(rules.remotesIncludes);
+      const hasTrackingRule = Boolean(rules.branchTracking);
+      const trackingRule = asRecord(rules.branchTracking);
+      const trackingOk =
+        !hasTrackingRule ||
+        (repo.tracking?.branch === asString(trackingRule.branch) &&
+          repo.tracking?.remote === asString(trackingRule.remote));
+
+      const passed =
+        (typeof rules.initialized !== "boolean" || repo.initialized === rules.initialized) &&
+        stagedIncludes.every((entry) => repo.staged.includes(entry)) &&
+        stagedExcludes.every((entry) => !repo.staged.includes(entry)) &&
+        lastCommitIncludes.every((entry) => repo.lastCommitIncludes.includes(entry)) &&
+        lastCommitExcludes.every((entry) => !repo.lastCommitIncludes.includes(entry)) &&
+        remotesIncludes.every((entry) => Object.hasOwn(repo.remotes, entry)) &&
+        (typeof rules.remoteInSync !== "boolean" || repo.remoteInSync === rules.remoteInSync) &&
+        (typeof rules.hasAtLeastCommits !== "number" ||
+          repo.commitsCount >= rules.hasAtLeastCommits) &&
+        trackingOk;
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    default:
+      return {
+        checkId: check.checkId,
+        message: check.messageOk,
+        passed: true,
+      };
+  }
+};
+
+export const getActivitiesCatalog = (): typeof activitiesCatalog => activitiesCatalog;
+
+export const getActivityById = (activityId: string): ActivityDefinition | undefined =>
+  getActivitiesMap()[activityId];
+
+export const setCurrentActivityId = (activityId = ""): void => {
+  if (!canUseStorage()) return;
+
+  if (activityId) {
+    window.localStorage.setItem(ACTIVE_ACTIVITY_ID_KEY, activityId);
+    return;
+  }
+
+  window.localStorage.removeItem(ACTIVE_ACTIVITY_ID_KEY);
+};
+
+export const getCurrentActivityId = (): string => {
+  if (!canUseStorage()) return "";
+
+  return (
+    getSearchParam("activityId") ||
+    window.localStorage.getItem(ACTIVE_ACTIVITY_ID_KEY) ||
+    ""
+  );
+};
+
+export const getActivityState = (activityId: string): ActivityState => {
+  const fallback: ActivityState = {
+    answers: {},
+    completed: false,
+    completedCheckIds: [],
+  };
+
+  return readJson<ActivityState>(getStateKey(activityId), fallback);
+};
+
+export const saveActivityAnswers = (
+  activityId: string,
+  answers: Record<string, unknown>
+): ActivityState => {
+  const current = getActivityState(activityId);
+  const next: ActivityState = {
+    ...current,
+    answers: {
+      ...current.answers,
+      ...answers,
+    },
+  };
+
+  writeJson(getStateKey(activityId), next);
+
+  return next;
+};
+
+const readTelemetry = (activityId: string): ActivityTelemetry => {
+  const parsed = readJson<ActivityTelemetry>(
+    getTelemetryKey(activityId),
+    getDefaultTelemetry()
+  );
+
+  return {
+    commands: Array.isArray(parsed.commands)
+      ? parsed.commands.filter(
+          (entry): entry is TrackedCommand =>
+            Boolean(entry) &&
+            typeof entry.command === "string" &&
+            typeof entry.cwd === "string" &&
+            typeof entry.timestamp === "number"
+        )
+      : [],
+    fileSavedPaths: asStringArray(parsed.fileSavedPaths),
+    inferredRepo: {
+      ...getDefaultRepoState(),
+      ...asRecord(parsed.inferredRepo),
+      lastCommitIncludes: asStringArray(parsed.inferredRepo?.lastCommitIncludes),
+      remotes:
+        parsed.inferredRepo && typeof parsed.inferredRepo.remotes === "object"
+          ? (parsed.inferredRepo.remotes)
+          : {},
+      staged: asStringArray(parsed.inferredRepo?.staged),
+    },
+  };
+};
+
+export const clearActivityProgress = (activityId: string): void => {
+  if (!canUseStorage()) return;
+
+  window.localStorage.removeItem(getStateKey(activityId));
+  window.localStorage.removeItem(getTelemetryKey(activityId));
+};
+
+export const validateActivity = (activityId: string): {
+  completed: boolean;
+  progress: { completed: number; total: number };
+  results: ValidationResult[];
+} => {
+  const activity = getActivityById(activityId);
+
+  if (!activity) {
+    return {
+      completed: false,
+      progress: { completed: 0, total: 0 },
+      results: [],
+    };
+  }
+
+  const state = getActivityState(activityId);
+  const telemetry = readTelemetry(activityId);
+  const results = activity.validation.checks.map((check) =>
+    evaluateCheck(activity, state.answers, telemetry, check)
+  );
+  const completedCheckIds = results
+    .filter(({ passed }) => passed)
+    .map(({ checkId }) => checkId);
+  const completed = results.length > 0 && results.every(({ passed }) => passed);
+
+  writeJson(getStateKey(activityId), {
+    ...state,
+    completed,
+    completedCheckIds,
+    lastValidatedAt: Date.now(),
+  });
+
+  if (completed) {
+    // eslint-disable-next-line no-console
+    console.log(`Actividad completada: ${activityId}`);
+  }
+
+  return {
+    completed,
+    progress: {
+      completed: completedCheckIds.length,
+      total: results.length,
+    },
+    results,
+  };
+};
+
+export const getActivityProgress = (
+  activityId: string
+): { completed: number; total: number } => {
+  const activity = getActivityById(activityId);
+  const state = getActivityState(activityId);
+
+  return {
+    completed: state.completedCheckIds.length,
+    total: activity?.validation.checks.length || 0,
+  };
+};
+
+export const trackActivityEvent = (
+  event: ActivityEvent
+): { activityId: string; matched: boolean } => {
+  const activityId = event.activityId || getCurrentActivityId();
+
+  if (!activityId) {
+    return { activityId: "", matched: false };
+  }
+
+  const telemetry = readTelemetry(activityId);
+
+  if (event.type === "commandExecuted") {
+    const command = event.command.trim();
+
+    if (command) {
+      telemetry.commands.push({
+        command,
+        cwd: event.cwd || "/",
+        timestamp: Date.now(),
+      });
+      telemetry.inferredRepo = inferRepoFromCommand(command, telemetry.inferredRepo);
+    }
+  }
+
+  if (event.type === "fileSaved") {
+    telemetry.fileSavedPaths = [
+      ...new Set([...telemetry.fileSavedPaths, normalizePath(event.path)]),
+    ];
+  }
+
+  writeJson(getTelemetryKey(activityId), telemetry);
+
+  return { activityId, matched: true };
+};
