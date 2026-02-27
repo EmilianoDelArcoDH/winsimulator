@@ -3,13 +3,14 @@ import styled from "styled-components";
 const StyledStatusBar = styled.footer`
   background-color: rgb(0 122 204);
   border-top: 0;
-  bottom: 0;
   color: rgb(255 255 255);
   display: flex;
-  font-size: 12px;
-  height: 30px;
+  font-size: 11px;
+  height: 22px;
+  min-height: 22px;
+  overflow: hidden;
   place-content: space-between;
-  position: fixed;
+  position: relative;
   width: 100%;
   z-index: 1;
 
@@ -28,13 +29,13 @@ const StyledStatusBar = styled.footer`
 
     li {
       margin: 0 4px;
-      padding: 4px 8px;
+      padding: 2px 8px;
       white-space: nowrap;
 
       button {
         color: inherit;
         font-size: inherit;
-        padding: 4px 8px;
+        padding: 2px 8px;
 
         &.pretty {
           position: relative;
@@ -62,7 +63,7 @@ const StyledStatusBar = styled.footer`
 
       &.save {
         svg {
-          margin-top: 4px;
+          margin-top: 1px;
         }
       }
     }

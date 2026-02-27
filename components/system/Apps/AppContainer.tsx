@@ -45,7 +45,7 @@ const AppContainer: FC<AppContainerProps> = ({
   const [loading, setLoading] = useState(true);
   const style = useMemo<React.CSSProperties>(
     () => ({
-      contain: "strict",
+      contain: "layout paint",
       visibility: loading ? "hidden" : "visible",
     }),
     [loading]
