@@ -107,8 +107,16 @@ const useMonaco = ({
     [monaco]
   );
   const createModel = useCallback(async () => {
+    let fileContent = "";
+
+    try {
+      fileContent = (await readFile(url)).toString();
+    } catch {
+      fileContent = "";
+    }
+
     const newModel = monaco?.editor.createModel(
-      (await readFile(url)).toString(),
+      fileContent,
       detectLanguage(getExtension(url)),
       createModelUri(url)
     );
@@ -119,8 +127,16 @@ const useMonaco = ({
   }, [createModelUri, monaco?.editor, prependFileToTitle, readFile, url]);
   const loadFile = useCallback(async () => {
     if (monaco && editor && url.startsWith("/")) {
-      editor.getModel()?.dispose();
+      const currentModel = editor.getModel();
+
+      currentModel?.dispose();
       editor.setModel(await createModel());
+      editor.updateOptions({
+        domReadOnly: false,
+        readOnly: false,
+      });
+      editor.layout();
+      editor.focus();
     }
 
     prependFileToTitle(basename(url || DEFAULT_TEXT_FILE_SAVE_PATH));
@@ -155,7 +171,7 @@ const useMonaco = ({
   }, [monaco]);
 
   useEffect(() => {
-    editor?.onKeyDown(async (event) => {
+    const keydownDisposable = editor?.onKeyDown(async (event) => {
       const { ctrlKey, code, keyCode } = event;
 
       if (ctrlKey && (code === "KeyS" || (keyCode as number) === 49)) {
@@ -170,20 +186,43 @@ const useMonaco = ({
         }
       }
     });
+
+    return () => keydownDisposable?.dispose();
   }, [editor, prependFileToTitle, updateFolder, url, writeFile]);
 
   useEffect(() => {
-    if (monaco && !editor && containerRef.current) {
+    if (monaco && containerRef.current) {
       const monacoHost = containerRef.current.querySelector<HTMLDivElement>(
         "[data-monaco-editor-host]"
       );
 
-      if (!monacoHost) return;
+      if (!monacoHost || editor) return;
 
       const currentEditor = monaco.editor.create(monacoHost, {
         ...editorOptions,
         theme,
       });
+
+      currentEditor.updateOptions({
+        domReadOnly: false,
+        readOnly: false,
+      });
+
+      if (typeof ResizeObserver !== "undefined") {
+        const resizeObserver = new ResizeObserver(() => {
+          currentEditor.layout();
+        });
+
+        resizeObserver.observe(monacoHost);
+      }
+
+      monacoHost.addEventListener(
+        "mousedown",
+        () => {
+          currentEditor.focus();
+        },
+        { passive: true }
+      );
 
       registerVsCodeLikeCommands(currentEditor);
 
@@ -201,18 +240,17 @@ const useMonaco = ({
       setEditor(currentEditor);
       setArgument(id, "editor", currentEditor);
       setLoading(false);
+      requestAnimationFrame(() => {
+        currentEditor.layout();
+        currentEditor.focus();
+      });
     }
 
-    return () => {
-      if (editor && monaco) {
-        editor.getModel()?.dispose();
-        editor.dispose();
-      }
-    };
+    return undefined;
   }, [
     containerRef,
-    editor,
     id,
+    editor,
     monaco,
     registerVsCodeLikeCommands,
     setArgument,
@@ -224,6 +262,14 @@ const useMonaco = ({
       loadFile();
     }
   }, [editor, loadFile, monaco, url]);
+
+  useEffect(
+    () => () => {
+      editor?.getModel()?.dispose();
+      editor?.dispose();
+    },
+    [editor]
+  );
 };
 
 export default useMonaco;

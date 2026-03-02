@@ -501,8 +501,22 @@ const evaluateCheck = (
 
     case "TERMINAL_IN_DIR": {
       const expectedDir = normalizePath(asString(rules.equals));
+      const expectedDirSuffix = normalizePath(asString(rules.endsWith));
       const commandEvent = commands.find(({ command }) => normalize(command) === "git init");
-      const passed = Boolean(commandEvent) && normalizePath(commandEvent?.cwd || "") === expectedDir;
+      const commandCwd = normalizePath(commandEvent?.cwd || "");
+      const matchesExact = Boolean(expectedDir) && commandCwd === expectedDir;
+      const matchesExpectedAsSuffix =
+        Boolean(expectedDir) &&
+        expectedDir !== "/" &&
+        (commandCwd === expectedDir || commandCwd.endsWith(expectedDir));
+      const matchesSuffix =
+        Boolean(expectedDirSuffix) &&
+        (commandCwd === expectedDirSuffix ||
+          commandCwd.endsWith(`${expectedDirSuffix}/`) ||
+          commandCwd.endsWith(expectedDirSuffix));
+      const passed =
+        Boolean(commandEvent) &&
+        (matchesExact || matchesExpectedAsSuffix || matchesSuffix);
 
       return {
         checkId: check.checkId,

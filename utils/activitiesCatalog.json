@@ -250,17 +250,49 @@
           "id": "sch_git_c02_a01",
           "classId": "sch_git_c02",
           "title": "Inicializar repo",
-          "objective": "Ejecutar git init en el lugar correcto.",
+          "objective": "Crear carpeta de proyecto web, generar archivos base e inicializar Git en el lugar correcto.",
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
+            "scenario": "Abrí GitBash y prepará un proyecto web básico en /miProyecto para luego inicializar el repositorio.",
+            "instructions": [
+              "Abrí GitBash.",
+              "Creá la carpeta \"miProyecto\" y entrá a esa carpeta.",
+              "Creá los archivos index.html, style.css y app.js.",
+              "Ejecutá git init dentro de /miProyecto.",
+              "Opcional: verificá con git status."
+            ],
             "terminal": {
-              "expectedWorkingDir": "/repo",
-              "allowedCommands": ["pwd", "ls", "cd", "git init", "git status", "help"]
+              "expectedWorkingDir": "/miProyecto",
+              "allowedCommands": ["pwd", "ls", "cd", "mkdir", "touch", "echo", "cat", "git init", "git status", "help"]
             }
           },
           "validation": {
             "checks": [
+              {
+                "checkId": "c02_a01_created_repo_dir",
+                "type": "TERMINAL_REGEX",
+                "target": "commands",
+                "rules": { "pattern": "mkdir\\s+(-p\\s+)?miProyecto" },
+                "messageOk": "Creaste la carpeta miProyecto.",
+                "messageFail": "Primero creá la carpeta del proyecto con mkdir miProyecto."
+              },
+              {
+                "checkId": "c02_a01_entered_repo_dir",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustIncludeAny": ["cd miProyecto", "cd ./miProyecto", "cd /miProyecto"] },
+                "messageOk": "Entraste a la carpeta miProyecto.",
+                "messageFail": "Entrá a la carpeta con cd miProyecto antes de inicializar Git."
+              },
+              {
+                "checkId": "c02_a01_mentions_html_css_js",
+                "type": "TERMINAL_REGEX",
+                "target": "commands",
+                "rules": { "pattern": "index\\.html|style\\.css|app\\.js" },
+                "messageOk": "Usaste nombres de archivos web (html/css/js).",
+                "messageFail": "Trabajá con archivos web: index.html, style.css y app.js."
+              },
               {
                 "checkId": "c02_a01_ran_git_init",
                 "type": "TERMINAL_COMMAND_EXECUTED",
@@ -273,9 +305,9 @@
                 "checkId": "c02_a01_correct_dir",
                 "type": "TERMINAL_IN_DIR",
                 "target": "cwd",
-                "rules": { "equals": "/repo" },
+                "rules": { "equals": "/miProyecto", "endsWith": "/miProyecto" },
                 "messageOk": "Lo hiciste en el directorio correcto.",
-                "messageFail": "Ejecutá git init dentro de /repo (no en otra carpeta)."
+                "messageFail": "Ejecutá git init dentro de /miProyecto (no en otra carpeta)."
               },
               {
                 "checkId": "c02_a01_repo_initialized",
@@ -296,17 +328,25 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": {
-              "preloadedChanges": [
-                { "path": "index.html", "type": "modified" },
-                { "path": "style.css", "type": "modified" }
-              ],
-              "mustStageOnly": ["index.html"],
-              "mustNotStage": ["style.css"]
-            }
+            "scenario": "En tu proyecto web (index.html, style.css y app.js), practicá los estados de Git agregando solo el archivo correcto.",
+            "instructions": [
+              "Asegurate de estar dentro de /miProyecto.",
+              "Hacé cambios en index.html y style.css.",
+              "Usá git status antes y después de git add.",
+              "Prepará solo index.html para staging.",
+              "No incluyas style.css en staging ni en el commit."
+            ]
           },
           "validation": {
             "checks": [
+              {
+                "checkId": "c02_a02_context_web_files",
+                "type": "TERMINAL_REGEX",
+                "target": "commands",
+                "rules": { "pattern": "index\\.html|style\\.css|app\\.js" },
+                "messageOk": "Trabajaste en contexto de archivos web.",
+                "messageFail": "La práctica debe hacerse con archivos web (html/css/js)."
+              },
               {
                 "checkId": "c02_a02_status_used_twice",
                 "type": "TERMINAL_COMMAND_COUNT_MIN",
@@ -350,6 +390,14 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
+            "scenario": "Con el proyecto web abierto en GitBash, hacé un commit con mensaje profesional sobre cambios en html/css/js.",
+            "instructions": [
+              "Trabajá dentro de /repo.",
+              "Prepará cambios del proyecto web con git add (evitá agregar basura).",
+              "Ejecutá git commit -m \"...\".",
+              "Usá un mensaje de al menos 15 caracteres.",
+              "Empezá con: Agrega, Corrige, Elimina, Actualiza, Mejora o Refactoriza."
+            ],
             "rules": {
               "forbiddenMessages": ["cambios", "fix", "arreglo", "asdf", "update"],
               "mustStartWithAny": ["Agrega", "Corrige", "Elimina", "Actualiza", "Mejora", "Refactoriza"],
@@ -389,10 +437,14 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": {
-              "junkFile": "notes.tmp",
-              "mustNotCommit": ["notes.tmp"]
-            },
+            "scenario": "En un proyecto web con index.html, style.css y app.js, evitá incluir notes.tmp en el commit final.",
+            "instructions": [
+              "Hacé cambios en archivos web (html/css/js).",
+              "Existe un archivo basura notes.tmp que NO debe entrar al commit.",
+              "Revisá con git status antes de commitear.",
+              "Seleccioná archivos de forma explícita.",
+              "Evitá git add . ciego."
+            ],
             "policy": { "warnOnAddDot": true }
           },
           "validation": {

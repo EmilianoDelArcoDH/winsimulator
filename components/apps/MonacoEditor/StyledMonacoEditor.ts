@@ -15,7 +15,7 @@ const StyledMonacoEditor = styled.div`
   width: 100%;
 
   && {
-    height: 100vh;
+    height: 100%;
   }
 
   .editor-shell {
@@ -24,8 +24,8 @@ const StyledMonacoEditor = styled.div`
       "workbench"
       "statusbar";
     grid-template-rows: minmax(0, 1fr) var(--status-bar-height);
-    height: 100vh;
-    max-height: 100vh;
+    height: 100%;
+    max-height: 100%;
     min-height: 0;
     overflow: hidden;
     min-width: 0;
@@ -139,14 +139,14 @@ const StyledMonacoEditor = styled.div`
         border: 1px solid rgb(29 29 29);
         box-shadow: 0 6px 16px rgb(0 0 0 / 35%);
         display: block;
-        left: auto;
+        left: 0;
         list-style: none;
         margin: 0;
         min-width: 196px;
         padding: 4px;
         pointer-events: auto;
-        position: fixed;
-        top: auto;
+        position: absolute;
+        top: calc(var(--menu-bar-height) - 1px);
         z-index: 12000;
 
         li {
@@ -513,7 +513,6 @@ const StyledMonacoEditor = styled.div`
 
     .empty-tab {
       color: rgb(140 140 140);
-      color: rgb(220 220 220);
       font-size: 12px;
       padding-left: 8px;
     }

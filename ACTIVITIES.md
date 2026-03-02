@@ -58,15 +58,18 @@ Cuando una actividad cumple todos los checks de validación, se registra en cons
 - URL app: `/?app=Activities&activityId=sch_git_c02_a01`
 - URL standalone: `/activities/sch_git_c02_a01`
 - Solución esperada:
+  - Abrir GitBash y crear la carpeta `repo`.
+  - Entrar a `/repo` y trabajar ahí.
+  - Crear archivos base del proyecto web: `index.html`, `style.css`, `app.js`.
   - Ejecutar `git init`.
-  - Hacerlo en el directorio requerido (`/repo`).
-  - Quedar con repositorio detectado como inicializado.
+  - Quedar con repositorio detectado como inicializado en `/repo`.
 
 ### `sch_git_c02_a02` — 3 estados: working / staging / commit
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c02_a02`
 - URL standalone: `/activities/sch_git_c02_a02`
 - Solución esperada:
+  - Trabajar sobre archivos web del repo (`index.html`, `style.css`, `app.js`).
   - Ejecutar `git status` al menos 2 veces.
   - Ejecutar `git add index.html`.
   - No incluir `style.css` en staging ni en el commit final.
@@ -76,6 +79,7 @@ Cuando una actividad cumple todos los checks de validación, se registra en cons
 - URL app: `/?app=Activities&activityId=sch_git_c02_a03`
 - URL standalone: `/activities/sch_git_c02_a03`
 - Solución esperada:
+  - Hacerlo en contexto de proyecto web (`html/css/js`) dentro de `/repo`.
   - Ejecutar `git commit -m "..."`.
   - Mensaje con mínimo 15 caracteres.
   - Empezar con verbo sugerido (`Agrega`, `Corrige`, `Elimina`, `Actualiza`, `Mejora`, `Refactoriza`) y evitar mensajes genéricos (`fix`, `update`, etc.).
@@ -85,6 +89,7 @@ Cuando una actividad cumple todos los checks de validación, se registra en cons
 - URL app: `/?app=Activities&activityId=sch_git_c02_a04`
 - URL standalone: `/activities/sch_git_c02_a04`
 - Solución esperada:
+  - Trabajar con `index.html`, `style.css` y `app.js`.
   - Hacer commit sin `notes.tmp`.
   - Ejecutar `git status` antes de `git commit`.
   - Evitar `git add .` ciego (si se usa, la validación muestra warning).

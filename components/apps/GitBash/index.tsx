@@ -549,10 +549,45 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
             }
             break;
           case "touch":
-            if (params[0]) {
-              const filePath = resolvePath(params[0]).replace(/\/+/g, "/");
+            if (params.length === 0) {
+              print("touch: falta operando");
+              print("uso: touch ARCHIVO...");
+              break;
+            }
+
+            for (const entry of params) {
+              if (!entry || entry.startsWith("-")) {
+                print(`touch: opción no soportada '${entry}'`);
+                continue;
+              }
+
+              const filePath = resolvePath(entry).replace(/\/+/g, "/");
+              const parentDir = parentPath(filePath);
+
+              if (!(await fileSystem.exists(parentDir))) {
+                print(`touch: no se puede crear '${entry}': No existe el directorio`);
+                continue;
+              }
+
+              const parentStat = await fileSystem.lstat(parentDir);
+
+              if (!parentStat.isDirectory()) {
+                print(`touch: no se puede crear '${entry}': El padre no es un directorio`);
+                continue;
+              }
+
+              if (await fileSystem.exists(filePath)) {
+                const existingStat = await fileSystem.lstat(filePath);
+
+                if (existingStat.isDirectory()) {
+                  print(`touch: no se puede tocar '${entry}': Es un directorio`);
+                }
+
+                continue;
+              }
 
               await fileSystem.writeFile(filePath, "");
+              trackActivityEvent({ path: filePath, type: "fileSaved" });
             }
             break;
           case "cat":

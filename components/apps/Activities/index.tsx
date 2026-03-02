@@ -46,14 +46,18 @@ const containerStyle: React.CSSProperties = {
     flexDirection: "column",
     gap: 12,
     height: "100%",
+    minHeight: 0,
     overflow: "auto",
     padding: 12,
+    paddingBottom: 72,
 };
 
 const panelStyle: React.CSSProperties = {
     background: "#1b1b1b",
     border: "1px solid #2f2f2f",
     borderRadius: 8,
+    minWidth: 0,
+    overflow: "hidden",
     padding: 12,
 };
 
@@ -67,11 +71,27 @@ const inputStyle: React.CSSProperties = {
 
 const buttonStyle: React.CSSProperties = {
     background: "#2d5fff",
-    border: "none",
+    border: "1px solid #6f92ff",
     borderRadius: 6,
     color: "white",
     cursor: "pointer",
-    padding: "8px 12px",
+    fontWeight: 600,
+    minHeight: 36,
+    padding: "8px 14px",
+};
+
+const actionsStyle: React.CSSProperties = {
+    background: "#111",
+    borderTop: "1px solid #2f2f2f",
+    bottom: 8,
+    display: "flex",
+    flexWrap: "wrap",
+    gap: 8,
+    marginTop: "auto",
+    paddingBottom: 4,
+    paddingTop: 8,
+    position: "sticky",
+    zIndex: 8,
 };
 
 const asString = (value: unknown): string => (typeof value === "string" ? value : "");
@@ -195,6 +215,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     const formFields = ((activity.data.form || []) as FormField[]).filter(
         ({ id, label }) => Boolean(id && label)
     );
+    const instructions = asStringArray(activity.data.instructions);
     const freeTextMinItems =
         typeof freeText.minItems === "number" && freeText.minItems > 1
             ? freeText.minItems
@@ -214,14 +235,22 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             }}
         >
             <div style={panelStyle}>
-                <div style={{ display: "flex", gap: 8, justifyContent: "space-between" }}>
+                <div
+                    style={{
+                        alignItems: "flex-start",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        gap: 8,
+                        justifyContent: "space-between",
+                    }}
+                >
                     <div>
                         <div style={{ color: "#7ea0ff", fontSize: 12 }}>{selectedClass?.title}</div>
                         <h2 style={{ margin: "6px 0" }}>{activity.title}</h2>
                         <div style={{ color: "#d0d0d0", fontSize: 13 }}>{activity.objective}</div>
                     </div>
 
-                    <div style={{ minWidth: 240 }}>
+                    <div style={{ flex: "1 1 260px", maxWidth: "100%", minWidth: 240 }}>
                         <label htmlFor="activity-select" style={{ display: "block", fontSize: 12 }}>
                             Actividad
                         </label>
@@ -248,6 +277,21 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                         {asString(question.label) && (
                             <div style={{ color: "#d8d8d8", marginTop: 4 }}>{asString(question.label)}</div>
                         )}
+                    </div>
+                )}
+
+                {instructions.length > 0 && (
+                    <div style={{ marginBottom: 12 }}>
+                        <div style={{ color: "#9fb6ff", fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
+                            Consigna
+                        </div>
+                        <ol style={{ margin: 0, paddingLeft: 20 }}>
+                            {instructions.map((instruction, index) => (
+                                <li key={`${activity.id}-instruction-${index + 1}`} style={{ marginBottom: 4 }}>
+                                    {instruction}
+                                </li>
+                            ))}
+                        </ol>
                     </div>
                 )}
 
@@ -437,13 +481,13 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                 )}
             </div>
 
-            <div style={{ display: "flex", gap: 8 }}>
+            <div style={actionsStyle}>
                 <button onClick={validate} style={buttonStyle} type="button">
                     {activity.ui?.submitLabel || "Validar"}
                 </button>
                 <button
                     onClick={retry}
-                    style={{ ...buttonStyle, background: "#454545" }}
+                    style={{ ...buttonStyle, background: "#454545", borderColor: "#6a6a6a" }}
                     type="button"
                 >
                     {activity.ui?.retryLabel || "Reintentar"}

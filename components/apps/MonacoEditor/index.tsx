@@ -45,6 +45,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     exists,
     lstat,
     mkdir,
+    readFile,
     readdir,
     rename,
     rmdir,
@@ -72,7 +73,6 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [isTerminalPanelOpen, setIsTerminalPanelOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState<string>("");
   const [activeMenu, setActiveMenu] = useState<string>("");
-  const [menuPosition, setMenuPosition] = useState({ left: 0, top: 34 });
   const [isCompactLayout, setIsCompactLayout] = useState(false);
   const [activeView, setActiveView] = useState<"explorer" | "search" | "git">(
     "explorer"
@@ -92,6 +92,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     { id: "terminal-init", value: "VS Code Terminal initialized." },
   ]);
   const [terminalInput, setTerminalInput] = useState("");
+  const [terminalCwd, setTerminalCwd] = useState<string>(explorerRoot);
   const logExplorer = useCallback(
     (message: string, details?: Record<string, unknown>): void => {
       // eslint-disable-next-line no-console
@@ -292,21 +293,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     return () => document.removeEventListener("keydown", handleEscClose);
   }, []);
 
-  const toggleTopMenu = useCallback(
-    (menuName: string, triggerButton: HTMLButtonElement): void => {
-      const triggerRect = triggerButton.getBoundingClientRect();
-      const estimatedMenuWidth = 220;
-      const maxLeft = Math.max(8, window.innerWidth - estimatedMenuWidth - 8);
-      const nextLeft = Math.max(8, Math.min(triggerRect.left, maxLeft));
-
-      setMenuPosition({
-        left: nextLeft,
-        top: triggerRect.bottom,
-      });
-      setActiveMenu((currentMenu) => (currentMenu === menuName ? "" : menuName));
-    },
-    []
-  );
+  const toggleTopMenu = useCallback((menuName: string): void => {
+    setActiveMenu((currentMenu) => (currentMenu === menuName ? "" : menuName));
+  }, []);
 
   useEffect(() => {
     const currentWorkbench = workbenchRef.current;
@@ -324,7 +313,12 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
 
     observer.observe(currentWorkbench);
 
+    return () => observer.disconnect();
   }, []);
+
+  useEffect(() => {
+    setTerminalCwd((currentCwd) => currentCwd || explorerRoot);
+  }, [explorerRoot]);
 
   useEffect(() => {
     if (!creatingEntry) return;
@@ -743,8 +737,33 @@ function example() {
     }
   }, [currentEditor, currentUrl, loadEntries, updateFolder, writeFile]);
 
+  const resolveTerminalPath = useCallback(
+    (inputPath: string, basePath: string): string => {
+      const normalizedInput = inputPath.trim().replace(/\\/g, "/");
+      const isAbsolute = normalizedInput.startsWith("/");
+      const sourcePath = isAbsolute
+        ? normalizedInput
+        : normalizeFsPath(`${basePath}/${normalizedInput}`);
+      const segments = sourcePath.split("/");
+      const resolvedSegments: string[] = [];
+
+      segments.forEach((segment) => {
+        if (!segment || segment === ".") return;
+        if (segment === "..") {
+          resolvedSegments.pop();
+          return;
+        }
+
+        resolvedSegments.push(segment);
+      });
+
+      return `/${resolvedSegments.join("/")}`.replace(/\/+/g, "/") || "/";
+    },
+    [normalizeFsPath]
+  );
+
   const runTerminalCommand = useCallback(
-    (value: string): void => {
+    async (value: string): Promise<void> => {
       const command = value.trim();
 
       if (!command) {
@@ -758,19 +777,106 @@ function example() {
       }
 
       const nextLines = [`$ ${command}`];
+      const [instruction = "", ...args] = command.split(/\s+/);
 
       if (command === "help") {
-        nextLines.push("Available commands: help, pwd, ls, clear");
-      } else if (command === "pwd") {
-        nextLines.push(explorerRoot);
-      } else if (command === "ls") {
-        const visibleEntries = folderContents[explorerRoot] || entries;
-
         nextLines.push(
-          visibleEntries.length > 0
-            ? visibleEntries.map(({ name }) => name).join("  ")
-            : "(empty)"
+          "Available commands: help, pwd, ls, cd, mkdir, touch, cat, echo, clear"
         );
+      } else if (command === "pwd") {
+        nextLines.push(terminalCwd);
+      } else if (instruction === "ls") {
+        const listingPath = args[0]
+          ? resolveTerminalPath(args[0], terminalCwd)
+          : terminalCwd;
+
+        try {
+          const listingStat = await lstat(listingPath);
+
+          if (!listingStat.isDirectory()) {
+            nextLines.push(`ls: ${args[0] || listingPath}: Not a directory`);
+          } else {
+            const visibleEntries = await readFolderEntries(listingPath);
+
+            nextLines.push(
+              visibleEntries.length > 0
+                ? visibleEntries.map(({ name }) => name).join("  ")
+                : "(empty)"
+            );
+          }
+        } catch {
+          nextLines.push(`ls: ${args[0] || listingPath}: No such file or directory`);
+        }
+      } else if (instruction === "cd") {
+        const targetPath = args[0]
+          ? resolveTerminalPath(args[0], terminalCwd)
+          : explorerRoot;
+
+        try {
+          const targetStat = await lstat(targetPath);
+
+          if (!targetStat.isDirectory()) {
+            nextLines.push(`cd: ${args[0]}: Not a directory`);
+          } else {
+            setTerminalCwd(targetPath);
+          }
+        } catch {
+          nextLines.push(`cd: ${args[0] || targetPath}: No such file or directory`);
+        }
+      } else if (instruction === "mkdir") {
+        if (!args[0]) {
+          nextLines.push("mkdir: missing operand");
+        } else {
+          const targetPath = resolveTerminalPath(args[0], terminalCwd);
+
+          try {
+            await mkdir(targetPath);
+            await loadFolder(dirname(targetPath));
+            await loadEntries();
+          } catch {
+            nextLines.push(`mkdir: cannot create directory '${args[0]}'`);
+          }
+        }
+      } else if (instruction === "touch") {
+        if (args.length === 0) {
+          nextLines.push("touch: missing file operand");
+        } else {
+          for (const target of args) {
+            const targetPath = resolveTerminalPath(target, terminalCwd);
+
+            try {
+              await writeFile(targetPath, "", true);
+              await loadFolder(dirname(targetPath));
+              trackActivityEvent({ path: targetPath, type: "fileSaved" });
+            } catch {
+              nextLines.push(`touch: cannot touch '${target}'`);
+            }
+          }
+
+          await loadEntries();
+        }
+      } else if (instruction === "cat") {
+        if (!args[0]) {
+          nextLines.push("cat: missing file operand");
+        } else {
+          const targetPath = resolveTerminalPath(args[0], terminalCwd);
+
+          try {
+            const targetStat = await lstat(targetPath);
+
+            if (targetStat.isDirectory()) {
+              nextLines.push(`cat: ${args[0]}: Is a directory`);
+            } else {
+              const content = (await readFile(targetPath)).toString();
+
+              nextLines.push(content || "");
+            }
+          } catch {
+            nextLines.push(`cat: ${args[0]}: No such file or directory`);
+          }
+        }
+      } else if (instruction === "echo") {
+        nextLines.push(args.join(" "));
       } else {
         nextLines.push(`Command not found: ${command}`);
       }
@@ -784,7 +890,18 @@ function example() {
       ]);
       setTerminalInput("");
     },
-    [entries, explorerRoot, folderContents]
+    [
+      explorerRoot,
+      loadEntries,
+      loadFolder,
+      lstat,
+      mkdir,
+      readFile,
+      readFolderEntries,
+      resolveTerminalPath,
+      terminalCwd,
+      writeFile,
+    ]
   );
 
   const runMenuAction = useCallback(
@@ -912,6 +1029,15 @@ function example() {
     setSelectedPath(initialSelection);
   }, [currentUrl, openFiles, selectedPath]);
 
+  useEffect(() => {
+    if (!currentEditor) return;
+
+    requestAnimationFrame(() => {
+      currentEditor.layout();
+      currentEditor.focus();
+    });
+  }, [currentEditor, currentUrl, isTerminalPanelOpen, panelOpen, isCompactLayout]);
+
   return (
     <AppContainer
       StyledComponent={StyledMonacoEditor}
@@ -930,7 +1056,7 @@ function example() {
                   className={activeMenu === "file" ? "active" : ""}
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleTopMenu("file", e.currentTarget);
+                    toggleTopMenu("file");
                   }}
                   onMouseDown={(e) => e.preventDefault()}
                   type="button"
@@ -938,14 +1064,7 @@ function example() {
                   File
                 </button>
                 {activeMenu === "file" && (
-                  <menu
-                    className="menu-dropdown"
-                    style={{
-                      left: `${menuPosition.left}px`,
-                      position: "fixed",
-                      top: `${menuPosition.top}px`,
-                    }}
-                  >
+                  <menu className="menu-dropdown">
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("new-file"); }} onMouseDown={(e) => e.preventDefault()} type="button">New File</button></li>
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("new-folder"); }} onMouseDown={(e) => e.preventDefault()} type="button">New Folder</button></li>
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("open-folder"); }} onMouseDown={(e) => e.preventDefault()} type="button">Open Folder</button></li>
@@ -960,7 +1079,7 @@ function example() {
                   className={activeMenu === "edit" ? "active" : ""}
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleTopMenu("edit", e.currentTarget);
+                    toggleTopMenu("edit");
                   }}
                   onMouseDown={(e) => e.preventDefault()}
                   type="button"
@@ -968,14 +1087,7 @@ function example() {
                   Edit
                 </button>
                 {activeMenu === "edit" && (
-                  <menu
-                    className="menu-dropdown"
-                    style={{
-                      left: `${menuPosition.left}px`,
-                      position: "fixed",
-                      top: `${menuPosition.top}px`,
-                    }}
-                  >
+                  <menu className="menu-dropdown">
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("palette"); }} onMouseDown={(e) => e.preventDefault()} type="button">Command Palette</button></li>
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("format"); }} onMouseDown={(e) => e.preventDefault()} type="button">Format Document</button></li>
                   </menu>
@@ -986,7 +1098,7 @@ function example() {
                   className={activeMenu === "view" ? "active" : ""}
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleTopMenu("view", e.currentTarget);
+                    toggleTopMenu("view");
                   }}
                   onMouseDown={(e) => e.preventDefault()}
                   type="button"
@@ -994,14 +1106,7 @@ function example() {
                   View
                 </button>
                 {activeMenu === "view" && (
-                  <menu
-                    className="menu-dropdown"
-                    style={{
-                      left: `${menuPosition.left}px`,
-                      position: "fixed",
-                      top: `${menuPosition.top}px`,
-                    }}
-                  >
+                  <menu className="menu-dropdown">
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("toggle-sidebar"); }} onMouseDown={(e) => e.preventDefault()} type="button">Toggle Side Bar</button></li>
                   </menu>
                 )}
@@ -1011,7 +1116,7 @@ function example() {
                   className={activeMenu === "terminal" ? "active" : ""}
                   onClick={(e) => {
                     e.stopPropagation();
-                    toggleTopMenu("terminal", e.currentTarget);
+                    toggleTopMenu("terminal");
                   }}
                   onMouseDown={(e) => e.preventDefault()}
                   type="button"
@@ -1019,14 +1124,7 @@ function example() {
                   Terminal
                 </button>
                 {activeMenu === "terminal" && (
-                  <menu
-                    className="menu-dropdown"
-                    style={{
-                      left: `${menuPosition.left}px`,
-                      position: "fixed",
-                      top: `${menuPosition.top}px`,
-                    }}
-                  >
+                  <menu className="menu-dropdown">
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("toggle-terminal"); }} onMouseDown={(e) => e.preventDefault()} type="button">Toggle Terminal</button></li>
                   </menu>
                 )}
@@ -1496,10 +1594,10 @@ function example() {
               className="terminal-input-row"
               onSubmit={(event) => {
                 event.preventDefault();
-                runTerminalCommand(terminalInput);
+                void runTerminalCommand(terminalInput);
               }}
             >
-              <span>$</span>
+              <span>{terminalCwd} $</span>
               <input
                 ref={terminalInputRef}
                 className="terminal-input"
