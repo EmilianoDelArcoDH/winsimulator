@@ -1,5 +1,5 @@
 import { basename, dirname } from "path";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import loader from "@monaco-editor/loader";
 import type * as Monaco from "monaco-editor/esm/vs/editor/editor.api";
 import {
@@ -35,6 +35,7 @@ const useMonaco = ({
   const { readFile, updateFolder, writeFile } = useFileSystem();
   const { argument: setArgument } = useProcesses();
   const { prependFileToTitle } = useTitle(id);
+  const lastLoadedUrlRef = useRef("");
   const [editor, setEditor] = useState<Monaco.editor.IStandaloneCodeEditor>();
   const [monaco, setMonaco] = useState<typeof Monaco>();
   const createModelUri = useCallback(
@@ -126,8 +127,21 @@ const useMonaco = ({
     return newModel as Monaco.editor.ITextModel;
   }, [createModelUri, monaco?.editor, prependFileToTitle, readFile, url]);
   const loadFile = useCallback(async () => {
+    if (!url || lastLoadedUrlRef.current === url) {
+      return;
+    }
+
+    lastLoadedUrlRef.current = url;
+
     if (monaco && editor && url.startsWith("/")) {
       const currentModel = editor.getModel();
+      const currentModelPath = (currentModel as Model | undefined)?._associatedResource
+        ?.path;
+
+      if (currentModelPath?.startsWith(`${url}${URL_DELIMITER}`)) {
+        prependFileToTitle(basename(url || DEFAULT_TEXT_FILE_SAVE_PATH));
+        return;
+      }
 
       currentModel?.dispose();
       editor.setModel(await createModel());
@@ -195,6 +209,8 @@ const useMonaco = ({
       const monacoHost = containerRef.current.querySelector<HTMLDivElement>(
         "[data-monaco-editor-host]"
       );
+      const currentSection = containerRef.current?.closest("section");
+      const currentContainer = containerRef.current;
 
       if (!monacoHost || editor) return;
 
@@ -202,37 +218,29 @@ const useMonaco = ({
         ...editorOptions,
         theme,
       });
+      const handleHostMouseDown = (): void => {
+        currentEditor.focus();
+      };
+      const handleSectionFocus = (): void => {
+        currentEditor.focus();
+      };
 
       currentEditor.updateOptions({
         domReadOnly: false,
         readOnly: false,
       });
 
-      if (typeof ResizeObserver !== "undefined") {
-        const resizeObserver = new ResizeObserver(() => {
-          currentEditor.layout();
-        });
-
-        resizeObserver.observe(monacoHost);
-      }
-
-      monacoHost.addEventListener(
-        "mousedown",
-        () => {
-          currentEditor.focus();
-        },
-        { passive: true }
-      );
+      monacoHost.addEventListener("mousedown", handleHostMouseDown, {
+        passive: true,
+      });
 
       registerVsCodeLikeCommands(currentEditor);
 
-      containerRef.current
-        ?.closest("section")
-        ?.addEventListener("focus", () => currentEditor.focus(), {
-          passive: true,
-        });
+      currentSection?.addEventListener("focus", handleSectionFocus, {
+        passive: true,
+      });
 
-      containerRef.current?.addEventListener("blur", relocateShadowRoot, {
+      currentContainer?.addEventListener("blur", relocateShadowRoot, {
         capture: true,
         passive: true,
       });
@@ -244,6 +252,14 @@ const useMonaco = ({
         currentEditor.layout();
         currentEditor.focus();
       });
+
+      return () => {
+        monacoHost.removeEventListener("mousedown", handleHostMouseDown);
+        currentSection?.removeEventListener("focus", handleSectionFocus);
+        currentContainer?.removeEventListener("blur", relocateShadowRoot, {
+          capture: true,
+        });
+      };
     }
 
     return undefined;
@@ -261,7 +277,8 @@ const useMonaco = ({
     if (monaco && editor && url) {
       loadFile();
     }
-  }, [editor, loadFile, monaco, url]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, monaco, url]);
 
   useEffect(
     () => () => {

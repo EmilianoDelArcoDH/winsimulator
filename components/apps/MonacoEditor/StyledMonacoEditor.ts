@@ -2,7 +2,9 @@ import styled from "styled-components";
 
 const StyledMonacoEditor = styled.div`
   --activity-bar-width: 52px;
-  --side-panel-width: clamp(220px, 18vw, 320px);
+  --side-panel-width: clamp(150px, 12vw, 210px);
+  --sidebar-splitter-width: 4px;
+  --panel-splitter-height: 4px;
   --menu-bar-height: 34px;
   --status-bar-height: 22px;
   --explorer-row-height: 22px;
@@ -34,9 +36,27 @@ const StyledMonacoEditor = styled.div`
     &.terminal-open {
       grid-template-areas:
         "workbench"
+        "panel-splitter"
         "terminal"
         "statusbar";
-      grid-template-rows: minmax(0, 1fr) 200px var(--status-bar-height);
+      grid-template-rows: minmax(0, 1fr) var(--panel-splitter-height) var(
+          --vsc-panel-height,
+          220px
+        ) var(--status-bar-height);
+    }
+  }
+
+  .panel-splitter {
+    background: rgb(31 31 31);
+    border-top: 1px solid rgb(24 24 24);
+    border-bottom: 1px solid rgb(24 24 24);
+    cursor: row-resize;
+    grid-area: panel-splitter;
+    height: var(--panel-splitter-height);
+    width: 100%;
+
+    &:hover {
+      background: rgb(0 122 204);
     }
   }
 
@@ -45,12 +65,11 @@ const StyledMonacoEditor = styled.div`
     gap: 0;
     grid-area: workbench;
     grid-template-areas:
-      "menu menu menu"
-      "activity sidebar editor";
-    grid-template-columns: var(--activity-bar-width) var(--side-panel-width) minmax(
-      0,
-      1fr
-    );
+      "menu menu menu menu"
+      "activity sidebar splitter editor";
+    grid-template-columns: var(--activity-bar-width) var(--side-panel-width) var(
+        --sidebar-splitter-width
+      ) minmax(0, 1fr);
     grid-template-rows: var(--menu-bar-height) 1fr;
     height: 100%;
     min-height: 0;
@@ -75,11 +94,34 @@ const StyledMonacoEditor = styled.div`
       .side-panel {
         display: none;
       }
+
+      .sidebar-splitter {
+        display: none;
+      }
+    }
+
+    &.compact-layout {
+      grid-template-areas:
+        "menu menu"
+        "activity editor";
+      grid-template-columns: var(--activity-bar-width) minmax(0, 1fr);
+
+      .side-panel {
+        display: none;
+      }
+
+      .sidebar-splitter {
+        display: none;
+      }
+
+      .editor-area {
+        grid-column: 2;
+      }
     }
 
     &.panel-open {
       .editor-area {
-        grid-column: 3;
+        grid-column: 4;
       }
     }
   }
@@ -206,7 +248,8 @@ const StyledMonacoEditor = styled.div`
     display: flex;
     flex-direction: column;
     grid-area: sidebar;
-    min-width: 220px;
+    max-width: 320px;
+    min-width: 170px;
     min-height: 0;
     overflow: hidden;
     padding-bottom: 0;
@@ -261,7 +304,7 @@ const StyledMonacoEditor = styled.div`
       color: rgb(140 140 140);
       font-size: 10px;
       letter-spacing: 0.8px;
-      margin: 10px 10px 4px;
+      margin: 8px 10px 4px;
       text-transform: uppercase;
     }
 
@@ -278,7 +321,7 @@ const StyledMonacoEditor = styled.div`
     .open-editors {
       flex: 0 0 auto;
       margin-bottom: 0;
-      max-height: 180px;
+      max-height: 120px;
       overflow: auto;
       padding: 0 4px;
 
@@ -314,6 +357,7 @@ const StyledMonacoEditor = styled.div`
 
     .folder-entries {
       flex: 1;
+      margin-top: 2px;
       min-height: 0;
       position: relative;
       z-index: 1;
@@ -351,7 +395,10 @@ const StyledMonacoEditor = styled.div`
           width: 14px;
         }
 
-        &:hover,
+        &:hover {
+          background: rgb(42 45 46);
+        }
+
         &.active {
           background: rgb(9 71 113);
         }
@@ -398,6 +445,12 @@ const StyledMonacoEditor = styled.div`
       min-width: 0;
       outline: none;
       padding: 0 6px;
+
+      &:focus,
+      &:focus-visible {
+        border-color: rgb(0 122 204);
+        box-shadow: inset 0 0 0 1px rgb(0 122 204);
+      }
     }
 
     .entry-error {
@@ -425,7 +478,47 @@ const StyledMonacoEditor = styled.div`
     }
   }
 
+  .sidebar-splitter {
+    background: rgb(31 31 31);
+    border-right: 1px solid rgb(24 24 24);
+    cursor: col-resize;
+    grid-area: splitter;
+    width: var(--sidebar-splitter-width);
+
+    &:hover {
+      background: rgb(0 122 204);
+    }
+  }
+
   @media (max-width: 900px) {
+    .workbench {
+      grid-template-areas:
+        "menu menu"
+        "activity editor";
+      grid-template-columns: var(--activity-bar-width) minmax(0, 1fr);
+
+      .side-panel {
+        display: none;
+      }
+
+      .sidebar-splitter {
+        display: none;
+      }
+
+      .editor-area {
+        grid-column: 2;
+      }
+    }
+
+    .activity-bar {
+      width: 44px;
+
+      button {
+        font-size: 14px;
+        height: 32px;
+      }
+    }
+
     .breadcrumbs {
       font-size: 11px;
       padding: 5px 8px;
@@ -465,7 +558,7 @@ const StyledMonacoEditor = styled.div`
 
     .tab {
       align-items: center;
-      background: rgb(30 30 30);
+      background: rgb(45 45 45);
       border: 1px solid rgb(57 57 57);
       border-bottom: 0;
       display: inline-flex;
@@ -495,6 +588,8 @@ const StyledMonacoEditor = styled.div`
         height: 24px;
         justify-content: center;
         margin-right: 6px;
+        opacity: 0;
+        visibility: hidden;
         width: 18px;
 
         &:hover {
@@ -502,11 +597,24 @@ const StyledMonacoEditor = styled.div`
         }
       }
 
+      &:hover {
+        .close {
+          opacity: 1;
+          visibility: visible;
+        }
+      }
+
       &.active {
+        background: rgb(30 30 30);
         border-top: 2px solid rgb(30 136 229);
 
         .open {
           color: rgb(245 245 245);
+        }
+
+        .close {
+          opacity: 1;
+          visibility: visible;
         }
       }
     }
@@ -587,6 +695,12 @@ const StyledMonacoEditor = styled.div`
       outline: none;
       padding: 0 6px;
       width: 100%;
+
+      &:focus,
+      &:focus-visible {
+        border-color: rgb(0 122 204);
+        box-shadow: inset 0 0 0 1px rgb(0 122 204);
+      }
     }
   }
 
@@ -652,6 +766,35 @@ const StyledMonacoEditor = styled.div`
       margin-bottom: 16px;
     }
 
+    .dialog-label {
+      color: rgb(209 209 209);
+      display: block;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .dialog-input {
+      background: rgb(37 37 38);
+      border: 1px solid rgb(78 78 78);
+      color: rgb(245 245 245);
+      font-size: 12px;
+      height: 30px;
+      margin-bottom: 8px;
+      outline: none;
+      padding: 0 8px;
+      width: 100%;
+
+      &:focus {
+        border-color: rgb(0 122 204);
+      }
+    }
+
+    .dialog-error {
+      color: rgb(255 130 130);
+      font-size: 11px;
+      margin-bottom: 10px;
+    }
+
     .confirm-actions {
       display: flex;
       gap: 8px;
@@ -676,6 +819,85 @@ const StyledMonacoEditor = styled.div`
 
           &:hover {
             background: rgb(195 58 58);
+          }
+        }
+      }
+    }
+  }
+
+  .save-as-dialog {
+    background: rgb(37 37 38);
+    border: 1px solid rgb(69 69 69);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 55%);
+    left: 50%;
+    min-width: 460px;
+    padding: 12px;
+    position: fixed;
+    top: 72px;
+    transform: translateX(-50%);
+    z-index: 10002;
+
+    .save-as-title {
+      color: rgb(245 245 245);
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0 0 4px;
+    }
+
+    .save-as-subtitle {
+      color: rgb(171 171 171);
+      font-size: 11px;
+      margin: 0 0 8px;
+    }
+
+    .save-as-input {
+      background: rgb(30 30 30);
+      border: 1px solid rgb(0 122 204);
+      color: rgb(245 245 245);
+      font-size: 12px;
+      height: 30px;
+      margin: 0;
+      outline: none;
+      padding: 0 8px;
+      width: 100%;
+
+      &:focus,
+      &:focus-visible {
+        box-shadow: inset 0 0 0 1px rgb(0 122 204);
+      }
+    }
+
+    .save-as-error {
+      color: rgb(255 130 130);
+      font-size: 11px;
+      margin: 8px 0 0;
+    }
+
+    .save-as-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 10px;
+
+      .dialog-action {
+        background: rgb(60 60 60);
+        border: 1px solid rgb(80 80 80);
+        border-radius: 2px;
+        color: rgb(255 255 255);
+        cursor: pointer;
+        font-size: 12px;
+        padding: 6px 12px;
+
+        &:hover {
+          background: rgb(72 72 72);
+        }
+
+        &.primary {
+          background: rgb(14 99 156);
+          border-color: rgb(17 116 183);
+
+          &:hover {
+            background: rgb(17 116 183);
           }
         }
       }
