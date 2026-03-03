@@ -5,7 +5,6 @@ import useProxyMenu, {
 } from "components/apps/Browser/useProxyMenu";
 import { ADDRESS_INPUT_PROPS } from "components/apps/FileExplorer/AddressBar";
 import useHistoryMenu from "components/apps/Browser/useHistoryMenu";
-import useBookmarkMenu from "components/apps/Browser/useBookmarkMenu";
 import {
   createDirectoryIndex,
   type DirectoryEntries,
@@ -35,7 +34,6 @@ import { useProcesses } from "contexts/process";
 import processDirectory from "contexts/process/directory";
 import useHistory from "hooks/useHistory";
 import Button from "styles/common/Button";
-import Icon from "styles/common/Icon";
 import {
   FAVICON_BASE_PATH,
   IFRAME_CONFIG,
@@ -127,7 +125,6 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
   );
   const [proxyState, setProxyState] = useState<ProxyState>("CORS");
   const proxyMenu = useProxyMenu(proxyState, setProxyState);
-  const bookmarkMenu = useBookmarkMenu();
   const normalizeLocalAssetPath = useCallback(
     (htmlPath: string, assetReference: string): string => {
       const cleanReference = assetReference
@@ -626,28 +623,6 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
         >
           <Network />
         </Button>
-      </nav>
-      <nav>
-        {bookmarks.map(({ name, icon, url: bookmarkUrl }) => (
-          <Button
-            key={name}
-            onClick={({ ctrlKey }) => {
-              if (ctrlKey) {
-                open("Browser", { url: bookmarkUrl });
-              } else {
-                goToLink(bookmarkUrl);
-              }
-            }}
-            {...label(
-              `${name}\n${bookmarkUrl
-                .replace(/^http:\/\//, "")
-                .replace(/\/$/, "")}`
-            )}
-            {...bookmarkMenu}
-          >
-            <Icon alt={name} imgSize={16} src={icon} singleSrc />
-          </Button>
-        ))}
       </nav>
       <iframe
         ref={iframeRef}
