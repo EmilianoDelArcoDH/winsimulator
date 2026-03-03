@@ -1,4 +1,4 @@
-import { basename, join, resolve } from "path";
+import { basename, dirname, join, resolve } from "path";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useProxyMenu, {
   type ProxyState,
@@ -77,9 +77,12 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
   const initialUrl = url || HOME_PAGE;
   const { canGoBack, canGoForward, history, moveHistory, position } =
     useHistory(initialUrl, id);
-  const { exists, fs, stat, readFile, readdir } = useFileSystem();
+  const { addFsWatcher, exists, fs, stat, readFile, readdir, removeFsWatcher } =
+    useFileSystem();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const localPreviewHtmlPathRef = useRef("");
+  const localPreviewDependenciesRef = useRef<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
   const [srcDoc, setSrcDoc] = useState("");
   const changeHistory = (step: number): void => {
@@ -125,6 +128,94 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
   const [proxyState, setProxyState] = useState<ProxyState>("CORS");
   const proxyMenu = useProxyMenu(proxyState, setProxyState);
   const bookmarkMenu = useBookmarkMenu();
+  const normalizeLocalAssetPath = useCallback(
+    (htmlPath: string, assetReference: string): string => {
+      const cleanReference = assetReference
+        .trim()
+        .replace(/[?#].*$/, "")
+        .replace(/\\/g, "/");
+
+      if (!cleanReference) return "";
+
+      if (
+        cleanReference.startsWith("http://") ||
+        cleanReference.startsWith("https://") ||
+        cleanReference.startsWith("data:") ||
+        cleanReference.startsWith("blob:") ||
+        cleanReference.startsWith("javascript:") ||
+        cleanReference.startsWith("#") ||
+        cleanReference.startsWith("//")
+      ) {
+        return "";
+      }
+
+      const resolvedPath = cleanReference.startsWith("/")
+        ? cleanReference
+        : resolve(dirname(htmlPath), cleanReference);
+
+      return resolvedPath.replace(/\\/g, "/");
+    },
+    []
+  );
+  const buildLocalHtmlPreview = useCallback(
+    async (
+      htmlPath: string
+    ): Promise<{ dependencies: Set<string>; html: string }> => {
+      const htmlContent = (await readFile(htmlPath)).toString();
+      const dependencies = new Set<string>([htmlPath]);
+      let previewHtml = htmlContent;
+
+      const linkHrefRegex =
+        /<link\b[^>]*\brel\s*=\s*["'][^"']*stylesheet[^"']*["'][^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>/gi;
+      const scriptSrcRegex = /<script\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)><\/script>/gi;
+
+      const linkMatches = [...previewHtml.matchAll(linkHrefRegex)];
+
+      for (const match of linkMatches) {
+        const [fullTag = "", href = ""] = match;
+        const localCssPath = normalizeLocalAssetPath(htmlPath, href);
+
+        if (!localCssPath || !(await exists(localCssPath))) continue;
+
+        try {
+          const cssContent = (await readFile(localCssPath)).toString();
+
+          dependencies.add(localCssPath);
+          previewHtml = previewHtml.replace(
+            fullTag,
+            `<style data-preview-path="${localCssPath}">\n${cssContent}\n</style>`
+          );
+        } catch {
+          // Ignore failure to inline stylesheet
+        }
+      }
+
+      const scriptMatches = [...previewHtml.matchAll(scriptSrcRegex)];
+
+      for (const match of scriptMatches) {
+        const [fullTag = "", beforeSrc = "", src = "", afterSrc = ""] = match;
+        const localJsPath = normalizeLocalAssetPath(htmlPath, src);
+
+        if (!localJsPath || !(await exists(localJsPath))) continue;
+
+        try {
+          const jsContent = (await readFile(localJsPath)).toString();
+          const scriptOpenTag = `<script${beforeSrc}${afterSrc}>`;
+
+          dependencies.add(localJsPath);
+          previewHtml = previewHtml.replace(
+            fullTag,
+            `${scriptOpenTag}\n${jsContent}\n</script>`
+          );
+        } catch {
+          // Ignore failure to inline script
+        }
+      }
+
+      return { dependencies, html: previewHtml };
+    },
+    [exists, normalizeLocalAssetPath, readFile]
+  );
   const setUrl = useCallback(
     async (addressInput: string): Promise<void> => {
       const { contentWindow } = iframeRef.current || {};
@@ -135,7 +226,17 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
           (await exists(addressInput));
 
         setLoading(true);
-        if (isHtml) setSrcDoc((await readFile(addressInput)).toString());
+        if (isHtml) {
+          const { dependencies, html } = await buildLocalHtmlPreview(addressInput);
+
+          localPreviewDependenciesRef.current = dependencies;
+          localPreviewHtmlPathRef.current = addressInput;
+          setSrcDoc(html);
+          prependFileToTitle(basename(addressInput));
+        } else {
+          localPreviewDependenciesRef.current = new Set();
+          localPreviewHtmlPathRef.current = "";
+        }
         setIcon(id, processDirectory.Browser.icon);
 
         if (addressInput.toLowerCase().startsWith(DINO_GAME.url)) {
@@ -394,9 +495,9 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
       id,
       initialTitle,
       open,
+      buildLocalHtmlPreview,
       prependFileToTitle,
       proxyState,
-      readFile,
       readdir,
       setIcon,
       stat,
@@ -414,6 +515,57 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
       setUrl(history[position]);
     }
   }, [history, position, process, setUrl]);
+
+  useEffect(() => {
+    const previewHtmlPath = localPreviewHtmlPathRef.current;
+
+    if (!previewHtmlPath) return;
+
+    const watchedPaths = localPreviewDependenciesRef.current;
+    const watcherFolders = new Set<string>(
+      [...watchedPaths].map((dependencyPath) => dirname(dependencyPath))
+    );
+
+    watcherFolders.add(dirname(previewHtmlPath));
+
+    const watcherCallbacks = new Map<
+      string,
+      (newFile?: string, oldFile?: string) => Promise<void>
+    >();
+
+    const createRefreshPreview =
+      (watcherFolder: string) =>
+        async (newFile?: string, oldFile?: string): Promise<void> => {
+          const activePreviewPath = localPreviewHtmlPathRef.current;
+          const activeWatchedPaths = localPreviewDependenciesRef.current;
+
+          if (!activePreviewPath || activeWatchedPaths.size === 0) return;
+
+          const changedPaths = [newFile, oldFile]
+            .filter(Boolean)
+            .map((entryName) => join(watcherFolder, entryName as string));
+          const shouldRefresh =
+            changedPaths.length === 0 ||
+            changedPaths.some((changedPath) => activeWatchedPaths.has(changedPath));
+
+          if (!shouldRefresh) return;
+
+          await setUrl(activePreviewPath);
+        };
+
+    watcherFolders.forEach((watcherFolder) => {
+      const refreshPreview = createRefreshPreview(watcherFolder);
+
+      watcherCallbacks.set(watcherFolder, refreshPreview);
+      addFsWatcher(watcherFolder, refreshPreview);
+    });
+
+    return () => {
+      watcherCallbacks.forEach((refreshPreview, watcherFolder) => {
+        removeFsWatcher(watcherFolder, refreshPreview);
+      });
+    };
+  }, [addFsWatcher, removeFsWatcher, setUrl, srcDoc]);
 
   useEffect(() => {
     if (iframeRef.current) {

@@ -136,11 +136,23 @@ const useFileContextMenu = (
               ];
         const menuItems: MenuItem[] = [];
         const pathExtension = getExtension(path);
+        const normalizedPath = path.endsWith("/") ? path.slice(0, -1) : path;
+        const isDesktopFolder =
+          dirname(normalizedPath) === DESKTOP_PATH &&
+          stats.isDirectory();
         const isShortcut = pathExtension === SHORTCUT_EXTENSION;
         const remoteMount = rootFs?.mountList.some(
           (mountPath) =>
             mountPath === path && isMountedFolder(rootFs?.mntMap[mountPath])
         );
+
+        if (
+          isDesktopFolder &&
+          pid !== "MonacoEditor" &&
+          !openWithFiltered.includes("MonacoEditor")
+        ) {
+          openWithFiltered.push("MonacoEditor");
+        }
 
         if (!readOnly && !remoteMount) {
           const defaultProcess = getProcessByFileExtension(urlExtension);

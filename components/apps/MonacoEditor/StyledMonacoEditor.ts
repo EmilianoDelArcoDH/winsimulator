@@ -332,6 +332,35 @@ const StyledMonacoEditor = styled.div`
         grid-template-columns: 1fr auto;
         min-height: var(--explorer-row-height);
 
+        &.entry-editing {
+          grid-template-columns: 1fr;
+          padding-right: 4px;
+        }
+
+        > button:not(.close) {
+          align-items: center;
+          display: inline-flex;
+          gap: 6px;
+          min-width: 0;
+
+          .file-icon {
+            color: rgb(180 180 180);
+            display: inline-flex;
+            font-size: 11px;
+            justify-content: center;
+            min-width: 16px;
+            width: 16px;
+
+            img {
+              display: block;
+              height: 14px;
+              object-fit: contain;
+              pointer-events: none;
+              width: 14px;
+            }
+          }
+        }
+
         button.close {
           align-items: center;
           background: transparent;
@@ -347,6 +376,12 @@ const StyledMonacoEditor = styled.div`
             color: rgb(240 240 240);
           }
         }
+      }
+
+      .entry-input-wrap {
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
       }
     }
 
@@ -391,8 +426,18 @@ const StyledMonacoEditor = styled.div`
         .entry-icon {
           align-items: center;
           display: inline-flex;
+          font-size: 11px;
           justify-content: center;
-          width: 14px;
+          min-width: 16px;
+          width: 16px;
+
+          img {
+            display: block;
+            height: 14px;
+            object-fit: contain;
+            pointer-events: none;
+            width: 14px;
+          }
         }
 
         &:hover {
@@ -566,16 +611,36 @@ const StyledMonacoEditor = styled.div`
       max-width: min(320px, 70%);
 
       .open {
+        align-items: center;
         background: transparent;
         border: 0;
         color: rgb(220 220 220);
+        display: inline-flex;
         font-size: 12px;
+        gap: 6px;
         height: 30px;
         max-width: 260px;
         overflow: hidden;
         padding: 0 10px;
         text-overflow: ellipsis;
         white-space: nowrap;
+
+        .file-icon {
+          color: rgb(180 180 180);
+          display: inline-flex;
+          font-size: 11px;
+          justify-content: center;
+          min-width: 16px;
+          width: 16px;
+
+          img {
+            display: block;
+            height: 14px;
+            object-fit: contain;
+            pointer-events: none;
+            width: 14px;
+          }
+        }
       }
 
       .close {
@@ -633,6 +698,26 @@ const StyledMonacoEditor = styled.div`
     min-width: 0;
     overflow: hidden;
     position: relative;
+  }
+
+  .editor-empty-state {
+    align-items: center;
+    background: rgb(30 30 30);
+    color: rgb(72 72 72);
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: center;
+    min-height: 0;
+    min-width: 0;
+    user-select: none;
+  }
+
+  .editor-empty-logo {
+    font-size: clamp(72px, 16vw, 180px);
+    font-weight: 700;
+    letter-spacing: 6px;
+    line-height: 1;
+    opacity: 0.35;
   }
 
   .bottom-panel {
@@ -734,6 +819,11 @@ const StyledMonacoEditor = styled.div`
       &:hover {
         background-color: rgb(61 61 61);
       }
+    }
+
+    .context-menu-separator {
+      border-top: 1px solid rgb(75 75 75);
+      margin: 4px 0;
     }
   }
 

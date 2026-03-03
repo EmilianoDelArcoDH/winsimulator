@@ -74,6 +74,16 @@ const useFocusable = (
   const moveToFront = useCallback(
     (event?: React.FocusEvent<HTMLElement> | React.MouseEvent<HTMLElement>) => {
       const { relatedTarget } = event || {};
+      const eventTarget = event?.target as HTMLElement | null;
+      const isEditableTarget =
+        eventTarget?.tagName === "INPUT" ||
+        eventTarget?.tagName === "TEXTAREA" ||
+        Boolean(eventTarget?.isContentEditable) ||
+        Boolean(
+          eventTarget?.closest(
+            ".monaco-editor, [data-monaco-editor-host], [contenteditable='true']"
+          )
+        );
 
       if (componentWindow?.contains(document.activeElement)) {
         prependToStack(id);
@@ -82,7 +92,9 @@ const useFocusable = (
         !relatedTarget ||
         (document.activeElement as HTMLElement) === taskbarEntry
       ) {
-        componentWindow?.focus(PREVENT_SCROLL);
+        if (!isEditableTarget) {
+          componentWindow?.focus(PREVENT_SCROLL);
+        }
         callbackEvents?.onFocusCapture?.(
           event as React.FocusEvent<HTMLElement>
         );

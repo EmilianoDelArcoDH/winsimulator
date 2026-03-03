@@ -13,12 +13,14 @@ type RenderComponentProps = {
   Component: React.ComponentType<ComponentProcessProps>;
   hasWindow?: boolean;
   id: string;
+  windowMode?: "floating" | "docked";
 };
 
 const RenderComponent: FC<RenderComponentProps> = ({
   Component,
   hasWindow = true,
   id,
+  windowMode = "floating",
 }) => {
   const SafeComponent = (
     <ErrorBoundary FallbackRender={<ComponentError />}>
@@ -26,7 +28,13 @@ const RenderComponent: FC<RenderComponentProps> = ({
     </ErrorBoundary>
   );
 
-  return hasWindow ? <Window id={id}>{SafeComponent}</Window> : SafeComponent;
+  return hasWindow ? (
+    <Window docked={windowMode === "docked"} id={id}>
+      {SafeComponent}
+    </Window>
+  ) : (
+    SafeComponent
+  );
 };
 
 export default memo(RenderComponent);

@@ -11,7 +11,6 @@ import {
 import {
   detectLanguage,
   getSaveFileInfo,
-  relocateShadowRoot,
 } from "components/apps/MonacoEditor/functions";
 import { registerEmmetSnippets } from "components/apps/MonacoEditor/emmet";
 import { type Model } from "components/apps/MonacoEditor/types";
@@ -50,6 +49,21 @@ const useMonaco = ({
         : monaco?.Uri.parse(uriName);
     },
     [monaco?.Uri, monaco?.editor]
+  );
+  const ensureEditorDomEditable = useCallback(
+    (currentEditor?: Monaco.editor.IStandaloneCodeEditor): void => {
+      const editorDomNode = currentEditor?.getDomNode();
+      const inputArea = editorDomNode?.querySelector<HTMLTextAreaElement>(
+        "textarea.inputarea"
+      );
+
+      if (inputArea) {
+        inputArea.disabled = false;
+        inputArea.readOnly = false;
+        inputArea.tabIndex = 0;
+      }
+    },
+    []
   );
   const registerVsCodeLikeCommands = useCallback(
     (currentEditor: Monaco.editor.IStandaloneCodeEditor): void => {
@@ -139,6 +153,13 @@ const useMonaco = ({
         ?.path;
 
       if (currentModelPath?.startsWith(`${url}${URL_DELIMITER}`)) {
+        editor.updateOptions({
+          domReadOnly: false,
+          readOnly: false,
+        });
+        ensureEditorDomEditable(editor);
+        editor.layout();
+        editor.focus();
         prependFileToTitle(basename(url || DEFAULT_TEXT_FILE_SAVE_PATH));
         return;
       }
@@ -149,12 +170,13 @@ const useMonaco = ({
         domReadOnly: false,
         readOnly: false,
       });
+      ensureEditorDomEditable(editor);
       editor.layout();
       editor.focus();
     }
 
     prependFileToTitle(basename(url || DEFAULT_TEXT_FILE_SAVE_PATH));
-  }, [createModel, editor, monaco, prependFileToTitle, url]);
+  }, [createModel, editor, ensureEditorDomEditable, monaco, prependFileToTitle, url]);
 
   useEffect(() => {
     if (!monaco) {
@@ -210,7 +232,6 @@ const useMonaco = ({
         "[data-monaco-editor-host]"
       );
       const currentSection = containerRef.current?.closest("section");
-      const currentContainer = containerRef.current;
 
       if (!monacoHost || editor) return;
 
@@ -219,9 +240,19 @@ const useMonaco = ({
         theme,
       });
       const handleHostMouseDown = (): void => {
+        ensureEditorDomEditable(currentEditor);
+        currentEditor.focus();
+      };
+      const handleHostClick = (): void => {
+        ensureEditorDomEditable(currentEditor);
+        requestAnimationFrame(() => currentEditor.focus());
+      };
+      const handleHostFocusIn = (): void => {
+        ensureEditorDomEditable(currentEditor);
         currentEditor.focus();
       };
       const handleSectionFocus = (): void => {
+        ensureEditorDomEditable(currentEditor);
         currentEditor.focus();
       };
 
@@ -229,19 +260,19 @@ const useMonaco = ({
         domReadOnly: false,
         readOnly: false,
       });
+      ensureEditorDomEditable(currentEditor);
 
       monacoHost.addEventListener("mousedown", handleHostMouseDown, {
         passive: true,
       });
+      monacoHost.addEventListener("click", handleHostClick, {
+        passive: true,
+      });
+      monacoHost.addEventListener("focusin", handleHostFocusIn);
 
       registerVsCodeLikeCommands(currentEditor);
 
       currentSection?.addEventListener("focus", handleSectionFocus, {
-        passive: true,
-      });
-
-      currentContainer?.addEventListener("blur", relocateShadowRoot, {
-        capture: true,
         passive: true,
       });
 
@@ -255,10 +286,9 @@ const useMonaco = ({
 
       return () => {
         monacoHost.removeEventListener("mousedown", handleHostMouseDown);
+        monacoHost.removeEventListener("click", handleHostClick);
+        monacoHost.removeEventListener("focusin", handleHostFocusIn);
         currentSection?.removeEventListener("focus", handleSectionFocus);
-        currentContainer?.removeEventListener("blur", relocateShadowRoot, {
-          capture: true,
-        });
       };
     }
 
@@ -268,10 +298,32 @@ const useMonaco = ({
     id,
     editor,
     monaco,
+    ensureEditorDomEditable,
     registerVsCodeLikeCommands,
     setArgument,
     setLoading,
+    url,
   ]);
+
+  useEffect(() => {
+    const monacoHost = containerRef.current?.querySelector<HTMLDivElement>(
+      "[data-monaco-editor-host]"
+    );
+
+    if (monacoHost) {
+      return;
+    }
+
+    setLoading(false);
+    lastLoadedUrlRef.current = "";
+
+    if (editor) {
+      editor.getModel()?.dispose();
+      editor.dispose();
+      setArgument(id, "editor", undefined);
+      setEditor(undefined);
+    }
+  }, [containerRef, editor, id, setArgument, setLoading, url]);
 
   useEffect(() => {
     if (monaco && editor && url) {
@@ -279,6 +331,62 @@ const useMonaco = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, monaco, url]);
+
+  useEffect(() => {
+    if (!url) {
+      lastLoadedUrlRef.current = "";
+      setLoading(false);
+    }
+  }, [setLoading, url]);
+
+  useEffect(() => {
+    if (!url && editor) {
+      editor.getModel()?.dispose();
+      editor.dispose();
+      setArgument(id, "editor", undefined);
+      setEditor(undefined);
+    }
+  }, [editor, id, setArgument, url]);
+
+  useEffect(() => {
+    if (url && editor) {
+      editor.updateOptions({
+        domReadOnly: false,
+        readOnly: false,
+      });
+      ensureEditorDomEditable(editor);
+      requestAnimationFrame(() => editor.focus());
+    }
+  }, [editor, ensureEditorDomEditable, url]);
+
+  useEffect(() => {
+    if (!editor) return undefined;
+
+    const editorDomNode = editor.getDomNode();
+
+    if (!editorDomNode) return undefined;
+
+    const inputArea = editorDomNode.querySelector<HTMLTextAreaElement>(
+      "textarea.inputarea"
+    );
+
+    if (!inputArea) return undefined;
+
+    const observer = new MutationObserver(() => {
+      ensureEditorDomEditable(editor);
+    });
+
+    observer.observe(inputArea, {
+      attributeFilter: ["readonly", "disabled", "tabindex"],
+      attributes: true,
+    });
+
+    ensureEditorDomEditable(editor);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [editor, ensureEditorDomEditable]);
 
   useEffect(
     () => () => {

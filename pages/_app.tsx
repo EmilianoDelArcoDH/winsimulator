@@ -1,5 +1,6 @@
 import { type AppProps } from "next/app";
 import { memo } from "react";
+import "react-mosaic-component/react-mosaic-component.css";
 import { ErrorBoundary } from "components/pages/ErrorBoundary";
 import Metadata from "components/pages/Metadata";
 import StyledApp from "components/pages/StyledApp";

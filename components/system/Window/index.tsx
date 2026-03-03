@@ -9,7 +9,11 @@ import useWindowTransitions from "components/system/Window/useWindowTransitions"
 import { useProcesses } from "contexts/process";
 import { useSession } from "contexts/session";
 
-const Window: FC<ComponentProcessProps> = ({ children, id }) => {
+type WindowProps = ComponentProcessProps & {
+  docked?: boolean;
+};
+
+const Window: FC<WindowProps> = ({ children, docked = false, id }) => {
   const {
     linkElement,
     processes: { [id]: process },
@@ -33,21 +37,38 @@ const Window: FC<ComponentProcessProps> = ({ children, id }) => {
     },
     [Component, id, linkElement, peekElement]
   );
+  const linkDockedWindow = useCallback(
+    (windowEntry: HTMLElement | null) => {
+      if (docked && Component && windowEntry) {
+        linkElement(id, "componentWindow", windowEntry);
+      }
+    },
+    [Component, docked, id, linkElement]
+  );
+
+  const windowShell = (
+    <StyledWindow
+      ref={linkDockedWindow}
+      $backgroundBlur={backgroundBlur}
+      $backgroundColor={backgroundColor}
+      $isForeground={isForeground}
+      {...focusableProps}
+      {...windowTransitions}
+    >
+      <StyledPeekViewport ref={linkViewportEntry}>
+        {!hideTitlebar && <Titlebar id={id} />}
+        {children}
+      </StyledPeekViewport>
+    </StyledWindow>
+  );
+
+  if (docked) {
+    return windowShell;
+  }
 
   return (
     <RndWindow id={id} zIndex={zIndex}>
-      <StyledWindow
-        $backgroundBlur={backgroundBlur}
-        $backgroundColor={backgroundColor}
-        $isForeground={isForeground}
-        {...focusableProps}
-        {...windowTransitions}
-      >
-        <StyledPeekViewport ref={linkViewportEntry}>
-          {!hideTitlebar && <Titlebar id={id} />}
-          {children}
-        </StyledPeekViewport>
-      </StyledWindow>
+      {windowShell}
     </RndWindow>
   );
 };

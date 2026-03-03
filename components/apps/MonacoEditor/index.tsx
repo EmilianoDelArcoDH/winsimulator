@@ -1,5 +1,6 @@
-import { basename, dirname } from "path";
+import { basename, dirname, extname } from "path";
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { getIconByFileExtension } from "components/system/Files/FileEntry/functions";
 import { getSaveFileInfo } from "components/apps/MonacoEditor/functions";
 import StatusBar from "components/apps/MonacoEditor/StatusBar";
 import StyledMonacoEditor from "components/apps/MonacoEditor/StyledMonacoEditor";
@@ -9,7 +10,11 @@ import { type ComponentProcessProps } from "components/system/Apps/RenderCompone
 import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
 import { trackActivityEvent } from "utils/activityRuntime";
-import { DEFAULT_TEXT_FILE_SAVE_PATH } from "utils/constants";
+import {
+  DEFAULT_TEXT_FILE_SAVE_PATH,
+  DESKTOP_PATH,
+  FOLDER_ICON,
+} from "utils/constants";
 
 type ExplorerEntry = {
   isDirectory: boolean;
@@ -24,11 +29,68 @@ type ExplorerListEntry = ExplorerEntry & {
   path: string;
 };
 
+type ContextMenuState = {
+  directoryPath?: string;
+  targetIsDirectory: boolean;
+  targetPath?: string;
+  x: number;
+  y: number;
+};
+
 type WindowWithDirectoryPicker = Window & {
   showDirectoryPicker?: () => Promise<unknown>;
 };
 
+type UrlTargetType = "none" | "file" | "directory";
+
 const INVALID_ENTRY_NAME = /[\\/:*?"<>|]/;
+const SIDEBAR_WIDTH_STORAGE_KEY = "monaco:sidebar-width";
+const DEFAULT_SIDEBAR_WIDTH = 210;
+
+const getTemplateCursorOffset = (filePath: string, content: string): number => {
+  const extension = extname(filePath).toLowerCase();
+
+  if (extension === ".html") {
+    const marker = "<h1>Hello World</h1>";
+    const markerIndex = content.indexOf(marker);
+
+    if (markerIndex !== -1) {
+      return markerIndex + marker.length;
+    }
+  }
+
+  if (extension === ".css") {
+    const marker = "h1 {";
+    const markerIndex = content.indexOf(marker);
+
+    if (markerIndex !== -1) {
+      return markerIndex + marker.length;
+    }
+  }
+
+  if (extension === ".js") {
+    const marker = "// Add your code here";
+    const markerIndex = content.indexOf(marker);
+
+    if (markerIndex !== -1) {
+      return markerIndex + marker.length;
+    }
+  }
+
+  return content.length;
+};
+
+const getEntryIconPath = (entryName: string, isDirectory: boolean): string => {
+  if (isDirectory) {
+    return FOLDER_ICON.replace("/System/Icons/", "/System/Icons/16x16/");
+  }
+
+  const iconPath = getIconByFileExtension(extname(entryName).toLowerCase());
+
+  return iconPath.includes("/16x16/")
+    ? iconPath
+    : iconPath.replace("/System/Icons/", "/System/Icons/16x16/");
+};
 
 const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const workbenchRef = useRef<HTMLDivElement | null>(null);
@@ -38,9 +100,11 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const saveAsInputRef = useRef<HTMLInputElement | null>(null);
   const terminalHistoryRef = useRef<HTMLDivElement | null>(null);
   const terminalInputRef = useRef<HTMLInputElement | null>(null);
-  const autoRenamedRef = useRef(false);
+  const renameInProgressRef = useRef(false);
+  const createInProgressRef = useRef(false);
   const lastExplorerRefreshKeyRef = useRef("");
   const {
+    open: openProcess,
     processes: { [id]: process },
     url: setProcessUrl,
   } = useProcesses();
@@ -60,11 +124,20 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     (value: string): string => value.replace(/\\/g, "/").replace(/\/+/g, "/"),
     []
   );
-  const currentUrl = normalizeFsPath(process?.url || DEFAULT_TEXT_FILE_SAVE_PATH);
+  const currentUrl = normalizeFsPath(process?.url || "");
+  const latestUrlRef = useRef(currentUrl);
+  const [currentUrlTargetType, setCurrentUrlTargetType] =
+    useState<UrlTargetType>("none");
+  const activeFileUrl = currentUrlTargetType === "file" ? currentUrl : "";
   const currentEditor = process?.editor;
   const explorerRoot = useMemo(
-    () => normalizeFsPath(dirname(currentUrl)),
-    [currentUrl, normalizeFsPath]
+    () =>
+      currentUrlTargetType === "directory"
+        ? currentUrl
+        : currentUrl?.startsWith("/")
+          ? normalizeFsPath(dirname(currentUrl))
+          : DESKTOP_PATH,
+    [currentUrl, currentUrlTargetType, normalizeFsPath]
   );
   const [entries, setEntries] = useState<ExplorerEntry[]>([]);
   const [folderContents, setFolderContents] = useState<
@@ -80,7 +153,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [activeView, setActiveView] = useState<"explorer" | "search" | "git">(
     "explorer"
   );
-  const [contextMenu, setContextMenu] = useState<{ x: number; y: number }>();
+  const [contextMenu, setContextMenu] = useState<ContextMenuState>();
   const [creatingEntry, setCreatingEntry] = useState<"file" | "folder">();
   const [creatingParentPath, setCreatingParentPath] = useState<string>(explorerRoot);
   const [newEntryName, setNewEntryName] = useState("");
@@ -99,6 +172,24 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   ]);
   const [terminalInput, setTerminalInput] = useState("");
   const [terminalCwd, setTerminalCwd] = useState<string>(explorerRoot);
+  const [pendingEditorFocusPath, setPendingEditorFocusPath] = useState<string>("");
+  const [pendingCursorOffset, setPendingCursorOffset] = useState<number | undefined>();
+  const [sidePanelWidth, setSidePanelWidth] = useState<number>(() => {
+    if (typeof window === "undefined") return DEFAULT_SIDEBAR_WIDTH;
+
+    const storedWidth = Number.parseInt(
+      window.localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY) || "",
+      10
+    );
+
+    return Number.isFinite(storedWidth) ? storedWidth : DEFAULT_SIDEBAR_WIDTH;
+  });
+  const hasActiveFile = Boolean(activeFileUrl);
+
+  useEffect(() => {
+    latestUrlRef.current = currentUrl;
+  }, [currentUrl]);
+
   const logExplorer = useCallback(
     (message: string, details?: Record<string, unknown>): void => {
       // eslint-disable-next-line no-console
@@ -109,6 +200,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const openFile = useCallback(
     (filePath: string): void => {
       const normalizedPath = normalizeFsPath(filePath);
+
+      setCurrentUrlTargetType("file");
 
       setOpenFiles((currentFiles) =>
         currentFiles.includes(normalizedPath)
@@ -124,9 +217,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     (filePath: string): void => {
       setOpenFiles((currentFiles) => {
         const nextFiles = currentFiles.filter((openFilePath) => openFilePath !== filePath);
-        const nextActiveFile = nextFiles[nextFiles.length - 1] || DEFAULT_TEXT_FILE_SAVE_PATH;
+        const nextActiveFile = nextFiles[nextFiles.length - 1] || "";
 
-        if (filePath === currentUrl) {
+        if (filePath === activeFileUrl) {
           setProcessUrl(id, nextActiveFile);
           setSelectedPath(nextActiveFile);
         }
@@ -134,7 +227,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
         return nextFiles;
       });
     },
-    [currentUrl, id, setProcessUrl]
+    [activeFileUrl, id, setProcessUrl]
   );
   const sortEntries = useCallback(
     (unsortedEntries: ExplorerEntry[]): ExplorerEntry[] =>
@@ -240,7 +333,30 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   }, [expandedFolders, explorerRoot, loadFolder]);
 
   useEffect(() => {
-    const normalizedUrl = normalizeFsPath(currentUrl);
+    if (!currentUrl) {
+      setCurrentUrlTargetType("none");
+      return;
+    }
+
+    const urlAtRequest = currentUrl;
+
+    lstat(currentUrl)
+      .then((stats) => {
+        if (latestUrlRef.current !== urlAtRequest) return;
+
+        setCurrentUrlTargetType(stats.isDirectory() ? "directory" : "file");
+      })
+      .catch(() => {
+        if (latestUrlRef.current !== urlAtRequest) return;
+
+        setCurrentUrlTargetType("file");
+      });
+  }, [currentUrl, lstat]);
+
+  useEffect(() => {
+    if (!activeFileUrl) return;
+
+    const normalizedUrl = normalizeFsPath(activeFileUrl);
 
     setOpenFiles((currentFiles) =>
       currentFiles.includes(normalizedUrl)
@@ -248,7 +364,16 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
         : [...currentFiles, normalizedUrl]
     );
     setSelectedPath((currentSelectedPath) => currentSelectedPath || normalizedUrl);
-  }, [currentUrl, normalizeFsPath]);
+  }, [activeFileUrl, normalizeFsPath]);
+
+  useEffect(() => {
+    if (currentUrlTargetType !== "directory" || !currentUrl) return;
+
+    setOpenFiles((currentFiles) =>
+      currentFiles.filter((openFilePath) => openFilePath !== currentUrl)
+    );
+    setSelectedPath((currentSelectedPath) => currentSelectedPath || currentUrl);
+  }, [currentUrl, currentUrlTargetType]);
 
   useEffect(() => {
     setExpandedFolders((curr) =>
@@ -324,6 +449,39 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     setActiveMenu((currentMenu) => (currentMenu === menuName ? "" : menuName));
   }, []);
 
+  const startSidebarResize = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>): void => {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const workbench = workbenchRef.current;
+
+      if (!workbench) return;
+
+      const workbenchRect = workbench.getBoundingClientRect();
+      const activityBarWidth = 52;
+      const splitterWidth = 4;
+      const minWidth = 150;
+      const maxWidth = Math.max(
+        minWidth,
+        workbenchRect.width - activityBarWidth - splitterWidth - 260
+      );
+
+      const onMouseMove = (moveEvent: MouseEvent): void => {
+        const desiredWidth = moveEvent.clientX - workbenchRect.left - activityBarWidth;
+
+        setSidePanelWidth(Math.max(minWidth, Math.min(maxWidth, desiredWidth)));
+      };
+      const onMouseUp = (): void => {
+        window.removeEventListener("mousemove", onMouseMove);
+      };
+
+      window.addEventListener("mousemove", onMouseMove);
+      window.addEventListener("mouseup", onMouseUp, { once: true });
+    },
+    []
+  );
+
   useEffect(() => {
     const currentWorkbench = workbenchRef.current;
 
@@ -338,6 +496,15 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
 
       if (compact) {
         setPanelOpen((currentOpen) => (currentOpen ? false : currentOpen));
+      }
+
+      if (!compact) {
+        const minWidth = 150;
+        const maxWidth = Math.max(minWidth, width - 52 - 4 - 260);
+
+        setSidePanelWidth((currentWidth) =>
+          Math.max(minWidth, Math.min(maxWidth, currentWidth))
+        );
       }
     };
 
@@ -357,6 +524,15 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   }, [explorerRoot]);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    window.localStorage.setItem(
+      SIDEBAR_WIDTH_STORAGE_KEY,
+      `${Math.round(sidePanelWidth)}`
+    );
+  }, [sidePanelWidth]);
+
+  useEffect(() => {
     if (!creatingEntry) return;
 
     requestAnimationFrame(() => {
@@ -369,15 +545,18 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     if (!renamingId || !renameInputRef.current) return;
 
     const renameInput = renameInputRef.current;
-    const extensionIndex = draftName.lastIndexOf(".");
+    const initialName = basename(renamingId);
+    const extensionIndex = initialName.lastIndexOf(".");
     const hasSelectableBaseName = extensionIndex > 0;
-    const selectionEnd = hasSelectableBaseName ? extensionIndex : draftName.length;
+    const selectionEnd = hasSelectableBaseName
+      ? extensionIndex
+      : initialName.length;
 
     requestAnimationFrame(() => {
       renameInput.focus();
       renameInput.setSelectionRange(0, selectionEnd);
     });
-  }, [draftName, renamingId]);
+  }, [renamingId]);
 
   useEffect(() => {
     const lineCount = terminalHistory.length;
@@ -610,24 +789,6 @@ function example() {
   }, []);
 
   useEffect(() => {
-    if (autoRenamedRef.current) return;
-    if (currentUrl !== normalizeFsPath(DEFAULT_TEXT_FILE_SAVE_PATH)) return;
-
-    if (!panelOpen) setPanelOpen(true);
-    setActiveView("explorer");
-
-    setExpandedFolders((curr) =>
-      curr.includes(explorerRoot) ? curr : [explorerRoot, ...curr]
-    );
-
-    setSelectedPath(currentUrl);
-
-    autoRenamedRef.current = true;
-
-    requestAnimationFrame(() => startRename(currentUrl));
-  }, [currentUrl, explorerRoot, panelOpen, normalizeFsPath, startRename]);
-
-  useEffect(() => {
     if (!renamingId) return;
 
     requestAnimationFrame(() => {
@@ -654,37 +815,53 @@ function example() {
 
   const commitNewEntry = useCallback(async (): Promise<void> => {
     if (!creatingEntry) return;
+    if (createInProgressRef.current) return;
 
-    logExplorer("commitNewEntry", {
-      creatingEntry,
-      creatingParentPath,
-      entriesCount: (folderContents[creatingParentPath] || []).length,
-      newEntryName,
-    });
+    createInProgressRef.current = true;
 
-    const nameError = await getSiblingNameError(newEntryName, creatingParentPath);
+    try {
+      logExplorer("commitNewEntry", {
+        creatingEntry,
+        creatingParentPath,
+        entriesCount: (folderContents[creatingParentPath] || []).length,
+        newEntryName,
+      });
 
-    if (nameError) {
-      setNewEntryError(nameError);
-      requestAnimationFrame(() => newEntryInputRef.current?.focus());
-      return;
-    }
+      const nameError = await getSiblingNameError(newEntryName, creatingParentPath);
 
-    const createdPath = await createEntry(
-      creatingParentPath,
-      creatingEntry === "folder",
-      newEntryName.trim()
-    );
+      if (nameError) {
+        setNewEntryError(nameError);
+        requestAnimationFrame(() => newEntryInputRef.current?.focus());
+        return;
+      }
 
-    if (createdPath) {
-      setExpandedFolders((currentFolders) =>
-        currentFolders.includes(creatingParentPath)
-          ? currentFolders
-          : [...currentFolders, creatingParentPath]
+      const createdPath = await createEntry(
+        creatingParentPath,
+        creatingEntry === "folder",
+        newEntryName.trim()
       );
-      setCreatingEntry(undefined);
-      setNewEntryName("");
-      setNewEntryError("");
+
+      if (createdPath) {
+        setExpandedFolders((currentFolders) =>
+          currentFolders.includes(creatingParentPath)
+            ? currentFolders
+            : [...currentFolders, creatingParentPath]
+        );
+        setCreatingEntry(undefined);
+        setNewEntryName("");
+        setNewEntryError("");
+
+        if (creatingEntry === "file") {
+          setPendingEditorFocusPath(createdPath);
+
+          const createdContent =
+            (await readFile(createdPath).catch(() => Buffer.from("")))?.toString() || "";
+
+          setPendingCursorOffset(getTemplateCursorOffset(createdPath, createdContent));
+        }
+      }
+    } finally {
+      createInProgressRef.current = false;
     }
   }, [
     createEntry,
@@ -694,6 +871,7 @@ function example() {
     getSiblingNameError,
     logExplorer,
     newEntryName,
+    readFile,
   ]);
   const deleteSelectedEntry = useCallback(
     async (confirmed = false): Promise<void> => {
@@ -727,39 +905,88 @@ function example() {
 
   const commitRename = useCallback(async (): Promise<void> => {
     if (!renamingId) return;
+    if (renameInProgressRef.current) return;
 
-    const parentPath = dirname(renamingId);
-
-    logExplorer("commitRename", {
-      draftName,
-      entriesCount: (folderContents[parentPath] || []).length,
-      parentPath,
-      renamingId,
-    });
-
-    const nameError = await getSiblingNameError(draftName, parentPath, renamingId);
-
-    if (nameError) {
-      setRenameError(nameError);
-      requestAnimationFrame(() => renameInputRef.current?.focus());
-      return;
-    }
-
-    const nextName = draftName.trim();
-    const nextPath = normalizeFsPath(`${dirname(renamingId)}/${nextName}`);
-
-    if (nextPath === renamingId) {
-      setRenamingId(undefined);
-      setDraftName("");
-      setRenameError("");
-      return;
-    }
+    renameInProgressRef.current = true;
 
     try {
-      const renamed = await rename(renamingId, nextPath);
+      const parentPath = dirname(renamingId);
 
-      if (!renamed) {
-        console.error("Could not rename entry.");
+      logExplorer("commitRename", {
+        draftName,
+        entriesCount: (folderContents[parentPath] || []).length,
+        parentPath,
+        renamingId,
+      });
+
+      const nameError = await getSiblingNameError(
+        draftName,
+        parentPath,
+        renamingId
+      );
+
+      if (nameError) {
+        setRenameError(nameError);
+        requestAnimationFrame(() => renameInputRef.current?.focus());
+        return;
+      }
+
+      const nextName = draftName.trim();
+      const nextPath = normalizeFsPath(`${dirname(renamingId)}/${nextName}`);
+
+      if (nextPath === renamingId) {
+        setRenamingId(undefined);
+        setDraftName("");
+        setRenameError("");
+        return;
+      }
+
+      let renameCompleted = false;
+      const sourceExists = await exists(renamingId);
+
+      if (!sourceExists && currentUrl === renamingId && currentEditor) {
+        await writeFile(nextPath, currentEditor.getValue(), true);
+        renameCompleted = true;
+      } else {
+        renameCompleted = await rename(renamingId, nextPath);
+      }
+
+      if (!renameCompleted) {
+        try {
+          const previousEntryStats = await lstat(renamingId);
+
+          if (previousEntryStats.isDirectory()) {
+            setRenameError("Could not rename folder.");
+            requestAnimationFrame(() => renameInputRef.current?.focus());
+            return;
+          }
+
+          const previousContent = await readFile(renamingId);
+
+          await writeFile(nextPath, previousContent, true);
+          await unlink(renamingId);
+          renameCompleted = true;
+        } catch {
+          const [oldExists, newExists] = await Promise.all([
+            exists(renamingId),
+            exists(nextPath),
+          ]);
+
+          if (newExists) {
+            if (oldExists) {
+              await unlink(renamingId).catch(() => {
+                // Ignore cleanup failures for stale source path
+              });
+            }
+
+            renameCompleted = true;
+          }
+        }
+      }
+
+      if (!renameCompleted) {
+        setRenameError("Could not rename entry.");
+        requestAnimationFrame(() => renameInputRef.current?.focus());
         return;
       }
 
@@ -788,19 +1015,27 @@ function example() {
       });
     } catch (error) {
       console.error("Could not rename entry:", error);
+    } finally {
+      renameInProgressRef.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    currentEditor,
     currentUrl,
     draftName,
+    exists,
     folderContents,
     getSiblingNameError,
     id,
+    lstat,
     logExplorer,
     normalizeFsPath,
+    readFile,
     rename,
     renamingId,
     selectedPath,
+    unlink,
+    writeFile,
   ]);
   const saveCurrentFile = useCallback(async (): Promise<void> => {
     const [saveUrl, saveData] = getSaveFileInfo(currentUrl, currentEditor);
@@ -1126,6 +1361,14 @@ function example() {
         return;
       }
 
+      if (menuAction === "rename") {
+        if (selectedPath) {
+          startRename(selectedPath);
+        }
+
+        return;
+      }
+
       if (menuAction === "refresh") {
         await loadEntries();
         return;
@@ -1153,6 +1396,11 @@ function example() {
         return;
       }
 
+      if (menuAction === "reset-sidebar-width") {
+        setSidePanelWidth(DEFAULT_SIDEBAR_WIDTH);
+        return;
+      }
+
       if (menuAction === "toggle-terminal") {
         setIsTerminalPanelOpen((currentOpen) => !currentOpen);
       }
@@ -1169,8 +1417,9 @@ function example() {
       openSaveAsDialog,
       resolveTargetFolder,
       saveCurrentFile,
-      saveCurrentFileAs,
+      selectedPath,
       setProcessUrl,
+      startRename,
     ]
   );
 
@@ -1191,7 +1440,7 @@ function example() {
 
       if (isCtrlOrMeta && !event.shiftKey && event.key.toLowerCase() === "w") {
         event.preventDefault();
-        closeFile(currentUrl);
+        closeFile(activeFileUrl);
         return;
       }
 
@@ -1213,7 +1462,7 @@ function example() {
 
     return () =>
       document.removeEventListener("keydown", handleWorkbenchShortcuts);
-  }, [closeFile, currentUrl, openSaveAsDialog, runMenuAction, selectedPath, startRename]);
+  }, [activeFileUrl, closeFile, openSaveAsDialog, runMenuAction, selectedPath, startRename]);
 
   useEffect(() => {
     if (!isSaveAsOpen) return;
@@ -1229,10 +1478,12 @@ function example() {
   useEffect(() => {
     if (selectedPath) return;
 
-    const initialSelection = openFiles[openFiles.length - 1] || currentUrl;
+    const initialSelection =
+      openFiles[openFiles.length - 1] ||
+      (currentUrlTargetType === "directory" ? currentUrl : activeFileUrl);
 
     setSelectedPath(initialSelection);
-  }, [currentUrl, openFiles, selectedPath]);
+  }, [activeFileUrl, currentUrl, currentUrlTargetType, openFiles, selectedPath]);
 
   useEffect(() => {
     if (!currentEditor) return;
@@ -1253,7 +1504,44 @@ function example() {
     });
 
     return () => cancelAnimationFrame(frameId);
-  }, [creatingEntry, currentEditor, currentUrl, renamingId]);
+  }, [creatingEntry, currentEditor, renamingId]);
+
+  useEffect(() => {
+    if (!pendingEditorFocusPath) return;
+    if (creatingEntry) return;
+    if (!currentEditor) return;
+    if (activeFileUrl !== pendingEditorFocusPath) return;
+
+    const frameId = requestAnimationFrame(() => {
+      currentEditor.updateOptions({
+        domReadOnly: false,
+        readOnly: false,
+      });
+      currentEditor.focus();
+
+      const model = currentEditor.getModel();
+
+      if (model && typeof pendingCursorOffset === "number") {
+        const position = model.getPositionAt(
+          Math.max(0, Math.min(pendingCursorOffset, model.getValueLength()))
+        );
+
+        currentEditor.setPosition(position);
+        currentEditor.revealPositionInCenterIfOutsideViewport(position);
+      }
+
+      setPendingEditorFocusPath("");
+      setPendingCursorOffset(undefined);
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [
+    creatingEntry,
+    currentEditor,
+    activeFileUrl,
+    pendingCursorOffset,
+    pendingEditorFocusPath,
+  ]);
 
   return (
     <AppContainer
@@ -1266,6 +1554,7 @@ function example() {
           ref={workbenchRef}
           className={`workbench ${panelOpen ? "panel-open" : "panel-closed"} ${isCompactLayout ? "compact-layout" : ""
             }`}
+          style={{ ["--side-panel-width" as string]: `${sidePanelWidth}px` }}
         >
           <header className="menu-bar">
             <ol>
@@ -1327,6 +1616,7 @@ function example() {
                 {activeMenu === "view" && (
                   <menu className="menu-dropdown">
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("toggle-sidebar"); }} onMouseDown={(e) => e.preventDefault()} type="button">Toggle Side Bar</button></li>
+                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("reset-sidebar-width"); }} onMouseDown={(e) => e.preventDefault()} type="button">Reset Sidebar Width</button></li>
                   </menu>
                 )}
               </li>
@@ -1362,7 +1652,7 @@ function example() {
               title="Explorer"
               type="button"
             >
-              E
+              🗂
             </button>
             <button
               className={activeView === "search" ? "active" : ""}
@@ -1375,7 +1665,7 @@ function example() {
               title="Search"
               type="button"
             >
-              S
+              🔍
             </button>
             <button
               className={activeView === "git" ? "active" : ""}
@@ -1388,7 +1678,7 @@ function example() {
               title="Source Control"
               type="button"
             >
-              G
+              ⎇
             </button>
             <button
               onClick={() => {
@@ -1452,36 +1742,106 @@ function example() {
                 <>
                   <p className="section-title">Open Editors</p>
                   <ol className="open-editors">
-                    {openFiles.map((openFilePath) => (
-                      <li key={openFilePath}>
-                        <button
-                          className={openFilePath === currentUrl ? "active" : ""}
-                          onClick={() => openFile(openFilePath)}
-                          title={openFilePath}
-                          type="button"
-                        >
-                          <span>●</span>
-                          {basename(openFilePath)}
-                        </button>
-                        <button
-                          className="close"
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            closeFile(openFilePath);
-                          }}
-                          title={`Close ${basename(openFilePath)}`}
-                          type="button"
-                        >
-                          ×
-                        </button>
-                      </li>
-                    ))}
+                    {openFiles.map((openFilePath) => {
+                      if (renamingId === openFilePath) {
+                        return (
+                          <li key={openFilePath} className="entry-editing" data-path={openFilePath}>
+                            <div className="entry-input-wrap">
+                              <input
+                                ref={renameInputRef}
+                                className="entry-input"
+                                onBlur={commitRename}
+                                onChange={(event) => {
+                                  setDraftName(event.currentTarget.value);
+                                  if (renameError) {
+                                    setRenameError("");
+                                  }
+                                }}
+                                onClick={(event) => event.stopPropagation()}
+                                onKeyDown={(event) => {
+                                  event.stopPropagation();
+
+                                  if (event.key === "Enter") {
+                                    event.preventDefault();
+                                    commitRename();
+                                  } else if (event.key === "Escape") {
+                                    setRenamingId(undefined);
+                                    setDraftName("");
+                                    setRenameError("");
+                                  }
+                                }}
+                                type="text"
+                                value={draftName}
+                              />
+                              {renameError && (
+                                <span className="entry-error">{renameError}</span>
+                              )}
+                            </div>
+                          </li>
+                        );
+                      }
+
+                      return (
+                        <li key={openFilePath}>
+                          <button
+                            className={openFilePath === activeFileUrl ? "active" : ""}
+                            onClick={() => openFile(openFilePath)}
+                            onContextMenu={(event) => {
+                              event.preventDefault();
+                              event.stopPropagation();
+                              setSelectedPath(openFilePath);
+                              setContextMenu({
+                                directoryPath: normalizeFsPath(dirname(openFilePath)),
+                                targetIsDirectory: false,
+                                targetPath: openFilePath,
+                                x: event.clientX,
+                                y: event.clientY,
+                              });
+                            }}
+                            title={openFilePath}
+                            type="button"
+                          >
+                            <span className="file-icon">
+                              <img alt="" src={getEntryIconPath(basename(openFilePath), false)} />
+                            </span>
+                            {basename(openFilePath)}
+                          </button>
+                          <button
+                            className="close"
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              closeFile(openFilePath);
+                            }}
+                            title={`Close ${basename(openFilePath)}`}
+                            type="button"
+                          >
+                            ×
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ol>
                   <p className="section-title">Folder</p>
                   <p className="folder-title">{basename(explorerRoot) || "Root"}</p>
                   <ol
                     ref={folderEntriesRef}
                     className="folder-entries"
+                    onContextMenu={(event) => {
+                      const target = event.target as HTMLElement;
+                      const clickedEntry = target.closest("li[data-path]");
+
+                      if (clickedEntry) {
+                        return;
+                      }
+
+                      event.preventDefault();
+                      setContextMenu({
+                        directoryPath: explorerRoot,
+                        targetIsDirectory: true,
+                        x: event.clientX,
+                        y: event.clientY,
+                      });
+                    }}
                   >
                     {explorerEntries.length === 0 && !creatingEntry && (
                       <li className="placeholder">No files</li>
@@ -1505,7 +1865,7 @@ function example() {
                                 style={{ paddingLeft: explorerPadding }}
                               >
                                 <span className="entry-icon">
-                                  {isDirectory ? "D" : "F"}
+                                  <img alt="" src={getEntryIconPath(name, isDirectory)} />
                                 </span>
                                 <div className="entry-input-wrap">
                                   <input
@@ -1561,9 +1921,9 @@ function example() {
                         const itemPath = path;
                         const isExpandedFolder =
                           isDirectory && expandedFolders.includes(itemPath);
-                        const isActive = !isDirectory && itemPath === currentUrl;
+                        const isActive = !isDirectory && itemPath === activeFileUrl;
 
-                        if (renamingId === itemPath) {
+                        if (renamingId === itemPath && !openFiles.includes(itemPath)) {
                           return (
                             <li key={itemId} className="entry-editing" data-path={itemPath}>
                               <div
@@ -1571,7 +1931,7 @@ function example() {
                                 style={{ paddingLeft: explorerPadding }}
                               >
                                 <span className="entry-icon">
-                                  {isDirectory ? "D" : "F"}
+                                  <img alt="" src={getEntryIconPath(name, isDirectory)} />
                                 </span>
                                 <div className="entry-input-wrap">
                                   <input
@@ -1629,12 +1989,15 @@ function example() {
                               onContextMenu={(e) => {
                                 e.preventDefault();
                                 setSelectedPath(itemPath);
-                                setContextMenu({ x: e.clientX, y: e.clientY });
-                              }}
-                              onDoubleClick={() => {
-                                if (!isDirectory) {
-                                  startRename(itemPath);
-                                }
+                                setContextMenu({
+                                  directoryPath: isDirectory
+                                    ? itemPath
+                                    : normalizeFsPath(dirname(itemPath)),
+                                  targetIsDirectory: isDirectory,
+                                  targetPath: itemPath,
+                                  x: e.clientX,
+                                  y: e.clientY,
+                                });
                               }}
                               style={{ paddingLeft: explorerPadding }}
                               title={itemPath}
@@ -1644,7 +2007,7 @@ function example() {
                                 {isDirectory ? (isExpandedFolder ? "▾" : "▸") : "•"}
                               </span>
                               <span className="entry-icon">
-                                {isDirectory ? "D" : "F"}
+                                <img alt="" src={getEntryIconPath(name, isDirectory)} />
                               </span>
                               <span className="entry-label">{name}</span>
                             </button>
@@ -1773,34 +2136,74 @@ function example() {
                     top: `${contextMenu.y}px`,
                   }}
                 >
-                  <button
-                    className="context-menu-action"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      runMenuAction("new-file");
-                      setContextMenu(undefined);
-                    }}
-                    type="button"
-                  >
-                    New File
-                  </button>
-                  <button
-                    className="context-menu-action"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      runMenuAction("new-folder");
-                      setContextMenu(undefined);
-                    }}
-                    type="button"
-                  >
-                    New Folder
-                  </button>
-                  {selectedPath && (
+                  {contextMenu.targetIsDirectory && (
+                    <>
+                      <button
+                        className="context-menu-action"
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          if (contextMenu.directoryPath) {
+                            setSelectedPath(contextMenu.directoryPath);
+                          }
+
+                          runMenuAction("new-file");
+                          setContextMenu(undefined);
+                        }}
+                        type="button"
+                      >
+                        New File...
+                      </button>
+                      <button
+                        className="context-menu-action"
+                        onClick={(e) => {
+                          e.stopPropagation();
+
+                          if (contextMenu.directoryPath) {
+                            setSelectedPath(contextMenu.directoryPath);
+                          }
+
+                          runMenuAction("new-folder");
+                          setContextMenu(undefined);
+                        }}
+                        type="button"
+                      >
+                        New Folder...
+                      </button>
+                    </>
+                  )}
+                  {!contextMenu.targetIsDirectory && contextMenu.targetPath && (
                     <button
                       className="context-menu-action"
                       onClick={(e) => {
                         e.stopPropagation();
-                        startRename(selectedPath);
+
+                        const targetPath = contextMenu.targetPath as string;
+                        const targetName = basename(targetPath).toLowerCase();
+
+                        if (targetName === "index.html" || targetName === "index.htm") {
+                          openProcess("Browser", { url: targetPath });
+                        } else {
+                          openFile(targetPath);
+                        }
+
+                        setContextMenu(undefined);
+                      }}
+                      type="button"
+                    >
+                      Open
+                    </button>
+                  )}
+                  {contextMenu.targetPath && (
+                    <button
+                      className="context-menu-action"
+                      onClick={(e) => {
+                        e.stopPropagation();
+
+                        const targetPath = contextMenu.targetPath as string;
+
+                        setSelectedPath(targetPath);
+                        startRename(targetPath);
                         setContextMenu(undefined);
                       }}
                       type="button"
@@ -1808,10 +2211,15 @@ function example() {
                       Rename
                     </button>
                   )}
+                  {contextMenu.targetPath && <div className="context-menu-separator" />}
                   <button
                     className="context-menu-action"
                     onClick={(e) => {
                       e.stopPropagation();
+                      if (contextMenu.targetPath) {
+                        setSelectedPath(contextMenu.targetPath);
+                      }
+
                       runMenuAction("delete");
                       setContextMenu(undefined);
                     }}
@@ -1819,44 +2227,75 @@ function example() {
                   >
                     Delete
                   </button>
+                  <button
+                    className="context-menu-action"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      runMenuAction("refresh");
+                      setContextMenu(undefined);
+                    }}
+                    type="button"
+                  >
+                    Refresh Explorer
+                  </button>
                 </div>
               )}
             </aside>
           )}
 
+          {panelOpen && !isCompactLayout && (
+            <button
+              aria-label="Resize Explorer panel"
+              className="sidebar-splitter"
+              onMouseDown={startSidebarResize}
+              type="button"
+            />
+          )}
+
           <main className="editor-area">
-            <div className="breadcrumbs">
-              {explorerRoot}
-              {" > "}
-              {basename(currentUrl)}
-            </div>
-            <header className="tabs">
-              {openFiles.length === 0 && <span className="empty-tab">No open files</span>}
-              {openFiles.map((openFilePath) => (
-                <div
-                  key={openFilePath}
-                  className={`tab ${openFilePath === currentUrl ? "active" : ""}`}
-                >
-                  <button
-                    className="open"
-                    onClick={() => openFile(openFilePath)}
-                    title={openFilePath}
-                    type="button"
-                  >
-                    {basename(openFilePath)}
-                  </button>
-                  <button
-                    className="close"
-                    onClick={() => closeFile(openFilePath)}
-                    title={`Close ${basename(openFilePath)}`}
-                    type="button"
-                  >
-                    ×
-                  </button>
+            {hasActiveFile ? (
+              <>
+                <div className="breadcrumbs">
+                  {explorerRoot}
+                  {" > "}
+                  {basename(activeFileUrl)}
                 </div>
-              ))}
-            </header>
-            <div className="editor-host" data-monaco-editor-host />
+                <header className="tabs">
+                  {openFiles.length === 0 && <span className="empty-tab">No open files</span>}
+                  {openFiles.map((openFilePath) => (
+                    <div
+                      key={openFilePath}
+                      className={`tab ${openFilePath === activeFileUrl ? "active" : ""}`}
+                    >
+                      <button
+                        className="open"
+                        onClick={() => openFile(openFilePath)}
+                        title={openFilePath}
+                        type="button"
+                      >
+                        <span className="file-icon">
+                          <img alt="" src={getEntryIconPath(basename(openFilePath), false)} />
+                        </span>
+                        {basename(openFilePath)}
+                      </button>
+                      <button
+                        className="close"
+                        onClick={() => closeFile(openFilePath)}
+                        title={`Close ${basename(openFilePath)}`}
+                        type="button"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ))}
+                </header>
+                <div className="editor-host" data-monaco-editor-host />
+              </>
+            ) : (
+              <section aria-label="No file open" className="editor-empty-state">
+                <span className="editor-empty-logo">DH</span>
+              </section>
+            )}
           </main>
         </div>
         {isTerminalPanelOpen && (
