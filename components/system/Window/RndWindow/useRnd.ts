@@ -104,7 +104,7 @@ const useRnd = (id: string): Props => {
       );
 
       if (newPosition.y < 0) {
-        boundedSize.height += newPosition.y;
+        boundedSize.height = pxToNum(boundedSize.height) + newPosition.y;
         newPosition.y = 0;
       }
 
