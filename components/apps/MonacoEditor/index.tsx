@@ -1,6 +1,13 @@
 import { basename, dirname, extname } from "path";
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { getIconByFileExtension } from "components/system/Files/FileEntry/functions";
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
+import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
+import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
+import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
+import AudiotrackRoundedIcon from "@mui/icons-material/AudiotrackRounded";
+import MovieRoundedIcon from "@mui/icons-material/MovieRounded";
+import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
+import CreateNewFolderRoundedIcon from "@mui/icons-material/CreateNewFolderRounded";
 import { getSaveFileInfo } from "components/apps/MonacoEditor/functions";
 import StatusBar from "components/apps/MonacoEditor/StatusBar";
 import StyledMonacoEditor from "components/apps/MonacoEditor/StyledMonacoEditor";
@@ -13,7 +20,6 @@ import { trackActivityEvent } from "utils/activityRuntime";
 import {
   DEFAULT_TEXT_FILE_SAVE_PATH,
   DESKTOP_PATH,
-  FOLDER_ICON,
 } from "utils/constants";
 
 type ExplorerEntry = {
@@ -80,16 +86,89 @@ const getTemplateCursorOffset = (filePath: string, content: string): number => {
   return content.length;
 };
 
-const getEntryIconPath = (entryName: string, isDirectory: boolean): string => {
+const getEntryIcon = (
+  entryName: string,
+  isDirectory: boolean
+): ReactElement => {
   if (isDirectory) {
-    return FOLDER_ICON.replace("/System/Icons/", "/System/Icons/16x16/");
+    return <FolderRoundedIcon sx={{ color: "rgb(219 176 92)" }} />;
   }
 
-  const iconPath = getIconByFileExtension(extname(entryName).toLowerCase());
+  const extension = extname(entryName).toLowerCase();
+  const imageExtensions = new Set([
+    ".avif",
+    ".bmp",
+    ".gif",
+    ".heic",
+    ".ico",
+    ".jpeg",
+    ".jpg",
+    ".png",
+    ".svg",
+    ".webp",
+  ]);
+  const audioExtensions = new Set([
+    ".aac",
+    ".flac",
+    ".m4a",
+    ".mp3",
+    ".ogg",
+    ".wav",
+    ".wma",
+  ]);
+  const videoExtensions = new Set([
+    ".avi",
+    ".m4v",
+    ".mkv",
+    ".mov",
+    ".mp4",
+    ".webm",
+    ".wmv",
+  ]);
+  const codeExtensions = new Set([
+    ".c",
+    ".cpp",
+    ".css",
+    ".go",
+    ".html",
+    ".java",
+    ".js",
+    ".json",
+    ".jsx",
+    ".md",
+    ".php",
+    ".py",
+    ".rb",
+    ".rs",
+    ".scss",
+    ".sh",
+    ".sql",
+    ".toml",
+    ".ts",
+    ".tsx",
+    ".txt",
+    ".xml",
+    ".yaml",
+    ".yml",
+  ]);
 
-  return iconPath.includes("/16x16/")
-    ? iconPath
-    : iconPath.replace("/System/Icons/", "/System/Icons/16x16/");
+  if (imageExtensions.has(extension)) {
+    return <ImageRoundedIcon sx={{ color: "rgb(171 136 255)" }} />;
+  }
+
+  if (audioExtensions.has(extension)) {
+    return <AudiotrackRoundedIcon sx={{ color: "rgb(255 179 102)" }} />;
+  }
+
+  if (videoExtensions.has(extension)) {
+    return <MovieRoundedIcon sx={{ color: "rgb(255 140 140)" }} />;
+  }
+
+  if (codeExtensions.has(extension)) {
+    return <CodeRoundedIcon sx={{ color: "rgb(97 197 255)" }} />;
+  }
+
+  return <DescriptionRoundedIcon sx={{ color: "rgb(188 188 188)" }} />;
 };
 
 const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
@@ -1720,7 +1799,7 @@ function example() {
                         title="New File"
                         type="button"
                       >
-                        +F
+                        <NoteAddRoundedIcon fontSize="small" />
                       </button>
                       <button
                         className="icon-action"
@@ -1731,7 +1810,7 @@ function example() {
                         title="New Folder"
                         type="button"
                       >
-                        +D
+                        <CreateNewFolderRoundedIcon fontSize="small" />
                       </button>
                     </div>
                   )}
@@ -1802,7 +1881,7 @@ function example() {
                             type="button"
                           >
                             <span className="file-icon">
-                              <img alt="" src={getEntryIconPath(basename(openFilePath), false)} />
+                              {getEntryIcon(basename(openFilePath), false)}
                             </span>
                             {basename(openFilePath)}
                           </button>
@@ -1865,7 +1944,7 @@ function example() {
                                 style={{ paddingLeft: explorerPadding }}
                               >
                                 <span className="entry-icon">
-                                  <img alt="" src={getEntryIconPath(name, isDirectory)} />
+                                  {getEntryIcon(name, isDirectory)}
                                 </span>
                                 <div className="entry-input-wrap">
                                   <input
@@ -1931,7 +2010,7 @@ function example() {
                                 style={{ paddingLeft: explorerPadding }}
                               >
                                 <span className="entry-icon">
-                                  <img alt="" src={getEntryIconPath(name, isDirectory)} />
+                                  {getEntryIcon(name, isDirectory)}
                                 </span>
                                 <div className="entry-input-wrap">
                                   <input
@@ -2007,7 +2086,7 @@ function example() {
                                 {isDirectory ? (isExpandedFolder ? "▾" : "▸") : "•"}
                               </span>
                               <span className="entry-icon">
-                                <img alt="" src={getEntryIconPath(name, isDirectory)} />
+                                {getEntryIcon(name, isDirectory)}
                               </span>
                               <span className="entry-label">{name}</span>
                             </button>
@@ -2274,7 +2353,7 @@ function example() {
                         type="button"
                       >
                         <span className="file-icon">
-                          <img alt="" src={getEntryIconPath(basename(openFilePath), false)} />
+                          {getEntryIcon(basename(openFilePath), false)}
                         </span>
                         {basename(openFilePath)}
                       </button>

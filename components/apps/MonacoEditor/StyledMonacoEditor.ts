@@ -346,17 +346,15 @@ const StyledMonacoEditor = styled.div`
           .file-icon {
             color: rgb(180 180 180);
             display: inline-flex;
-            font-size: 11px;
+            font-size: 14px;
             justify-content: center;
             min-width: 16px;
             width: 16px;
 
-            img {
+            svg {
               display: block;
-              height: 14px;
-              object-fit: contain;
+              font-size: 14px;
               pointer-events: none;
-              width: 14px;
             }
           }
         }
@@ -426,17 +424,15 @@ const StyledMonacoEditor = styled.div`
         .entry-icon {
           align-items: center;
           display: inline-flex;
-          font-size: 11px;
+          font-size: 14px;
           justify-content: center;
           min-width: 16px;
           width: 16px;
 
-          img {
+          svg {
             display: block;
-            height: 14px;
-            object-fit: contain;
+            font-size: 14px;
             pointer-events: none;
-            width: 14px;
           }
         }
 
@@ -475,7 +471,7 @@ const StyledMonacoEditor = styled.div`
 
     .entry-icon {
       color: rgb(135 135 135);
-      width: 12px;
+      width: 16px;
     }
 
     .entry-input {
@@ -628,17 +624,15 @@ const StyledMonacoEditor = styled.div`
         .file-icon {
           color: rgb(180 180 180);
           display: inline-flex;
-          font-size: 11px;
+          font-size: 14px;
           justify-content: center;
           min-width: 16px;
           width: 16px;
 
-          img {
+          svg {
             display: block;
-            height: 14px;
-            object-fit: contain;
+            font-size: 14px;
             pointer-events: none;
-            width: 14px;
           }
         }
       }
