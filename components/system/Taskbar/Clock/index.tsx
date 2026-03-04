@@ -14,6 +14,7 @@ import {
   ONE_TIME_PASSIVE_EVENT,
   TASKBAR_HEIGHT,
 } from "utils/constants";
+import { t } from "utils/i18n";
 import { createOffscreenCanvas } from "utils/functions";
 import { useMenuPreload } from "hooks/useMenuPreload";
 
@@ -72,7 +73,7 @@ const Clock: FC<ClockProps> = ({
     Object.create(null) as LocaleTimeDate
   );
   const { date, time } = now;
-  const { clockSource } = useSession();
+  const { clockSource, language } = useSession();
   const clockWorkerInit = useCallback(
     () =>
       new Worker(
@@ -177,6 +178,10 @@ const Clock: FC<ClockProps> = ({
   }, [clockSource]);
 
   useEffect(() => {
+    currentWorker.current?.postMessage({ locale: language });
+  }, [currentWorker, language]);
+
+  useEffect(() => {
     if (supportsOffscreenCanvas) {
       const monitorPixelRatio = (): void =>
         window
@@ -205,7 +210,7 @@ const Clock: FC<ClockProps> = ({
       ref={supportsOffscreenCanvas ? clockCallbackRef : undefined}
       $hasAI={hasAI}
       $width={width}
-      aria-label="Clock"
+      aria-label={t(language, "taskbar.clock")}
       onClick={onClockClick}
       role="timer"
       title={date}

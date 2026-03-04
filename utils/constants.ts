@@ -1,6 +1,10 @@
 import { type AsyncZipOptions } from "fflate";
 import { type Size } from "components/system/Window/RndWindow/useResizable";
-import { type ClockSource, type WallpaperFit } from "contexts/session/types";
+import {
+  type ClockSource,
+  type SessionLanguage,
+  type WallpaperFit,
+} from "contexts/session/types";
 import { type ThemeName } from "styles/themes";
 
 export const BASE_2D_CONTEXT_OPTIONS: CanvasRenderingContext2DSettings = {
@@ -15,6 +19,8 @@ export const IFRAME_CONFIG = {
 };
 
 export const DEFAULT_LOCALE = "en";
+
+export const DEFAULT_LANGUAGE: SessionLanguage = "en";
 
 export const DEFAULT_ASCENDING = true;
 

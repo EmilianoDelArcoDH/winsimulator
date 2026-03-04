@@ -3,9 +3,11 @@ import StartButtonIcon from "components/system/Taskbar/StartButton/StartButtonIc
 import StyledTaskbarButton from "components/system/Taskbar/StyledTaskbarButton";
 import {
   importStartMenu,
-  START_BUTTON_TITLE,
+  START_BUTTON_ID,
 } from "components/system/Taskbar/functions";
 import useTaskbarContextMenu from "components/system/Taskbar/useTaskbarContextMenu";
+import { useSession } from "contexts/session";
+import { t } from "utils/i18n";
 import { DIV_BUTTON_PROPS } from "utils/constants";
 import { label, preloadImage } from "utils/functions";
 import { useMenuPreload } from "hooks/useMenuPreload";
@@ -29,6 +31,7 @@ const StartButton: FC<StartButtonProps> = ({
   startMenuVisible,
   toggleStartMenu,
 }) => {
+  const { language } = useSession();
   const onClick = useCallback(
     async ({ ctrlKey, shiftKey }: React.MouseEvent): Promise<void> => {
       toggleStartMenu();
@@ -48,7 +51,8 @@ const StartButton: FC<StartButtonProps> = ({
       onClick={onClick}
       $highlight
       {...DIV_BUTTON_PROPS}
-      {...label(START_BUTTON_TITLE)}
+      data-taskbar-id={START_BUTTON_ID}
+      {...label(t(language, "taskbar.start"))}
       {...useTaskbarContextMenu(true)}
       {...useMenuPreload(preloadStartMenu)}
     >

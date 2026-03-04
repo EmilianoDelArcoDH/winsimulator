@@ -19,7 +19,8 @@ import { type ProcessArguments } from "contexts/process/types";
 import { useSession } from "contexts/session";
 import Button from "styles/common/Button";
 import Icon from "styles/common/Icon";
-import { DEFAULT_LOCALE, ROOT_NAME, SHORTCUT_EXTENSION } from "utils/constants";
+import { ROOT_NAME, SHORTCUT_EXTENSION } from "utils/constants";
+import { t } from "utils/i18n";
 import { getExtension, isYouTubeUrl } from "utils/functions";
 import SubIcons from "components/system/Files/FileEntry/SubIcons";
 
@@ -38,7 +39,7 @@ const Details: FC<{
     () => getExtension(info?.url || url),
     [info?.url, url]
   );
-  const { updateRecentFiles } = useSession();
+  const { language, updateRecentFiles } = useSession();
   const openFile = useCallback(() => {
     openApp(info?.pid, { url: info?.url });
     if (info?.url && info?.pid) updateRecentFiles(info?.url, info?.pid);
@@ -108,20 +109,29 @@ const Details: FC<{
       />
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions */}
       <h1 onClick={openFile}>{name}</h1>
-      <h2>{fileType(stats, extension, isYTUrl, isAppShortcut, isNostrUrl)}</h2>
+      <h2>
+        {fileType(
+          stats,
+          extension,
+          isYTUrl,
+          isAppShortcut,
+          isNostrUrl,
+          language
+        )}
+      </h2>
       {!isAppShortcut && info?.url && (
         <table>
           <tbody>
             <tr>
-              <th>Location</th>
+              <th>{t(language, "taskbar.search.location")}</th>
               <td onClick={openFile}>{info.url}</td>
             </tr>
             {!isYTUrl && !isNostrUrl && !isDirectory && (
               <tr>
-                <th>Last modified</th>
+                <th>{t(language, "taskbar.search.lastModified")}</th>
                 <td>
                   {new Date(getModifiedTime(info.url, stats)).toLocaleString(
-                    DEFAULT_LOCALE
+                    language
                   )}
                 </td>
               </tr>
@@ -133,7 +143,7 @@ const Details: FC<{
         <li>
           <Button onClick={openFile}>
             <Open />
-            Open
+            {t(language, "taskbar.search.open")}
           </Button>
         </li>
         {dirname(baseUrl) !== "." && (
@@ -146,7 +156,12 @@ const Details: FC<{
               }
             >
               <OpenFolder />
-              Open {isDirectory ? "folder" : "file"} location
+              {t(
+                language,
+                isDirectory
+                  ? "taskbar.search.openFolderLocation"
+                  : "taskbar.search.openFileLocation"
+              )}
             </Button>
           </li>
         )}

@@ -9,6 +9,7 @@ import {
   importStartMenu,
 } from "components/system/Taskbar/functions";
 import Clock from "components/system/Taskbar/Clock";
+import LanguageSwitcher from "components/system/Taskbar/LanguageSwitcher";
 import SearchButton from "components/system/Taskbar/Search/SearchButton";
 import StartButton from "components/system/Taskbar/StartButton";
 import StyledTaskbar from "components/system/Taskbar/StyledTaskbar";
@@ -23,6 +24,8 @@ const AIChat = dynamic(importAIChat);
 const Calendar = dynamic(importCalendar);
 const Search = dynamic(importSearch);
 const StartMenu = dynamic(importStartMenu);
+
+const LANGUAGE_SWITCHER_WIDTH = 42;
 
 const Taskbar: FC = () => {
   const [startMenuVisible, setStartMenuVisible] = useState(false);
@@ -75,7 +78,11 @@ const Taskbar: FC = () => {
           searchVisible={searchVisible}
           toggleSearch={toggleSearch}
         />
-        <TaskbarEntries clockWidth={clockWidth} hasAI={hasAI} />
+        <TaskbarEntries
+          clockWidth={clockWidth + LANGUAGE_SWITCHER_WIDTH}
+          hasAI={hasAI}
+        />
+        <LanguageSwitcher clockWidth={clockWidth} hasAI={hasAI} />
         <Clock
           hasAI={hasAI}
           setClockWidth={setClockWidth}

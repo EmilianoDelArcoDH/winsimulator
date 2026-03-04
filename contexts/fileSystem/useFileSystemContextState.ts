@@ -263,6 +263,76 @@ const useFileSystemContextState = (): FileSystemContextState => {
     },
     []
   );
+  const mkdirWithUpdate = useCallback(
+    async (path: string, overwrite?: boolean): Promise<boolean> => {
+      const created = await mkdir(path, overwrite);
+
+      if (created) {
+        await updateFolder(dirname(path), basename(path));
+      }
+
+      return created;
+    },
+    [mkdir, updateFolder]
+  );
+  const writeFileWithUpdate = useCallback(
+    async (
+      path: string,
+      data: Buffer | string,
+      overwrite?: boolean
+    ): Promise<boolean> => {
+      const written = await writeFile(path, data, overwrite);
+
+      if (written) {
+        await updateFolder(dirname(path), basename(path));
+      }
+
+      return written;
+    },
+    [updateFolder, writeFile]
+  );
+  const unlinkWithUpdate = useCallback(
+    async (path: string): Promise<boolean> => {
+      const deleted = await unlink(path);
+
+      if (deleted) {
+        await updateFolder(dirname(path), undefined, basename(path));
+      }
+
+      return deleted;
+    },
+    [unlink, updateFolder]
+  );
+  const rmdirWithUpdate = useCallback(
+    async (path: string): Promise<boolean> => {
+      const deleted = await rmdir(path);
+
+      if (deleted) {
+        await updateFolder(dirname(path), undefined, basename(path));
+      }
+
+      return deleted;
+    },
+    [rmdir, updateFolder]
+  );
+  const renameWithUpdate = useCallback(
+    async (oldPath: string, newPath: string): Promise<boolean> => {
+      const renamed = await rename(oldPath, newPath);
+
+      if (renamed) {
+        const oldDirectory = dirname(oldPath);
+        const newDirectory = dirname(newPath);
+
+        await Promise.all([
+          updateFolder(oldDirectory, undefined, basename(oldPath)),
+          updateFolder(newDirectory, basename(newPath)),
+        ]);
+      }
+
+      return renamed;
+    },
+    [rename, updateFolder]
+  );
   const mountEmscriptenFs = useCallback(
     async (FS: EmscriptenFS, fsName?: string) =>
       new Promise<string>((resolve, reject) => {
@@ -540,7 +610,8 @@ const useFileSystemContextState = (): FileSystemContextState => {
         let created: boolean;
 
         try {
-          created = (await exists(makePath)) || (await mkdir(makePath));
+          created =
+            (await exists(makePath)) || (await mkdirWithUpdate(makePath));
         } catch {
           created = false;
         }
@@ -556,14 +627,14 @@ const useFileSystemContextState = (): FileSystemContextState => {
 
       await recursePath();
     },
-    [exists, mkdir]
+    [exists, mkdirWithUpdate]
   );
   const deletePath = useCallback(
     async (path: string): Promise<boolean> => {
       let deleted = false;
 
       try {
-        deleted = await unlink(path);
+        deleted = await unlinkWithUpdate(path);
       } catch (error) {
         if ((error as ApiError).code === "EISDIR") {
           const dirContents = await readdir(path);
@@ -571,7 +642,7 @@ const useFileSystemContextState = (): FileSystemContextState => {
           await Promise.all(
             dirContents.map((entry) => deletePath(join(path, entry)))
           );
-          deleted = await rmdir(path);
+          deleted = await rmdirWithUpdate(path);
         }
       }
 
@@ -581,7 +652,7 @@ const useFileSystemContextState = (): FileSystemContextState => {
 
       return deleted;
     },
-    [closeWithTransition, readdir, rmdir, unlink]
+    [closeWithTransition, readdir, rmdirWithUpdate, unlinkWithUpdate]
   );
   const createPath = useCallback(
     async (
@@ -621,8 +692,7 @@ const useFileSystemContextState = (): FileSystemContextState => {
         const maybeMakePath = async (makePath: string): Promise<void> => {
           try {
             if (!(await exists(makePath))) {
-              await mkdir(makePath);
-              updateFolder(dirname(makePath), basename(makePath));
+              await mkdirWithUpdate(makePath);
             }
           } catch (error) {
             if ((error as ApiError).code === "ENOENT") {
@@ -637,8 +707,8 @@ const useFileSystemContextState = (): FileSystemContextState => {
         try {
           if (
             buffer
-              ? await writeFile(fullNewPath, buffer, overwrite)
-              : await mkdir(fullNewPath)
+              ? await writeFileWithUpdate(fullNewPath, buffer, overwrite)
+              : await mkdirWithUpdate(fullNewPath)
           ) {
             return uniqueName;
           }
@@ -651,7 +721,14 @@ const useFileSystemContextState = (): FileSystemContextState => {
 
       return "";
     },
-    [exists, mkdir, rename, rootFs?.mntMap, updateFolder, writeFile]
+    [
+      exists,
+      mkdirWithUpdate,
+      rename,
+      rootFs?.mntMap,
+      updateFolder,
+      writeFileWithUpdate,
+    ]
   );
   const restoredFsHandles = useRef(false);
 
@@ -697,6 +774,7 @@ const useFileSystemContextState = (): FileSystemContextState => {
     copyEntries,
     createPath,
     deletePath,
+    ...asyncFs,
     mapFs,
     mkdirRecursive,
     mountEmscriptenFs,
@@ -705,11 +783,15 @@ const useFileSystemContextState = (): FileSystemContextState => {
     moveEntries,
     pasteList,
     removeFsWatcher,
+    rename: renameWithUpdate,
     setPasteList,
     unMapFs,
     unMountFs,
+    rmdir: rmdirWithUpdate,
+    unlink: unlinkWithUpdate,
     updateFolder,
-    ...asyncFs,
+    writeFile: writeFileWithUpdate,
+    mkdir: mkdirWithUpdate,
   };
 };
 

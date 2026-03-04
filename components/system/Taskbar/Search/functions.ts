@@ -17,6 +17,8 @@ import {
 } from "utils/constants";
 import { getExtension, isYouTubeUrl } from "utils/functions";
 import { type RootFileSystem } from "contexts/fileSystem/useAsyncFs";
+import { type SessionLanguage } from "contexts/session/types";
+import { t } from "utils/i18n";
 
 export type ResultInfo = {
   icon: string;
@@ -35,7 +37,7 @@ export const getResultInfo = async (
   const {
     subIcons,
     icon,
-    pid = TEXT_EDITORS[0],
+    pid,
     url: infoUrl,
   } = await new Promise<FileInfo>((resolve) => {
     fs.lstat(url, (err, stats) => {
@@ -75,7 +77,7 @@ export const getResultInfo = async (
 
   return {
     icon: cachedIcon || icon,
-    pid,
+    pid: pid || TEXT_EDITORS[0],
     subIcons: subIcons?.includes(FOLDER_FRONT_ICON) ? subIcons : [],
     url: infoUrl || url,
   };
@@ -111,14 +113,15 @@ export const fileType = (
   extension: string,
   isYTUrl: boolean,
   isAppShortcut: boolean,
-  isNostrUrl: boolean
+  isNostrUrl: boolean,
+  language: SessionLanguage
 ): string =>
   isNostrUrl
-    ? "Nostr URI"
+    ? t(language, "taskbar.search.fileType.nostrUri")
     : isAppShortcut
-      ? "App"
+      ? t(language, "taskbar.search.fileType.app")
       : isYTUrl
-        ? "YouTube Video"
+        ? t(language, "taskbar.search.fileType.youtubeVideo")
         : stats?.isDirectory() || !extension
-          ? "File folder"
+          ? t(language, "taskbar.search.fileType.folder")
           : getFileType(extension);

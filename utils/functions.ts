@@ -11,7 +11,6 @@ import {
 } from "contexts/session/types";
 import {
   DEFAULT_LOCALE,
-  DESKTOP_PATH,
   HIGH_PRIORITY_REQUEST,
   ICON_CACHE,
   ICON_PATH,
@@ -28,6 +27,7 @@ import {
   TIMESTAMP_DATE_FORMAT,
   USER_ICON_PATH,
 } from "utils/constants";
+import { getActiveLanguage, translateUiText } from "utils/i18n";
 
 export const bufferToBlob = (buffer: Buffer, type?: string): Blob =>
   new Blob([buffer as BlobPart], type ? { type } : undefined);
@@ -394,7 +394,7 @@ export const getWindowViewport = (): Position => ({
 export const calcInitialPosition = (
   { offsetHeight }: HTMLElement,
   { right = 0, left = 0, top = 0, bottom = 0 } = {} as RelativePosition,
-  { width = 0, height = 0 } = {} as Size
+  { width, height } = {} as Size
 ): Position => {
   const [vh, vw] = [viewHeight(), viewWidth()];
 
@@ -481,10 +481,10 @@ export const saveUnpositionedDesktopIcons = (
           }
 
           return [
-            name ? join(DESKTOP_PATH, name) : "",
+            name,
             {
-              gridColumnStart: Math.round(left / width) + 1,
-              gridRowStart: Math.round((top - rowTopPadding) / height) + 1,
+              gridColumnStart: Math.floor(left / width) + 1,
+              gridRowStart: Math.floor((top - rowTopPadding) / height) + 1,
             },
           ];
         })
@@ -506,7 +506,7 @@ export const updateIconPositionsIfEmpty = (
 ): IconPositions => {
   if (!gridElement) return iconPositions;
 
-  const [fileOrder = []] = sortOrders[url] || [];
+  const [fileOrder] = sortOrders[url] || [];
   const newIconPositions: IconPositions = {};
   const gridComputedStyle = window.getComputedStyle(gridElement);
   const gridTemplateRowCount = gridComputedStyle
@@ -930,9 +930,9 @@ export const clsx = (classes: Record<string, boolean>): string =>
     .join(" ");
 
 export const label = (value: string): React.HTMLAttributes<HTMLElement> => ({
-  "aria-label": value,
-  title: value,
-});
+    "aria-label": translateUiText(getActiveLanguage(), value),
+    title: translateUiText(getActiveLanguage(), value),
+  });
 
 export const isYouTubeUrl = (url: string): boolean =>
   (url.includes("youtube.com/") || url.includes("youtu.be/")) &&
@@ -1232,7 +1232,7 @@ export const maybeRequestIdleCallback = (
 };
 
 export const displayVersion = (): string => {
-  const { __NEXT_DATA__: { buildId } = {} } = window;
+  const { __NEXT_DATA__: { buildId } } = window;
 
   return `${PACKAGE_DATA.version}${buildId ? `-${buildId}` : ""}`;
 };

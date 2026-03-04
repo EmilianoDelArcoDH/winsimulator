@@ -9,12 +9,12 @@ import {
   createCalendar,
 } from "components/system/Taskbar/Calendar/functions";
 import useTaskbarItemTransition from "components/system/Taskbar/useTaskbarItemTransition";
+import { useSession } from "contexts/session";
 import Button from "styles/common/Button";
 import { FOCUSABLE_ELEMENT, PREVENT_SCROLL } from "utils/constants";
+import { t } from "utils/i18n";
 import { haltEvent, hasFinePointer } from "utils/functions";
 import { spotlightEffect } from "utils/spotlightEffect";
-
-const DAY_NAMES = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 type CalendarProps = {
   toggleCalendar: (showCalendar?: boolean) => void;
@@ -22,9 +22,19 @@ type CalendarProps = {
 
 const Calendar: FC<CalendarProps> = ({ toggleCalendar }) => {
   const [date, setDate] = useState(() => new Date());
+  const { language } = useSession();
   const [calendar, setCalendar] = useState<ICalendar>(() =>
     createCalendar(date)
   );
+  const dayNames = useMemo(() => {
+    const dayFormatter = new Intl.DateTimeFormat(language, {
+      weekday: "short",
+    });
+
+    return Array.from({ length: 7 }, (_, dayIndex) =>
+      dayFormatter.format(new Date(Date.UTC(2024, 0, dayIndex + 7)))
+    );
+  }, [language]);
   const today = useMemo(() => new Date(), []);
   const isCurrentDate = useMemo(
     () =>
@@ -89,7 +99,7 @@ const Calendar: FC<CalendarProps> = ({ toggleCalendar }) => {
     calendar && (
       <StyledCalendar
         ref={calendarRef}
-        aria-label="Calendar"
+        aria-label={t(language, "taskbar.calendar")}
         onContextMenu={haltEvent}
         {...calendarTransition}
         {...FOCUSABLE_ELEMENT}
@@ -97,10 +107,10 @@ const Calendar: FC<CalendarProps> = ({ toggleCalendar }) => {
         <table>
           <thead>
             <tr>
-              <td colSpan={DAY_NAMES.length}>
+              <td colSpan={dayNames.length}>
                 <div>
                   <header>
-                    {`${date.toLocaleString("default", {
+                    {`${date.toLocaleString(language, {
                       month: "long",
                     })}, ${date.getFullYear()}`}
                   </header>
@@ -116,7 +126,7 @@ const Calendar: FC<CalendarProps> = ({ toggleCalendar }) => {
               </td>
             </tr>
             <tr>
-              {DAY_NAMES.map((dayName) => (
+              {dayNames.map((dayName) => (
                 <td key={dayName}>{dayName}</td>
               ))}
             </tr>

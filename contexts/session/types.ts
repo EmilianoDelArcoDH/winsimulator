@@ -29,6 +29,8 @@ export type Views = Record<string, FileManagerViewNames>;
 
 export type ClockSource = "local" | "ntp";
 
+export type SessionLanguage = "en" | "es" | "pt";
+
 export type RecentFiles = [string, string, string][];
 
 export type IconPosition = {
@@ -43,6 +45,7 @@ export type SessionData = {
   clockSource: ClockSource;
   cursor: string | undefined;
   iconPositions: IconPositions;
+  language: SessionLanguage;
   lazySheep?: boolean;
   recentFiles: RecentFiles;
   runHistory: string[];
@@ -65,6 +68,7 @@ export type SessionContextState = SessionData & {
   setForegroundId: React.Dispatch<React.SetStateAction<string>>;
   setHaltSession: React.Dispatch<React.SetStateAction<boolean>>;
   setIconPositions: React.Dispatch<React.SetStateAction<IconPositions>>;
+  setLanguage: React.Dispatch<React.SetStateAction<SessionLanguage>>;
   setRunHistory: React.Dispatch<React.SetStateAction<string[]>>;
   setSortOrder: (
     directory: string,

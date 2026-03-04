@@ -5,24 +5,49 @@ export type LocaleTimeDate = {
 
 const DEFAULT_LOCALE = "en";
 
-const dateFormatter = new Intl.DateTimeFormat(DEFAULT_LOCALE, {
-  day: "numeric",
-  month: "long",
-  year: "numeric",
-});
+type Formatters = {
+  dateFormatter: Intl.DateTimeFormat;
+  dayFormatter: Intl.DateTimeFormat;
+  timeFormatter: Intl.DateTimeFormat;
+};
 
-const timeFormatter = new Intl.DateTimeFormat(DEFAULT_LOCALE, {
-  hour: "numeric",
-  hour12: true,
-  minute: "2-digit",
-  second: "2-digit",
-});
+const formatters = new Map<string, Formatters>();
 
-const dayFormatter = new Intl.DateTimeFormat(DEFAULT_LOCALE, {
-  weekday: "long",
-});
+const getFormatters = (locale = DEFAULT_LOCALE): Formatters => {
+  const normalizedLocale = locale || DEFAULT_LOCALE;
+  const cachedFormatters = formatters.get(normalizedLocale);
 
-export const formatLocaleDateTime = (now: Date): LocaleTimeDate => {
+  if (cachedFormatters) {
+    return cachedFormatters;
+  }
+
+  const nextFormatters = {
+    dateFormatter: new Intl.DateTimeFormat(normalizedLocale, {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }),
+    dayFormatter: new Intl.DateTimeFormat(normalizedLocale, {
+      weekday: "long",
+    }),
+    timeFormatter: new Intl.DateTimeFormat(normalizedLocale, {
+      hour: "numeric",
+      hour12: true,
+      minute: "2-digit",
+      second: "2-digit",
+    }),
+  };
+
+  formatters.set(normalizedLocale, nextFormatters);
+
+  return nextFormatters;
+};
+
+export const formatLocaleDateTime = (
+  now: Date,
+  locale = DEFAULT_LOCALE
+): LocaleTimeDate => {
+  const { dateFormatter, dayFormatter, timeFormatter } = getFormatters(locale);
   const date = dateFormatter.format(now);
   const day = dayFormatter.format(now);
   const time = timeFormatter.format(now);

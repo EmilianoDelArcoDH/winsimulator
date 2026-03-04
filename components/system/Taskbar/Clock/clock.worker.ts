@@ -14,6 +14,7 @@ const fontSize = "12px";
 const textColor = "rgba(255, 255, 255, 90%)";
 
 let mode: ClockSource;
+let locale = "en";
 let offscreenCanvas: OffscreenCanvas;
 let offscreenContext: OffscreenCanvasRenderingContext2D;
 
@@ -61,7 +62,7 @@ const drawClockText = (dateTime: LocaleTimeDate): void => {
 };
 
 const sendTick = (): void => {
-  const dateTime = formatLocaleDateTime(getNow());
+  const dateTime = formatLocaleDateTime(getNow(), locale);
 
   globalThis.postMessage(dateTime);
   if (offscreenCanvas) drawClockText(dateTime);
@@ -71,7 +72,11 @@ let initialized = false;
 
 globalThis.addEventListener(
   "message",
-  ({ data }: { data: ClockSource | OffscreenRenderProps | "init" }) => {
+  ({
+    data,
+  }: {
+    data: ClockSource | OffscreenRenderProps | "init" | { locale: string };
+  }) => {
     if (!initialized) {
       if (data === "init") {
         initialized = true;
@@ -108,6 +113,18 @@ globalThis.addEventListener(
         styleClock();
       }
 
+      sendTick();
+
+      return;
+    }
+
+    if (
+      data &&
+      typeof data === "object" &&
+      "locale" in data &&
+      typeof data.locale === "string"
+    ) {
+      locale = data.locale;
       sendTick();
 
       return;

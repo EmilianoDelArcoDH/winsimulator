@@ -24,7 +24,7 @@ import StyledSuggestions from "components/system/Taskbar/Search/StyledSuggestion
 import StyledTabs from "components/system/Taskbar/Search/StyledTabs";
 import useSearchInputTransition from "components/system/Taskbar/Search/useSearchInputTransition";
 import {
-  SEARCH_BUTTON_TITLE,
+  SEARCH_BUTTON_ID,
   maybeCloseTaskbarMenu,
 } from "components/system/Taskbar/functions";
 import useTaskbarItemTransition from "components/system/Taskbar/useTaskbarItemTransition";
@@ -53,6 +53,7 @@ import {
   SEARCH_LIB,
   useSearch,
 } from "utils/search";
+import { t, tf } from "utils/i18n";
 
 type SearchProps = {
   toggleSearch: (showMenu?: boolean) => void;
@@ -81,7 +82,7 @@ const GAMES = ["SpaceCadet", "Quake3", "DXBall"];
 const METADATA = {
   Documents: {
     icon: <Documents />,
-    subtitle: "for documents",
+    subtitle: "documents",
     title: "Documents",
   },
   Photos: {
@@ -104,7 +105,7 @@ const ResultSection = dynamic(
 const Search: FC<SearchProps> = ({ toggleSearch }) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const menuRef = useRef<HTMLElement | null>(null);
-  const { recentFiles, updateRecentFiles } = useSession();
+  const { language, recentFiles, updateRecentFiles } = useSession();
   const { lstat, readFile } = useFileSystem();
   const [activeTab, setActiveTab] = useState<TabName>("All");
   const {
@@ -144,21 +145,33 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
     [activeTab, results, subResults]
   );
   const listRef = useRef<HTMLDivElement | null>(null);
+  const tabTitleMap = useMemo(
+    () => ({
+      All: t(language, "taskbar.search.tab.all"),
+      Documents: t(language, "taskbar.search.tab.documents"),
+      Photos: t(language, "taskbar.search.tab.photos"),
+      Videos: t(language, "taskbar.search.tab.videos"),
+    }),
+    [language]
+  );
   const changeTab = useCallback(
     (tab: TabName) => {
       if (inputRef.current) {
+        const currentLabel = tabTitleMap[activeTab];
+        const nextLabel = tabTitleMap[tab];
+
         inputRef.current.value = (
           tab === "All"
             ? inputRef.current.value
-            : `${tab}: ${inputRef.current.value}`
-        ).replace(`${activeTab}: `, "");
+            : `${nextLabel}: ${inputRef.current.value}`
+        ).replace(`${currentLabel}: `, "");
         listRef.current?.scrollTo(0, 0);
       }
 
       setActiveItem("");
       setActiveTab(tab);
     },
-    [activeTab]
+    [activeTab, tabTitleMap]
   );
   const openApp = useCallback(
     (pid: string, args?: ProcessArguments) => {
@@ -255,7 +268,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
           menuRef.current,
           toggleSearch,
           inputRef.current,
-          SEARCH_BUTTON_TITLE,
+          SEARCH_BUTTON_ID,
           true
         )
       }
@@ -280,11 +293,13 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
                 onClick={() => changeTab(tab)}
                 {...label(
                   tab === "All"
-                    ? "Find the most relevant results"
-                    : `Find results in ${tab}`
+                    ? t(language, "taskbar.search.findMostRelevantResults")
+                    : tf(language, "taskbar.search.findResultsIn", {
+                      section: tabTitleMap[tab],
+                    })
                 )}
               >
-                {tab}
+                {tabTitleMap[tab]}
               </li>
             ))}
           </StyledTabs>
@@ -292,7 +307,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
             <Button
               className="close-button"
               onClick={() => toggleSearch(false)}
-              {...label("Close Search")}
+              {...label(t(language, "taskbar.search.close"))}
             >
               <CloseIcon />
             </Button>
@@ -304,7 +319,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
             >
               <section>
                 <figure>
-                  <figcaption>Suggested</figcaption>
+                  <figcaption>{t(language, "taskbar.search.suggested")}</figcaption>
                   <StyledSuggestions>
                     {SUGGESTED.map((app) => (
                       // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
@@ -329,7 +344,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
               <section>
                 {recentFiles.length > 0 && (
                   <StyledFiles>
-                    <figcaption>Recent</figcaption>
+                    <figcaption>{t(language, "taskbar.search.recent")}</figcaption>
                     <ol>
                       {recentFiles.map(([file, pid, title], index) => (
                         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
@@ -341,7 +356,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
                               setTimeout(
                                 () => updateRecentFiles(file, pid, title),
                                 TRANSITIONS_IN_SECONDS.TASKBAR_ITEM *
-                                  MILLISECONDS_IN_SECOND
+                                MILLISECONDS_IN_SECOND
                               );
                             }
                           }}
@@ -360,7 +375,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
                 <figure className="card">
                   <figcaption>
                     <Games />
-                    Games for you
+                    {t(language, "taskbar.search.gamesForYou")}
                   </figcaption>
                   <ol>
                     {GAMES.filter(
@@ -393,11 +408,17 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
           {!searchTerm && activeTab !== "All" && (
             <div className="tab">
               {METADATA[activeTab].icon}
-              <h1>Search {METADATA[activeTab].title.toLowerCase()}</h1>
+              <h1>
+                {tf(language, "taskbar.search.searchIn", {
+                  section: tabTitleMap[activeTab].toLowerCase(),
+                })}
+              </h1>
               <h3>
-                Start typing to search{" "}
-                {METADATA[activeTab].subtitle ||
-                  METADATA[activeTab].title.toLowerCase()}
+                {tf(language, "taskbar.search.startTypingToSearch", {
+                  section:
+                    METADATA[activeTab].subtitle ||
+                    tabTitleMap[activeTab].toLowerCase(),
+                })}
               </h3>
             </div>
           )}
@@ -412,7 +433,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
                     results={[firstResult || { ref: NO_RESULTS }]}
                     searchTerm={searchTerm}
                     setActiveItem={setActiveItem}
-                    title={"Best match" as TabName}
+                    title={t(language, "taskbar.search.bestMatch")}
                     details
                   />
                   {results.length > 1 &&
@@ -430,7 +451,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
                             )}
                             searchTerm={searchTerm}
                             setActiveItem={setActiveItem}
-                            title={title as TabName}
+                            title={tabTitleMap[title as TabName] || title}
                           />
                         )
                     )}
@@ -452,7 +473,8 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
           <input
             ref={focusOnRenderCallback}
             onChange={() => {
-              const tabAppend = activeTab === "All" ? "" : `${activeTab}: `;
+              const tabAppend =
+                activeTab === "All" ? "" : `${tabTitleMap[activeTab]}: `;
               const value = inputRef.current?.value.startsWith(tabAppend)
                 ? inputRef.current?.value.replace(tabAppend, "")
                 : inputRef.current?.value;
@@ -475,7 +497,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
                 (bestMatchElement as HTMLElement)?.click();
               }
             }}
-            placeholder="Type here to search"
+            placeholder={t(language, "taskbar.search.placeholder")}
             style={{
               caretColor: showCaret ? undefined : "transparent",
             }}

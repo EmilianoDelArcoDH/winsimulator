@@ -10,6 +10,7 @@ import { type ApiError } from "browserfs/dist/node/core/api_error";
 import { type SortBy } from "components/system/Files/FileManager/useSortBy";
 import { useFileSystem } from "contexts/fileSystem";
 import {
+  type SessionLanguage,
   type Views,
   type IconPositions,
   type RecentFiles,
@@ -23,6 +24,7 @@ import defaultSession from "public/session.json";
 import {
   DEFAULT_ASCENDING,
   DEFAULT_CLOCK_SOURCE,
+  DEFAULT_LANGUAGE,
   DEFAULT_THEME,
   DEFAULT_WALLPAPER,
   DEFAULT_WALLPAPER_FIT,
@@ -50,6 +52,21 @@ const DEFAULT_SESSION = (
 
 const KEEP_RECENT_FILES_LIST_COUNT = 10;
 
+const toSessionLanguage = (language?: string): SessionLanguage => {
+  const normalizedLanguage = language?.trim().toLowerCase().split("-")[0];
+
+  if (normalizedLanguage === "es" || normalizedLanguage === "pt") {
+    return normalizedLanguage;
+  }
+
+  return "en";
+};
+
+const getDefaultLanguage = (): SessionLanguage =>
+  toSessionLanguage(
+    typeof navigator === "object" ? navigator.language : DEFAULT_LANGUAGE
+  );
+
 const useSessionContextState = (): SessionContextState => {
   const { deletePath, readdir, readFile, rootFs, writeFile, lstat } =
     useFileSystem();
@@ -58,6 +75,7 @@ const useSessionContextState = (): SessionContextState => {
   const [stackOrder, setStackOrder] = useState<string[]>([]);
   const [themeName, setThemeName] = useState(DEFAULT_THEME);
   const [clockSource, setClockSource] = useState(DEFAULT_CLOCK_SOURCE);
+  const [language, setLanguage] = useState<SessionLanguage>(getDefaultLanguage);
   const [cursor, setCursor] = useState<string | undefined>();
   const [aiEnabled, setAiEnabled] = useState(false);
   const [lazySheep, setLazySheep] = useState(false);
@@ -218,6 +236,7 @@ const useSessionContextState = (): SessionContextState => {
             clockSource,
             cursor,
             iconPositions,
+            language,
             lazySheep,
             recentFiles,
             runHistory,
@@ -238,6 +257,7 @@ const useSessionContextState = (): SessionContextState => {
     cursor,
     haltSession,
     iconPositions,
+    language,
     lazySheep,
     recentFiles,
     runHistory,
@@ -280,6 +300,9 @@ const useSessionContextState = (): SessionContextState => {
           }
 
           if (session.clockSource) setClockSource(session.clockSource);
+          if (session.language) {
+            setLanguage(toSessionLanguage(session.language));
+          }
           if (session.cursor) setCursor(session.cursor);
           if (session.aiEnabled) setAiEnabled(session.aiEnabled);
           if (session.themeName) setThemeName(session.themeName);
@@ -386,12 +409,17 @@ const useSessionContextState = (): SessionContextState => {
     }
   }, [deletePath, lstat, readFile, rootFs, setWallpaper]);
 
+  useEffect(() => {
+    document.documentElement.lang = language;
+  }, [language]);
+
   return {
     aiEnabled,
     clockSource,
     cursor,
     foregroundId,
     iconPositions,
+    language,
     prependToStack,
     recentFiles,
     removeFromStack,
@@ -403,6 +431,7 @@ const useSessionContextState = (): SessionContextState => {
     setForegroundId,
     setHaltSession,
     setIconPositions: setAndUpdateIconPositions,
+    setLanguage,
     setRunHistory,
     setSortOrder,
     setThemeName,

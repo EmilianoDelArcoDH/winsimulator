@@ -4,6 +4,8 @@ import { NO_RESULTS, type TabName } from "components/system/Taskbar/Search";
 import ResultEntry from "components/system/Taskbar/Search/ResultEntry";
 import StyledResultsHeader from "components/system/Taskbar/Search/StyledResultsHeader";
 import { type ProcessArguments } from "contexts/process/types";
+import { useSession } from "contexts/session";
+import { tf } from "utils/i18n";
 
 type ResultsSectionProps = {
   activeItem: string;
@@ -14,7 +16,7 @@ type ResultsSectionProps = {
   results: lunr.Index.Result[];
   searchTerm: string;
   setActiveItem: React.Dispatch<React.SetStateAction<string>>;
-  title: TabName;
+  title: string;
 };
 
 const ResultSection: FC<ResultsSectionProps> = ({
@@ -28,6 +30,7 @@ const ResultSection: FC<ResultsSectionProps> = ({
   changeTab,
   title,
 }) => {
+  const { language } = useSession();
   const noResults = useMemo(
     () => results.length === 1 && results[0].ref === NO_RESULTS,
     [results]
@@ -39,12 +42,8 @@ const ResultSection: FC<ResultsSectionProps> = ({
   ) : (
     <figure>
       <StyledResultsHeader
-        className={
-          activeTab === title || (title as string) === "Best match"
-            ? "disabled"
-            : undefined
-        }
-        onClick={() => changeTab?.(title)}
+        className={activeTab === title || details ? "disabled" : undefined}
+        onClick={() => changeTab?.(title as TabName)}
       >
         {title}
       </StyledResultsHeader>
@@ -52,7 +51,9 @@ const ResultSection: FC<ResultsSectionProps> = ({
         {noResults ? (
           <li className="no-results">
             <SearchIcon />
-            No results found for &apos;{searchTerm}&apos;
+            {tf(language, "taskbar.search.noResultsFoundFor", {
+              term: searchTerm,
+            })}
           </li>
         ) : (
           results.map(({ ref }) => (

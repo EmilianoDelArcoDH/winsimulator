@@ -2,6 +2,8 @@ import { PREVENT_SCROLL } from "utils/constants";
 
 export const START_BUTTON_TITLE = "Start";
 export const SEARCH_BUTTON_TITLE = "Type here to search";
+export const START_BUTTON_ID = "taskbar-start";
+export const SEARCH_BUTTON_ID = "taskbar-search";
 
 /* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
 export const importAIButton = () =>
@@ -18,7 +20,7 @@ export const maybeCloseTaskbarMenu = (
   menuElement: HTMLElement | null,
   toggleMenu: (toggle: boolean) => void,
   focusElement?: HTMLElement | null,
-  buttonTitle?: string,
+  buttonId?: string,
   closeOnTaskbarEntries = false
 ): void => {
   const focusedInsideMenu =
@@ -30,7 +32,8 @@ export const maybeCloseTaskbarMenu = (
     const focusedTaskbarButton =
       focusedElement?.parentElement === taskbarElement;
     const focusedOnSelfButton =
-      (focusedElement as HTMLElement)?.title === buttonTitle;
+      (focusedElement as HTMLElement)?.dataset?.taskbarId === buttonId ||
+      (focusedElement as HTMLElement)?.title === buttonId;
 
     if (
       focusedElement &&

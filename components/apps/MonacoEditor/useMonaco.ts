@@ -202,7 +202,10 @@ const useMonaco = ({
 
   useEffect(() => {
     if (monaco) {
-      registerEmmetSnippets(monaco);
+      const runtimeLocale =
+        document.documentElement.lang || navigator.language || "en";
+
+      registerEmmetSnippets(monaco, runtimeLocale);
     }
   }, [monaco]);
 

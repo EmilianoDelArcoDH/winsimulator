@@ -24,6 +24,7 @@ import {
   PREVENT_SCROLL,
   TRANSITIONS_IN_MILLISECONDS,
 } from "utils/constants";
+import { getActiveLanguage, translateUiText } from "utils/i18n";
 import { haltEvent } from "utils/functions";
 
 type MenuItemEntryProps = MenuItem & {
@@ -56,6 +57,13 @@ const MenuItemEntry: FC<MenuItemEntryProps> = ({
     () => window.matchMedia("(hover: hover)").matches,
     []
   );
+  const activeLanguage = getActiveLanguage();
+  const translatedLabel = label
+    ? translateUiText(activeLanguage, label)
+    : undefined;
+  const translatedTooltip = tooltip
+    ? translateUiText(activeLanguage, tooltip)
+    : undefined;
   const setDelayedShowSubMenu = useCallback((show: boolean) => {
     if (showSubMenuTimerRef.current) {
       window.clearTimeout(showSubMenuTimerRef.current);
@@ -92,10 +100,10 @@ const MenuItemEntry: FC<MenuItemEntryProps> = ({
     () =>
       menu
         ? {
-            onBlur: onMouseLeave as unknown as React.FocusEventHandler,
-            onMouseEnter,
-            onMouseLeave,
-          }
+          onBlur: onMouseLeave as unknown as React.FocusEventHandler,
+          onMouseEnter,
+          onMouseLeave,
+        }
         : {},
     [menu, onMouseEnter, onMouseLeave]
   );
@@ -146,7 +154,7 @@ const MenuItemEntry: FC<MenuItemEntryProps> = ({
     <li
       ref={entryRef}
       className={disabled ? "disabled" : undefined}
-      title={tooltip}
+      title={translatedTooltip}
       {...FOCUSABLE_ELEMENT}
       {...(menu && subMenuEvents)}
     >
@@ -154,7 +162,7 @@ const MenuItemEntry: FC<MenuItemEntryProps> = ({
         <hr />
       ) : (
         <Button
-          aria-label={label}
+          aria-label={translatedLabel}
           className={
             showSubMenu && (!canMouseOver || mouseOver) ? "active" : undefined
           }
@@ -165,7 +173,7 @@ const MenuItemEntry: FC<MenuItemEntryProps> = ({
             (/\p{Emoji_Presentation}/u.test(icon) ? (
               <span>{icon}</span>
             ) : (
-              <Icon alt={label} imgSize={16} src={icon} />
+              <Icon alt={translatedLabel} imgSize={16} src={icon} />
             ))}
           {checked && <Checkmark className="left" />}
           {toggle && <Circle className="left" />}
@@ -175,7 +183,7 @@ const MenuItemEntry: FC<MenuItemEntryProps> = ({
             </div>
           )}
           <figcaption className={primary ? "primary" : undefined}>
-            {label}
+            {translatedLabel}
           </figcaption>
           {menu && <ChevronRight className="right" />}
         </Button>

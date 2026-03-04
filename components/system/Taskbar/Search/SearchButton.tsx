@@ -3,9 +3,11 @@ import { memo, useCallback } from "react";
 import StyledSearchButton from "components/system/Taskbar/Search/StyledSearchButton";
 import {
   importSearch,
-  SEARCH_BUTTON_TITLE,
+  SEARCH_BUTTON_ID,
 } from "components/system/Taskbar/functions";
 import useTaskbarContextMenu from "components/system/Taskbar/useTaskbarContextMenu";
+import { useSession } from "contexts/session";
+import { t } from "utils/i18n";
 import { DIV_BUTTON_PROPS } from "utils/constants";
 import { label } from "utils/functions";
 import { useMenuPreload } from "hooks/useMenuPreload";
@@ -25,6 +27,7 @@ const SearchButton: FC<StartButtonProps> = ({
   searchVisible,
   toggleSearch,
 }) => {
+  const { language } = useSession();
   const {
     sizes: { taskbar },
   } = useTheme();
@@ -36,7 +39,8 @@ const SearchButton: FC<StartButtonProps> = ({
       $left={taskbar.button.width}
       onClick={onClick}
       {...DIV_BUTTON_PROPS}
-      {...label(SEARCH_BUTTON_TITLE)}
+      data-taskbar-id={SEARCH_BUTTON_ID}
+      {...label(t(language, "taskbar.search"))}
       {...useTaskbarContextMenu()}
       {...useMenuPreload(importSearch)}
     >

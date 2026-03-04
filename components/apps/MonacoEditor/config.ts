@@ -9,6 +9,7 @@ export const config = {
 export const theme = "vs-dark";
 
 export const editorOptions: Monaco.editor.IStandaloneEditorConstructionOptions = {
+  acceptSuggestionOnEnter: "on",
   automaticLayout: true,
   bracketPairColorization: {
     enabled: true,
@@ -40,6 +41,8 @@ export const editorOptions: Monaco.editor.IStandaloneEditorConstructionOptions =
   stickyScroll: {
     enabled: true,
   },
+  snippetSuggestions: "top",
+  tabCompletion: "on",
   tabSize: 2,
   theme,
   wordWrap: "off",

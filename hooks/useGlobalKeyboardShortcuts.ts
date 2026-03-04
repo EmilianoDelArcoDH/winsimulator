@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import {
-  SEARCH_BUTTON_TITLE,
-  START_BUTTON_TITLE,
+  SEARCH_BUTTON_ID,
+  START_BUTTON_ID,
 } from "components/system/Taskbar/functions";
 import { useProcesses } from "contexts/process";
 import { useSession } from "contexts/session";
@@ -26,8 +26,9 @@ export const getNavButtonByTitle = (
   title: string
 ): HTMLButtonElement | undefined => {
   try {
-    return document.querySelector(
-      `main > nav > div[title='${CSS.escape(title)}']`
+    return (
+      document.querySelector(`main > nav > div[data-taskbar-id='${CSS.escape(title)}']`) ||
+      document.querySelector(`main > nav > div[title='${CSS.escape(title)}']`)
     ) as HTMLButtonElement;
   } catch {
     return undefined;
@@ -68,14 +69,14 @@ const useGlobalKeyboardShortcuts = (): void => {
   const altBindingsRef = useRef<Record<string, () => void>>({});
   const shiftBindingsRef = useRef<Record<string, () => void>>({
     E: () => open("FileExplorer"),
-    ESCAPE: () => getNavButtonByTitle(START_BUTTON_TITLE)?.click(),
+    ESCAPE: () => getNavButtonByTitle(START_BUTTON_ID)?.click(),
     F10: () => open("Terminal"),
     F12: () => open("DevTools"),
     F5: () => window.location.reload(),
     R: () => open("Run"),
-    S: () => getNavButtonByTitle(SEARCH_BUTTON_TITLE)?.click(),
+    S: () => getNavButtonByTitle(SEARCH_BUTTON_ID)?.click(),
     X: () =>
-      getNavButtonByTitle(START_BUTTON_TITLE)?.dispatchEvent(
+      getNavButtonByTitle(START_BUTTON_ID)?.dispatchEvent(
         new MouseEvent("contextmenu", {
           clientX: 1,
           clientY: viewHeight() - 1,
@@ -143,7 +144,7 @@ const useGlobalKeyboardShortcuts = (): void => {
       ) {
         metaDown = false;
         if (metaComboUsed) metaComboUsed = false;
-        else getNavButtonByTitle(START_BUTTON_TITLE)?.click();
+        else getNavButtonByTitle(START_BUTTON_ID)?.click();
       }
     };
 

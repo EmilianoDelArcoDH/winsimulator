@@ -17,7 +17,8 @@ import { useFileSystem } from "contexts/fileSystem";
 import { type ProcessArguments } from "contexts/process/types";
 import { useSession } from "contexts/session";
 import Icon from "styles/common/Icon";
-import { DEFAULT_LOCALE, SHORTCUT_EXTENSION } from "utils/constants";
+import { SHORTCUT_EXTENSION } from "utils/constants";
+import { t } from "utils/i18n";
 import { getExtension, isYouTubeUrl } from "utils/functions";
 import { useIsVisible } from "hooks/useIsVisible";
 import SubIcons from "components/system/Files/FileEntry/SubIcons";
@@ -44,7 +45,7 @@ const ResultEntry: FC<ResultEntryProps> = ({
   url,
 }) => {
   const { fs, readFile, stat } = useFileSystem();
-  const { updateRecentFiles } = useSession();
+  const { language, updateRecentFiles } = useSession();
   const [stats, setStats] = useState<Stats>();
   const [info, setInfo] = useState<ResultInfo>(INITIAL_INFO);
   const extension = useMemo(
@@ -74,14 +75,14 @@ const ResultEntry: FC<ResultEntryProps> = ({
   const lastModified = useMemo(
     () =>
       stats && !stats.isDirectory()
-        ? `Last modified: ${new Date(
-            getModifiedTime(baseUrl, stats)
-          ).toLocaleString(DEFAULT_LOCALE, {
-            dateStyle: "short",
-            timeStyle: "short",
-          })}`
+        ? `${t(language, "taskbar.search.lastModified")}: ${new Date(
+          getModifiedTime(baseUrl, stats)
+        ).toLocaleString(language, {
+          dateStyle: "short",
+          timeStyle: "short",
+        })}`
         : "",
-    [baseUrl, stats]
+    [baseUrl, language, stats]
   );
   const [hovered, setHovered] = useState(false);
   const elementRef = useRef<HTMLLIElement | null>(null);
@@ -154,11 +155,11 @@ const ResultEntry: FC<ResultEntryProps> = ({
             isAppShortcut
               ? undefined
               : {
-                  url:
-                    extname(baseUrl) === SHORTCUT_EXTENSION
-                      ? getShortcutInfo(await readFile(baseUrl))?.url || baseUrl
-                      : baseUrl,
-                }
+                url:
+                  extname(baseUrl) === SHORTCUT_EXTENSION
+                    ? getShortcutInfo(await readFile(baseUrl))?.url || baseUrl
+                    : baseUrl,
+              }
           );
           if (baseUrl && info?.pid) updateRecentFiles(baseUrl, info?.pid);
         }}
@@ -191,7 +192,14 @@ const ResultEntry: FC<ResultEntryProps> = ({
           {details && stats && (
             <>
               <h2>
-                {fileType(stats, extension, isYTUrl, isAppShortcut, isNostrUrl)}
+                {fileType(
+                  stats,
+                  extension,
+                  isYTUrl,
+                  isAppShortcut,
+                  isNostrUrl,
+                  language
+                )}
               </h2>
               {!isYTUrl && !isAppShortcut && !isDirectory && (
                 <h2>{lastModified}</h2>
