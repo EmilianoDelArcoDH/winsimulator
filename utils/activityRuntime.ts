@@ -1,5 +1,7 @@
 import activitiesCatalog from "utils/activitiesCatalog.json";
+import { localizeActivitiesCatalog } from "utils/activityI18n";
 import { getSearchParam } from "utils/functions";
+import { getActiveLanguage } from "utils/i18n";
 
 const ACTIVE_ACTIVITY_ID_KEY = "winsim_active_activity_id";
 const ACTIVITY_STATE_PREFIX = "winsim_activity_state_";
@@ -167,7 +169,7 @@ const getDefaultTelemetry = (): ActivityTelemetry => ({
 });
 
 const getActivityClasses = (): ActivityClass[] =>
-  (activitiesCatalog.classes as ActivityClass[]) || [];
+  (getActivitiesCatalog().classes as ActivityClass[]) || [];
 
 const getActivitiesMap = (): Record<string, ActivityDefinition> =>
   Object.fromEntries(
@@ -678,7 +680,8 @@ const evaluateCheck = (
   }
 };
 
-export const getActivitiesCatalog = (): typeof activitiesCatalog => activitiesCatalog;
+export const getActivitiesCatalog = (): typeof activitiesCatalog =>
+  localizeActivitiesCatalog(activitiesCatalog, getActiveLanguage());
 
 export const getActivityById = (activityId: string): ActivityDefinition | undefined =>
   getActivitiesMap()[activityId];
