@@ -1,4 +1,5 @@
 import activitiesCatalog from "utils/activitiesCatalog.json";
+import { type SessionLanguage } from "contexts/session/types";
 import { localizeActivitiesCatalog } from "utils/activityI18n";
 import { getSearchParam } from "utils/functions";
 import { getActiveLanguage } from "utils/i18n";
@@ -168,12 +169,12 @@ const getDefaultTelemetry = (): ActivityTelemetry => ({
   inferredRepo: getDefaultRepoState(),
 });
 
-const getActivityClasses = (): ActivityClass[] =>
-  (getActivitiesCatalog().classes as ActivityClass[]) || [];
+const getActivityClasses = (language?: SessionLanguage): ActivityClass[] =>
+  (getActivitiesCatalog(language).classes as ActivityClass[]) || [];
 
-const getActivitiesMap = (): Record<string, ActivityDefinition> =>
+const getActivitiesMap = (language?: SessionLanguage): Record<string, ActivityDefinition> =>
   Object.fromEntries(
-    getActivityClasses().flatMap(({ activities }) =>
+    getActivityClasses(language).flatMap(({ activities }) =>
       activities.map((activity) => [activity.id, activity])
     )
   );
@@ -680,11 +681,15 @@ const evaluateCheck = (
   }
 };
 
-export const getActivitiesCatalog = (): typeof activitiesCatalog =>
-  localizeActivitiesCatalog(activitiesCatalog, getActiveLanguage());
+export const getActivitiesCatalog = (
+  language?: SessionLanguage
+): typeof activitiesCatalog =>
+  localizeActivitiesCatalog(activitiesCatalog, language || getActiveLanguage());
 
-export const getActivityById = (activityId: string): ActivityDefinition | undefined =>
-  getActivitiesMap()[activityId];
+export const getActivityById = (
+  activityId: string,
+  language?: SessionLanguage
+): ActivityDefinition | undefined => getActivitiesMap(language)[activityId];
 
 export const setCurrentActivityId = (activityId = ""): void => {
   if (!canUseStorage()) return;
@@ -772,12 +777,15 @@ export const clearActivityProgress = (activityId: string): void => {
   window.localStorage.removeItem(getTelemetryKey(activityId));
 };
 
-export const validateActivity = (activityId: string): {
+export const validateActivity = (
+  activityId: string,
+  language?: SessionLanguage
+): {
   completed: boolean;
   progress: { completed: number; total: number };
   results: ValidationResult[];
 } => {
-  const activity = getActivityById(activityId);
+  const activity = getActivityById(activityId, language);
 
   if (!activity) {
     return {
@@ -820,9 +828,10 @@ export const validateActivity = (activityId: string): {
 };
 
 export const getActivityProgress = (
-  activityId: string
+  activityId: string,
+  language?: SessionLanguage
 ): { completed: number; total: number } => {
-  const activity = getActivityById(activityId);
+  const activity = getActivityById(activityId, language);
   const state = getActivityState(activityId);
 
   return {

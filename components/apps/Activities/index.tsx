@@ -2,6 +2,7 @@ import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
+import { useSession } from "contexts/session";
 import {
     clearActivityProgress,
     type ActivityCard,
@@ -185,8 +186,10 @@ const getInitialAnswers = (activity: ActivityDefinition): Record<string, unknown
     return {};
 };
 
-const getFallbackActivity = (): ActivityDefinition | undefined => {
-    const classes = (getActivitiesCatalog().classes || []) as ActivityClass[];
+const getFallbackActivity = (
+    language?: "es" | "en" | "pt"
+): ActivityDefinition | undefined => {
+    const classes = (getActivitiesCatalog(language).classes || []) as ActivityClass[];
 
     return classes[0]?.activities[0];
 };
@@ -195,9 +198,51 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     const preparedWorkspaceRef = useRef<Record<string, true>>({});
     const { mkdirRecursive, writeFile } = useFileSystem();
     const { open: openProcess, processes, url: setProcessUrl } = useProcesses();
+    const { language } = useSession();
+    const uiText = useMemo(() => {
+        if (language === "pt") {
+            return {
+                activity: "Atividade",
+                empty: "Nenhuma atividade carregada.",
+                instructions: "Instrucoes",
+                position: "Posicao",
+                result: "Resultado",
+                runCommandsHint:
+                    "Execute os comandos no GitBash e depois valide aqui. A validacao usa historico real de comandos e eventos.",
+                select: "Selecionar",
+                selectColumn: "Selecionar coluna",
+            };
+        }
+
+        if (language === "en") {
+            return {
+                activity: "Activity",
+                empty: "No activities loaded.",
+                instructions: "Instructions",
+                position: "Position",
+                result: "Result",
+                runCommandsHint:
+                    "Run the commands in GitBash and then validate here. Validation uses real command and event history.",
+                select: "Select",
+                selectColumn: "Select column",
+            };
+        }
+
+        return {
+            activity: "Actividad",
+            empty: "No hay actividades cargadas.",
+            instructions: "Consigna",
+            position: "Posicion",
+            result: "Resultado",
+            runCommandsHint:
+                "Ejecuta los comandos en GitBash y luego valida aca. La validacion usa historial real de comandos y eventos.",
+            select: "Seleccionar",
+            selectColumn: "Seleccionar columna",
+        };
+    }, [language]);
     const classes = useMemo(
-        () => (getActivitiesCatalog().classes || []) as ActivityClass[],
-        []
+        () => (getActivitiesCatalog(language).classes || []) as ActivityClass[],
+        [language]
     );
     const activities = useMemo(
         () => classes.flatMap((activityClass) => activityClass.activities),
@@ -208,12 +253,20 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     const [activityId, setActivityId] = useState(initialActivityId);
     const [results, setResults] = useState<ValidationResult[]>([]);
     const [answers, setAnswers] = useState<Record<string, unknown>>(() => {
-        const selectedActivity = getActivityById(initialActivityId) || getFallbackActivity();
+        const selectedActivity =
+            getActivityById(initialActivityId, language) || getFallbackActivity(language);
 
         return selectedActivity ? getInitialAnswers(selectedActivity) : {};
     });
 
-    const activity = getActivityById(activityId) || getFallbackActivity();
+    const fallbackActivity = useMemo(
+        () => activities[0] || getFallbackActivity(language),
+        [activities, language]
+    );
+    const activity = useMemo(
+        () => activities.find((entry) => entry.id === activityId) || fallbackActivity,
+        [activities, activityId, fallbackActivity]
+    );
 
     useEffect(() => {
         if (!activity) return;
@@ -315,7 +368,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
         if (!activity) return;
 
         saveActivityAnswers(activity.id, answers);
-        const output = validateActivity(activity.id);
+        const output = validateActivity(activity.id, language);
 
         setResults(output.results);
     };
@@ -329,7 +382,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     };
 
     if (!activity) {
-        return <div style={containerStyle}>No hay actividades cargadas.</div>;
+        return <div style={containerStyle}>{uiText.empty}</div>;
     }
 
     const selectedClass = classes.find(({ classId }) => classId === activity.classId);
@@ -378,7 +431,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
 
                     <div style={{ flex: "1 1 260px", maxWidth: "100%", minWidth: 240 }}>
                         <label htmlFor="activity-select" style={{ display: "block", fontSize: 12 }}>
-                            Actividad
+                            {uiText.activity}
                         </label>
                         <select
                             id="activity-select"
@@ -409,7 +462,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                 {instructions.length > 0 && (
                     <div style={{ marginBottom: 12 }}>
                         <div style={{ color: "#9fb6ff", fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-                            Consigna
+                            {uiText.instructions}
                         </div>
                         <ol style={{ margin: 0, paddingLeft: 20 }}>
                             {instructions.map((instruction, index) => (
@@ -432,7 +485,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                                     style={inputStyle}
                                     value={asString(asRecord(answers.cards)[card.id])}
                                 >
-                                    <option value="">Seleccionar columna</option>
+                                    <option value="">{uiText.selectColumn}</option>
                                     {((activity.data.columns || []) as string[]).map((column) => (
                                         <option key={column} value={column}>
                                             {column}
@@ -475,7 +528,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                                         {((activity.data.items || []) as { id: string }[]).map(
                                             (positionItem, indexPosition) => (
                                                 <option key={`${item.id}-${positionItem.id}`} value={indexPosition}>
-                                                    Posición {indexPosition + 1}
+                                                    {uiText.position} {indexPosition + 1}
                                                 </option>
                                             )
                                         )}
@@ -493,7 +546,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                                     style={inputStyle}
                                     value={asString(answers.culpable)}
                                 >
-                                    <option value="">Seleccionar</option>
+                                    <option value="">{uiText.select}</option>
                                     {question.options.map((optionId) => (
                                         <option key={optionId} value={optionId}>
                                             {optionId}
@@ -544,8 +597,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
 
                 {(activity.mode.startsWith("terminal") || activity.mode === "terminal") && (
                     <div style={{ color: "#d9d9d9", fontSize: 13, marginBottom: 12 }}>
-                        Ejecutá los comandos en GitBash y luego validá acá. La validación usa historial
-                        real de comandos y eventos.
+                        {uiText.runCommandsHint}
                     </div>
                 )}
 
@@ -622,7 +674,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
 
             {results.length > 0 && (
                 <div style={panelStyle}>
-                    <h3 style={{ marginTop: 0 }}>Resultado</h3>
+                    <h3 style={{ marginTop: 0 }}>{uiText.result}</h3>
                     <ul style={{ margin: 0, paddingLeft: 18 }}>
                         {results.map((result) => (
                             <li key={result.checkId} style={{ color: result.passed ? "#6af58b" : "#ff8e8e" }}>

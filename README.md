@@ -4,7 +4,33 @@
 
 ## _Desktop environment in the browser_
 
+## Project Overview
+
+DH Console (WinSimulator) is a browser-based desktop environment for interactive learning.
+It combines a full desktop simulation (windows, apps, file system, start menu, taskbar)
+with guided educational activities focused on Git and collaborative workflows.
+
+It is designed for:
+
+- Classroom training and guided labs
+- Hands-on Git practice without local machine setup
+- Repeatable scenarios with automatic validation and feedback
+
 # System 🧠
+
+### Educational Activities
+
+- Activities app with guided lessons and validation checks
+- Class-based progression (`sch_git_c01` to `sch_git_c04`)
+- Terminal + form + rubric activity modes
+- Automatic command telemetry and activity completion tracking
+- Shared validation between Git Bash and Visual Studio Code terminal
+
+### Localization
+
+- Multi-language user experience: **ES / EN / PT**
+- Language-aware UI text handling
+- Activity content localization integrated with active language
 
 ### [File System](https://github.com/jvilk/BrowserFS)
 
@@ -94,6 +120,23 @@
 
 # Apps 🧪
 
+### Activities
+
+- Guided educational app for Git and collaboration skills
+- Includes scenarios, instructions, and automatic grading
+- Supports seeded workspaces by activity
+  - Auto-creates folders/files per exercise
+  - Opens Visual Studio Code at the exercise root
+  - Optional reset-on-enter flow for repeatable labs
+
+### Git Bash
+
+- Git-focused training terminal
+- Supports realistic Git learning workflows
+- Includes enhanced simulation for `git clone` and `git pull`
+  - Realistic console output style
+  - Real file updates for lab scenarios
+
 ### [BoxedWine](http://www.boxedwine.org/) (**_.exe, .zip_**)
 
 - Runs 16/32-bit Windows applications
@@ -141,6 +184,7 @@
 - Line count, cursor position, language id
 - [Prettier](https://prettier.io/) formatting
   - json, js/ts, css/sass/less, html, markdown
+- Terminal supports Git activity validation flow
 
 ### [Paint](https://github.com/1j01/jspaint) (**_.bmp, .gif, .ico, .jpg, .png, .tiff, .webp,_**)
 
@@ -231,6 +275,23 @@
 ### [Quake III Arena](https://github.com/lrusso/Quake3)
 
 - Port of the classic first-person shooter
+
+# Recent Enhancements ✨
+
+- Realistic Git lab simulation for `clone` + `pull` with observable file changes
+- New Git activities for:
+  - Initial Git identity setup
+  - Clone-only
+  - Pull-only
+  - Clone + pull combined flow
+- Workspace seeding for activities (auto project scaffolding)
+- Resettable activity environments for repeatable classroom practice
+- Visual consistency updates:
+  - Monaco renamed to **Visual Studio Code** in visible UI
+  - Start Menu shortcut updated accordingly
+- Git Bash UX improvements (window controls fallback)
+- Default app launch behavior set to maximized (fullscreen-like)
+- Build validated for production export and Vercel deployment flow
 
 # Try It 🚀
 
