@@ -247,6 +247,50 @@
       "title": "Crear y guardar cambios",
       "activities": [
         {
+          "id": "sch_git_c02_a00",
+          "classId": "sch_git_c02",
+          "title": "Configuración inicial de Git",
+          "objective": "Configurar identidad global de autor para commits.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Antes de crear repos, configurá tu identidad global de Git en GitBash.",
+            "instructions": [
+              "Ejecutá: git config --global user.name \"Tu Nombre\"",
+              "Ejecutá: git config --global user.email \"tu@email.com\"",
+              "Después continuá con la actividad de inicializar repo"
+            ]
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c02_a00_name_set",
+                "type": "TERMINAL_COMMAND_REGEX_EXECUTED",
+                "target": "commands",
+                "rules": { "pattern": "git\\s+config\\s+--global\\s+user\\.name\\s+.+" },
+                "messageOk": "Configuraste user.name.",
+                "messageFail": "Falta configurar user.name con git config --global user.name \"...\""
+              },
+              {
+                "checkId": "c02_a00_email_set",
+                "type": "TERMINAL_COMMAND_REGEX_EXECUTED",
+                "target": "commands",
+                "rules": { "pattern": "git\\s+config\\s+--global\\s+user\\.email\\s+.+@.+" },
+                "messageOk": "Configuraste user.email.",
+                "messageFail": "Falta configurar user.email con git config --global user.email \"...\""
+              },
+              {
+                "checkId": "c02_a00_order",
+                "type": "TERMINAL_ORDER",
+                "target": "commands",
+                "rules": { "before": "git init", "mustAppear": "git config --global user.name" },
+                "messageOk": "Configuración realizada antes de inicializar repo.",
+                "messageFail": "Primero configurá tu identidad y después inicializá repos con git init."
+              }
+            ]
+          }
+        },
+        {
           "id": "sch_git_c02_a01",
           "classId": "sch_git_c02",
           "title": "Inicializar repo",
@@ -265,6 +309,19 @@
             "terminal": {
               "expectedWorkingDir": "/miProyecto",
               "allowedCommands": ["pwd", "ls", "cd", "mkdir", "touch", "echo", "cat", "git init", "git status", "help"]
+            },
+            "workspace": {
+              "rootPath": "/",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/miProyecto"],
+              "files": [
+                {
+                  "path": "/miProyecto/README.md",
+                  "content": "# miProyecto\n\nPrework de la actividad: crea archivos web base y luego ejecuta git init.\n"
+                }
+              ]
             }
           },
           "validation": {
@@ -335,7 +392,27 @@
               "Usá git status antes y después de git add.",
               "Prepará solo index.html para staging.",
               "No incluyas style.css en staging ni en el commit."
-            ]
+            ],
+            "workspace": {
+              "rootPath": "/miProyecto",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/miProyecto/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Mi Proyecto</title>\n    <link rel=\"stylesheet\" href=\"style.css\" />\n  </head>\n  <body>\n    <h1>Mi Proyecto Git</h1>\n    <script src=\"app.js\"></script>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/miProyecto/style.css",
+                  "content": "body {\n  font-family: 'Segoe UI', sans-serif;\n  margin: 0;\n  padding: 24px;\n}\n\nh1 {\n  color: #1f2937;\n}\n"
+                },
+                {
+                  "path": "/miProyecto/app.js",
+                  "content": "console.log('Mi Proyecto listo para practicar Git');\n"
+                }
+              ]
+            }
           },
           "validation": {
             "checks": [
@@ -398,6 +475,26 @@
               "Usá un mensaje de al menos 15 caracteres.",
               "Empezá con: Agrega, Corrige, Elimina, Actualiza, Mejora o Refactoriza."
             ],
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Repo Clase</title>\n  </head>\n  <body>\n    <h1>Practica de commits</h1>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 {\n  color: #2563eb;\n}\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Listo para commit profesional');\n"
+                }
+              ]
+            },
             "rules": {
               "forbiddenMessages": ["cambios", "fix", "arreglo", "asdf", "update"],
               "mustStartWithAny": ["Agrega", "Corrige", "Elimina", "Actualiza", "Mejora", "Refactoriza"],
@@ -445,6 +542,30 @@
               "Seleccioná archivos de forma explícita.",
               "Evitá git add . ciego."
             ],
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Repo Clase</title>\n  </head>\n  <body>\n    <h1>Control de staging</h1>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 {\n  color: #0f172a;\n}\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Selecciona archivos explicitamente');\n"
+                },
+                {
+                  "path": "/repo/notes.tmp",
+                  "content": "archivo temporal - no debe ir al commit\n"
+                }
+              ]
+            },
             "policy": { "warnOnAddDot": true }
           },
           "validation": {
@@ -494,7 +615,27 @@
             "form": [
               { "id": "author", "label": "Autor del último commit" },
               { "id": "message", "label": "Mensaje del último commit" }
-            ]
+            ],
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Historial de cambios</h1></body></html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 { color: #0ea5e9; }\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Actividad c03_a01');\n"
+                }
+              ]
+            }
           },
           "validation": {
             "checks": [
@@ -536,7 +677,27 @@
             "form": [
               { "id": "commit1", "label": "Copiá el 1er commit (hash + mensaje)" },
               { "id": "commit2", "label": "Copiá el 2do commit (hash + mensaje)" }
-            ]
+            ],
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Oneline log</h1></body></html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 { font-size: 2rem; }\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Actividad c03_a02');\n"
+                }
+              ]
+            }
           },
           "validation": {
             "checks": [
@@ -575,7 +736,27 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "form": [{ "id": "linea", "label": "¿Qué línea cambió? (copiala)" }]
+            "form": [{ "id": "linea", "label": "¿Qué línea cambió? (copiala)" }],
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Diff practice</h1></body></html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 { color: #1f2937; }\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Actividad c03_a03');\n"
+                }
+              ]
+            }
           },
           "validation": {
             "checks": [
@@ -617,7 +798,27 @@
             "form": [
               { "id": "hash", "label": "Pegá el hash del commit culpable" },
               { "id": "queCambio", "label": "¿Qué cambió? (2 ideas)" }
-            ]
+            ],
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Debug historico</h1></body></html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 { letter-spacing: 0.01em; }\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Actividad c03_a04');\n"
+                }
+              ]
+            }
           },
           "validation": {
             "checks": [
@@ -673,6 +874,26 @@
             "remote": {
               "requiredName": "origin",
               "urlPattern": "^(https://|git@).+"
+            },
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Remote setup</h1></body></html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 { color: #0f172a; }\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Actividad c04_a01');\n"
+                }
+              ]
             }
           },
           "validation": {
@@ -711,7 +932,29 @@
           "objective": "Publicar la rama y configurar tracking.",
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
-          "data": { "expected": { "branch": "main", "remote": "origin" } },
+          "data": {
+            "expected": { "branch": "main", "remote": "origin" },
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Push upstream</h1></body></html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 { color: #2563eb; }\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Actividad c04_a02');\n"
+                }
+              ]
+            }
+          },
           "validation": {
             "checks": [
               {
@@ -751,7 +994,27 @@
           "data": {
             "scenario": {
               "remoteHasNewCommits": true,
-              "requiredPull": "git pull origin main"
+              "requiredPull": "git pull"
+            },
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Pull before push</h1></body></html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 { color: #475569; }\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Actividad c04_a03');\n"
+                }
+              ]
             }
           },
           "validation": {
@@ -760,15 +1023,15 @@
                 "checkId": "c04_a03_pull_done",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
-                "rules": { "mustInclude": ["git pull origin main"] },
+                "rules": { "mustInclude": ["git pull"] },
                 "messageOk": "Hiciste pull correctamente.",
-                "messageFail": "Tenés que hacer: git pull origin main"
+                "messageFail": "Tenés que hacer: git pull"
               },
               {
                 "checkId": "c04_a03_pull_before_push",
                 "type": "TERMINAL_ORDER",
                 "target": "commands",
-                "rules": { "before": "git push", "mustAppear": "git pull origin main" },
+                "rules": { "before": "git push", "mustAppear": "git pull" },
                 "messageOk": "Hiciste pull antes de push.",
                 "messageFail": "Primero hacé pull y después push."
               },
@@ -792,7 +1055,27 @@
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
             "requiredSequence": ["git pull", "git status", "git add", "git commit", "git push"],
-            "commitMessageRules": { "minLength": 12 }
+            "commitMessageRules": { "minLength": 12 },
+            "workspace": {
+              "rootPath": "/repo",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/repo/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Flujo remoto completo</h1></body></html>\n"
+                },
+                {
+                  "path": "/repo/style.css",
+                  "content": "h1 { color: #0f766e; }\n"
+                },
+                {
+                  "path": "/repo/app.js",
+                  "content": "console.log('Actividad c04_a04');\n"
+                }
+              ]
+            }
           },
           "validation": {
             "checks": [
@@ -835,6 +1118,191 @@
                 "rules": { "remoteInSync": true },
                 "messageOk": "Repo remoto actualizado.",
                 "messageFail": "El remoto no quedó actualizado. Revisá el push."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c04_a05",
+          "classId": "sch_git_c04",
+          "title": "Lab: solo clone",
+          "objective": "Practicar clonado remoto de un proyecto web.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Cloná un laboratorio remoto simulado y entrá al proyecto clonado.",
+            "instructions": [
+              "Ejecutá: git clone https://github.com/winsim-labs/css-pull-lab.git",
+              "Entrá al repo: cd css-pull-lab",
+              "Verificá que exista styles.css con: ls"
+            ],
+            "workspace": {
+              "rootPath": "/git-labs",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/git-labs/README.md",
+                  "content": "# Git Labs\n\nClona el laboratorio css-pull-lab desde esta carpeta.\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c04_a05_clone_done",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git clone https://github.com/winsim-labs/css-pull-lab.git"] },
+                "messageOk": "Clonado realizado.",
+                "messageFail": "Primero hacé el clone del laboratorio remoto."
+              },
+              {
+                "checkId": "c04_a05_enter_repo",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["cd css-pull-lab"] },
+                "messageOk": "Entraste al repo clonado.",
+                "messageFail": "Entrá al repo con: cd css-pull-lab"
+              },
+              {
+                "checkId": "c04_a05_clone_before_cd",
+                "type": "TERMINAL_ORDER",
+                "target": "commands",
+                "rules": { "before": "cd css-pull-lab", "mustAppear": "git clone https://github.com/winsim-labs/css-pull-lab.git" },
+                "messageOk": "Orden correcto: primero clone y luego cd.",
+                "messageFail": "Primero hacé clone y después entrá al repo."
+              },
+              {
+                "checkId": "c04_a05_remote_present",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "remotesIncludes": ["origin"] },
+                "messageOk": "El clone dejó origin configurado.",
+                "messageFail": "No se detecta origin en el repo clonado."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c04_a06",
+          "classId": "sch_git_c04",
+          "title": "Lab: solo pull",
+          "objective": "Traer cambios remotos usando git pull simple.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Dentro del repo css-pull-lab, ejecutá pull para actualizar styles.css.",
+            "instructions": [
+              "Entrá al proyecto: cd css-pull-lab",
+              "Ejecutá: git pull",
+              "Validá que hubo cambios: cat styles.css"
+            ],
+            "workspace": {
+              "rootPath": "/css-pull-lab",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/css-pull-lab/index.html",
+                  "content": "<!doctype html>\n<html><head><link rel=\"stylesheet\" href=\"styles.css\" /></head><body><h1>Pull Lab</h1></body></html>\n"
+                },
+                {
+                  "path": "/css-pull-lab/styles.css",
+                  "content": "h1 { color: #1d4ed8; }\n"
+                },
+                {
+                  "path": "/css-pull-lab/README.md",
+                  "content": "# css-pull-lab\n\nLaboratorio para practicar git pull.\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c04_a06_pull_done",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git pull"] },
+                "messageOk": "Pull ejecutado.",
+                "messageFail": "Tenés que ejecutar git pull"
+              },
+              {
+                "checkId": "c04_a06_repo_synced",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "remoteInSync": true },
+                "messageOk": "Repositorio sincronizado tras el pull.",
+                "messageFail": "No se detecta sincronización remota todavía."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_git_c04_a07",
+          "classId": "sch_git_c04",
+          "title": "Lab: clone + pull",
+          "objective": "Completar flujo de clone y luego pull para traer cambios de CSS.",
+          "mode": "terminal",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Cloná el repo de laboratorio y luego traé actualizaciones remotas con pull simple.",
+            "instructions": [
+              "git clone https://github.com/winsim-labs/css-pull-lab.git",
+              "cd css-pull-lab",
+              "git pull",
+              "cat styles.css"
+            ],
+            "workspace": {
+              "rootPath": "/git-labs",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/git-labs/README.md",
+                  "content": "# Git Labs\n\nFlujo completo: clone + pull del laboratorio css-pull-lab.\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "c04_a07_clone_done",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git clone https://github.com/winsim-labs/css-pull-lab.git"] },
+                "messageOk": "Clone realizado.",
+                "messageFail": "Primero hacé git clone del laboratorio."
+              },
+              {
+                "checkId": "c04_a07_pull_done",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git pull"] },
+                "messageOk": "Pull realizado.",
+                "messageFail": "Después del clone, ejecutá git pull"
+              },
+              {
+                "checkId": "c04_a07_clone_before_pull",
+                "type": "TERMINAL_ORDER",
+                "target": "commands",
+                "rules": { "before": "git pull", "mustAppear": "git clone https://github.com/winsim-labs/css-pull-lab.git" },
+                "messageOk": "Orden correcto: clone antes de pull.",
+                "messageFail": "Hacé clone primero y después pull."
+              },
+              {
+                "checkId": "c04_a07_synced",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": { "remoteInSync": true },
+                "messageOk": "Quedó sincronizado con remoto.",
+                "messageFail": "Todavía no se detecta sync remoto."
               }
             ]
           }

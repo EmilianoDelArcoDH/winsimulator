@@ -38,6 +38,14 @@ const Titlebar: FC<TitlebarProps> = ({ id }) => {
     title,
     maximized,
   } = process || {};
+  const isGitBashWindow = id.startsWith("GitBash");
+  const resolvedAllowResizing = isGitBashWindow ? true : allowResizing;
+  const resolvedHideMaximizeButton = isGitBashWindow
+    ? false
+    : hideMaximizeButton;
+  const resolvedHideMinimizeButton = isGitBashWindow
+    ? false
+    : hideMinimizeButton;
   const { foregroundId, setForegroundId } = useSession();
   const isForeground = id === foregroundId;
   const { onClose, onMaximize, onMinimize } = useWindowActions(id);
@@ -130,7 +138,7 @@ const Titlebar: FC<TitlebarProps> = ({ id }) => {
       {...titlebarContextMenu}
     >
       <Button
-        {...(!hideMaximizeButton && allowResizing && !closing
+        {...(!resolvedHideMaximizeButton && resolvedAllowResizing && !closing
           ? onClickMaximize
           : {})}
         onMouseDownCapture={onMouseDownCapture}
@@ -152,7 +160,7 @@ const Titlebar: FC<TitlebarProps> = ({ id }) => {
         </figure>
       </Button>
       <nav className="cancel">
-        {!hideMinimizeButton && (
+        {!resolvedHideMinimizeButton && (
           <Button
             className="minimize"
             onClick={triggerMinimize}
@@ -161,10 +169,10 @@ const Titlebar: FC<TitlebarProps> = ({ id }) => {
             <MinimizeIcon />
           </Button>
         )}
-        {!hideMaximizeButton && (
+        {!resolvedHideMaximizeButton && (
           <Button
             className="maximize"
-            disabled={!allowResizing}
+            disabled={!resolvedAllowResizing}
             onClick={onMaximize}
             {...label(maximized ? "Restore Down" : "Maximize")}
           >
@@ -172,7 +180,7 @@ const Titlebar: FC<TitlebarProps> = ({ id }) => {
           </Button>
         )}
         <Button
-          $short={hideMaximizeButton && hideMinimizeButton}
+          $short={resolvedHideMaximizeButton && resolvedHideMinimizeButton}
           className="close"
           onClick={onClose}
           {...label("Close")}

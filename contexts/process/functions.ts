@@ -55,7 +55,7 @@ export const openProcess =
   (processId: string, processArguments: ProcessArguments, icon?: string) =>
   (currentProcesses: Processes): Processes => {
     const { url = "" } = processArguments;
-    const { dependantLibs, libs, singleton } =
+    const { dependantLibs, dialogProcess, libs, singleton } =
       processDirectory[processId] || {};
 
     if (libs) preloadLibs(libs);
@@ -90,6 +90,8 @@ export const openProcess =
             ...processDirectory[processId],
             ...(typeof icon === "string" && { icon }),
             ...processArguments,
+            // Start regular apps in fullscreen by default.
+            ...(dialogProcess ? {} : { maximized: true }),
           },
         }
       : currentProcesses;

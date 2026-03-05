@@ -22,13 +22,15 @@ const RenderComponent: FC<RenderComponentProps> = ({
   id,
   windowMode = "floating",
 }) => {
+  const enforceWindowShell = id.startsWith("GitBash");
+  const shouldRenderWindow = enforceWindowShell || hasWindow;
   const SafeComponent = (
     <ErrorBoundary FallbackRender={<ComponentError />}>
       <Component id={id} />
     </ErrorBoundary>
   );
 
-  return hasWindow ? (
+  return shouldRenderWindow ? (
     <Window docked={windowMode === "docked"} id={id}>
       {SafeComponent}
     </Window>

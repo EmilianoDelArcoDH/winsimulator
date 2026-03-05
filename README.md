@@ -133,7 +133,7 @@
 
 - Markdown Viewer
 
-### [Monaco Editor](https://microsoft.github.io/monaco-editor/)
+### [Visual Studio Code](https://microsoft.github.io/monaco-editor/)
 
 - Code/text editor
 - Supports all file types

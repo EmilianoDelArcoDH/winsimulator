@@ -25,6 +25,7 @@ const Window: FC<WindowProps> = ({ children, docked = false, id }) => {
     hideTitlebar,
     peekElement,
   } = process || {};
+  const resolvedHideTitlebar = id.startsWith("GitBash") ? true : hideTitlebar;
   const { foregroundId } = useSession();
   const isForeground = id === foregroundId;
   const { zIndex, ...focusableProps } = useFocusable(id);
@@ -56,7 +57,7 @@ const Window: FC<WindowProps> = ({ children, docked = false, id }) => {
       {...windowTransitions}
     >
       <StyledPeekViewport ref={linkViewportEntry}>
-        {!hideTitlebar && <Titlebar id={id} />}
+        {!resolvedHideTitlebar && <Titlebar id={id} />}
         {children}
       </StyledPeekViewport>
     </StyledWindow>

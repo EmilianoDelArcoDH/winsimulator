@@ -1,5 +1,7 @@
-import { memo, useEffect, useMemo, useState } from "react";
+import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
+import { useFileSystem } from "contexts/fileSystem";
+import { useProcesses } from "contexts/process";
 import {
     clearActivityProgress,
     type ActivityCard,
@@ -37,6 +39,20 @@ type QuestionData = {
 type FormField = {
     id: string;
     label: string;
+};
+
+type WorkspaceSeedFile = {
+    content: string;
+    path: string;
+};
+
+type WorkspaceSeed = {
+    files: WorkspaceSeedFile[];
+    folders: string[];
+    openInVscode: boolean;
+    overwriteFiles: boolean;
+    resetOnEnter: boolean;
+    rootPath: string;
 };
 
 const containerStyle: React.CSSProperties = {
@@ -104,6 +120,51 @@ const asStringArray = (value: unknown): string[] =>
 const asRecord = (value: unknown): Record<string, unknown> =>
     value && typeof value === "object" ? (value as Record<string, unknown>) : {};
 
+const normalizeWorkspacePath = (value: string): string => {
+    const normalized = value.replace(/\\/g, "/").replace(/\/+/g, "/").trim();
+
+    if (!normalized) return "";
+
+    return normalized.startsWith("/") ? normalized : `/${normalized}`;
+};
+
+const getParentPath = (value: string): string => {
+    const lastSlash = value.lastIndexOf("/");
+
+    if (lastSlash <= 0) return "/";
+
+    return value.slice(0, lastSlash);
+};
+
+const resolveWorkspaceSeed = (activity: ActivityDefinition): WorkspaceSeed | undefined => {
+    const workspace = asRecord(activity.data.workspace);
+    const rootPath = normalizeWorkspacePath(asString(workspace.rootPath));
+
+    if (!rootPath) {
+        return undefined;
+    }
+
+    const files = (workspace.files as unknown[])
+        ?.map((entry) => asRecord(entry))
+        .map((entry) => ({
+            content: asString(entry.content),
+            path: normalizeWorkspacePath(asString(entry.path)),
+        }))
+        .filter((entry) => Boolean(entry.path)) as WorkspaceSeedFile[];
+    const folders = asStringArray(workspace.folders)
+        .map((entry) => normalizeWorkspacePath(entry))
+        .filter(Boolean);
+
+    return {
+        files,
+        folders,
+        openInVscode: workspace.openInVscode !== false,
+        overwriteFiles: workspace.overwriteFiles === true,
+        resetOnEnter: workspace.resetOnEnter === true,
+        rootPath,
+    };
+};
+
 const getInitialAnswers = (activity: ActivityDefinition): Record<string, unknown> => {
     const saved = getActivityState(activity.id).answers;
 
@@ -131,6 +192,9 @@ const getFallbackActivity = (): ActivityDefinition | undefined => {
 };
 
 const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
+    const preparedWorkspaceRef = useRef<Record<string, true>>({});
+    const { mkdirRecursive, writeFile } = useFileSystem();
+    const { open: openProcess, processes, url: setProcessUrl } = useProcesses();
     const classes = useMemo(
         () => (getActivitiesCatalog().classes || []) as ActivityClass[],
         []
@@ -158,6 +222,68 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
         setAnswers(getInitialAnswers(activity));
         setResults([]);
     }, [activity]);
+
+    useEffect(() => {
+        if (!activity) return;
+
+        const workspaceSeed = resolveWorkspaceSeed(activity);
+
+        if (!workspaceSeed) {
+            return;
+        }
+
+        if (preparedWorkspaceRef.current[activity.id] && !workspaceSeed.resetOnEnter) {
+            return;
+        }
+
+        let cancelled = false;
+
+        const prepareWorkspace = async (): Promise<void> => {
+            try {
+                const folderSet = new Set<string>([
+                    workspaceSeed.rootPath,
+                    ...workspaceSeed.folders,
+                    ...workspaceSeed.files.map(({ path }) => getParentPath(path)),
+                ]);
+
+                await Promise.all(
+                    [...folderSet]
+                        .filter(Boolean)
+                        .map((folderPath) => mkdirRecursive(folderPath))
+                );
+
+                await Promise.all(
+                    workspaceSeed.files.map(({ content, path }) =>
+                        writeFile(path, content, workspaceSeed.overwriteFiles)
+                    )
+                );
+
+                if (cancelled) return;
+
+                preparedWorkspaceRef.current[activity.id] = true;
+
+                if (workspaceSeed.openInVscode) {
+                    const monacoId = Object.keys(processes).find((processId) =>
+                        processId.startsWith("MonacoEditor")
+                    );
+
+                    if (monacoId) {
+                        setProcessUrl(monacoId, workspaceSeed.rootPath);
+                    } else {
+                        openProcess("MonacoEditor", { url: workspaceSeed.rootPath });
+                    }
+                }
+            } catch {
+                // Ignore workspace seeding failures to avoid blocking activity flow.
+            }
+        };
+
+        prepareWorkspace();
+
+        return () => {
+            cancelled = true;
+        };
+    }, [activity, mkdirRecursive, openProcess, processes, setProcessUrl, writeFile]);
 
     const saveAnswers = (nextAnswers: Record<string, unknown>): void => {
         if (!activity) return;

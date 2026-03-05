@@ -15,11 +15,16 @@ const directory: Processes = {
   },
   GitBash: {
     Component: dynamic(() => import("components/apps/GitBash/GitBashApp")),
+    allowResizing: true,
     backgroundColor: "#1d1f21",
     defaultSize: {
       height: 400,
       width: 650,
     },
+    hasWindow: true,
+    hideMaximizeButton: false,
+    hideMinimizeButton: false,
+    hideTitlebar: false,
     icon: "/System/Icons/48x48/xterm.webp", // Icono existente para terminal
     singleton: false,
     title: "Git Bash",
@@ -181,7 +186,7 @@ const directory: Processes = {
       "/Program Files/MonacoEditor/vs/editor/editor.main.nls.js",
     ],
     icon: "/System/Icons/monaco.webp",
-    title: "Monaco Editor",
+    title: "Visual Studio Code",
   },
   OpenType: {
     Component: dynamic(() => import("components/apps/OpenType")),

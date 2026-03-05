@@ -8,6 +8,7 @@ import {
 } from "react";
 import { useFileSystem } from "contexts/fileSystem";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
+import { useProcesses } from "contexts/process";
 import { trackActivityEvent } from "utils/activityRuntime";
 
 const HISTORY_KEY = "gitbash_history";
@@ -37,10 +38,177 @@ type GitRepoState = {
   branch: string;
   branches: Record<string, GitCommit[]>;
   initialized: boolean;
+  pendingPulls: SimulatedPull[];
   remotes: Record<string, string>;
   staged: Set<string>;
   tags: Record<string, { hash: string; message?: string }>;
   tracked: Set<string>;
+};
+
+type SimulatedPull = {
+  branch: string;
+  changedFiles: Array<{
+    created?: boolean;
+    deletions: number;
+    insertions: number;
+    path: string;
+  }>;
+  fromHash: string;
+  objects: {
+    counted: number;
+    delta: number;
+    enumerated: number;
+    packReused: number;
+    reused: number;
+    total: number;
+    unpacked: number;
+  };
+  speedMiBps: string;
+  targetHash: string;
+  totalSizeMiB: string;
+  updates: Record<string, string>;
+};
+
+const CSS_PULL_LAB_REMOTE = "https://github.com/winsim-labs/css-pull-lab.git";
+
+const createCssPullLabSeed = (): {
+  pendingPulls: SimulatedPull[];
+  readme: string;
+  snapshot: Record<string, string>;
+} => {
+  const baseSnapshot: Record<string, string> = {
+    "index.html": `<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="hero">
+      <h1>Curso Git Pull Lab</h1>
+      <p>Version inicial del estilo.</p>
+      <button>Ver cambios</button>
+    </main>
+  </body>
+</html>
+`,
+    "styles.css": `:root {
+  --bg: #f7f7f7;
+  --card: #ffffff;
+  --text: #1f2430;
+  --accent: #2d7ff9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  color: var(--text);
+}
+
+.hero {
+  background: var(--card);
+  border: 1px solid #d8dce4;
+  border-radius: 12px;
+  padding: 28px;
+  width: min(560px, 92vw);
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 16px;
+}
+`,
+  };
+
+  const pulledStyles = `:root {
+  --bg: linear-gradient(135deg, #e9f3ff 0%, #fef6e4 100%);
+  --card: rgba(255, 255, 255, 0.88);
+  --text: #1a1f2b;
+  --accent: #0068d9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  color: var(--text);
+}
+
+.hero {
+  backdrop-filter: blur(6px);
+  background: var(--card);
+  border: 1px solid rgba(16, 35, 64, 0.12);
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(16, 35, 64, 0.16);
+  padding: 36px;
+  width: min(640px, 92vw);
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  padding: 12px 20px;
+}
+`;
+
+  return {
+    pendingPulls: [
+      {
+        branch: "main",
+        changedFiles: [
+          {
+            deletions: 8,
+            insertions: 14,
+            path: "styles.css",
+          },
+        ],
+        fromHash: "56d4760",
+        objects: {
+          counted: 100,
+          delta: 38,
+          enumerated: 100,
+          packReused: 0,
+          reused: 53,
+          total: 53,
+          unpacked: 53,
+        },
+        speedMiBps: "2.89",
+        targetHash: "06df7b2",
+        totalSizeMiB: "1.20",
+        updates: {
+          "styles.css": pulledStyles,
+        },
+      },
+    ],
+    readme:
+      "# css-pull-lab\n\nSimulador para practicar `git pull` y ver cambios reales en styles.css.\n",
+    snapshot: baseSnapshot,
+  };
 };
 
 const parseArgs = (command: string): string[] =>
@@ -96,9 +264,18 @@ const wildcardToRegex = (pattern: string): RegExp => {
   return new RegExp(`^${escaped}$`);
 };
 
-const GitBash: React.FC<ComponentProcessProps> = () => {
+const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
   const fs = useFileSystem();
+  const {
+    closeWithTransition,
+    maximize,
+    minimize,
+    processes: { [id]: process },
+  } = useProcesses();
   const fsRef = useRef(fs);
+  const showFallbackWindowControls = true;
+  const isMaximized = Boolean(process?.maximized);
+
   const [cwd, setCwd] = useState<string>(HOME);
   const cwdRef = useRef<string>(HOME);
   const previousCwdRef = useRef<string>(HOME);
@@ -230,6 +407,7 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
             branch: "main",
             branches: { main: [] },
             initialized: true,
+            pendingPulls: [],
             remotes: {},
             staged: new Set(),
             tags: {},
@@ -366,7 +544,7 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
         const fullPath = joinPath(repoRoot, relativeFile);
 
         await ensureDir(parentPath(fullPath));
-        await fileSystem.writeFile(fullPath, content);
+        await fileSystem.writeFile(fullPath, content, true);
       };
       const applyCommitSnapshot = async (
         repoRoot: string,
@@ -689,19 +867,23 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
                 await ensureDir(joinPath(gitDirPath, "info"));
                 await fileSystem.writeFile(
                   joinPath(gitDirPath, "HEAD"),
-                  "ref: refs/heads/main\n"
+                  "ref: refs/heads/main\n",
+                  true
                 );
                 await fileSystem.writeFile(
                   joinPath(gitDirPath, "config"),
-                  "[core]\n\trepositoryformatversion = 0\n\tfilemode = false\n\tbare = false\n"
+                  "[core]\n\trepositoryformatversion = 0\n\tfilemode = false\n\tbare = false\n",
+                  true
                 );
                 await fileSystem.writeFile(
                   joinPath(gitDirPath, "description"),
-                  "Unnamed repository; edit this file 'description' to name the repository.\n"
+                  "Unnamed repository; edit this file 'description' to name the repository.\n",
+                  true
                 );
                 await fileSystem.writeFile(
                   joinPath(gitDirPath, "refs/heads/main"),
-                  ""
+                  "",
+                  true
                 );
 
                 getRepoState(repoInitRoot);
@@ -745,16 +927,54 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
                 await ensureDir(joinPath(destinationPath, ".git/refs/tags"));
                 await fileSystem.writeFile(
                   joinPath(destinationPath, ".git/HEAD"),
-                  "ref: refs/heads/main\n"
-                );
-                await fileSystem.writeFile(
-                  joinPath(destinationPath, "README.md"),
-                  `# ${remoteName}\n\nCloned from ${sourceInput}\n`
+                  "ref: refs/heads/main\n",
+                  true
                 );
 
                 const clonedRepo = getRepoState(destinationPath);
 
                 clonedRepo.remotes.origin = sourceInput;
+                if (sourceInput === CSS_PULL_LAB_REMOTE) {
+                  const seed = createCssPullLabSeed();
+
+                  await Promise.all(
+                    Object.entries(seed.snapshot).map(([filePath, content]) =>
+                      fileSystem.writeFile(joinPath(destinationPath, filePath), content)
+                    )
+                  );
+                  await fileSystem.writeFile(
+                    joinPath(destinationPath, "README.md"),
+                    seed.readme
+                  );
+
+                  const baseCommit: GitCommit = {
+                    hash: "56d4760",
+                    message: "feat: base web styles",
+                    snapshot: {
+                      ...seed.snapshot,
+                      "README.md": seed.readme,
+                    },
+                    timestamp: Date.now() - 5 * 60 * 1000,
+                  };
+
+                  clonedRepo.branches.main = [baseCommit];
+                  clonedRepo.pendingPulls = seed.pendingPulls;
+                  Object.keys(baseCommit.snapshot).forEach((entry) =>
+                    clonedRepo.tracked.add(entry)
+                  );
+
+                  await fileSystem.writeFile(
+                    joinPath(destinationPath, ".git/refs/heads/main"),
+                    `${baseCommit.hash}\n`,
+                    true
+                  );
+                } else {
+                  await fileSystem.writeFile(
+                    joinPath(destinationPath, "README.md"),
+                    `# ${remoteName}\n\nCloned from ${sourceInput}\n`
+                  );
+                }
+
                 print(`Cloning into '${cloneFolderName}'...`);
                 print("remote: Enumerating objects: 12, done.");
                 print("Receiving objects: 100% (12/12), done.");
@@ -804,6 +1024,12 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
                   branch: sourceRepoState.branch,
                   branches: clonedBranches,
                   initialized: true,
+                  pendingPulls: sourceRepoState.pendingPulls.map((entry) => ({
+                    ...entry,
+                    changedFiles: entry.changedFiles.map((file) => ({ ...file })),
+                    objects: { ...entry.objects },
+                    updates: { ...entry.updates },
+                  })),
                   remotes: { ...sourceRepoState.remotes },
                   staged: new Set(),
                   tags: { ...sourceRepoState.tags },
@@ -1018,11 +1244,13 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
 
               await fileSystem.writeFile(
                 joinPath(repoRoot, `.git/refs/heads/${repo.branch}`),
-                `${commitHash}\n`
+                `${commitHash}\n`,
+                true
               );
               await fileSystem.writeFile(
                 joinPath(repoRoot, ".git/COMMIT_EDITMSG"),
-                `${message}\n`
+                `${message}\n`,
+                true
               );
 
               print(`[${repo.branch} ${commitHash}] ${message}`);
@@ -1168,7 +1396,8 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
 
                 await fileSystem.writeFile(
                   joinPath(repoRoot, `.git/refs/heads/${repo.branch}`),
-                  `${targetCommit.hash}\n`
+                  `${targetCommit.hash}\n`,
+                  true
                 );
                 break;
               }
@@ -1297,6 +1526,87 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
                 break;
               }
 
+              const pendingPull = repo.pendingPulls.find(
+                (entry) =>
+                  entry.branch === branchName &&
+                  (remoteName === "origin" || Boolean(repo.remotes[remoteName]))
+              );
+
+              if (pendingPull) {
+                await Promise.all(
+                  Object.entries(pendingPull.updates).map(([relativePath, content]) =>
+                    writeSnapshotFile(repoRoot, relativePath, content)
+                  )
+                );
+
+                const nextSnapshot = await createSnapshot(repoRoot);
+
+                repo.branches[repo.branch] = repo.branches[repo.branch] || [];
+                repo.branches[repo.branch].unshift({
+                  hash: pendingPull.targetHash,
+                  message: "style: refresh landing layout",
+                  parentHash: pendingPull.fromHash,
+                  snapshot: nextSnapshot,
+                  timestamp: Date.now(),
+                });
+                Object.keys(nextSnapshot).forEach((entry) => repo.tracked.add(entry));
+
+                repo.pendingPulls = repo.pendingPulls.filter(
+                  (entry) => entry !== pendingPull
+                );
+
+                await fileSystem.writeFile(
+                  joinPath(repoRoot, `.git/refs/heads/${repo.branch}`),
+                  `${pendingPull.targetHash}\n`,
+                  true
+                );
+
+                print(
+                  `remote: Enumerating objects: ${pendingPull.objects.enumerated}, done.`
+                );
+                print(
+                  `remote: Counting objects: 100% (${pendingPull.objects.counted}/${pendingPull.objects.counted}), done.`
+                );
+                print("remote: Compressing objects: 100% (14/14), done.");
+                print(
+                  `remote: Total ${pendingPull.objects.total} (delta ${pendingPull.objects.delta}), reused ${pendingPull.objects.reused} (delta ${pendingPull.objects.delta}), pack-reused ${pendingPull.objects.packReused}`
+                );
+                print(
+                  `Unpacking objects: 100% (${pendingPull.objects.unpacked}/${pendingPull.objects.unpacked}), ${pendingPull.totalSizeMiB} MiB | ${pendingPull.speedMiBps} MiB/s, done.`
+                );
+                print(`From ${repo.remotes[remoteName]}`);
+                print(
+                  `   ${pendingPull.fromHash}..${pendingPull.targetHash}  ${branchName}       -> ${remoteName}/${branchName}`
+                );
+                print(`Updating ${pendingPull.fromHash}..${pendingPull.targetHash}`);
+                print("Fast-forward");
+                pendingPull.changedFiles.forEach((entry) => {
+                  print(
+                    ` ${entry.path} | ${entry.insertions + entry.deletions} ${"+".repeat(
+                      Math.min(entry.insertions, 20)
+                    )}${"-".repeat(Math.min(entry.deletions, 20))}`
+                  );
+                });
+
+                const insertions = pendingPull.changedFiles.reduce(
+                  (total, entry) => total + entry.insertions,
+                  0
+                );
+                const deletions = pendingPull.changedFiles.reduce(
+                  (total, entry) => total + entry.deletions,
+                  0
+                );
+
+                print(
+                  ` ${pendingPull.changedFiles.length} file changed, ${insertions} insertion(+), ${deletions} deletion(-)`
+                );
+
+                pendingPull.changedFiles
+                  .filter((entry) => entry.created)
+                  .forEach((entry) => print(` create mode 100644 ${entry.path}`));
+                break;
+              }
+
               print(`From ${repo.remotes[remoteName]}`);
               print(` * branch            ${branchName} -> FETCH_HEAD`);
               print("Already up to date.");
@@ -1356,7 +1666,8 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
               repo.branches[newBranch] = [...(repo.branches[repo.branch] || [])];
               await fileSystem.writeFile(
                 joinPath(repoRoot, `.git/refs/heads/${newBranch}`),
-                ""
+                "",
+                true
               );
               print(`Branch '${newBranch}' created.`);
               break;
@@ -1382,7 +1693,8 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
                 };
                 await fileSystem.writeFile(
                   joinPath(repoRoot, `.git/refs/tags/${tagName}`),
-                  `${headCommit.hash}\n`
+                  `${headCommit.hash}\n`,
+                  true
                 );
                 print(`Tag '${tagName}' created.`);
                 break;
@@ -1454,12 +1766,14 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
                 repo.branches[branchName] = [...(repo.branches[repo.branch] || [])];
                 await fileSystem.writeFile(
                   joinPath(repoRoot, `.git/refs/heads/${branchName}`),
-                  ""
+                  "",
+                  true
                 );
                 repo.branch = branchName;
                 await fileSystem.writeFile(
                   joinPath(repoRoot, ".git/HEAD"),
-                  `ref: refs/heads/${branchName}\n`
+                  `ref: refs/heads/${branchName}\n`,
+                  true
                 );
                 print(`Switched to a new branch '${branchName}'`);
                 break;
@@ -1469,7 +1783,8 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
                 repo.branch = branchName;
                 await fileSystem.writeFile(
                   joinPath(repoRoot, ".git/HEAD"),
-                  `ref: refs/heads/${branchName}\n`
+                  `ref: refs/heads/${branchName}\n`,
+                  true
                 );
                 print(`Switched to branch '${branchName}'`);
                 break;
@@ -1719,6 +2034,73 @@ const GitBash: React.FC<ComponentProcessProps> = () => {
         width: "100%",
       }}
     >
+      {showFallbackWindowControls && (
+        <div
+          style={{
+            alignItems: "center",
+            background: "#2d2f33",
+            borderBottom: "1px solid #1a1b1e",
+            display: "flex",
+            height: 28,
+            justifyContent: "space-between",
+            margin: "-8px -8px 8px",
+            padding: "0 0 0 8px",
+            userSelect: "none",
+          }}
+        >
+          <span style={{ color: "#d7d7d7", fontSize: 12 }}>Git Bash</span>
+          <div style={{ display: "flex", gap: 0 }}>
+            <button
+              aria-label="Minimize"
+              onClick={() => minimize(id)}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#d7d7d7",
+                cursor: "pointer",
+                fontSize: 14,
+                height: 28,
+                width: 40,
+              }}
+              type="button"
+            >
+              _
+            </button>
+            <button
+              aria-label={isMaximized ? "Restore" : "Maximize"}
+              onClick={() => maximize(id)}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#d7d7d7",
+                cursor: "pointer",
+                fontSize: 12,
+                height: 28,
+                width: 40,
+              }}
+              type="button"
+            >
+              {isMaximized ? "[]" : "[ ]"}
+            </button>
+            <button
+              aria-label="Close"
+              onClick={() => closeWithTransition(id)}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "#f3f3f3",
+                cursor: "pointer",
+                fontSize: 14,
+                height: 28,
+                width: 44,
+              }}
+              type="button"
+            >
+              x
+            </button>
+          </div>
+        </div>
+      )}
       <div
         ref={outputRef}
         style={{

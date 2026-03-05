@@ -12,6 +12,7 @@ import { getSaveFileInfo } from "components/apps/MonacoEditor/functions";
 import StatusBar from "components/apps/MonacoEditor/StatusBar";
 import StyledMonacoEditor from "components/apps/MonacoEditor/StyledMonacoEditor";
 import useMonaco from "components/apps/MonacoEditor/useMonaco";
+import processGit from "components/apps/Terminal/processGit";
 import AppContainer from "components/system/Apps/AppContainer";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useFileSystem } from "contexts/fileSystem";
@@ -52,6 +53,7 @@ type UrlTargetType = "none" | "file" | "directory";
 const INVALID_ENTRY_NAME = /[\\/:*?"<>|]/;
 const SIDEBAR_WIDTH_STORAGE_KEY = "monaco:sidebar-width";
 const DEFAULT_SIDEBAR_WIDTH = 210;
+const GIT_CONFIG_KEY = "gitbash_global_config";
 
 const getTemplateCursorOffset = (filePath: string, content: string): number => {
   const extension = extname(filePath).toLowerCase();
@@ -189,6 +191,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   } = useProcesses();
   const {
     exists,
+    fs,
     lstat,
     mkdir,
     readFile,
@@ -1228,6 +1231,12 @@ function example() {
         return;
       }
 
+      trackActivityEvent({
+        command,
+        cwd: terminalCwd,
+        type: "commandExecuted",
+      });
+
       if (command === "clear") {
         setTerminalHistory([]);
         setTerminalInput("");
@@ -1239,7 +1248,7 @@ function example() {
 
       if (command === "help") {
         nextLines.push(
-          "Available commands: help, pwd, ls, cd, mkdir, touch, cat, echo, clear"
+          "Available commands: help, pwd, ls, cd, mkdir, touch, cat, echo, clear, git"
         );
       } else if (command === "pwd") {
         nextLines.push(terminalCwd);
@@ -1335,6 +1344,57 @@ function example() {
         }
       } else if (instruction === "echo") {
         nextLines.push(args.join(" "));
+      } else if (instruction === "git") {
+        const gitSubCommand = args[0] || "";
+
+        if (!gitSubCommand) {
+          nextLines.push("usage: git <command> [options]");
+        } else if (gitSubCommand === "config") {
+          const scope = args[1] || "";
+          const key = args[2] || "";
+          const configValue = args.slice(3).join(" ");
+
+          if (scope !== "--global") {
+            nextLines.push("Only git config --global is supported in this terminal.");
+          } else if (!key || !configValue) {
+            nextLines.push("usage: git config --global user.name|user.email <value>");
+          } else if (key !== "user.name" && key !== "user.email") {
+            nextLines.push("Supported keys: user.name, user.email");
+          } else {
+            try {
+              const currentConfig = JSON.parse(
+                window.localStorage.getItem(GIT_CONFIG_KEY) || "{}"
+              ) as { userEmail?: string; userName?: string };
+
+              const nextConfig = {
+                ...currentConfig,
+                ...(key === "user.name"
+                  ? { userName: configValue }
+                  : { userEmail: configValue }),
+              };
+
+              window.localStorage.setItem(GIT_CONFIG_KEY, JSON.stringify(nextConfig));
+              nextLines.push(`Set global ${key} to '${configValue}'`);
+            } catch {
+              nextLines.push("Failed to save git config in local storage.");
+            }
+          }
+        } else if (fs) {
+          await processGit(
+            args,
+            terminalCwd,
+            (message) => nextLines.push(message),
+            fs,
+            (folder) => {
+              updateFolder(folder).catch(() => {
+                // Ignore updateFolder failures triggered by git side effects.
+              });
+            }
+          );
+          await loadEntries();
+        } else {
+          nextLines.push("git is not available: file system not ready");
+        }
       } else {
         nextLines.push(`Command not found: ${command}`);
       }
@@ -1352,12 +1412,14 @@ function example() {
       explorerRoot,
       loadEntries,
       loadFolder,
+      fs,
       lstat,
       mkdir,
       readFile,
       readFolderEntries,
       resolveTerminalPath,
       terminalCwd,
+      updateFolder,
       writeFile,
     ]
   );

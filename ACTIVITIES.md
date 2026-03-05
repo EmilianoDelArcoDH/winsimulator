@@ -14,6 +14,15 @@ Cuando una actividad cumple todos los checks de validación, se registra en cons
 
 - `Actividad completada: {activityId}`
 
+## Workspace Semilla (Git)
+
+En varias actividades prácticas de Git (`c02`, `c03`, `c04`) el sistema ahora:
+
+- crea automáticamente carpeta(s) y archivo(s) base del ejercicio,
+- y abre `Visual Studio Code` con esa carpeta como raíz.
+
+Esto evita que el alumno tenga que empezar siempre desde cero y permite enfocarse en el objetivo de la actividad.
+
 ## Clase `sch_git_c01` — Control de versiones y trabajo colaborativo
 
 ### `sch_git_c01_a01` — Versiones vs copias
@@ -52,6 +61,15 @@ Cuando una actividad cumple todos los checks de validación, se registra en cons
   - Explicar decisión con mínimo 20 chars incluyendo términos de conflicto/resolución.
 
 ## Clase `sch_git_c02` — Crear y guardar cambios
+
+### `sch_git_c02_a00` — Configuración inicial de Git
+- Modo: `terminal`
+- URL app: `/?app=Activities&activityId=sch_git_c02_a00`
+- URL standalone: `/activities/sch_git_c02_a00`
+- Solución esperada:
+  - Ejecutar `git config --global user.name "Tu Nombre"`.
+  - Ejecutar `git config --global user.email "tu@email.com"`.
+  - Realizar esta configuración antes de `git init`.
 
 ### `sch_git_c02_a01` — Inicializar repo
 - Modo: `terminal`
@@ -155,7 +173,7 @@ Cuando una actividad cumple todos los checks de validación, se registra en cons
 - URL app: `/?app=Activities&activityId=sch_git_c04_a03`
 - URL standalone: `/activities/sch_git_c04_a03`
 - Solución esperada:
-  - Ejecutar `git pull origin main`.
+  - Ejecutar `git pull`.
   - Hacer `pull` antes de `push`.
   - Dejar repositorio sincronizado con remoto.
 
@@ -168,3 +186,31 @@ Cuando una actividad cumple todos los checks de validación, se registra en cons
   - Registrar al menos un commit.
   - Usar mensaje de commit de mínimo 12 caracteres.
   - Terminar con remoto actualizado/sincronizado.
+
+### `sch_git_c04_a05` — Lab: solo clone
+- Modo: `terminal`
+- URL app: `/?app=Activities&activityId=sch_git_c04_a05`
+- URL standalone: `/activities/sch_git_c04_a05`
+- Solución esperada:
+  - Ejecutar `git clone https://github.com/winsim-labs/css-pull-lab.git`.
+  - Ingresar al repo con `cd css-pull-lab`.
+  - Verificar presencia de archivos del proyecto (`index.html`, `styles.css`).
+
+### `sch_git_c04_a06` — Lab: solo pull
+- Modo: `terminal`
+- URL app: `/?app=Activities&activityId=sch_git_c04_a06`
+- URL standalone: `/activities/sch_git_c04_a06`
+- Solución esperada:
+  - Estar dentro del repo `css-pull-lab`.
+  - Ejecutar `git pull` (sin `origin main`).
+  - Confirmar que el repo quedó sincronizado.
+
+### `sch_git_c04_a07` — Lab: clone + pull
+- Modo: `terminal`
+- URL app: `/?app=Activities&activityId=sch_git_c04_a07`
+- URL standalone: `/activities/sch_git_c04_a07`
+- Solución esperada:
+  - Ejecutar `git clone https://github.com/winsim-labs/css-pull-lab.git`.
+  - Entrar con `cd css-pull-lab`.
+  - Ejecutar `git pull` (sin `origin main`).
+  - Verificar con `cat styles.css` que cambió tras el pull.
