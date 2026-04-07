@@ -120,15 +120,21 @@ export const filterMenuItems = (
     typeof shown === "boolean" ? shown : shown(browserName),
   ]);
 
-export const disableOffscreenCanvas = ({ page }: TestProps): Promise<void> =>
-  page.addInitScript(() => {
+export const disableOffscreenCanvas = async ({
+  page,
+}: TestProps): Promise<void> => {
+  await page.addInitScript(() => {
     delete (window as Partial<Window & typeof globalThis>).OffscreenCanvas;
   });
+};
 
-export const disableWallpaper = ({ page }: TestProps): Promise<void> =>
-  page.addInitScript(() => {
+export const disableWallpaper = async ({
+  page,
+}: TestProps): Promise<void> => {
+  await page.addInitScript(() => {
     window.DEBUG_DISABLE_WALLPAPER = true;
   });
+};
 
 // action
 export const mockPictureSlideshowRequest = async ({
