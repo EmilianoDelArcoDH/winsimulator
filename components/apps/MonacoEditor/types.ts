@@ -9,6 +9,6 @@ export type Model = Monaco.editor.ITextModel & {
 
 declare global {
   interface Window {
-    monaco: typeof Monaco;
+    monaco?: typeof Monaco;
   }
 }

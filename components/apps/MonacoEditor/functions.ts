@@ -8,11 +8,12 @@ import { DEFAULT_TEXT_FILE_SAVE_PATH } from "utils/constants";
 
 export const detectLanguage = (ext: string): string => {
   const extension = customExtensionLanguages[ext] || ext;
+  const monaco = window.monaco;
 
-  if (!monacoExtensions.has(extension)) return "";
+  if (!monacoExtensions.has(extension) || !monaco) return "";
 
   const { id = "" } =
-    window.monaco.languages
+    monaco.languages
       .getLanguages()
       .find((language) => language.extensions?.includes(extension)) || {};
 

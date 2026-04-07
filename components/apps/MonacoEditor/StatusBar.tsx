@@ -76,16 +76,17 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
     const updateModel = (): void => {
       const model = editor?.getModel() as Model;
       const modelLanguage = model?.getLanguageId();
+      const monaco = window.monaco;
 
       if (modelLanguage) {
         setLanguage(
-          window.monaco?.languages
+          monaco?.languages
             .getLanguages()
             .reduce(
               (alias, { id: languageId, aliases }) =>
                 languageId === modelLanguage ? aliases?.[0] || alias : alias,
               modelLanguage
-            )
+            ) || modelLanguage
         );
       }
 
@@ -181,8 +182,12 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
             <li className="clickable">
               <Button
                 onClick={() => {
+                  const monaco = window.monaco;
+
+                  if (!monaco) return;
+
                   const currentWrap = editor?.getOption(
-                    window.monaco.editor.EditorOption.wordWrap
+                    monaco.editor.EditorOption.wordWrap
                   );
                   const nextWrap = currentWrap === "off" ? "on" : "off";
 
@@ -200,8 +205,12 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
             <li className="clickable">
               <Button
                 onClick={() => {
+                  const monaco = window.monaco;
+
+                  if (!monaco) return;
+
                   const minimapOption = editor?.getOption(
-                    window.monaco.editor.EditorOption.minimap
+                    monaco.editor.EditorOption.minimap
                   );
 
                   editor?.updateOptions({
