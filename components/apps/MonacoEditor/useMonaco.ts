@@ -22,6 +22,7 @@ import {
   DEFAULT_TEXT_FILE_SAVE_PATH,
   MILLISECONDS_IN_SECOND,
 } from "utils/constants";
+import { trackActivityEvent } from "utils/activityRuntime";
 import { getExtension } from "utils/functions";
 import { shareGlobal } from "utils/globals";
 
@@ -222,6 +223,11 @@ const useMonaco = ({
           await writeFile(saveUrl, saveData, true);
           updateFolder(dirname(saveUrl), basename(saveUrl));
           prependFileToTitle(basename(saveUrl));
+          trackActivityEvent({
+            content: saveData,
+            path: saveUrl,
+            type: "fileSaved",
+          });
         }
       }
     });

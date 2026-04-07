@@ -1308,6 +1308,1070 @@
           }
         }
       ]
+    },
+    {
+      "classId": "sch_publish_c01",
+      "title": "Preparar un proyecto para publicacion",
+      "activities": [
+        {
+          "id": "sch_publish_c01_a01",
+          "classId": "sch_publish_c01",
+          "title": "Estructura clara vs desordenada",
+          "objective": "Reorganizar una estructura inicial desordenada para que el proyecto quede listo para mostrarse.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "En Monaco vas a encontrar un proyecto con archivos mezclados en la raiz. Recorre la estructura, ordenala mentalmente y guarda una propuesta corregida editando el archivo de referencia.",
+            "instructions": [
+              "Abre el proyecto semilla que se carga automaticamente en Monaco.",
+              "Revisa la estructura desordenada en la carpeta raiz.",
+              "Edita y guarda /Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt con una estructura mas clara.",
+              "La propuesta final debe dejar index.html en raiz y separar css, js e img en carpetas propias."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/publish-c01-a01",
+              "editablePaths": ["/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/publish-c01-a01/css", "/Users/Public/Desktop/publish-c01-a01/js", "/Users/Public/Desktop/publish-c01-a01/img"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Proyecto desordenado</title>\n    <link rel=\"stylesheet\" href=\"style main.css\" />\n  </head>\n  <body>\n    <h1>Mi sitio</h1>\n    <img src=\"Logo Principal.png\" alt=\"Logo\" />\n    <script src=\"script final.js\"></script>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/style main.css",
+                  "content": "body {\n  font-family: Arial, sans-serif;\n}\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/script final.js",
+                  "content": "console.log('estructura inicial');\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/Logo Principal.png",
+                  "content": "placeholder-image\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/copia_final_v2_definitivo.html",
+                  "content": "<h1>Version vieja</h1>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt",
+                  "content": "Corrige esta propuesta para dejar una estructura clara.\n\nmi-proyecto/\n  index.html\n  style main.css\n  script final.js\n  Logo Principal.png\n  copia_final_v2_definitivo.html\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "publish_c01_a01_saved_structure_file",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt"] },
+                "messageOk": "Guardaste la propuesta de estructura en Monaco.",
+                "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt con tu estructura corregida."
+              },
+              {
+                "checkId": "publish_c01_a01_index_in_root",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt", "pattern": "index\\.html" },
+                "messageOk": "La propuesta mantiene index.html en la raiz.",
+                "messageFail": "La propuesta debe dejar index.html en la raiz del proyecto."
+              },
+              {
+                "checkId": "publish_c01_a01_css_folder",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt", "pattern": "css[\\\\/]estilos\\.css" },
+                "messageOk": "Incluiste una carpeta css con un nombre de archivo claro.",
+                "messageFail": "Tu propuesta debe incluir css/estilos.css."
+              },
+              {
+                "checkId": "publish_c01_a01_js_folder",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt", "pattern": "js[\\\\/]script\\.js" },
+                "messageOk": "Incluiste una carpeta js con script.js.",
+                "messageFail": "Tu propuesta debe incluir js/script.js."
+              },
+              {
+                "checkId": "publish_c01_a01_img_folder",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt", "pattern": "img[\\\\/].+\\.(png|jpg|jpeg|svg)" },
+                "messageOk": "La propuesta separa las imagenes en img/.",
+                "messageFail": "La propuesta debe mover las imagenes a una carpeta img/."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_publish_c01_a02",
+          "classId": "sch_publish_c01",
+          "title": "Limpiar antes de publicar",
+          "objective": "Identificar que sobra en un proyecto inicial y dejar registro de limpieza en el editor.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "El proyecto semilla incluye archivos utiles y archivos basura. Revisa la carpeta cargada en Monaco y completa un plan de limpieza antes de responder.",
+            "instructions": [
+              "Abre el proyecto semilla en Monaco.",
+              "Revisa que archivos parecen formar parte del sitio y cuales sobran.",
+              "Edita y guarda /Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt indicando que se queda y que se elimina.",
+              "Asegurate de justificar por que ciertos archivos no deberian publicarse."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/publish-c01-a02",
+              "editablePaths": ["/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/publish-c01-a02/css", "/Users/Public/Desktop/publish-c01-a02/img"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Landing</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <img src=\"img/banner-home.jpg\" alt=\"Banner\" />\n    <script src=\"script.js\"></script>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/css/estilos.css",
+                  "content": "body {\n  margin: 0;\n}\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/script.js",
+                  "content": "console.log('sitio principal');\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/img/banner-home.jpg",
+                  "content": "placeholder-banner\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/notas.txt",
+                  "content": "cambiar fuentes despues\nsubir otra opcion de color\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/prueba-layout-viejo.html",
+                  "content": "<h1>layout viejo</h1>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/copia_final_ahora_si.png",
+                  "content": "placeholder-duplicate\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
+                  "content": "Completa este plan.\n\nSe queda:\n- \n\nSe elimina:\n- \n\nJustificacion:\n- Solo deben quedar los archivos que el sitio necesita para funcionar o mostrarse.\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "publish_c01_a02_saved_cleanup_plan",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt"] },
+                "messageOk": "Guardaste el plan de limpieza en Monaco.",
+                "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt."
+              },
+              {
+                "checkId": "publish_c01_a02_keeps_index",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "Se queda:[\\s\\S]*index\\.html" },
+                "messageOk": "Marcaste index.html como archivo que se queda.",
+                "messageFail": "El plan debe dejar claro que index.html se conserva."
+              },
+              {
+                "checkId": "publish_c01_a02_remove_notes",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "Se elimina:[\\s\\S]*notas\\.txt" },
+                "messageOk": "Identificaste notas.txt como archivo para eliminar.",
+                "messageFail": "El plan debe indicar que notas.txt se elimina."
+              },
+              {
+                "checkId": "publish_c01_a02_remove_old_layout",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "Se elimina:[\\s\\S]*prueba-layout-viejo\\.html" },
+                "messageOk": "Identificaste el layout viejo como archivo sobrante.",
+                "messageFail": "El plan debe indicar que prueba-layout-viejo.html se elimina."
+              },
+              {
+                "checkId": "publish_c01_a02_remove_duplicate_asset",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "Se elimina:[\\s\\S]*copia_final_ahora_si\\.png" },
+                "messageOk": "Identificaste la copia duplicada como archivo para eliminar.",
+                "messageFail": "El plan deberia indicar que copia_final_ahora_si.png tambien se elimina."
+              },
+              {
+                "checkId": "publish_c01_a02_rule_explained",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "(funcion|necesit|mostrar|public|sitio|proyecto)" },
+                "messageOk": "La regla de limpieza esta explicada dentro del plan.",
+                "messageFail": "Explica en el plan que solo debe quedar lo que el proyecto necesita para funcionar o mostrarse."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_publish_c01_a03",
+          "classId": "sch_publish_c01",
+          "title": "Rutas absolutas vs relativas",
+          "objective": "Corregir un proyecto semilla con rutas problematicas y distinguir rutas absolutas de relativas.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "El index del proyecto semilla tiene rutas que dependen de una computadora especifica. Revísalo en Monaco, corrígelo y después clasifica ejemplos.",
+            "instructions": [
+              "Abre /Users/Public/Desktop/publish-c01-a03/index.html en Monaco.",
+              "Corrige las rutas problematicas para que apunten dentro del proyecto.",
+              "Guarda index.html cuando todo quede con rutas relativas."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/publish-c01-a03",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/publish-c01-a03/css", "/Users/Public/Desktop/publish-c01-a03/img", "/Users/Public/Desktop/publish-c01-a03/js"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a03/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Rutas</title>\n    <link rel=\"stylesheet\" href=\"C:/Users/Ana/Desktop/proyecto/css/estilos.css\" />\n  </head>\n  <body>\n    <img src=\"/Users/ana/Desktop/proyecto/img/logo.png\" alt=\"Logo\" />\n    <script src=\"D:/trabajos/final/js/app.js\"></script>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a03/css/estilos.css",
+                  "content": "body {\n  background: #fafafa;\n}\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a03/img/logo.png",
+                  "content": "placeholder-logo\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a03/js/app.js",
+                  "content": "console.log('corrige rutas');\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "publish_c01_a03_saved_index",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a03/index.html"] },
+                "messageOk": "Guardaste index.html con una propuesta corregida.",
+                "messageFail": "Antes de validar, corrige y guarda /Users/Public/Desktop/publish-c01-a03/index.html en Monaco."
+              },
+              {
+                "checkId": "publish_c01_a03_css_relative",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a03/index.html", "pattern": "href\\s*=\\s*[\\\"'](?:\\./)?css/estilos\\.css[\\\"']" },
+                "messageOk": "La hoja de estilos ya usa una ruta relativa correcta.",
+                "messageFail": "Corrige el href para que apunte a css/estilos.css."
+              },
+              {
+                "checkId": "publish_c01_a03_img_relative",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a03/index.html", "pattern": "src\\s*=\\s*[\\\"'](?:\\./)?img/logo\\.png[\\\"']" },
+                "messageOk": "La imagen ya usa una ruta relativa correcta.",
+                "messageFail": "Corrige la imagen para que use img/logo.png."
+              },
+              {
+                "checkId": "publish_c01_a03_js_relative",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a03/index.html", "pattern": "src\\s*=\\s*[\\\"'](?:\\./)?js/app\\.js[\\\"']" },
+                "messageOk": "El script ya usa una ruta relativa correcta.",
+                "messageFail": "Corrige el script para que use js/app.js."
+              },
+              {
+                "checkId": "publish_c01_a03_no_absolute",
+                "type": "FILE_CONTENT_NOT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a03/index.html", "pattern": "(C:|D:|E:|/Users/)" },
+                "messageOk": "Ya no quedan rutas absolutas en index.html.",
+                "messageFail": "Todavia quedan rutas absolutas en index.html."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_publish_c01_a04",
+          "classId": "sch_publish_c01",
+          "title": "Nombres de archivo seguros para publicar",
+          "objective": "Detectar nombres inseguros dentro de un proyecto semilla y dejar una propuesta de renombre.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "El proyecto semilla incluye archivos con nombres poco seguros. Revísalos en Monaco y deja una propuesta de renombre antes de elegir la mejor opción.",
+            "instructions": [
+              "Abre la carpeta del ejercicio en Monaco.",
+              "Revisa los nombres de archivo con espacios, simbolos o mayusculas raras.",
+              "Edita y guarda /Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt con nombres mas seguros.",
+              "Propone nombres en minusculas, sin espacios y usando guiones."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/publish-c01-a04",
+              "editablePaths": ["/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/publish-c01-a04/img", "/Users/Public/Desktop/publish-c01-a04/css"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Nombres seguros</title>\n    <link rel=\"stylesheet\" href=\"css/Estilos Finales.css\" />\n  </head>\n  <body>\n    <img src=\"img/Mi Foto Final.png\" alt=\"Foto\" />\n    <img src=\"img/banner!!home.png\" alt=\"Banner\" />\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/css/Estilos Finales.css",
+                  "content": "body {\n  color: #111;\n}\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/img/Mi Foto Final.png",
+                  "content": "placeholder-photo\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/img/banner!!home.png",
+                  "content": "placeholder-banner\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt",
+                  "content": "Propone nombres mas seguros:\n\nMi Foto Final.png -> \nbanner!!home.png -> \nEstilos Finales.css -> \n\nCriterio:\n- usar minusculas\n- usar guiones\n- evitar espacios, tildes o simbolos raros\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "publish_c01_a04_saved_rename_plan",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt"] },
+                "messageOk": "Guardaste la propuesta de renombres en Monaco.",
+                "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt."
+              },
+              {
+                "checkId": "publish_c01_a04_safe_photo_name",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt", "pattern": "mi-foto-final\\.png" },
+                "messageOk": "Propusiste un nombre seguro para la foto principal.",
+                "messageFail": "Propone mi-foto-final.png como nombre seguro para la foto."
+              },
+              {
+                "checkId": "publish_c01_a04_safe_banner_name",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt", "pattern": "banner-home\\.png" },
+                "messageOk": "Propusiste un nombre seguro para el banner.",
+                "messageFail": "Propone banner-home.png como nombre seguro para el banner."
+              },
+              {
+                "checkId": "publish_c01_a04_safe_css_name",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt", "pattern": "estilos-finales\\.css" },
+                "messageOk": "Propusiste un nombre seguro para la hoja de estilos.",
+                "messageFail": "Propone estilos-finales.css como nombre seguro para la hoja de estilos."
+              },
+              {
+                "checkId": "publish_c01_a04_mentions_reason",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt", "pattern": "(minusculas|guiones|espacios|tildes|simbolos|caracteres especiales)" },
+                "messageOk": "La propuesta deja asentado el criterio de renombre.",
+                "messageFail": "En la propuesta menciona el criterio: minusculas, guiones y sin espacios o simbolos."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_publish_c01_a05",
+          "classId": "sch_publish_c01",
+          "title": "Checklist antes de mostrar",
+          "objective": "Completar un checklist real sobre un proyecto semilla y ordenar el proceso minimo antes de publicar.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Abre el proyecto semilla en Monaco, recorre sus archivos y completa un checklist previo a publicacion.",
+            "instructions": [
+              "Explora el proyecto en Monaco.",
+              "Edita y guarda /Users/Public/Desktop/publish-c01-a05/checklist-previo.txt marcando con [x] los puntos que revisarías antes de mostrar el sitio.",
+              "Cuando termines, el checklist completo debe quedar marcado."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/publish-c01-a05",
+              "editablePaths": ["/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/publish-c01-a05/css", "/Users/Public/Desktop/publish-c01-a05/img", "/Users/Public/Desktop/publish-c01-a05/js"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Checklist</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <h1>Mi web final</h1>\n    <img src=\"img/logo.png\" alt=\"Logo\" />\n    <a href=\"contacto.html\">Contacto</a>\n    <script src=\"js/app.js\"></script>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/css/estilos.css",
+                  "content": "body {\n  font-family: sans-serif;\n}\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/js/app.js",
+                  "content": "console.log('checklist');\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/img/logo.png",
+                  "content": "placeholder-logo\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
+                  "content": "Checklist previo a mostrar:\nRecorre el proyecto y marca cada punto cuando lo hayas revisado.\n\n[ ] Revisar estructura\n[ ] Limpiar archivos innecesarios\n[ ] Corregir rutas\n[ ] Probar toda la navegacion\n[ ] Confirmar que el sitio se entiende solo\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "publish_c01_a05_saved_checklist",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt"] },
+                "messageOk": "Guardaste el checklist en Monaco.",
+                "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a05/checklist-previo.txt."
+              },
+              {
+                "checkId": "publish_c01_a05_checked_structure",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Revisar estructura" },
+                "messageOk": "Marcaste la revision de estructura.",
+                "messageFail": "Marca con [x] la revision de estructura."
+              },
+              {
+                "checkId": "publish_c01_a05_checked_cleanup",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Limpiar archivos innecesarios" },
+                "messageOk": "Marcaste la limpieza de archivos innecesarios.",
+                "messageFail": "Marca con [x] la limpieza de archivos innecesarios."
+              },
+              {
+                "checkId": "publish_c01_a05_checked_routes",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Corregir rutas" },
+                "messageOk": "Marcaste la revision de rutas.",
+                "messageFail": "Marca con [x] la revision de rutas."
+              },
+              {
+                "checkId": "publish_c01_a05_checked_navigation",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Probar toda la navegacion" },
+                "messageOk": "Marcaste la prueba de navegacion.",
+                "messageFail": "Marca con [x] la prueba de navegacion."
+              },
+              {
+                "checkId": "publish_c01_a05_checked_clarity",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Confirmar que el sitio se entiende solo" },
+                "messageOk": "Marcaste la revision de claridad del sitio.",
+                "messageFail": "Marca con [x] la revision de claridad del sitio."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classId": "sch_pages_c01",
+      "title": "Publicar un sitio con Pages",
+      "activities": [
+        {
+          "id": "sch_pages_c01_a01",
+          "classId": "sch_pages_c01",
+          "title": "Antes de publicar: comprobar que esta listo",
+          "objective": "Revisar un proyecto y dejar por escrito si cumple el checklist minimo antes de publicarlo.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Antes de activar Pages conviene revisar si el proyecto ya esta listo. Explora el proyecto semilla y completa un breve diagnostico.",
+            "instructions": [
+              "Explora el proyecto en Monaco.",
+              "No modifiques los archivos del sitio.",
+              "Edita y guarda /Users/Public/Desktop/pages-c01-a01/estado-previo.txt indicando si el proyecto esta listo para publicarse y que deberias revisar."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/pages-c01-a01",
+              "editablePaths": ["/Users/Public/Desktop/pages-c01-a01/estado-previo.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/pages-c01-a01/css", "/Users/Public/Desktop/pages-c01-a01/img"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a01/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Mi landing</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <h1>Mi proyecto</h1>\n    <img src=\"img/logo.png\" alt=\"Logo\" />\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a01/css/estilos.css",
+                  "content": "body {\n  font-family: sans-serif;\n}\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a01/img/logo.png",
+                  "content": "placeholder-logo\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt",
+                  "content": "Completa este diagnostico:\n\nEstado: \n\nChecklist a revisar:\n- index.html en raiz\n- rutas relativas\n- imagenes cargando\n- sin archivos innecesarios\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "pages_c01_a01_saved_report",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/pages-c01-a01/estado-previo.txt"] },
+                "messageOk": "Guardaste el diagnostico previo.",
+                "messageFail": "Antes de validar, guarda /Users/Public/Desktop/pages-c01-a01/estado-previo.txt."
+              },
+              {
+                "checkId": "pages_c01_a01_mentions_ready",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt", "pattern": "(listo|publicar|publicacion)" },
+                "messageOk": "El diagnostico deja claro el estado previo a publicar.",
+                "messageFail": "Indica en el diagnostico si el proyecto esta listo para publicar."
+              },
+              {
+                "checkId": "pages_c01_a01_mentions_core_checks",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt", "pattern": "(index\\.html|rutas relativas|imagenes|archivos innecesarios)" },
+                "messageOk": "Mencionaste al menos parte del checklist previo.",
+                "messageFail": "Tu diagnostico debe mencionar elementos del checklist previo: index.html, rutas relativas, imagenes o archivos innecesarios."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_pages_c01_a02",
+          "classId": "sch_pages_c01",
+          "title": "Guardar el proyecto en el repositorio",
+          "objective": "Registrar el proyecto en un repositorio local antes de publicarlo con Pages.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Antes de publicar, el proyecto tiene que quedar guardado en un repositorio. Usa la terminal de Monaco para hacerlo.",
+            "instructions": [
+              "Abre la carpeta del proyecto en Monaco.",
+              "En la terminal, ejecuta git init.",
+              "Luego ejecuta git add .",
+              "Finalmente ejecuta git commit -m \"Preparar proyecto para publicar\"."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/pages-c01-a02",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/pages-c01-a02/css", "/Users/Public/Desktop/pages-c01-a02/img"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a02/index.html",
+                  "content": "<!doctype html>\n<html><head><link rel=\"stylesheet\" href=\"css/estilos.css\" /></head><body><img src=\"img/logo.png\" alt=\"Logo\" /></body></html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a02/css/estilos.css",
+                  "content": "body { background: #fff; }\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a02/img/logo.png",
+                  "content": "placeholder-logo\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "pages_c01_a02_git_init",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git init"] },
+                "messageOk": "Inicializaste el repositorio.",
+                "messageFail": "Primero ejecuta git init."
+              },
+              {
+                "checkId": "pages_c01_a02_git_add",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git add ."] },
+                "messageOk": "Preparaste los archivos para el commit.",
+                "messageFail": "Ejecuta git add . para preparar el proyecto."
+              },
+              {
+                "checkId": "pages_c01_a02_git_commit",
+                "type": "TERMINAL_REGEX",
+                "target": "commands",
+                "rules": { "pattern": "^git commit -m \\\".+\\\"$" },
+                "messageOk": "Registraste un commit para el proyecto.",
+                "messageFail": "Ejecuta git commit -m \"...\" para guardar el proyecto en el repositorio."
+              },
+              {
+                "checkId": "pages_c01_a02_order",
+                "type": "TERMINAL_ORDER",
+                "target": "commands",
+                "rules": { "before": "git commit -m \"Preparar proyecto para publicar\"", "mustAppearAny": ["git init", "git add ."] },
+                "messageOk": "El flujo de repositorio fue en orden logico.",
+                "messageFail": "Inicializa y agrega archivos antes de hacer el commit."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_pages_c01_a03",
+          "classId": "sch_pages_c01",
+          "title": "Activar Pages y obtener la URL",
+          "objective": "Publicar el proyecto con Pages simulado y registrar la URL publica generada.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Ya con el proyecto listo, publica el sitio con Pages simulado desde la terminal de Monaco.",
+            "instructions": [
+              "Abre la carpeta del proyecto en Monaco.",
+              "En la terminal, ejecuta pages publish mi-sitio.",
+              "Cuando se abra el navegador interno, copia la URL publica en /Users/Public/Desktop/pages-c01-a03/url-publica.txt y guardala."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/pages-c01-a03",
+              "editablePaths": ["/Users/Public/Desktop/pages-c01-a03/url-publica.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/pages-c01-a03/css", "/Users/Public/Desktop/pages-c01-a03/img", "/Users/Public/Desktop/pages-c01-a03/js"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a03/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Mi sitio publicado</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <h1>Portfolio</h1>\n    <img src=\"img/logo.png\" alt=\"Logo\" />\n    <script src=\"js/app.js\"></script>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a03/css/estilos.css",
+                  "content": "body { color: #111; }\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a03/js/app.js",
+                  "content": "console.log('pages publish');\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a03/img/logo.png",
+                  "content": "placeholder-logo\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a03/url-publica.txt",
+                  "content": "Pega aqui la URL publica generada por Pages:\n\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "pages_c01_a03_publish_command",
+                "type": "TERMINAL_REGEX",
+                "target": "commands",
+                "rules": { "pattern": "^pages publish(\\s+[a-z0-9-]+)?$" },
+                "messageOk": "Ejecutaste el comando de Pages.",
+                "messageFail": "Ejecuta pages publish mi-sitio desde la terminal."
+              },
+              {
+                "checkId": "pages_c01_a03_published_url_runtime",
+                "type": "PAGES_PUBLISHED_URL_REGEX",
+                "target": "pages",
+                "rules": { "pattern": "^https://estudiante\\.pages\\.dev/[a-z0-9-]+$" },
+                "messageOk": "Se detecto una publicacion valida en Pages.",
+                "messageFail": "Todavia no se detecta una URL publicada por Pages."
+              },
+              {
+                "checkId": "pages_c01_a03_saved_url_file",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/pages-c01-a03/url-publica.txt"] },
+                "messageOk": "Guardaste la URL publica en el archivo pedido.",
+                "messageFail": "Guarda la URL en /Users/Public/Desktop/pages-c01-a03/url-publica.txt."
+              },
+              {
+                "checkId": "pages_c01_a03_url_format",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c01-a03/url-publica.txt", "pattern": "https://estudiante\\.pages\\.dev/[a-z0-9-]+" },
+                "messageOk": "El archivo contiene una URL publica valida.",
+                "messageFail": "El archivo debe contener la URL publica generada por Pages."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_pages_c01_a04",
+          "classId": "sch_pages_c01",
+          "title": "Verificar que la URL publicada funciona",
+          "objective": "Completar un checklist post-publicacion despues de abrir la URL publicada y revisar el sitio.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Despues de publicar, ya no alcanza con tener una URL: hay que revisar que todo funcione.",
+            "instructions": [
+              "Publica el proyecto con pages publish desde la terminal.",
+              "Abre la URL generada en el navegador interno.",
+              "Edita y guarda /Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt marcando con [x] los puntos revisados."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/pages-c01-a04",
+              "editablePaths": ["/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/pages-c01-a04/css", "/Users/Public/Desktop/pages-c01-a04/img"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a04/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Checklist post</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <h1>Sitio online</h1>\n    <img src=\"img/logo.png\" alt=\"Logo\" />\n    <a href=\"index.html\">Inicio</a>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a04/css/estilos.css",
+                  "content": "body { background: #fafafa; }\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a04/img/logo.png",
+                  "content": "placeholder-logo\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt",
+                  "content": "Checklist post-publicacion:\n[ ] La URL abre sin errores\n[ ] Las imagenes cargan\n[ ] Los estilos se aplican\n[ ] Los links internos funcionan\n[ ] Lo probe desde el celular\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "pages_c01_a04_published_runtime",
+                "type": "PAGES_PUBLISHED_URL_REGEX",
+                "target": "pages",
+                "rules": { "pattern": "^https://estudiante\\.pages\\.dev/[a-z0-9-]+$" },
+                "messageOk": "La publicacion ya existe para revisar el sitio.",
+                "messageFail": "Primero publica el sitio con Pages."
+              },
+              {
+                "checkId": "pages_c01_a04_saved_checklist",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt"] },
+                "messageOk": "Guardaste el checklist post-publicacion.",
+                "messageFail": "Guarda /Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt antes de validar."
+              },
+              {
+                "checkId": "pages_c01_a04_checked_url",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt", "pattern": "\\[[xX]\\]\\s*La URL abre sin errores" },
+                "messageOk": "Marcaste la revision de la URL.",
+                "messageFail": "Marca con [x] que la URL abre sin errores."
+              },
+              {
+                "checkId": "pages_c01_a04_checked_assets",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt", "pattern": "\\[[xX]\\]\\s*Las imagenes cargan[\\s\\S]*\\[[xX]\\]\\s*Los estilos se aplican" },
+                "messageOk": "Revisaste imagenes y estilos.",
+                "messageFail": "Marca con [x] que las imagenes cargan y que los estilos se aplican."
+              },
+              {
+                "checkId": "pages_c01_a04_checked_links_or_mobile",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt", "pattern": "(\\[[xX]\\]\\s*Los links internos funcionan|\\[[xX]\\]\\s*Lo probe desde el celular)" },
+                "messageOk": "Completaste parte de la verificacion final.",
+                "messageFail": "Marca al menos la revision de links internos o la prueba desde el celular."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classId": "sch_pages_c02",
+      "title": "Gestionar cambios y republicar",
+      "activities": [
+        {
+          "id": "sch_pages_c02_a01",
+          "classId": "sch_pages_c02",
+          "title": "Editar, guardar y dejar listo el cambio",
+          "objective": "Hacer un cambio local en el proyecto y verificar que quede guardado antes del ciclo de commit y push.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "El sitio ya esta publicado, pero ahora hay que corregir un detalle local antes de volver a subirlo.",
+            "instructions": [
+              "Abre /Users/Public/Desktop/pages-c02-a01/index.html en Monaco.",
+              "Cambia el titulo principal a: Sitio actualizado.",
+              "Guarda el archivo para dejar listo el cambio local."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/pages-c02-a01",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/pages-c02-a01/css"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/pages-c02-a01/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Ciclo de cambios</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <h1>Mi sitio</h1>\n    <p>Version inicial publicada.</p>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c02-a01/css/estilos.css",
+                  "content": "body { font-family: sans-serif; }\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "pages_c02_a01_saved_index",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/pages-c02-a01/index.html"] },
+                "messageOk": "Guardaste el cambio local.",
+                "messageFail": "Guarda index.html despues de editarlo."
+              },
+              {
+                "checkId": "pages_c02_a01_updated_heading",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c02-a01/index.html", "pattern": "<h1>\\s*Sitio actualizado\\s*</h1>" },
+                "messageOk": "El titulo principal ya refleja el cambio pedido.",
+                "messageFail": "Cambia el h1 para que diga Sitio actualizado."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_pages_c02_a02",
+          "classId": "sch_pages_c02",
+          "title": "Registrar el cambio con commit",
+          "objective": "Practicar el paso de git add y git commit con un mensaje descriptivo.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "Despues de editar el proyecto, hay que registrar el cambio en el repositorio con un mensaje claro.",
+            "instructions": [
+              "Abre el proyecto en Monaco.",
+              "Haz un cambio pequeño en index.html: agrega el texto Cambios listos para publicar dentro del body.",
+              "En la terminal ejecuta git init, git add . y git commit -m \"Actualizo contenido del sitio\"."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/pages-c02-a02",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/pages-c02-a02/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head><meta charset=\"UTF-8\" /><title>Commit</title></head>\n  <body>\n    <h1>Mi sitio</h1>\n  </body>\n</html>\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "pages_c02_a02_content_saved",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c02-a02/index.html", "pattern": "Cambios listos para publicar" },
+                "messageOk": "El cambio local fue agregado al archivo.",
+                "messageFail": "Agrega el texto Cambios listos para publicar dentro de index.html y guardalo."
+              },
+              {
+                "checkId": "pages_c02_a02_git_add",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git add ."] },
+                "messageOk": "Preparaste los cambios con git add .",
+                "messageFail": "Ejecuta git add . antes del commit."
+              },
+              {
+                "checkId": "pages_c02_a02_git_commit",
+                "type": "TERMINAL_REGEX",
+                "target": "commands",
+                "rules": { "pattern": "^git commit -m \\\"(?!cambios$|arregle cosas$|arreglé cosas$).+\\\"$" },
+                "messageOk": "Registraste un commit con mensaje descriptivo.",
+                "messageFail": "Haz git commit -m con un mensaje mas descriptivo que cambios o arregle cosas."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_pages_c02_a03",
+          "classId": "sch_pages_c02",
+          "title": "Push y sitio actualizado",
+          "objective": "Completar el ciclo editar -> commit -> push y verificar que el sitio publicado se actualiza.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "El sitio ya esta online. Ahora hay que cambiarlo, commitearlo, hacer push y comprobar que Pages refleja el nuevo estado.",
+            "instructions": [
+              "Abre /Users/Public/Desktop/pages-c02-a03/index.html en Monaco y cambia el h1 a Sitio republicado.",
+              "En la terminal ejecuta pages publish ciclo-pages para generar la URL inicial.",
+              "Luego ejecuta git init, git add ., git commit -m \"Actualizo el titulo del sitio\" y git push.",
+              "Cuando se actualice el sitio publicado, abre la URL y verifica el cambio.",
+              "Finalmente guarda esa URL en /Users/Public/Desktop/pages-c02-a03/url-republicada.txt."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/pages-c02-a03",
+              "editablePaths": ["/Users/Public/Desktop/pages-c02-a03/index.html", "/Users/Public/Desktop/pages-c02-a03/url-republicada.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": ["/Users/Public/Desktop/pages-c02-a03/css"],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/pages-c02-a03/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Republicar</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <h1>Mi sitio</h1>\n    <p>Este contenido se publica con Pages simulado.</p>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c02-a03/css/estilos.css",
+                  "content": "body { color: #222; }\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c02-a03/url-republicada.txt",
+                  "content": "Pega aqui la URL republicada:\n\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "pages_c02_a03_publish_command",
+                "type": "TERMINAL_REGEX",
+                "target": "commands",
+                "rules": { "pattern": "^pages publish\\s+ciclo-pages$" },
+                "messageOk": "Generaste la publicacion inicial con Pages.",
+                "messageFail": "Primero ejecuta pages publish ciclo-pages."
+              },
+              {
+                "checkId": "pages_c02_a03_push_done",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": { "mustInclude": ["git push"] },
+                "messageOk": "Enviaste el cambio al repositorio con push.",
+                "messageFail": "Ejecuta git push para actualizar el sitio publicado."
+              },
+              {
+                "checkId": "pages_c02_a03_saved_url",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/pages-c02-a03/url-republicada.txt"] },
+                "messageOk": "Guardaste la URL republicada.",
+                "messageFail": "Guarda la URL en /Users/Public/Desktop/pages-c02-a03/url-republicada.txt."
+              },
+              {
+                "checkId": "pages_c02_a03_url_format",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c02-a03/url-republicada.txt", "pattern": "https://estudiante\\.pages\\.dev/ciclo-pages" },
+                "messageOk": "La URL guardada coincide con la publicacion esperada.",
+                "messageFail": "El archivo debe contener la URL https://estudiante.pages.dev/ciclo-pages."
+              },
+              {
+                "checkId": "pages_c02_a03_runtime_publish",
+                "type": "PAGES_PUBLISHED_URL_REGEX",
+                "target": "pages",
+                "rules": { "pattern": "^https://estudiante\\.pages\\.dev/ciclo-pages$" },
+                "messageOk": "Pages detecto la publicacion del proyecto.",
+                "messageFail": "Todavia no se detecta publicada la URL de ciclo-pages."
+              }
+            ]
+          }
+        },
+        {
+          "id": "sch_pages_c02_a04",
+          "classId": "sch_pages_c02",
+          "title": "Errores frecuentes despues del push",
+          "objective": "Registrar por escrito por que un cambio puede no verse online y como comprobarlo.",
+          "mode": "workspace",
+          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "data": {
+            "scenario": "A veces el cambio existe localmente pero no se ve online. Revisa el caso y completa un mini reporte.",
+            "instructions": [
+              "Explora el proyecto en Monaco.",
+              "No modifiques los archivos del sitio.",
+              "Edita y guarda /Users/Public/Desktop/pages-c02-a04/reporte-errores.txt explicando por que un cambio podria no verse online despues de editar."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/pages-c02-a04",
+              "editablePaths": ["/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt"],
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/pages-c02-a04/index.html",
+                  "content": "<!doctype html>\n<html><body><h1>Errores frecuentes</h1></body></html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt",
+                  "content": "Completa este reporte:\n\nPosibles causas:\n- \n\nComo lo verificaria:\n- \n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "pages_c02_a04_saved_report",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": { "paths": ["/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt"] },
+                "messageOk": "Guardaste el reporte de errores frecuentes.",
+                "messageFail": "Guarda /Users/Public/Desktop/pages-c02-a04/reporte-errores.txt antes de validar."
+              },
+              {
+                "checkId": "pages_c02_a04_mentions_push_or_cache",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt", "pattern": "(push|cache|cach[eé]|git add|commit)" },
+                "messageOk": "Mencionaste una causa realista del problema.",
+                "messageFail": "Menciona en el reporte causas como no hacer push, olvidar git add o problemas de cache."
+              },
+              {
+                "checkId": "pages_c02_a04_mentions_reload",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": { "path": "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt", "pattern": "(ctrl\\s*\\+\\s*shift\\s*\\+\\s*r|cmd\\s*\\+\\s*shift\\s*\\+\\s*r|recargar|reload)" },
+                "messageOk": "El reporte incluye una verificacion concreta para comprobar el cambio.",
+                "messageFail": "Explica como verificarias el cambio, por ejemplo recargando fuerte con Ctrl+Shift+R o Cmd+Shift+R."
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

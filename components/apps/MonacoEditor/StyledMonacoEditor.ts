@@ -74,6 +74,7 @@ const StyledMonacoEditor = styled.div`
     height: 100%;
     min-height: 0;
     overflow: hidden;
+    position: relative;
     width: 100%;
 
     > * {
@@ -176,6 +177,20 @@ const StyledMonacoEditor = styled.div`
         }
       }
 
+      &.validate-item > button {
+        background: rgb(18 92 59);
+        border: 1px solid rgb(40 146 98);
+        border-radius: 4px;
+        color: rgb(232 255 243);
+        font-weight: 600;
+        padding: 4px 10px;
+
+        &:hover,
+        &.active {
+          background: rgb(26 120 76);
+        }
+      }
+
       > menu.menu-dropdown {
         background: rgb(49 49 49);
         border: 1px solid rgb(29 29 29);
@@ -210,6 +225,61 @@ const StyledMonacoEditor = styled.div`
             }
           }
         }
+      }
+    }
+  }
+
+  .validation-panel {
+    background: rgb(31 31 31);
+    border: 1px solid rgb(26 89 59);
+    box-shadow: 0 8px 20px rgb(0 0 0 / 35%);
+    color: rgb(234 234 234);
+    max-height: 260px;
+    overflow: auto;
+    position: absolute;
+    right: 16px;
+    top: calc(var(--menu-bar-height) + 8px);
+    width: min(420px, calc(100% - 24px));
+    z-index: 40;
+
+    header {
+      align-items: center;
+      background: rgb(18 92 59);
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr auto auto;
+      padding: 8px 10px;
+
+      button {
+        background: transparent;
+        border: 0;
+        color: rgb(232 255 243);
+        cursor: pointer;
+        font-size: 12px;
+      }
+    }
+
+    ol {
+      display: grid;
+      gap: 6px;
+      list-style: none;
+      margin: 0;
+      padding: 10px;
+    }
+
+    li {
+      border-left: 3px solid transparent;
+      font-size: 12px;
+      padding: 4px 8px;
+
+      &.passed {
+        border-left-color: rgb(56 182 109);
+        color: rgb(210 255 225);
+      }
+
+      &.failed {
+        border-left-color: rgb(231 95 95);
+        color: rgb(255 214 214);
       }
     }
   }
@@ -394,6 +464,11 @@ const StyledMonacoEditor = styled.div`
       min-height: 0;
       position: relative;
       z-index: 1;
+
+      li.drag-over > button {
+        background: rgb(9 71 113);
+        outline: 1px solid rgb(78 171 255);
+      }
     }
 
     li {
@@ -585,6 +660,15 @@ const StyledMonacoEditor = styled.div`
     padding: 6px 10px;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .read-only-hint {
+    background: rgb(48 32 12);
+    border-bottom: 1px solid rgb(110 84 31);
+    color: rgb(255 225 171);
+    font-size: 12px;
+    margin: 0;
+    padding: 6px 10px;
   }
 
   .tabs {

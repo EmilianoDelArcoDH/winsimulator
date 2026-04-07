@@ -20,6 +20,7 @@ import useTitle from "components/system/Window/useTitle";
 import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
 import Button from "styles/common/Button";
+import { trackActivityEvent } from "utils/activityRuntime";
 import { haltEvent, label } from "utils/functions";
 import { MILLISECONDS_IN_SECOND } from "utils/constants";
 
@@ -114,6 +115,11 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
                     await writeFile(saveUrl, saveData, true);
                     updateFolder(dirname(saveUrl), basename(saveUrl));
                     prependFileToTitle(basename(saveUrl));
+                    trackActivityEvent({
+                      content: saveData,
+                      path: saveUrl,
+                      type: "fileSaved",
+                    });
                     addNotification("File saved", "info");
                   }
                 }}

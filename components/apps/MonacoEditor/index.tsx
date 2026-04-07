@@ -17,7 +17,19 @@ import AppContainer from "components/system/Apps/AppContainer";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
-import { trackActivityEvent } from "utils/activityRuntime";
+import {
+  getActivityById,
+  getCurrentActivityId,
+  trackActivityEvent,
+  type ValidationResult,
+  validateActivity,
+} from "utils/activityRuntime";
+import {
+  getPagesUsername,
+  getPublishedSitesBySourceRoot,
+  registerPublishedSite,
+  updatePublishedSite,
+} from "utils/pagesRuntime";
 import {
   DEFAULT_TEXT_FILE_SAVE_PATH,
   DESKTOP_PATH,
@@ -49,6 +61,13 @@ type WindowWithDirectoryPicker = Window & {
 };
 
 type UrlTargetType = "none" | "file" | "directory";
+
+type ActivityValidationState = {
+  activityId: string;
+  completed: boolean;
+  progress: { completed: number; total: number };
+  results: ValidationResult[];
+};
 
 const INVALID_ENTRY_NAME = /[\\/:*?"<>|]/;
 const SIDEBAR_WIDTH_STORAGE_KEY = "monaco:sidebar-width";
@@ -194,6 +213,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     fs,
     lstat,
     mkdir,
+    mkdirRecursive,
     readFile,
     readdir,
     rename,
@@ -256,6 +276,10 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [terminalCwd, setTerminalCwd] = useState<string>(explorerRoot);
   const [pendingEditorFocusPath, setPendingEditorFocusPath] = useState<string>("");
   const [pendingCursorOffset, setPendingCursorOffset] = useState<number | undefined>();
+  const [draggedPath, setDraggedPath] = useState("");
+  const [dragOverPath, setDragOverPath] = useState("");
+  const [activityValidationState, setActivityValidationState] =
+    useState<ActivityValidationState>();
   const [sidePanelWidth, setSidePanelWidth] = useState<number>(() => {
     if (typeof window === "undefined") return DEFAULT_SIDEBAR_WIDTH;
 
@@ -267,6 +291,63 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     return Number.isFinite(storedWidth) ? storedWidth : DEFAULT_SIDEBAR_WIDTH;
   });
   const hasActiveFile = Boolean(activeFileUrl);
+  const currentActivityId = getCurrentActivityId();
+  const currentActivity = getActivityById(currentActivityId);
+  const activityWorkspace = (currentActivity?.data?.workspace as {
+    editablePaths?: string[];
+    rootPath?: string;
+  } | undefined);
+  const activityWorkspaceRoot = normalizeFsPath(activityWorkspace?.rootPath || "");
+  const activityEditablePaths = useMemo(
+    () =>
+      (activityWorkspace?.editablePaths || [])
+        .map((entry) => normalizeFsPath(entry))
+        .filter(Boolean),
+    [activityWorkspace?.editablePaths, normalizeFsPath]
+  );
+  const canValidateCurrentActivity =
+    Boolean(currentActivityId) &&
+    Boolean(activityWorkspaceRoot) &&
+    (explorerRoot.startsWith(activityWorkspaceRoot) ||
+      currentUrl.startsWith(activityWorkspaceRoot));
+  const hasWorkspaceEditRestrictions =
+    canValidateCurrentActivity && activityEditablePaths.length > 0;
+  const isPathInsideCurrentWorkspace = useCallback(
+    (path: string): boolean => {
+      const normalizedPath = normalizeFsPath(path);
+
+      return Boolean(activityWorkspaceRoot) &&
+        (normalizedPath === activityWorkspaceRoot ||
+          normalizedPath.startsWith(`${activityWorkspaceRoot}/`));
+    },
+    [activityWorkspaceRoot, normalizeFsPath]
+  );
+  const isEditableActivityPath = useCallback(
+    (path: string): boolean => {
+      const normalizedPath = normalizeFsPath(path);
+
+      if (!hasWorkspaceEditRestrictions) return true;
+      if (!isPathInsideCurrentWorkspace(normalizedPath)) return true;
+
+      return activityEditablePaths.includes(normalizedPath);
+    },
+    [
+      activityEditablePaths,
+      hasWorkspaceEditRestrictions,
+      isPathInsideCurrentWorkspace,
+      normalizeFsPath,
+    ]
+  );
+  const isActiveFileEditable = activeFileUrl
+    ? isEditableActivityPath(activeFileUrl)
+    : !hasWorkspaceEditRestrictions;
+  const canMutateSelectedPath = selectedPath
+    ? isEditableActivityPath(selectedPath)
+    : !hasWorkspaceEditRestrictions;
+  const canCreateEntriesInWorkspace = !hasWorkspaceEditRestrictions;
+  const readOnlyActivityMessage = hasWorkspaceEditRestrictions
+    ? "En esta actividad solo puedes editar el archivo de propuesta."
+    : "";
 
   useEffect(() => {
     latestUrlRef.current = currentUrl;
@@ -864,11 +945,13 @@ function example() {
   );
 
   const startRename = useCallback((path: string): void => {
+    if (!isEditableActivityPath(path)) return;
+
     setContextMenu(undefined);
     setRenamingId(path);
     setDraftName(basename(path));
     setRenameError("");
-  }, []);
+  }, [isEditableActivityPath]);
 
   useEffect(() => {
     if (!renamingId) return;
@@ -897,6 +980,11 @@ function example() {
 
   const commitNewEntry = useCallback(async (): Promise<void> => {
     if (!creatingEntry) return;
+    if (!canCreateEntriesInWorkspace) {
+      setCreatingEntry(undefined);
+      setNewEntryError(readOnlyActivityMessage);
+      return;
+    }
     if (createInProgressRef.current) return;
 
     createInProgressRef.current = true;
@@ -946,6 +1034,7 @@ function example() {
       createInProgressRef.current = false;
     }
   }, [
+    canCreateEntriesInWorkspace,
     createEntry,
     creatingEntry,
     creatingParentPath,
@@ -954,10 +1043,12 @@ function example() {
     logExplorer,
     newEntryName,
     readFile,
+    readOnlyActivityMessage,
   ]);
   const deleteSelectedEntry = useCallback(
     async (confirmed = false): Promise<void> => {
       if (!selectedPath) return;
+      if (!isEditableActivityPath(selectedPath)) return;
 
       if (!confirmed) {
         setConfirmDelete(selectedPath);
@@ -982,11 +1073,17 @@ function example() {
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [closeFile, lstat, rmdir, selectedPath, unlink]
+    [closeFile, isEditableActivityPath, lstat, rmdir, selectedPath, unlink]
   );
 
   const commitRename = useCallback(async (): Promise<void> => {
     if (!renamingId) return;
+    if (!isEditableActivityPath(renamingId)) {
+      setRenamingId(undefined);
+      setDraftName("");
+      setRenameError("");
+      return;
+    }
     if (renameInProgressRef.current) return;
 
     renameInProgressRef.current = true;
@@ -1109,6 +1206,7 @@ function example() {
     folderContents,
     getSiblingNameError,
     id,
+    isEditableActivityPath,
     lstat,
     logExplorer,
     normalizeFsPath,
@@ -1119,19 +1217,141 @@ function example() {
     unlink,
     writeFile,
   ]);
+  const moveEntry = useCallback(
+    async (sourcePath: string, targetDirectoryPath: string): Promise<void> => {
+      const normalizedSourcePath = normalizeFsPath(sourcePath);
+      const normalizedTargetDirectoryPath = normalizeFsPath(targetDirectoryPath);
+
+      if (!normalizedSourcePath || !normalizedTargetDirectoryPath) return;
+      if (
+        !isEditableActivityPath(normalizedSourcePath) ||
+        !isEditableActivityPath(normalizedTargetDirectoryPath)
+      ) {
+        return;
+      }
+      if (normalizedSourcePath === normalizedTargetDirectoryPath) return;
+
+      const sourceName = basename(normalizedSourcePath);
+      const nextPath = normalizeFsPath(
+        `${normalizedTargetDirectoryPath}/${sourceName}`
+      );
+
+      if (nextPath === normalizedSourcePath) return;
+      if (
+        normalizedTargetDirectoryPath === normalizedSourcePath ||
+        normalizedTargetDirectoryPath.startsWith(`${normalizedSourcePath}/`)
+      ) {
+        return;
+      }
+
+      try {
+        const sourceStats = await lstat(normalizedSourcePath);
+        const targetStats = await lstat(normalizedTargetDirectoryPath);
+
+        if (!targetStats.isDirectory()) return;
+
+        let moved = await rename(normalizedSourcePath, nextPath);
+
+        if (!moved && !sourceStats.isDirectory()) {
+          const sourceContent = await readFile(normalizedSourcePath);
+
+          await writeFile(nextPath, sourceContent, true);
+          await unlink(normalizedSourcePath);
+          moved = true;
+        }
+
+        if (!moved) return;
+
+        setOpenFiles((currentFiles) =>
+          currentFiles.map((openFilePath) =>
+            openFilePath === normalizedSourcePath ? nextPath : openFilePath
+          )
+        );
+
+        if (selectedPath === normalizedSourcePath) {
+          setSelectedPath(nextPath);
+        }
+
+        if (currentUrl === normalizedSourcePath) {
+          setProcessUrl(id, nextPath);
+        }
+
+        setExpandedFolders((currentFolders) =>
+          currentFolders.includes(normalizedTargetDirectoryPath)
+            ? currentFolders
+            : [...currentFolders, normalizedTargetDirectoryPath]
+        );
+
+        await loadEntries();
+      } catch (error) {
+        console.error("Could not move entry:", error);
+      }
+    },
+    [
+      currentUrl,
+      id,
+      isEditableActivityPath,
+      loadEntries,
+      lstat,
+      normalizeFsPath,
+      readFile,
+      rename,
+      selectedPath,
+      setProcessUrl,
+      unlink,
+      writeFile,
+    ]
+  );
+
+  const snapshotDirectory = useCallback(
+    async (sourceRoot: string, targetRoot: string): Promise<void> => {
+      await mkdirRecursive(targetRoot);
+
+      const sourceEntries = await readFolderEntries(sourceRoot);
+
+      await Promise.all(
+        sourceEntries.map(async ({ isDirectory, name }) => {
+          const sourcePath = normalizeFsPath(`${sourceRoot}/${name}`);
+          const targetPath = normalizeFsPath(`${targetRoot}/${name}`);
+
+          if (isDirectory) {
+            await snapshotDirectory(sourcePath, targetPath);
+            return;
+          }
+
+          const fileContent = await readFile(sourcePath);
+
+          await writeFile(targetPath, fileContent, true);
+        })
+      );
+    },
+    [mkdirRecursive, normalizeFsPath, readFile, readFolderEntries, writeFile]
+  );
   const saveCurrentFile = useCallback(async (): Promise<void> => {
     const [saveUrl, saveData] = getSaveFileInfo(currentUrl, currentEditor);
+
+    if (saveUrl && !isEditableActivityPath(saveUrl)) {
+      return;
+    }
 
     if (saveUrl && saveData) {
       await writeFile(saveUrl, saveData, true);
       updateFolder(dirname(saveUrl), basename(saveUrl));
       await loadEntries();
       trackActivityEvent({
+        content: saveData.toString(),
         path: saveUrl,
         type: "fileSaved",
       });
     }
-  }, [currentEditor, currentUrl, loadEntries, updateFolder, writeFile]);
+  }, [
+    currentEditor,
+    currentUrl,
+    isEditableActivityPath,
+    loadEntries,
+    updateFolder,
+    writeFile,
+  ]);
 
   const openSaveAsDialog = useCallback((): void => {
     const suggestedName = basename(currentUrl || DEFAULT_TEXT_FILE_SAVE_PATH);
@@ -1161,6 +1381,13 @@ function example() {
         ? trimmedPath
         : `${explorerRoot}/${trimmedPath}`
     );
+
+    if (!isEditableActivityPath(targetPath)) {
+      setSaveAsError(readOnlyActivityMessage || "This path is read-only.");
+      requestAnimationFrame(() => saveAsInputRef.current?.focus());
+      return;
+    }
+
     const nextName = basename(targetPath);
 
     if (!nextName || INVALID_ENTRY_NAME.test(nextName)) {
@@ -1183,6 +1410,7 @@ function example() {
     setSaveAsPath("");
     setSaveAsError("");
     trackActivityEvent({
+      content: currentEditor.getValue(),
       path: targetPath,
       type: "fileSaved",
     });
@@ -1190,8 +1418,10 @@ function example() {
     currentEditor,
     explorerRoot,
     id,
+    isEditableActivityPath,
     loadEntries,
     normalizeFsPath,
+    readOnlyActivityMessage,
     saveAsPath,
     setProcessUrl,
     updateFolder,
@@ -1248,7 +1478,7 @@ function example() {
 
       if (command === "help") {
         nextLines.push(
-          "Available commands: help, pwd, ls, cd, mkdir, touch, cat, echo, clear, git"
+          "Available commands: help, pwd, ls, cd, mkdir, touch, cat, echo, clear, git, pages"
         );
       } else if (command === "pwd") {
         nextLines.push(terminalCwd);
@@ -1391,9 +1621,69 @@ function example() {
               });
             }
           );
+
+          if (gitSubCommand === "push") {
+            const publishedSites = getPublishedSitesBySourceRoot(terminalCwd);
+
+            if (publishedSites.length > 0) {
+              await Promise.all(
+                publishedSites.map(async (site) => {
+                  await snapshotDirectory(site.sourceRoot, site.snapshotRoot);
+                  updatePublishedSite(site.publicUrl, {
+                    snapshotRoot: site.snapshotRoot,
+                    sourceRoot: site.sourceRoot,
+                  });
+                })
+              );
+              nextLines.push("Pages updated from latest push.");
+            }
+          }
+
           await loadEntries();
         } else {
           nextLines.push("git is not available: file system not ready");
+        }
+      } else if (instruction === "pages") {
+        const pagesSubCommand = args[0] || "";
+
+        if (pagesSubCommand !== "publish") {
+          nextLines.push("usage: pages publish [project-name]");
+        } else {
+          const sourceRoot = terminalCwd || explorerRoot;
+          const inferredProjectName =
+            args.slice(1).join(" ").trim() || basename(sourceRoot) || "mi-proyecto";
+          const snapshotRoot = normalizeFsPath(
+            `/Users/Public/Pages/${inferredProjectName}-${Date.now()}`
+          );
+
+          try {
+            const sourceStats = await lstat(sourceRoot);
+
+            if (!sourceStats.isDirectory()) {
+              nextLines.push("pages publish must be run from a project folder.");
+            } else {
+              await snapshotDirectory(sourceRoot, snapshotRoot);
+
+              const publishedSite = registerPublishedSite({
+                projectName: inferredProjectName,
+                snapshotRoot,
+                sourceRoot,
+                username: getPagesUsername(),
+              });
+
+              trackActivityEvent({
+                type: "pagesPublished",
+                url: publishedSite.publicUrl,
+              });
+              nextLines.push("Pages published successfully.");
+              nextLines.push(`Public URL: ${publishedSite.publicUrl}`);
+              openProcess("Browser", { url: publishedSite.publicUrl });
+            }
+          } catch (error) {
+            nextLines.push(
+              `pages publish failed: ${(error as Error)?.message || "unknown error"}`
+            );
+          }
         }
       } else {
         nextLines.push(`Command not found: ${command}`);
@@ -1410,6 +1700,7 @@ function example() {
     },
     [
       explorerRoot,
+      openProcess,
       loadEntries,
       loadFolder,
       fs,
@@ -1418,9 +1709,11 @@ function example() {
       readFile,
       readFolderEntries,
       resolveTerminalPath,
+      snapshotDirectory,
       terminalCwd,
       updateFolder,
       writeFile,
+      normalizeFsPath,
     ]
   );
 
@@ -1429,6 +1722,7 @@ function example() {
       setActiveMenu("");
 
       if (menuAction === "new-file") {
+        if (!canCreateEntriesInWorkspace) return;
         setPanelOpen(true);
         setActiveView("explorer");
         const targetFolder = normalizeFsPath(await resolveTargetFolder());
@@ -1452,6 +1746,7 @@ function example() {
       }
 
       if (menuAction === "new-folder") {
+        if (!canCreateEntriesInWorkspace) return;
         const targetFolder = normalizeFsPath(await resolveTargetFolder());
 
         logExplorer("menu:new-folder", {
@@ -1493,6 +1788,7 @@ function example() {
       }
 
       if (menuAction === "save-as") {
+        if (!isActiveFileEditable) return;
         openSaveAsDialog();
         return;
       }
@@ -1544,14 +1840,32 @@ function example() {
 
       if (menuAction === "toggle-terminal") {
         setIsTerminalPanelOpen((currentOpen) => !currentOpen);
+        return;
+      }
+
+      if (menuAction === "validate-activity") {
+        if (!canValidateCurrentActivity || !currentActivityId) return;
+
+        const validationOutput = validateActivity(currentActivityId);
+
+        setActivityValidationState({
+          activityId: currentActivityId,
+          completed: validationOutput.completed,
+          progress: validationOutput.progress,
+          results: validationOutput.results,
+        });
       }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       currentEditor,
+      currentActivityId,
+      canValidateCurrentActivity,
+      canCreateEntriesInWorkspace,
       deleteSelectedEntry,
       folderContents,
       id,
+      isActiveFileEditable,
       isCompactLayout,
       logExplorer,
       normalizeFsPath,
@@ -1574,6 +1888,7 @@ function example() {
       const isCtrlOrMeta = event.ctrlKey || event.metaKey;
 
       if (isCtrlOrMeta && event.shiftKey && event.key.toLowerCase() === "s") {
+        if (!isActiveFileEditable) return;
         event.preventDefault();
         openSaveAsDialog();
         return;
@@ -1586,12 +1901,14 @@ function example() {
       }
 
       if (event.key === "F2" && selectedPath) {
+        if (!isEditableActivityPath(selectedPath)) return;
         event.preventDefault();
         startRename(selectedPath);
         return;
       }
 
       if (event.key === "Delete" && selectedPath && !isTextInputTarget) {
+        if (!isEditableActivityPath(selectedPath)) return;
         event.preventDefault();
         runMenuAction("delete").catch(() => {
           // Ignore delete shortcut errors
@@ -1603,7 +1920,16 @@ function example() {
 
     return () =>
       document.removeEventListener("keydown", handleWorkbenchShortcuts);
-  }, [activeFileUrl, closeFile, openSaveAsDialog, runMenuAction, selectedPath, startRename]);
+  }, [
+    activeFileUrl,
+    closeFile,
+    isActiveFileEditable,
+    isEditableActivityPath,
+    openSaveAsDialog,
+    runMenuAction,
+    selectedPath,
+    startRename,
+  ]);
 
   useEffect(() => {
     if (!isSaveAsOpen) return;
@@ -1638,6 +1964,14 @@ function example() {
 
   useEffect(() => {
     if (!currentEditor) return;
+    currentEditor.updateOptions({
+      domReadOnly: !isActiveFileEditable,
+      readOnly: !isActiveFileEditable,
+    });
+  }, [currentEditor, isActiveFileEditable]);
+
+  useEffect(() => {
+    if (!currentEditor) return;
     if (creatingEntry || renamingId) return;
 
     const frameId = requestAnimationFrame(() => {
@@ -1655,8 +1989,8 @@ function example() {
 
     const frameId = requestAnimationFrame(() => {
       currentEditor.updateOptions({
-        domReadOnly: false,
-        readOnly: false,
+        domReadOnly: !isActiveFileEditable,
+        readOnly: !isActiveFileEditable,
       });
       currentEditor.focus();
 
@@ -1680,6 +2014,7 @@ function example() {
     creatingEntry,
     currentEditor,
     activeFileUrl,
+    isActiveFileEditable,
     pendingCursorOffset,
     pendingEditorFocusPath,
   ]);
@@ -1713,12 +2048,12 @@ function example() {
                 </button>
                 {activeMenu === "file" && (
                   <menu className="menu-dropdown">
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("new-file"); }} onMouseDown={(e) => e.preventDefault()} type="button">New File</button></li>
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("new-folder"); }} onMouseDown={(e) => e.preventDefault()} type="button">New Folder</button></li>
+                    <li><button disabled={!canCreateEntriesInWorkspace} onClick={(e) => { e.stopPropagation(); runMenuAction("new-file"); }} onMouseDown={(e) => e.preventDefault()} type="button">New File</button></li>
+                    <li><button disabled={!canCreateEntriesInWorkspace} onClick={(e) => { e.stopPropagation(); runMenuAction("new-folder"); }} onMouseDown={(e) => e.preventDefault()} type="button">New Folder</button></li>
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("open-folder"); }} onMouseDown={(e) => e.preventDefault()} type="button">Open Folder</button></li>
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("save"); }} onMouseDown={(e) => e.preventDefault()} type="button">Save</button></li>
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("save-as"); }} onMouseDown={(e) => e.preventDefault()} type="button">Save As...</button></li>
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("delete"); }} onMouseDown={(e) => e.preventDefault()} type="button">Delete Selected</button></li>
+                    <li><button disabled={!isActiveFileEditable} onClick={(e) => { e.stopPropagation(); runMenuAction("save"); }} onMouseDown={(e) => e.preventDefault()} type="button">Save</button></li>
+                    <li><button disabled={!isActiveFileEditable} onClick={(e) => { e.stopPropagation(); runMenuAction("save-as"); }} onMouseDown={(e) => e.preventDefault()} type="button">Save As...</button></li>
+                    <li><button disabled={!canMutateSelectedPath} onClick={(e) => { e.stopPropagation(); runMenuAction("delete"); }} onMouseDown={(e) => e.preventDefault()} type="button">Delete Selected</button></li>
                     <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("refresh"); }} onMouseDown={(e) => e.preventDefault()} type="button">Refresh Explorer</button></li>
                   </menu>
                 )}
@@ -1779,8 +2114,49 @@ function example() {
                   </menu>
                 )}
               </li>
+              {canValidateCurrentActivity && (
+                <li className="validate-item">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      void runMenuAction("validate-activity");
+                    }}
+                    onMouseDown={(e) => e.preventDefault()}
+                    type="button"
+                  >
+                    Validar
+                  </button>
+                </li>
+              )}
             </ol>
           </header>
+          {activityValidationState && (
+            <section className="validation-panel">
+              <header>
+                <strong>Validacion</strong>
+                <span>
+                  {activityValidationState.progress.completed}/
+                  {activityValidationState.progress.total}
+                </span>
+                <button
+                  onClick={() => setActivityValidationState(undefined)}
+                  type="button"
+                >
+                  Cerrar
+                </button>
+              </header>
+              <ol>
+                {activityValidationState.results.map((result) => (
+                  <li
+                    key={result.checkId}
+                    className={result.passed ? "passed" : "failed"}
+                  >
+                    {result.message}
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
           <aside className="activity-bar">
             <button
               className={activeView === "explorer" ? "active" : ""}
@@ -1854,6 +2230,7 @@ function example() {
                     <div className="panel-actions">
                       <button
                         className="icon-action"
+                        disabled={!canCreateEntriesInWorkspace}
                         onClick={(e) => {
                           e.stopPropagation();
                           runMenuAction("new-file");
@@ -1865,6 +2242,7 @@ function example() {
                       </button>
                       <button
                         className="icon-action"
+                        disabled={!canCreateEntriesInWorkspace}
                         onClick={(e) => {
                           e.stopPropagation();
                           runMenuAction("new-folder");
@@ -1967,6 +2345,26 @@ function example() {
                   <ol
                     ref={folderEntriesRef}
                     className="folder-entries"
+                    onDragLeave={() => {
+                      setDragOverPath("");
+                    }}
+                    onDragOver={(event) => {
+                      if (!draggedPath || !canCreateEntriesInWorkspace) return;
+
+                      event.preventDefault();
+                      event.dataTransfer.dropEffect = "move";
+                    }}
+                    onDrop={(event) => {
+                      const sourcePath =
+                        event.dataTransfer.getData("text/plain") || draggedPath;
+
+                      setDraggedPath("");
+                      setDragOverPath("");
+
+                      if (sourcePath && canCreateEntriesInWorkspace) {
+                        void moveEntry(sourcePath, explorerRoot);
+                      }
+                    }}
                     onContextMenu={(event) => {
                       const target = event.target as HTMLElement;
                       const clickedEntry = target.closest("li[data-path]");
@@ -2111,7 +2509,70 @@ function example() {
                         }
 
                         return (
-                          <li key={itemId} data-path={itemPath}>
+                        <li
+                          key={itemId}
+                          className={
+                            dragOverPath === itemPath && isDirectory
+                              ? "drag-over"
+                              : ""
+                          }
+                          data-path={itemPath}
+                          draggable={!isNew && isEditableActivityPath(itemPath)}
+                          onDragEnd={() => {
+                            setDraggedPath("");
+                            setDragOverPath("");
+                          }}
+                          onDragOver={(event) => {
+                            if (
+                              !isDirectory ||
+                              !draggedPath ||
+                              draggedPath === itemPath ||
+                              !isEditableActivityPath(itemPath)
+                            ) {
+                              return;
+                            }
+
+                            event.preventDefault();
+                            event.stopPropagation();
+                            event.dataTransfer.dropEffect = "move";
+                            setDragOverPath(itemPath);
+                          }}
+                          onDragStart={(event) => {
+                            if (!isEditableActivityPath(itemPath)) {
+                              event.preventDefault();
+                              return;
+                            }
+                            event.dataTransfer.effectAllowed = "move";
+                            event.dataTransfer.setData("text/plain", itemPath);
+                            setDraggedPath(itemPath);
+                            setSelectedPath(itemPath);
+                          }}
+                          onDragLeave={() => {
+                            if (dragOverPath === itemPath) {
+                              setDragOverPath("");
+                            }
+                          }}
+                          onDrop={(event) => {
+                            if (!isDirectory) {
+                              return;
+                            }
+                            if (!isEditableActivityPath(itemPath)) {
+                              return;
+                            }
+
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const sourcePath =
+                              event.dataTransfer.getData("text/plain") || draggedPath;
+
+                            setDraggedPath("");
+                            setDragOverPath("");
+
+                            if (sourcePath) {
+                              void moveEntry(sourcePath, itemPath);
+                            }
+                          }}
+                        >
                             <button
                               className={isActive || selectedPath === itemPath ? "active" : ""}
                               onClick={async () => {
@@ -2281,6 +2742,7 @@ function example() {
                     <>
                       <button
                         className="context-menu-action"
+                        disabled={!canCreateEntriesInWorkspace}
                         onClick={(e) => {
                           e.stopPropagation();
 
@@ -2297,6 +2759,7 @@ function example() {
                       </button>
                       <button
                         className="context-menu-action"
+                        disabled={!canCreateEntriesInWorkspace}
                         onClick={(e) => {
                           e.stopPropagation();
 
@@ -2338,6 +2801,7 @@ function example() {
                   {contextMenu.targetPath && (
                     <button
                       className="context-menu-action"
+                      disabled={!isEditableActivityPath(contextMenu.targetPath)}
                       onClick={(e) => {
                         e.stopPropagation();
 
@@ -2355,6 +2819,11 @@ function example() {
                   {contextMenu.targetPath && <div className="context-menu-separator" />}
                   <button
                     className="context-menu-action"
+                    disabled={
+                      contextMenu.targetPath
+                        ? !isEditableActivityPath(contextMenu.targetPath)
+                        : !canMutateSelectedPath
+                    }
                     onClick={(e) => {
                       e.stopPropagation();
                       if (contextMenu.targetPath) {
@@ -2401,6 +2870,13 @@ function example() {
                   {" > "}
                   {basename(activeFileUrl)}
                 </div>
+                {hasWorkspaceEditRestrictions && (
+                  <p className="read-only-hint">
+                    {isActiveFileEditable
+                      ? "Archivo editable para resolver la actividad."
+                      : readOnlyActivityMessage}
+                  </p>
+                )}
                 <header className="tabs">
                   {openFiles.length === 0 && <span className="empty-tab">No open files</span>}
                   {openFiles.map((openFilePath) => (

@@ -43,11 +43,14 @@ import {
 import {
   GOOGLE_SEARCH_QUERY,
   LOCAL_HOST,
+  bufferToUrl,
   getExtension,
+  getMimeType,
   getUrlOrSearch,
   haltEvent,
   label,
 } from "utils/functions";
+import { isPublishedPagesUrl, resolvePublishedPagesUrl } from "utils/pagesRuntime";
 import {
   getInfoWithExtension,
   getModifiedTime,
@@ -81,6 +84,7 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const localPreviewHtmlPathRef = useRef("");
   const localPreviewDependenciesRef = useRef<Set<string>>(new Set());
+  const localPreviewPublicUrlRef = useRef("");
   const [loading, setLoading] = useState(false);
   const [srcDoc, setSrcDoc] = useState("");
   const changeHistory = (step: number): void => {
@@ -165,6 +169,7 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
       const linkHrefRegex =
         /<link\b[^>]*\brel\s*=\s*["'][^"']*stylesheet[^"']*["'][^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>/gi;
       const scriptSrcRegex = /<script\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)><\/script>/gi;
+      const imageSrcRegex = /<img\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)>/gi;
 
       const linkMatches = [...previewHtml.matchAll(linkHrefRegex)];
 
@@ -209,6 +214,28 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
         }
       }
 
+      const imageMatches = [...previewHtml.matchAll(imageSrcRegex)];
+
+      for (const match of imageMatches) {
+        const [fullTag = "", beforeSrc = "", src = "", afterSrc = ""] = match;
+        const localImagePath = normalizeLocalAssetPath(htmlPath, src);
+
+        if (!localImagePath || !(await exists(localImagePath))) continue;
+
+        try {
+          const imageBuffer = await readFile(localImagePath);
+          const imageUrl = bufferToUrl(imageBuffer, getMimeType(localImagePath));
+
+          dependencies.add(localImagePath);
+          previewHtml = previewHtml.replace(
+            fullTag,
+            `<img${beforeSrc}src="${imageUrl}"${afterSrc}>`
+          );
+        } catch {
+          // Ignore failure to inline image
+        }
+      }
+
       return { dependencies, html: previewHtml };
     },
     [exists, normalizeLocalAssetPath, readFile]
@@ -218,21 +245,57 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
       const { contentWindow } = iframeRef.current || {};
 
       if (contentWindow?.location) {
+        const publishedResolution = isPublishedPagesUrl(addressInput)
+          ? resolvePublishedPagesUrl(addressInput)
+          : undefined;
+        let previewPath = addressInput;
+
+        if (
+          publishedResolution?.localPath &&
+          (await exists(publishedResolution.localPath))
+        ) {
+          const publishedStats = await stat(publishedResolution.localPath);
+
+          previewPath = publishedStats.isDirectory()
+            ? join(publishedResolution.localPath, "index.html")
+            : publishedResolution.localPath;
+        } else if (publishedResolution) {
+          localPreviewDependenciesRef.current = new Set();
+          localPreviewHtmlPathRef.current = "";
+          localPreviewPublicUrlRef.current = "";
+          setSrcDoc(NOT_FOUND);
+          prependFileToTitle("404 Not Found");
+          setLoading(false);
+          return;
+        }
+
         const isHtml =
-          [".htm", ".html"].includes(getExtension(addressInput)) &&
-          (await exists(addressInput));
+          [".htm", ".html"].includes(getExtension(previewPath)) &&
+          (await exists(previewPath));
 
         setLoading(true);
         if (isHtml) {
-          const { dependencies, html } = await buildLocalHtmlPreview(addressInput);
+          const { dependencies, html } = await buildLocalHtmlPreview(previewPath);
 
           localPreviewDependenciesRef.current = dependencies;
-          localPreviewHtmlPathRef.current = addressInput;
+          localPreviewHtmlPathRef.current = previewPath;
+          localPreviewPublicUrlRef.current = publishedResolution
+            ? (
+              addressInput.endsWith(".html")
+                ? addressInput
+                : `${addressInput.replace(/\/$/, "")}/`
+            )
+            : addressInput;
           setSrcDoc(html);
-          prependFileToTitle(basename(addressInput));
+          prependFileToTitle(
+            publishedResolution
+              ? `${publishedResolution.site.projectName} - Pages`
+              : basename(previewPath)
+          );
         } else {
           localPreviewDependenciesRef.current = new Set();
           localPreviewHtmlPathRef.current = "";
+          localPreviewPublicUrlRef.current = "";
         }
         setIcon(id, processDirectory.Browser.icon);
 
@@ -628,6 +691,41 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
         ref={iframeRef}
         onLoad={() => {
           try {
+            const previewHtmlPath = localPreviewHtmlPathRef.current;
+            const previewPublicUrl = localPreviewPublicUrlRef.current;
+
+            if (previewHtmlPath) {
+              iframeRef.current?.contentWindow?.document
+                ?.querySelectorAll("a[href]")
+                .forEach((anchor) => {
+                  anchor.addEventListener("click", (event) => {
+                    const href =
+                      (event.currentTarget as HTMLAnchorElement).getAttribute("href") || "";
+
+                    if (
+                      !href ||
+                      href.startsWith("#") ||
+                      href.startsWith("mailto:") ||
+                      href.startsWith("tel:") ||
+                      href.startsWith("javascript:")
+                    ) {
+                      return;
+                    }
+
+                    event.preventDefault();
+
+                    if (previewPublicUrl) {
+                      void goToLink(new URL(href, previewPublicUrl).href);
+                      return;
+                    }
+
+                    void goToLink(
+                      resolve(dirname(previewHtmlPath), href).replace(/\\/g, "/")
+                    );
+                  });
+                });
+            }
+
             iframeRef.current?.contentWindow?.addEventListener("focus", () =>
               setForegroundId(id)
             );

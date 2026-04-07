@@ -1,216 +1,296 @@
-# Activities (Git)
+# Activities (Git y Publicacion)
 
-Este documento describe las actividades implementadas desde `utils/activitiesCatalog.json`, con URL directa y solución esperada por actividad.
+Este documento resume las actividades implementadas desde `utils/activitiesCatalog.json`, con URL directa y solucion esperada por actividad.
 
 ## Rutas base
 
-- App integrada (canónica): `/?app=Activities&activityId={id}`
+- App integrada: `/?app=Activities&activityId={id}`
 - Standalone (Next): `/activities/{id}`
-- Standalone (template del catálogo): `/activities/{id}/index.html`
+- Standalone (template del catalogo): `/activities/{id}/index.html`
 
-## Señal de completitud
+## Senal de completitud
 
-Cuando una actividad cumple todos los checks de validación, se registra en consola:
+Cuando una actividad cumple todos los checks de validacion, se registra en consola:
 
 - `Actividad completada: {activityId}`
 
-## Workspace Semilla (Git)
+## Workspace semilla
 
-En varias actividades prácticas de Git (`c02`, `c03`, `c04`) el sistema ahora:
+En varias actividades practicas el sistema:
 
-- crea automáticamente carpeta(s) y archivo(s) base del ejercicio,
-- y abre `Visual Studio Code` con esa carpeta como raíz.
+- crea automaticamente carpetas y archivos base del ejercicio
+- abre `Visual Studio Code` con esa carpeta como raiz
+- y, en algunas actividades de publicacion, deja solo un archivo editable y mantiene el resto en solo lectura
 
-Esto evita que el alumno tenga que empezar siempre desde cero y permite enfocarse en el objetivo de la actividad.
+## Pages simulado
 
-## Clase `sch_git_c01` — Control de versiones y trabajo colaborativo
+El simulador ahora incluye una primera version de `Pages` para practicar publicacion:
 
-### `sch_git_c01_a01` — Versiones vs copias
+- comando disponible en la terminal de Monaco: `pages publish [nombre-del-proyecto]`
+- genera una URL publica simulada con formato `https://estudiante.pages.dev/mi-proyecto`
+- abre automaticamente esa URL en el navegador interno
+- el navegador renderiza un snapshot publicado del proyecto, incluyendo HTML, CSS, JS e imagenes locales
+- tambien permite navegar links internos basicos dentro de la version publicada
+
+## Clase `sch_git_c01` - Control de versiones y trabajo colaborativo
+
+### `sch_git_c01_a01` - Versiones vs copias
 - Modo: `classify`
 - URL app: `/?app=Activities&activityId=sch_git_c01_a01`
 - URL standalone: `/activities/sch_git_c01_a01`
-- Solución esperada:
-  - Clasificar correctamente las 10 tarjetas entre `control_versiones` y `copias_caos`.
-  - Completar `porqueImporta` y `cuandoSirve` (mínimo 20 chars cada una).
-  - Incluir al menos 2 keywords de versión/cambio/decisión/historia por respuesta.
+- Solucion esperada:
+  - Clasificar correctamente las tarjetas entre control de versiones y caos por copias.
+  - Completar las justificaciones minimas pedidas.
 
-### `sch_git_c01_a02` — Git vs GitHub
+### `sch_git_c01_a02` - Git vs GitHub
 - Modo: `classify`
 - URL app: `/?app=Activities&activityId=sch_git_c01_a02`
 - URL standalone: `/activities/sch_git_c01_a02`
-- Solución esperada:
-  - Clasificar correctamente tarjetas entre `git` y `github` (con umbral mínimo de aciertos).
-  - Responder explicación de mínimo 30 chars.
-  - Mencionar que Git es local y GitHub es plataforma remota/web.
+- Solucion esperada:
+  - Distinguir Git como herramienta local y GitHub como plataforma remota/web.
 
-### `sch_git_c01_a03` — Ordenar la historia de cambios
+### `sch_git_c01_a03` - Ordenar la historia de cambios
 - Modo: `order`
 - URL app: `/?app=Activities&activityId=sch_git_c01_a03`
 - URL standalone: `/activities/sch_git_c01_a03`
-- Solución esperada:
-  - Ordenar los eventos exactamente como define la secuencia correcta del ejercicio.
-  - Escribir justificación de al menos 15 caracteres.
+- Solucion esperada:
+  - Ordenar correctamente la secuencia del ejercicio.
 
-### `sch_git_c01_a04` — Conflicto no es “error”
+### `sch_git_c01_a04` - Conflicto no es error
 - Modo: `decision`
 - URL app: `/?app=Activities&activityId=sch_git_c01_a04`
 - URL standalone: `/activities/sch_git_c01_a04`
-- Solución esperada:
-  - Indicar que hay conflicto (`hayConflicto=true`).
-  - Seleccionar una resolución válida.
-  - Explicar decisión con mínimo 20 chars incluyendo términos de conflicto/resolución.
+- Solucion esperada:
+  - Detectar el conflicto y justificar una resolucion valida.
 
-## Clase `sch_git_c02` — Crear y guardar cambios
+## Clase `sch_git_c02` - Crear y guardar cambios
 
-### `sch_git_c02_a00` — Configuración inicial de Git
+### `sch_git_c02_a00` - Configuracion inicial de Git
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c02_a00`
 - URL standalone: `/activities/sch_git_c02_a00`
-- Solución esperada:
-  - Ejecutar `git config --global user.name "Tu Nombre"`.
-  - Ejecutar `git config --global user.email "tu@email.com"`.
-  - Realizar esta configuración antes de `git init`.
+- Solucion esperada:
+  - Ejecutar `git config --global user.name "..."`
+  - Ejecutar `git config --global user.email "..."`
 
-### `sch_git_c02_a01` — Inicializar repo
+### `sch_git_c02_a01` - Inicializar repo
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c02_a01`
 - URL standalone: `/activities/sch_git_c02_a01`
-- Solución esperada:
-  - Abrir GitBash y crear la carpeta `repo`.
-  - Entrar a `/repo` y trabajar ahí.
-  - Crear archivos base del proyecto web: `index.html`, `style.css`, `app.js`.
-  - Ejecutar `git init`.
-  - Quedar con repositorio detectado como inicializado en `/repo`.
+- Solucion esperada:
+  - Crear el proyecto base y ejecutar `git init`.
 
-### `sch_git_c02_a02` — 3 estados: working / staging / commit
+### `sch_git_c02_a02` - 3 estados: working / staging / commit
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c02_a02`
 - URL standalone: `/activities/sch_git_c02_a02`
-- Solución esperada:
-  - Trabajar sobre archivos web del repo (`index.html`, `style.css`, `app.js`).
-  - Ejecutar `git status` al menos 2 veces.
-  - Ejecutar `git add index.html`.
-  - No incluir `style.css` en staging ni en el commit final.
+- Solucion esperada:
+  - Usar `git status`, preparar solo lo indicado y evitar agregar archivos no pedidos.
 
-### `sch_git_c02_a03` — Mensaje de commit profesional
+### `sch_git_c02_a03` - Mensaje de commit profesional
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c02_a03`
 - URL standalone: `/activities/sch_git_c02_a03`
-- Solución esperada:
-  - Hacerlo en contexto de proyecto web (`html/css/js`) dentro de `/repo`.
-  - Ejecutar `git commit -m "..."`.
-  - Mensaje con mínimo 15 caracteres.
-  - Empezar con verbo sugerido (`Agrega`, `Corrige`, `Elimina`, `Actualiza`, `Mejora`, `Refactoriza`) y evitar mensajes genéricos (`fix`, `update`, etc.).
+- Solucion esperada:
+  - Ejecutar `git commit -m "..."` con un mensaje claro y suficientemente descriptivo.
 
-### `sch_git_c02_a04` — Evitar el git add . ciego
+### `sch_git_c02_a04` - Evitar el git add . ciego
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c02_a04`
 - URL standalone: `/activities/sch_git_c02_a04`
-- Solución esperada:
-  - Trabajar con `index.html`, `style.css` y `app.js`.
-  - Hacer commit sin `notes.tmp`.
-  - Ejecutar `git status` antes de `git commit`.
-  - Evitar `git add .` ciego (si se usa, la validación muestra warning).
+- Solucion esperada:
+  - Revisar el estado antes de commitear y evitar sumar basura al repo.
 
-## Clase `sch_git_c03` — Revisar historial y versiones
+## Clase `sch_git_c03` - Revisar historial y versiones
 
-### `sch_git_c03_a01` — Leer el historial (git log)
+### `sch_git_c03_a01` - Leer el historial (git log)
 - Modo: `terminal+form`
 - URL app: `/?app=Activities&activityId=sch_git_c03_a01`
 - URL standalone: `/activities/sch_git_c03_a01`
-- Solución esperada:
-  - Ejecutar `git log`.
-  - Completar `author` y `message` exactamente iguales al último commit del repo.
 
-### `sch_git_c03_a02` — Vista resumida (git log --oneline)
+### `sch_git_c03_a02` - Vista resumida (git log --oneline)
 - Modo: `terminal+form`
 - URL app: `/?app=Activities&activityId=sch_git_c03_a02`
 - URL standalone: `/activities/sch_git_c03_a02`
-- Solución esperada:
-  - Ejecutar `git log --oneline`.
-  - Completar `commit1` y `commit2` con formato válido `<hash> <mensaje>` (hash hexadecimal de 7+ caracteres).
 
-### `sch_git_c03_a03` — git diff antes del commit
+### `sch_git_c03_a03` - git diff antes del commit
 - Modo: `terminal+form`
 - URL app: `/?app=Activities&activityId=sch_git_c03_a03`
 - URL standalone: `/activities/sch_git_c03_a03`
-- Solución esperada:
-  - Ejecutar `git diff`.
-  - Asegurar `git diff` antes de `git commit`.
-  - Copiar en `linea` un contenido que incluya la línea esperada del diff del ejercicio.
 
-### `sch_git_c03_a04` — Debugging histórico (git show)
+### `sch_git_c03_a04` - Debugging historico (git show)
 - Modo: `terminal+form`
 - URL app: `/?app=Activities&activityId=sch_git_c03_a04`
 - URL standalone: `/activities/sch_git_c03_a04`
-- Solución esperada:
-  - Ejecutar `git log --oneline` y luego `git show <hash>`.
-  - Completar `hash` con el commit culpable correcto.
-  - Completar `queCambio` con explicación mínima de 30 caracteres.
 
-## Clase `sch_git_c04` — Repositorios remotos y trabajo compartido
+## Clase `sch_git_c04` - Repositorios remotos y trabajo compartido
 
-### `sch_git_c04_a01` — Configurar origin
+### `sch_git_c04_a01` - Configurar origin
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c04_a01`
 - URL standalone: `/activities/sch_git_c04_a01`
-- Solución esperada:
-  - Ejecutar `git remote add origin <URL>`.
-  - Ejecutar `git remote -v`.
-  - Ver `origin` registrado en el estado del repo.
 
-### `sch_git_c04_a02` — Primer push con upstream
+### `sch_git_c04_a02` - Primer push con upstream
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c04_a02`
 - URL standalone: `/activities/sch_git_c04_a02`
-- Solución esperada:
-  - Ejecutar `git push -u origin main` (o `git push --set-upstream origin main`).
-  - Dejar tracking configurado para `main` con `origin`.
-  - Realizar luego un `git push` simple.
 
-### `sch_git_c04_a03` — Pull antes de push
+### `sch_git_c04_a03` - Pull antes de push
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c04_a03`
 - URL standalone: `/activities/sch_git_c04_a03`
-- Solución esperada:
-  - Ejecutar `git pull`.
-  - Hacer `pull` antes de `push`.
-  - Dejar repositorio sincronizado con remoto.
 
-### `sch_git_c04_a04` — Flujo completo con remoto
+### `sch_git_c04_a04` - Flujo completo con remoto
 - Modo: `terminal+rubric`
 - URL app: `/?app=Activities&activityId=sch_git_c04_a04`
 - URL standalone: `/activities/sch_git_c04_a04`
-- Solución esperada:
-  - Cumplir el flujo `pull -> status -> add -> commit -> push` (en ese orden lógico).
-  - Registrar al menos un commit.
-  - Usar mensaje de commit de mínimo 12 caracteres.
-  - Terminar con remoto actualizado/sincronizado.
 
-### `sch_git_c04_a05` — Lab: solo clone
+### `sch_git_c04_a05` - Lab: solo clone
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c04_a05`
 - URL standalone: `/activities/sch_git_c04_a05`
-- Solución esperada:
-  - Ejecutar `git clone https://github.com/winsim-labs/css-pull-lab.git`.
-  - Ingresar al repo con `cd css-pull-lab`.
-  - Verificar presencia de archivos del proyecto (`index.html`, `styles.css`).
 
-### `sch_git_c04_a06` — Lab: solo pull
+### `sch_git_c04_a06` - Lab: solo pull
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c04_a06`
 - URL standalone: `/activities/sch_git_c04_a06`
-- Solución esperada:
-  - Estar dentro del repo `css-pull-lab`.
-  - Ejecutar `git pull` (sin `origin main`).
-  - Confirmar que el repo quedó sincronizado.
 
-### `sch_git_c04_a07` — Lab: clone + pull
+### `sch_git_c04_a07` - Lab: clone + pull
 - Modo: `terminal`
 - URL app: `/?app=Activities&activityId=sch_git_c04_a07`
 - URL standalone: `/activities/sch_git_c04_a07`
-- Solución esperada:
-  - Ejecutar `git clone https://github.com/winsim-labs/css-pull-lab.git`.
-  - Entrar con `cd css-pull-lab`.
-  - Ejecutar `git pull` (sin `origin main`).
-  - Verificar con `cat styles.css` que cambió tras el pull.
+
+## Clase `sch_publish_c01` - Preparar un proyecto para publicacion
+
+### `sch_publish_c01_a01` - Estructura clara vs desordenada
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_publish_c01_a01`
+- URL standalone: `/activities/sch_publish_c01_a01`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a01`.
+  - Solo queda editable `/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt`.
+  - La validacion exige proponer `index.html` en raiz, `css/estilos.css`, `js/script.js` e `img/...`.
+
+### `sch_publish_c01_a02` - Limpiar antes de publicar
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_publish_c01_a02`
+- URL standalone: `/activities/sch_publish_c01_a02`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a02`.
+  - Solo queda editable `/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt`.
+  - La validacion exige conservar `index.html`.
+  - La validacion exige eliminar `notas.txt`, `prueba-layout-viejo.html` y `copia_final_ahora_si.png`.
+  - La justificacion debe explicar que solo debe quedar lo que el proyecto necesita para funcionar o mostrarse.
+
+### `sch_publish_c01_a03` - Rutas absolutas vs relativas
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_publish_c01_a03`
+- URL standalone: `/activities/sch_publish_c01_a03`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a03`.
+  - Esta actividad sigue siendo practica real: se edita `index.html`.
+  - La validacion acepta `css/estilos.css`, `img/logo.png`, `js/app.js` y tambien variantes relativas validas como `./css/estilos.css`, `./img/logo.png` y `./js/app.js`.
+  - La validacion rechaza rutas que dependan de `C:/`, `D:/`, `E:/` o `/Users/`.
+
+### `sch_publish_c01_a04` - Nombres de archivo seguros para publicar
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_publish_c01_a04`
+- URL standalone: `/activities/sch_publish_c01_a04`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a04`.
+  - Solo queda editable `/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt`.
+  - La validacion exige proponer `mi-foto-final.png`, `banner-home.png` y `estilos-finales.css`.
+  - El criterio aceptado incluye minusculas, guiones y evitar espacios, tildes, simbolos o caracteres especiales.
+
+### `sch_publish_c01_a05` - Checklist antes de mostrar
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_publish_c01_a05`
+- URL standalone: `/activities/sch_publish_c01_a05`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a05`.
+  - Solo queda editable `/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt`.
+  - La validacion acepta checklist marcado con `[x]` o `[X]`.
+  - Deben quedar marcados estructura, limpieza, rutas, navegacion y claridad del sitio.
+
+## Clase `sch_pages_c01` - Publicar un sitio con Pages
+
+### `sch_pages_c01_a01` - Antes de publicar: comprobar que esta listo
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_pages_c01_a01`
+- URL standalone: `/activities/sch_pages_c01_a01`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/pages-c01-a01`.
+  - Solo queda editable `/Users/Public/Desktop/pages-c01-a01/estado-previo.txt`.
+  - La validacion exige guardar el diagnostico y mencionar si el proyecto esta listo para publicar.
+  - El texto debe mencionar elementos del checklist previo como `index.html`, rutas relativas, imagenes o archivos innecesarios.
+
+### `sch_pages_c01_a02` - Guardar el proyecto en el repositorio
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_pages_c01_a02`
+- URL standalone: `/activities/sch_pages_c01_a02`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/pages-c01-a02`.
+  - La actividad se resuelve desde la terminal de Monaco.
+  - La validacion exige `git init`, `git add .` y `git commit -m "..."`.
+
+### `sch_pages_c01_a03` - Activar Pages y obtener la URL
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_pages_c01_a03`
+- URL standalone: `/activities/sch_pages_c01_a03`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/pages-c01-a03`.
+  - Solo queda editable `/Users/Public/Desktop/pages-c01-a03/url-publica.txt`.
+  - La validacion exige ejecutar `pages publish ...` desde la terminal.
+  - La validacion exige detectar una URL publicada real en el runtime de Pages.
+  - Tambien exige guardar esa URL en `url-publica.txt`.
+
+### `sch_pages_c01_a04` - Verificar que la URL publicada funciona
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_pages_c01_a04`
+- URL standalone: `/activities/sch_pages_c01_a04`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/pages-c01-a04`.
+  - Solo queda editable `/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt`.
+  - La validacion exige haber publicado antes con Pages.
+  - El checklist debe marcar revision de URL, assets y parte de la verificacion final del sitio.
+
+## Clase `sch_pages_c02` - Gestionar cambios y republicar
+
+### `sch_pages_c02_a01` - Editar, guardar y dejar listo el cambio
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_pages_c02_a01`
+- URL standalone: `/activities/sch_pages_c02_a01`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/pages-c02-a01`.
+  - La actividad exige editar y guardar `index.html`.
+  - La validacion comprueba que el `h1` pase a `Sitio actualizado`.
+
+### `sch_pages_c02_a02` - Registrar el cambio con commit
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_pages_c02_a02`
+- URL standalone: `/activities/sch_pages_c02_a02`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/pages-c02-a02`.
+  - La actividad exige un cambio real en `index.html`.
+  - La validacion exige `git add .` y `git commit -m "..."` con mensaje descriptivo.
+
+### `sch_pages_c02_a03` - Push y sitio actualizado
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_pages_c02_a03`
+- URL standalone: `/activities/sch_pages_c02_a03`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/pages-c02-a03`.
+  - Quedan editables `index.html` y `url-republicada.txt`.
+  - La actividad exige ejecutar `pages publish ciclo-pages`.
+  - Despues exige completar el ciclo `git init`, `git add .`, `git commit -m "..."` y `git push`.
+  - El runtime de Pages actualiza el snapshot publicado cuando detecta `git push` sobre un sitio ya publicado.
+
+### `sch_pages_c02_a04` - Errores frecuentes despues del push
+- Modo: `workspace`
+- URL app: `/?app=Activities&activityId=sch_pages_c02_a04`
+- URL standalone: `/activities/sch_pages_c02_a04`
+- Estado vigente:
+  - Monaco se abre sobre `/Users/Public/Desktop/pages-c02-a04`.
+  - Solo queda editable `/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt`.
+  - La validacion exige mencionar causas reales como `push`, `git add`, `commit` o cache.
+  - Tambien exige describir como verificar o recargar el sitio publicado.

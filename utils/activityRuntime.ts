@@ -79,8 +79,10 @@ type InferredRepoState = {
 
 type ActivityTelemetry = {
   commands: TrackedCommand[];
+  fileContents: Record<string, string>;
   fileSavedPaths: string[];
   inferredRepo: InferredRepoState;
+  publishedUrls: string[];
 };
 
 export type ActivityEvent =
@@ -92,8 +94,14 @@ export type ActivityEvent =
     }
   | {
       activityId?: string;
+      content?: string;
       path: string;
       type: "fileSaved";
+    }
+  | {
+      activityId?: string;
+      type: "pagesPublished";
+      url: string;
     };
 
 export type ValidationResult = {
@@ -165,8 +173,10 @@ const getDefaultRepoState = (): InferredRepoState => ({
 
 const getDefaultTelemetry = (): ActivityTelemetry => ({
   commands: [],
+  fileContents: {},
   fileSavedPaths: [],
   inferredRepo: getDefaultRepoState(),
+  publishedUrls: [],
 });
 
 const getActivityClasses = (language?: SessionLanguage): ActivityClass[] =>
@@ -283,6 +293,17 @@ const hasCommand = (commands: TrackedCommand[], fragment: string): boolean =>
 const countCommand = (commands: TrackedCommand[], fragment: string): number =>
   commands.filter(({ command }) => normalize(command).includes(normalize(fragment))).length;
 
+const hasSavedPath = (savedPaths: string[], expectedPath: string): boolean => {
+  const normalizedExpected = normalizePath(expectedPath);
+
+  return savedPaths.some((savedPath) => normalizePath(savedPath) === normalizedExpected);
+};
+
+const getSavedFileContent = (
+  fileContents: Record<string, string>,
+  targetPath: string
+): string => fileContents[normalizePath(targetPath)] || "";
+
 const resolveExpectedRepoValue = (
   repoPath: string,
   telemetry: ActivityTelemetry
@@ -316,6 +337,9 @@ const evaluateCheck = (
 ): ValidationResult => {
   const rules = asRecord(check.rules);
   const {commands} = telemetry;
+  const fileContents = telemetry.fileContents;
+  const savedPaths = telemetry.fileSavedPaths;
+  const publishedUrls = telemetry.publishedUrls;
   const repo = telemetry.inferredRepo;
 
   switch (check.type) {
@@ -592,6 +616,69 @@ const evaluateCheck = (
       };
     }
 
+    case "FILE_SAVED_PATHS_INCLUDE": {
+      const requiredPaths = asStringArray(rules.paths);
+      const passed =
+        requiredPaths.length > 0 &&
+        requiredPaths.every((path) => hasSavedPath(savedPaths, path));
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "FILE_SAVED_PATHS_EXCLUDE": {
+      const forbiddenPaths = asStringArray(rules.paths);
+      const passed = forbiddenPaths.every((path) => !hasSavedPath(savedPaths, path));
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "FILE_CONTENT_REGEX": {
+      const path = asString(rules.path);
+      const pattern = asString(rules.pattern);
+      const content = getSavedFileContent(fileContents, path);
+      const regex = new RegExp(pattern, "i");
+      const passed = Boolean(content) && regex.test(content);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "FILE_CONTENT_NOT_REGEX": {
+      const path = asString(rules.path);
+      const pattern = asString(rules.pattern);
+      const content = getSavedFileContent(fileContents, path);
+      const regex = new RegExp(pattern, "i");
+      const passed = Boolean(content) && !regex.test(content);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "PAGES_PUBLISHED_URL_REGEX": {
+      const regex = new RegExp(asString(rules.pattern), "i");
+      const passed = publishedUrls.some((url) => regex.test(url));
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
     case "ANSWER_EQUALS_REPO_VALUE": {
       const repoPath = asString(rules.repoPath);
       const normalizeHash = Boolean(rules.normalizeHash);
@@ -756,7 +843,17 @@ const readTelemetry = (activityId: string): ActivityTelemetry => {
             typeof entry.timestamp === "number"
         )
       : [],
+    fileContents:
+      parsed.fileContents && typeof parsed.fileContents === "object"
+        ? Object.fromEntries(
+            Object.entries(parsed.fileContents).filter(
+              (entry): entry is [string, string] =>
+                typeof entry[0] === "string" && typeof entry[1] === "string"
+            )
+          )
+        : {},
     fileSavedPaths: asStringArray(parsed.fileSavedPaths),
+    publishedUrls: asStringArray(parsed.publishedUrls),
     inferredRepo: {
       ...getDefaultRepoState(),
       ...asRecord(parsed.inferredRepo),
@@ -867,6 +964,16 @@ export const trackActivityEvent = (
   if (event.type === "fileSaved") {
     telemetry.fileSavedPaths = [
       ...new Set([...telemetry.fileSavedPaths, normalizePath(event.path)]),
+    ];
+
+    if (typeof event.content === "string") {
+      telemetry.fileContents[normalizePath(event.path)] = event.content;
+    }
+  }
+
+  if (event.type === "pagesPublished" && event.url) {
+    telemetry.publishedUrls = [
+      ...new Set([...telemetry.publishedUrls, event.url]),
     ];
   }
 

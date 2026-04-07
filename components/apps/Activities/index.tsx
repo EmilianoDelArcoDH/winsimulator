@@ -196,6 +196,7 @@ const getFallbackActivity = (
 
 const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     const preparedWorkspaceRef = useRef<Record<string, true>>({});
+    const lastPreparedActivityIdRef = useRef("");
     const { mkdirRecursive, writeFile } = useFileSystem();
     const { open: openProcess, processes, url: setProcessUrl } = useProcesses();
     const { language } = useSession();
@@ -209,6 +210,8 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                 result: "Resultado",
                 runCommandsHint:
                     "Execute os comandos no GitBash e depois valide aqui. A validacao usa historico real de comandos e eventos.",
+                workspaceHint:
+                    "Para esta atividade, trabalhe o projeto no Monaco e use o botao Validar no menu superior do editor.",
                 select: "Selecionar",
                 selectColumn: "Selecionar coluna",
             };
@@ -223,6 +226,8 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                 result: "Result",
                 runCommandsHint:
                     "Run the commands in GitBash and then validate here. Validation uses real command and event history.",
+                workspaceHint:
+                    "For this activity, work on the project in Monaco and use the Validate button in the editor top menu.",
                 select: "Select",
                 selectColumn: "Select column",
             };
@@ -236,6 +241,8 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             result: "Resultado",
             runCommandsHint:
                 "Ejecuta los comandos en GitBash y luego valida aca. La validacion usa historial real de comandos y eventos.",
+            workspaceHint:
+                "Para esta actividad, trabaja el proyecto en Monaco y usa el boton Validar del menu superior del editor.",
             select: "Seleccionar",
             selectColumn: "Seleccionar columna",
         };
@@ -285,7 +292,11 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             return;
         }
 
-        if (preparedWorkspaceRef.current[activity.id] && !workspaceSeed.resetOnEnter) {
+        if (
+            preparedWorkspaceRef.current[activity.id] &&
+            (!workspaceSeed.resetOnEnter ||
+                lastPreparedActivityIdRef.current === activity.id)
+        ) {
             return;
         }
 
@@ -314,6 +325,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                 if (cancelled) return;
 
                 preparedWorkspaceRef.current[activity.id] = true;
+                lastPreparedActivityIdRef.current = activity.id;
 
                 if (workspaceSeed.openInVscode) {
                     const monacoId = Object.keys(processes).find((processId) =>
@@ -471,6 +483,12 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                                 </li>
                             ))}
                         </ol>
+                    </div>
+                )}
+
+                {activity.mode === "workspace" && (
+                    <div style={{ color: "#d9d9d9", fontSize: 13, marginBottom: 12 }}>
+                        {uiText.workspaceHint}
                     </div>
                 )}
 
@@ -659,18 +677,20 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                 )}
             </div>
 
-            <div style={actionsStyle}>
-                <button onClick={validate} style={buttonStyle} type="button">
-                    {activity.ui?.submitLabel || "Validar"}
-                </button>
-                <button
-                    onClick={retry}
-                    style={{ ...buttonStyle, background: "#454545", borderColor: "#6a6a6a" }}
-                    type="button"
-                >
-                    {activity.ui?.retryLabel || "Reintentar"}
-                </button>
-            </div>
+            {activity.mode !== "workspace" && (
+                <div style={actionsStyle}>
+                    <button onClick={validate} style={buttonStyle} type="button">
+                        {activity.ui?.submitLabel || "Validar"}
+                    </button>
+                    <button
+                        onClick={retry}
+                        style={{ ...buttonStyle, background: "#454545", borderColor: "#6a6a6a" }}
+                        type="button"
+                    >
+                        {activity.ui?.retryLabel || "Reintentar"}
+                    </button>
+                </div>
+            )}
 
             {results.length > 0 && (
                 <div style={panelStyle}>
