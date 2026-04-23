@@ -90,8 +90,8 @@ export const openProcess =
             ...processDirectory[processId],
             ...(typeof icon === "string" && { icon }),
             ...processArguments,
-            // Start regular apps in fullscreen by default.
-            ...(dialogProcess ? {} : { maximized: true }),
+            // Start apps at their configured size instead of fullscreen.
+            ...(dialogProcess ? {} : { maximized: false }),
           },
         }
       : currentProcesses;

@@ -2047,6 +2047,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
             padding: "0 0 0 8px",
             userSelect: "none",
           }}
+          className="handle"
         >
           <span style={{ color: "#d7d7d7", fontSize: 12 }}>Git Bash</span>
           <div style={{ display: "flex", gap: 0 }}>

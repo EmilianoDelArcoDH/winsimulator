@@ -57,59 +57,161 @@ type WorkspaceSeed = {
 };
 
 const containerStyle: React.CSSProperties = {
-    background: "#111",
+    background:
+        "radial-gradient(circle at top, rgba(50, 95, 255, 0.10), transparent 38%), linear-gradient(180deg, #0f1116 0%, #0b0d12 100%)",
     color: "#f1f1f1",
     display: "flex",
     flexDirection: "column",
-    gap: 12,
+    gap: 16,
     height: "100%",
     minHeight: 0,
     overflow: "auto",
-    padding: 12,
-    paddingBottom: 72,
+    padding: 16,
+    paddingBottom: 88,
 };
 
 const panelStyle: React.CSSProperties = {
-    background: "#1b1b1b",
-    border: "1px solid #2f2f2f",
-    borderRadius: 8,
+    background: "rgba(20, 22, 28, 0.92)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    borderRadius: 14,
+    boxShadow: "0 18px 48px rgba(0, 0, 0, 0.24)",
     minWidth: 0,
     overflow: "hidden",
-    padding: 12,
+    padding: 16,
 };
 
 const inputStyle: React.CSSProperties = {
-    background: "#0f0f0f",
-    border: "1px solid #3a3a3a",
-    borderRadius: 6,
+    background: "rgba(11, 13, 18, 0.95)",
+    border: "1px solid rgba(255, 255, 255, 0.10)",
+    borderRadius: 10,
     color: "#f1f1f1",
-    padding: "8px 10px",
+    padding: "10px 12px",
 };
 
 const buttonStyle: React.CSSProperties = {
-    background: "#2d5fff",
-    border: "1px solid #6f92ff",
-    borderRadius: 6,
+    background: "linear-gradient(180deg, #4b74ff 0%, #2d5fff 100%)",
+    border: "1px solid rgba(111, 146, 255, 0.75)",
+    borderRadius: 10,
     color: "white",
     cursor: "pointer",
     fontWeight: 600,
-    minHeight: 36,
-    padding: "8px 14px",
+    minHeight: 40,
+    padding: "10px 16px",
 };
 
 const actionsStyle: React.CSSProperties = {
-    background: "#111",
-    borderTop: "1px solid #2f2f2f",
-    bottom: 8,
+    backdropFilter: "blur(10px)",
+    background: "rgba(11, 13, 18, 0.92)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    borderRadius: 14,
+    bottom: 12,
+    boxShadow: "0 18px 40px rgba(0, 0, 0, 0.25)",
     display: "flex",
     flexWrap: "wrap",
-    gap: 8,
+    gap: 10,
+    justifyContent: "flex-start",
     marginTop: "auto",
-    paddingBottom: 4,
-    paddingTop: 8,
+    padding: 12,
     position: "sticky",
     zIndex: 8,
 };
+
+const shellStyle: React.CSSProperties = {
+    display: "grid",
+    gap: 16,
+};
+
+const heroStyle: React.CSSProperties = {
+    background:
+        "linear-gradient(135deg, rgba(45, 95, 255, 0.18), rgba(16, 18, 24, 0.92) 45%, rgba(16, 18, 24, 0.98))",
+    border: "1px solid rgba(111, 146, 255, 0.22)",
+    borderRadius: 16,
+    padding: 18,
+};
+
+const eyebrowStyle: React.CSSProperties = {
+    color: "#8ea8ff",
+    fontSize: 12,
+    fontWeight: 700,
+    letterSpacing: "0.08em",
+    marginBottom: 8,
+    textTransform: "uppercase",
+};
+
+const titleStyle: React.CSSProperties = {
+    fontSize: 30,
+    lineHeight: 1.05,
+    margin: 0,
+};
+
+const objectiveStyle: React.CSSProperties = {
+    color: "#d1d7e0",
+    fontSize: 14,
+    lineHeight: 1.6,
+    margin: "10px 0 0",
+    maxWidth: 820,
+};
+
+const sectionTitleStyle: React.CSSProperties = {
+    color: "#9fb6ff",
+    fontSize: 12,
+    fontWeight: 700,
+    letterSpacing: "0.08em",
+    marginBottom: 10,
+    textTransform: "uppercase",
+};
+
+const promptStyle: React.CSSProperties = {
+    color: "#f3f5f8",
+    fontSize: 16,
+    lineHeight: 1.55,
+    margin: 0,
+};
+
+const helperTextStyle: React.CSSProperties = {
+    color: "#d2d7e0",
+    fontSize: 13,
+    lineHeight: 1.55,
+    margin: 0,
+};
+
+const fieldGridStyle: React.CSSProperties = {
+    display: "grid",
+    gap: 12,
+};
+
+const fieldLabelStyle: React.CSSProperties = {
+    display: "grid",
+    gap: 8,
+};
+
+const answerChoiceStyle: React.CSSProperties = {
+    alignItems: "flex-start",
+    background: "rgba(255, 255, 255, 0.03)",
+    border: "1px solid rgba(255, 255, 255, 0.06)",
+    borderRadius: 12,
+    display: "flex",
+    gap: 10,
+    padding: 12,
+};
+
+const resultCardStyle: React.CSSProperties = {
+    background: "rgba(20, 22, 28, 0.92)",
+    border: "1px solid rgba(255, 255, 255, 0.08)",
+    borderRadius: 14,
+    boxShadow: "0 18px 48px rgba(0, 0, 0, 0.24)",
+    padding: 16,
+};
+
+const resultListStyle: React.CSSProperties = {
+    margin: 0,
+    paddingLeft: 18,
+};
+
+const resultItemStyle = (passed: boolean): React.CSSProperties => ({
+    color: passed ? "#78e39b" : "#ff8e8e",
+    lineHeight: 1.55,
+});
 
 const asString = (value: unknown): string => (typeof value === "string" ? value : "");
 
@@ -420,292 +522,260 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                     ? {
                         height: "100vh",
                         margin: "0 auto",
-                        maxWidth: 980,
+                        maxWidth: 1100,
                     }
                     : {}),
             }}
         >
-            <div style={panelStyle}>
-                <div
-                    style={{
-                        alignItems: "flex-start",
-                        display: "flex",
-                        flexWrap: "wrap",
-                        gap: 8,
-                        justifyContent: "space-between",
-                    }}
-                >
-                    <div>
-                        <div style={{ color: "#7ea0ff", fontSize: 12 }}>{selectedClass?.title}</div>
-                        <h2 style={{ margin: "6px 0" }}>{activity.title}</h2>
-                        <div style={{ color: "#d0d0d0", fontSize: 13 }}>{activity.objective}</div>
-                    </div>
+            <div style={shellStyle}>
+                <section style={heroStyle}>
+                    <div style={eyebrowStyle}>{selectedClass?.title || uiText.activity}</div>
+                    <h2 style={titleStyle}>{activity.title}</h2>
+                    <p style={objectiveStyle}>{activity.objective}</p>
+                </section>
 
-                    <div style={{ flex: "1 1 260px", maxWidth: "100%", minWidth: 240 }}>
-                        <label htmlFor="activity-select" style={{ display: "block", fontSize: 12 }}>
-                            {uiText.activity}
-                        </label>
-                        <select
-                            id="activity-select"
-                            onChange={({ target }) => setActivityId(target.value)}
-                            style={{ ...inputStyle, width: "100%" }}
-                            value={activity.id}
-                        >
-                            {activities.map((entry) => (
-                                <option key={entry.id} value={entry.id}>
-                                    {entry.id} · {entry.title}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div style={panelStyle}>
-                {(asString(activity.data.scenario) || asString(question.label)) && (
-                    <div style={{ marginBottom: 10 }}>
-                        <div>{asString(activity.data.scenario)}</div>
-                        {asString(question.label) && (
-                            <div style={{ color: "#d8d8d8", marginTop: 4 }}>{asString(question.label)}</div>
-                        )}
-                    </div>
-                )}
-
-                {instructions.length > 0 && (
-                    <div style={{ marginBottom: 12 }}>
-                        <div style={{ color: "#9fb6ff", fontSize: 12, fontWeight: 600, marginBottom: 6 }}>
-                            {uiText.instructions}
+                <section style={panelStyle}>
+                    {(asString(activity.data.scenario) || asString(question.label)) && (
+                        <div style={{ marginBottom: 14 }}>
+                            {asString(activity.data.scenario) && (
+                                <p style={promptStyle}>{asString(activity.data.scenario)}</p>
+                            )}
+                            {asString(question.label) && (
+                                <p style={{ ...helperTextStyle, marginTop: 8 }}>{asString(question.label)}</p>
+                            )}
                         </div>
-                        <ol style={{ margin: 0, paddingLeft: 20 }}>
-                            {instructions.map((instruction, index) => (
-                                <li key={`${activity.id}-instruction-${index + 1}`} style={{ marginBottom: 4 }}>
-                                    {instruction}
-                                </li>
-                            ))}
-                        </ol>
-                    </div>
-                )}
+                    )}
 
-                {activity.mode === "workspace" && (
-                    <div style={{ color: "#d9d9d9", fontSize: 13, marginBottom: 12 }}>
-                        {uiText.workspaceHint}
-                    </div>
-                )}
+                    {instructions.length > 0 && (
+                        <div style={{ marginBottom: 16 }}>
+                            <div style={sectionTitleStyle}>{uiText.instructions}</div>
+                            <ol style={{ margin: 0, paddingLeft: 20 }}>
+                                {instructions.map((instruction, index) => (
+                                    <li key={`${activity.id}-instruction-${index + 1}`} style={{ marginBottom: 6 }}>
+                                        {instruction}
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                    )}
 
-                {activity.mode === "classify" && (
-                    <div style={{ display: "grid", gap: 8 }}>
-                        {((activity.data.cards || []) as ActivityCard[]).map((card) => (
-                            <label key={card.id} htmlFor={`card-${card.id}`} style={{ display: "grid", gap: 6 }}>
-                                <span>{card.text}</span>
-                                <select
-                                    id={`card-${card.id}`}
-                                    onChange={({ target }) => updateCardAnswer(card.id, target.value)}
-                                    style={inputStyle}
-                                    value={asString(asRecord(answers.cards)[card.id])}
-                                >
-                                    <option value="">{uiText.selectColumn}</option>
-                                    {((activity.data.columns || []) as string[]).map((column) => (
-                                        <option key={column} value={column}>
-                                            {column}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                        ))}
-                    </div>
-                )}
+                    {activity.mode === "workspace" && (
+                        <div style={{ ...helperTextStyle, marginBottom: 16 }}>{uiText.workspaceHint}</div>
+                    )}
 
-                {activity.mode === "order" && (
-                    <div style={{ display: "grid", gap: 8 }}>
-                        {((activity.data.items || []) as { id: string; text: string }[]).map((item) => {
-                            const currentOrder = asStringArray(answers.itemsOrder);
-
-                            return (
-                                <label key={item.id} htmlFor={`order-${item.id}`} style={{ display: "grid", gap: 6 }}>
-                                    <span>{item.text}</span>
+                    {activity.mode === "classify" && (
+                        <div style={fieldGridStyle}>
+                            {((activity.data.cards || []) as ActivityCard[]).map((card) => (
+                                <label key={card.id} htmlFor={`card-${card.id}`} style={fieldLabelStyle}>
+                                    <span>{card.text}</span>
                                     <select
-                                        id={`order-${item.id}`}
-                                        onChange={({ target }) => {
-                                            const nextOrder = [...currentOrder];
-                                            const currentIndex = nextOrder.indexOf(item.id);
-                                            const targetIndex = Number(target.value);
-
-                                            if (currentIndex !== -1) {
-                                                nextOrder.splice(currentIndex, 1);
-                                            }
-
-                                            nextOrder.splice(targetIndex, 0, item.id);
-                                            saveAnswers({
-                                                ...answers,
-                                                itemsOrder: nextOrder,
-                                            });
-                                        }}
+                                        id={`card-${card.id}`}
+                                        onChange={({ target }) => updateCardAnswer(card.id, target.value)}
                                         style={inputStyle}
-                                        value={String(Math.max(currentOrder.indexOf(item.id), 0))}
+                                        value={asString(asRecord(answers.cards)[card.id])}
                                     >
-                                        {((activity.data.items || []) as { id: string }[]).map(
-                                            (positionItem, indexPosition) => (
-                                                <option key={`${item.id}-${positionItem.id}`} value={indexPosition}>
-                                                    {uiText.position} {indexPosition + 1}
-                                                </option>
-                                            )
-                                        )}
+                                        <option value="">{uiText.selectColumn}</option>
+                                        {((activity.data.columns || []) as string[]).map((column) => (
+                                            <option key={column} value={column}>
+                                                {column}
+                                            </option>
+                                        ))}
                                     </select>
                                 </label>
-                            );
-                        })}
+                            ))}
+                        </div>
+                    )}
 
-                        {Array.isArray(question.options) && question.options.length > 0 && (
-                            <label htmlFor="culpable" style={{ display: "grid", gap: 6 }}>
-                                <span>{asString(question.label)}</span>
-                                <select
-                                    id="culpable"
-                                    onChange={({ target }) => updateTextAnswer("culpable", target.value)}
-                                    style={inputStyle}
-                                    value={asString(answers.culpable)}
-                                >
-                                    <option value="">{uiText.select}</option>
-                                    {question.options.map((optionId) => (
-                                        <option key={optionId} value={optionId}>
-                                            {optionId}
-                                        </option>
-                                    ))}
-                                </select>
-                            </label>
-                        )}
-                    </div>
-                )}
+                    {activity.mode === "order" && (
+                        <div style={fieldGridStyle}>
+                            {((activity.data.items || []) as { id: string; text: string }[]).map((item) => {
+                                const currentOrder = asStringArray(answers.itemsOrder);
 
-                {activity.mode === "decision" && (
-                    <div style={{ display: "grid", gap: 8 }}>
-                        {((activity.data.options || []) as ActivityOption[]).map((option) => (
-                            <label key={option.id} htmlFor={option.id} style={{ alignItems: "center", display: "flex", gap: 8 }}>
-                                <input
-                                    checked={asString(answers.resolution) === option.id}
-                                    id={option.id}
-                                    name="resolution"
-                                    onChange={() => updateTextAnswer("resolution", option.id)}
-                                    type="radio"
-                                />
-                                <span>{option.label}</span>
-                            </label>
-                        ))}
-
-                        {requiredCheckboxId && (
-                            <label
-                                htmlFor={requiredCheckboxId}
-                                style={{ alignItems: "center", display: "flex", gap: 8 }}
-                            >
-                                <input
-                                    checked={Boolean(answers[requiredCheckboxId])}
-                                    id={requiredCheckboxId}
-                                    onChange={({ target }) =>
-                                        saveAnswers({
-                                            ...answers,
-                                            [requiredCheckboxId]: target.checked,
-                                        })
-                                    }
-                                    type="checkbox"
-                                />
-                                <span>{requiredCheckboxLabel}</span>
-                            </label>
-                        )}
-                    </div>
-                )}
-
-                {(activity.mode.startsWith("terminal") || activity.mode === "terminal") && (
-                    <div style={{ color: "#d9d9d9", fontSize: 13, marginBottom: 12 }}>
-                        {uiText.runCommandsHint}
-                    </div>
-                )}
-
-                {formFields.length > 0 && (
-                    <div style={{ display: "grid", gap: 10 }}>
-                        {formFields.map((field) => (
-                            <label key={field.id} htmlFor={field.id} style={{ display: "grid", gap: 6 }}>
-                                <span>{field.label}</span>
-                                <textarea
-                                    id={field.id}
-                                    onChange={({ target }) => updateTextAnswer(field.id, target.value)}
-                                    rows={3}
-                                    style={{ ...inputStyle, resize: "vertical" }}
-                                    value={asString(answers[field.id])}
-                                />
-                            </label>
-                        ))}
-                    </div>
-                )}
-
-                {freeText.id && !formFields.some(({ id }) => id === freeText.id) && (
-                    <div style={{ display: "grid", gap: 8, marginTop: 10 }}>
-                        <label style={{ display: "grid", gap: 6 }}>
-                            <span>{freeText.label}</span>
-                            {freeTextMinItems > 1 ? (
-                                Array.from({ length: freeTextMinItems }).map((_, indexItem) => {
-                                    const existing = asStringArray(answers[freeText.id]);
-                                    const currentValue = existing[indexItem] || "";
-
-                                    return (
-                                        <textarea
-                                            key={`${freeText.id}-${indexItem + 1}`}
+                                return (
+                                    <label key={item.id} htmlFor={`order-${item.id}`} style={fieldLabelStyle}>
+                                        <span>{item.text}</span>
+                                        <select
+                                            id={`order-${item.id}`}
                                             onChange={({ target }) => {
-                                                const next = [...existing];
+                                                const nextOrder = [...currentOrder];
+                                                const currentIndex = nextOrder.indexOf(item.id);
+                                                const targetIndex = Number(target.value);
 
-                                                next[indexItem] = target.value;
+                                                if (currentIndex !== -1) {
+                                                    nextOrder.splice(currentIndex, 1);
+                                                }
+
+                                                nextOrder.splice(targetIndex, 0, item.id);
                                                 saveAnswers({
                                                     ...answers,
-                                                    [freeText.id]: next,
+                                                    itemsOrder: nextOrder,
                                                 });
                                             }}
-                                            placeholder={`Respuesta ${indexItem + 1}`}
-                                            rows={2}
-                                            style={{ ...inputStyle, resize: "vertical" }}
-                                            value={currentValue}
-                                        />
-                                    );
-                                })
-                            ) : (
-                                <textarea
-                                    onChange={({ target }) => updateTextAnswer(freeText.id, target.value)}
-                                    rows={3}
-                                    style={{ ...inputStyle, resize: "vertical" }}
-                                    value={asString(answers[freeText.id])}
-                                />
+                                            style={inputStyle}
+                                            value={String(Math.max(currentOrder.indexOf(item.id), 0))}
+                                        >
+                                            {((activity.data.items || []) as { id: string }[]).map(
+                                                (positionItem, indexPosition) => (
+                                                    <option key={`${item.id}-${positionItem.id}`} value={indexPosition}>
+                                                        {uiText.position} {indexPosition + 1}
+                                                    </option>
+                                                )
+                                            )}
+                                        </select>
+                                    </label>
+                                );
+                            })}
+
+                            {Array.isArray(question.options) && question.options.length > 0 && (
+                                <label htmlFor="culpable" style={fieldLabelStyle}>
+                                    <span>{asString(question.label)}</span>
+                                    <select
+                                        id="culpable"
+                                        onChange={({ target }) => updateTextAnswer("culpable", target.value)}
+                                        style={inputStyle}
+                                        value={asString(answers.culpable)}
+                                    >
+                                        <option value="">{uiText.select}</option>
+                                        {question.options.map((optionId) => (
+                                            <option key={optionId} value={optionId}>
+                                                {optionId}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </label>
                             )}
-                        </label>
+                        </div>
+                    )}
+
+                    {activity.mode === "decision" && (
+                        <div style={fieldGridStyle}>
+                            {((activity.data.options || []) as ActivityOption[]).map((option) => (
+                                <label key={option.id} htmlFor={option.id} style={answerChoiceStyle}>
+                                    <input
+                                        checked={asString(answers.resolution) === option.id}
+                                        id={option.id}
+                                        name="resolution"
+                                        onChange={() => updateTextAnswer("resolution", option.id)}
+                                        type="radio"
+                                        style={{ marginTop: 2 }}
+                                    />
+                                    <span>{option.label}</span>
+                                </label>
+                            ))}
+
+                            {requiredCheckboxId && (
+                                <label htmlFor={requiredCheckboxId} style={answerChoiceStyle}>
+                                    <input
+                                        checked={Boolean(answers[requiredCheckboxId])}
+                                        id={requiredCheckboxId}
+                                        onChange={({ target }) =>
+                                            saveAnswers({
+                                                ...answers,
+                                                [requiredCheckboxId]: target.checked,
+                                            })
+                                        }
+                                        type="checkbox"
+                                        style={{ marginTop: 2 }}
+                                    />
+                                    <span>{requiredCheckboxLabel}</span>
+                                </label>
+                            )}
+                        </div>
+                    )}
+
+                    {(activity.mode.startsWith("terminal") || activity.mode === "terminal") && (
+                        <div style={{ ...helperTextStyle, marginBottom: 16 }}>{uiText.runCommandsHint}</div>
+                    )}
+
+                    {formFields.length > 0 && (
+                        <div style={fieldGridStyle}>
+                            {formFields.map((field) => (
+                                <label key={field.id} htmlFor={field.id} style={fieldLabelStyle}>
+                                    <span>{field.label}</span>
+                                    <textarea
+                                        id={field.id}
+                                        onChange={({ target }) => updateTextAnswer(field.id, target.value)}
+                                        rows={3}
+                                        style={{ ...inputStyle, resize: "vertical" }}
+                                        value={asString(answers[field.id])}
+                                    />
+                                </label>
+                            ))}
+                        </div>
+                    )}
+
+                    {freeText.id && !formFields.some(({ id }) => id === freeText.id) && (
+                        <div style={fieldGridStyle}>
+                            <label style={fieldLabelStyle}>
+                                <span>{freeText.label}</span>
+                                {freeTextMinItems > 1 ? (
+                                    Array.from({ length: freeTextMinItems }).map((_, indexItem) => {
+                                        const existing = asStringArray(answers[freeText.id]);
+                                        const currentValue = existing[indexItem] || "";
+
+                                        return (
+                                            <textarea
+                                                key={`${freeText.id}-${indexItem + 1}`}
+                                                onChange={({ target }) => {
+                                                    const next = [...existing];
+
+                                                    next[indexItem] = target.value;
+                                                    saveAnswers({
+                                                        ...answers,
+                                                        [freeText.id]: next,
+                                                    });
+                                                }}
+                                                placeholder={`Respuesta ${indexItem + 1}`}
+                                                rows={2}
+                                                style={{ ...inputStyle, resize: "vertical" }}
+                                                value={currentValue}
+                                            />
+                                        );
+                                    })
+                                ) : (
+                                    <textarea
+                                        onChange={({ target }) => updateTextAnswer(freeText.id, target.value)}
+                                        rows={3}
+                                        style={{ ...inputStyle, resize: "vertical" }}
+                                        value={asString(answers[freeText.id])}
+                                    />
+                                )}
+                            </label>
+                        </div>
+                    )}
+                </section>
+
+                {activity.mode !== "workspace" && (
+                    <div style={actionsStyle}>
+                        <button onClick={validate} style={buttonStyle} type="button">
+                            {activity.ui?.submitLabel || "Validar"}
+                        </button>
+                        <button
+                            onClick={retry}
+                            style={{ ...buttonStyle, background: "#454545", borderColor: "#6a6a6a" }}
+                            type="button"
+                        >
+                            {activity.ui?.retryLabel || "Reintentar"}
+                        </button>
                     </div>
                 )}
+
+                {results.length > 0 && (
+                    <section style={resultCardStyle}>
+                        <h3 style={{ marginTop: 0 }}>{uiText.result}</h3>
+                        <ul style={resultListStyle}>
+                            {results.map((result) => (
+                                <li key={result.checkId} style={resultItemStyle(result.passed)}>
+                                    {result.message}
+                                </li>
+                            ))}
+                        </ul>
+                    </section>
+                )}
             </div>
-
-            {activity.mode !== "workspace" && (
-                <div style={actionsStyle}>
-                    <button onClick={validate} style={buttonStyle} type="button">
-                        {activity.ui?.submitLabel || "Validar"}
-                    </button>
-                    <button
-                        onClick={retry}
-                        style={{ ...buttonStyle, background: "#454545", borderColor: "#6a6a6a" }}
-                        type="button"
-                    >
-                        {activity.ui?.retryLabel || "Reintentar"}
-                    </button>
-                </div>
-            )}
-
-            {results.length > 0 && (
-                <div style={panelStyle}>
-                    <h3 style={{ marginTop: 0 }}>{uiText.result}</h3>
-                    <ul style={{ margin: 0, paddingLeft: 18 }}>
-                        {results.map((result) => (
-                            <li key={result.checkId} style={{ color: result.passed ? "#6af58b" : "#ff8e8e" }}>
-                                {result.message}
-                            </li>
-                        ))}
-                    </ul>
-                </div>
-            )}
         </div>
     );
 };
 
 export default memo(Activities);
+

@@ -3,6 +3,7 @@ import { type SessionLanguage } from "contexts/session/types";
 import { localizeActivitiesCatalog } from "utils/activityI18n";
 import { getSearchParam } from "utils/functions";
 import { getActiveLanguage } from "utils/i18n";
+import { sendActivityPgEvent } from "utils/pg-events";
 
 const ACTIVE_ACTIVITY_ID_KEY = "winsim_active_activity_id";
 const ACTIVITY_STATE_PREFIX = "winsim_activity_state_";
@@ -892,21 +893,49 @@ export const validateActivity = (
     };
   }
 
-  const state = getActivityState(activityId);
+  const currentState = getActivityState(activityId);
   const telemetry = readTelemetry(activityId);
   const results = activity.validation.checks.map((check) =>
-    evaluateCheck(activity, state.answers, telemetry, check)
+    evaluateCheck(activity, currentState.answers, telemetry, check)
   );
   const completedCheckIds = results
     .filter(({ passed }) => passed)
     .map(({ checkId }) => checkId);
   const completed = results.length > 0 && results.every(({ passed }) => passed);
+  const progress = {
+    completed: completedCheckIds.length,
+    total: results.length,
+  };
+  const reason = results
+    .filter(({ passed }) => !passed)
+    .map(({ message }) => message);
+  const eventState = {
+    activity: {
+      classId: activity.classId,
+      id: activity.id,
+      mode: activity.mode,
+      objective: activity.objective,
+      title: activity.title,
+    },
+    answers: currentState.answers,
+    completed,
+    completedCheckIds,
+    progress,
+    results,
+    validatedAt: Date.now(),
+  };
 
   writeJson(getStateKey(activityId), {
-    ...state,
+    ...currentState,
     completed,
     completedCheckIds,
     lastValidatedAt: Date.now(),
+  });
+
+  sendActivityPgEvent({
+    completed,
+    reason,
+    state: eventState,
   });
 
   if (completed) {
@@ -916,10 +945,7 @@ export const validateActivity = (
 
   return {
     completed,
-    progress: {
-      completed: completedCheckIds.length,
-      total: results.length,
-    },
+    progress,
     results,
   };
 };
