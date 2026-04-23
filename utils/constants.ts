@@ -216,11 +216,37 @@ export const SHORTCUT_EXTENSION = ".url";
 
 export const SYSTEM_FILES = new Set(["desktop.ini"]);
 
-export const SYSTEM_PATHS = new Set(["/.deletedFiles.log"]);
-
 export const DESKTOP_PATH = `${HOME}/Desktop`;
 
 export const START_MENU_PATH = `${HOME}/Start Menu`;
+
+export const HIDDEN_SYSTEM_PATHS = [
+  "/Program Files/EmulatorJs",
+  "/Program Files/Webamp",
+  "/Program Files/Vim.js",
+  "/Program Files/TinyMCE",
+  "/Program Files/StableDiffusion",
+  "/Program Files/kiwiirc",
+  "/Program Files/Marked",
+  `${START_MENU_PATH}/Emulators`,
+  `${START_MENU_PATH}/Emulators/BoxedWine.url`,
+  `${START_MENU_PATH}/Emulators/EmulatorJS.url`,
+  `${START_MENU_PATH}/Emulators/js-dos.url`,
+  `${START_MENU_PATH}/Emulators/Ruffle.url`,
+  `${START_MENU_PATH}/Emulators/TIC-80.url`,
+  `${START_MENU_PATH}/Emulators/Virtual x86.url`,
+  `${START_MENU_PATH}/Webamp.url`,
+  `${START_MENU_PATH}/Vim.url`,
+  `${START_MENU_PATH}/TinyMCE.url`,
+  `${START_MENU_PATH}/Stable Diffusion.url`,
+  `${START_MENU_PATH}/IRC.url`,
+  `${START_MENU_PATH}/Marked.url`,
+] as const;
+
+export const SYSTEM_PATHS = new Set([
+  "/.deletedFiles.log",
+  ...HIDDEN_SYSTEM_PATHS,
+]);
 
 export const AI_TITLE = "Talos";
 
