@@ -15,7 +15,7 @@ const webpack = require("webpack");
 const nextConfig = {
   compiler: {
     reactRemoveProperties: isProduction,
-    removeConsole: isProduction,
+    removeConsole: false,
     styledComponents: {
       displayName: false,
       fileName: false,

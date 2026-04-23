@@ -886,6 +886,11 @@ export const validateActivity = (
   const activity = getActivityById(activityId, language);
 
   if (!activity) {
+    globalThis.console?.warn?.("[validateActivity] Activity not found", {
+      activityId,
+      language,
+    });
+
     return {
       completed: false,
       progress: { completed: 0, total: 0 },
@@ -930,6 +935,12 @@ export const validateActivity = (
     completed,
     completedCheckIds,
     lastValidatedAt: Date.now(),
+  });
+
+  globalThis.console?.log?.("[validateActivity] Sending activity event", {
+    activityId,
+    completed,
+    reason,
   });
 
   sendActivityPgEvent({

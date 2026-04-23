@@ -62,10 +62,13 @@ const toSessionLanguage = (language?: string): SessionLanguage => {
   return "en";
 };
 
-const getDefaultLanguage = (): SessionLanguage =>
+const getBrowserLanguage = (): SessionLanguage =>
   toSessionLanguage(
     typeof navigator === "object" ? navigator.language : DEFAULT_LANGUAGE
   );
+
+const getDefaultLanguage = (): SessionLanguage =>
+  toSessionLanguage(DEFAULT_LANGUAGE);
 
 const useSessionContextState = (): SessionContextState => {
   const { deletePath, readdir, readFile, rootFs, writeFile, lstat } =
@@ -302,6 +305,8 @@ const useSessionContextState = (): SessionContextState => {
           if (session.clockSource) setClockSource(session.clockSource);
           if (session.language) {
             setLanguage(toSessionLanguage(session.language));
+          } else {
+            setLanguage(getBrowserLanguage());
           }
           if (session.cursor) setCursor(session.cursor);
           if (session.aiEnabled) setAiEnabled(session.aiEnabled);

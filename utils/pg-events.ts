@@ -11,8 +11,7 @@ export const sendActivityPgEvent = ({
   reason,
   state,
 }: ActivityPgEventPayload): void => {
-  // eslint-disable-next-line no-console
-  console.log("[sendActivityPgEvent]", {
+  globalThis.console?.log?.("[sendActivityPgEvent]", {
     completed,
     event: completed ? "SUCCES" : "FAILURE",
     message: completed ? "Ejercicio resuleto" : "Hay errores en tu actividad",
