@@ -13,14 +13,14 @@ export const sendActivityPgEvent = ({
 }: ActivityPgEventPayload): void => {
   globalThis.console?.log?.("[sendActivityPgEvent]", {
     completed,
-    event: completed ? "SUCCES" : "FAILURE",
+    event: completed ? "SUCCESS" : "FAILURE",
     message: completed ? "Ejercicio resuleto" : "Hay errores en tu actividad",
     reason,
     state,
   });
 
   sendPgEvent({
-    event: completed ? "SUCCES" : "FAILURE",
+    event: completed ? "SUCCESS" : "FAILURE",
     message: completed ? "Ejercicio resuleto" : "Hay errores en tu actividad",
     reasons: reason,
     state,
