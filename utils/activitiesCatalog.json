@@ -257,8 +257,7 @@
             "scenario": "Antes de crear repos, configurá tu identidad global de Git en GitBash.",
             "instructions": [
               "Ejecutá: git config --global user.name \"Tu Nombre\"",
-              "Ejecutá: git config --global user.email \"tu@email.com\"",
-              "Después continuá con la actividad de inicializar repo"
+              "Ejecutá: git config --global user.email \"tu@email.com\""
             ]
           },
           "validation": {
@@ -278,14 +277,6 @@
                 "rules": { "pattern": "git\\s+config\\s+--global\\s+user\\.email\\s+.+@.+" },
                 "messageOk": "Configuraste user.email.",
                 "messageFail": "Falta configurar user.email con git config --global user.email \"...\""
-              },
-              {
-                "checkId": "c02_a00_order",
-                "type": "TERMINAL_ORDER",
-                "target": "commands",
-                "rules": { "before": "git init", "mustAppear": "git config --global user.name" },
-                "messageOk": "Configuración realizada antes de inicializar repo.",
-                "messageFail": "Primero configurá tu identidad y después inicializá repos con git init."
               }
             ]
           }

@@ -78,10 +78,6 @@ const EN_REPLACEMENTS: Replacement[] = [
     "Antes de crear repos, configurá tu identidad global de Git en GitBash.",
     "Before creating repos, configure your global Git identity in GitBash.",
   ],
-  [
-    "Después continuá con la actividad de inicializar repo",
-    "Then continue with the initialize repo activity",
-  ],
   ["Configuraste user.name.", "Configured user.name."],
   ["Configuraste user.email.", "Configured user.email."],
   ["Tenés que", "You need to"],
@@ -187,10 +183,6 @@ const PT_REPLACEMENTS: Replacement[] = [
   [
     "Antes de crear repos, configurá tu identidad global de Git en GitBash.",
     "Antes de criar repositorios, configure sua identidade global do Git no GitBash.",
-  ],
-  [
-    "Después continuá con la actividad de inicializar repo",
-    "Depois continue com a atividade de inicializar o repositorio",
   ],
   ["Configuraste user.name.", "Voce configurou user.name."],
   ["Configuraste user.email.", "Voce configurou user.email."],
