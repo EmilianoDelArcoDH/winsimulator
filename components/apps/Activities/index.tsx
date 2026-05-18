@@ -1,10 +1,10 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
+import git from "isomorphic-git";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
 import { useSession } from "contexts/session";
 import {
-    clearActivityProgress,
     type ActivityCard,
     type ActivityClass,
     type ActivityDefinition,
@@ -14,6 +14,7 @@ import {
     getActivityState,
     saveActivityAnswers,
     setCurrentActivityId,
+    retryActivity,
     type ValidationResult,
     validateActivity,
 } from "utils/activityRuntime";
@@ -50,6 +51,10 @@ type WorkspaceSeedFile = {
 type WorkspaceSeed = {
     files: WorkspaceSeedFile[];
     folders: string[];
+    git?: {
+        initialCommit: boolean;
+        message: string;
+    };
     openInVscode: boolean;
     overwriteFiles: boolean;
     resetOnEnter: boolean;
@@ -239,6 +244,18 @@ const getParentPath = (value: string): string => {
     return value.slice(0, lastSlash);
 };
 
+const toWorkspaceRelativePath = (rootPath: string, filePath: string): string => {
+    const normalizedRoot = normalizeWorkspacePath(rootPath);
+    const normalizedPath = normalizeWorkspacePath(filePath);
+
+    if (normalizedPath === normalizedRoot) return ".";
+    if (normalizedPath.startsWith(`${normalizedRoot}/`)) {
+        return normalizedPath.slice(normalizedRoot.length + 1);
+    }
+
+    return normalizedPath.replace(/^\/+/, "");
+};
+
 const resolveWorkspaceSeed = (activity: ActivityDefinition): WorkspaceSeed | undefined => {
     const workspace = asRecord(activity.data.workspace);
     const rootPath = normalizeWorkspacePath(asString(workspace.rootPath));
@@ -257,10 +274,19 @@ const resolveWorkspaceSeed = (activity: ActivityDefinition): WorkspaceSeed | und
     const folders = asStringArray(workspace.folders)
         .map((entry) => normalizeWorkspacePath(entry))
         .filter(Boolean);
+    const gitConfig = asRecord(workspace.git);
 
     return {
         files,
         folders,
+        git:
+            gitConfig.initialCommit === true
+                ? {
+                      initialCommit: true,
+                      message:
+                          asString(gitConfig.message) || "Initial activity workspace",
+                  }
+                : undefined,
         openInVscode: workspace.openInVscode !== false,
         overwriteFiles: workspace.overwriteFiles === true,
         resetOnEnter: workspace.resetOnEnter === true,
@@ -299,7 +325,7 @@ const getFallbackActivity = (
 const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     const preparedWorkspaceRef = useRef<Record<string, true>>({});
     const lastPreparedActivityIdRef = useRef("");
-    const { mkdirRecursive, writeFile } = useFileSystem();
+    const { fs, mkdirRecursive, writeFile } = useFileSystem();
     const { open: openProcess, processes, url: setProcessUrl } = useProcesses();
     const { language } = useSession();
     const uiText = useMemo(() => {
@@ -424,6 +450,41 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                     )
                 );
 
+                if (workspaceSeed.git?.initialCommit && fs) {
+                    await git.init({
+                        defaultBranch: "main",
+                        dir: workspaceSeed.rootPath,
+                        fs,
+                    });
+
+                    await Promise.all(
+                        workspaceSeed.files.map(({ path }) =>
+                            git.add({
+                                dir: workspaceSeed.rootPath,
+                                filepath: toWorkspaceRelativePath(
+                                    workspaceSeed.rootPath,
+                                    path
+                                ),
+                                fs,
+                            })
+                        )
+                    );
+
+                    try {
+                        await git.commit({
+                            author: {
+                                email: "user@winsim.local",
+                                name: "user",
+                            },
+                            dir: workspaceSeed.rootPath,
+                            fs,
+                            message: workspaceSeed.git.message,
+                        });
+                    } catch {
+                        // Existing initialized workspaces may already have this base commit.
+                    }
+                }
+
                 if (cancelled) return;
 
                 preparedWorkspaceRef.current[activity.id] = true;
@@ -450,7 +511,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
         return () => {
             cancelled = true;
         };
-    }, [activity, mkdirRecursive, openProcess, processes, setProcessUrl, writeFile]);
+    }, [activity, fs, mkdirRecursive, openProcess, processes, setProcessUrl, writeFile]);
 
     const saveAnswers = (nextAnswers: Record<string, unknown>): void => {
         if (!activity) return;
@@ -490,7 +551,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     const retry = (): void => {
         if (!activity) return;
 
-        clearActivityProgress(activity.id);
+        retryActivity(activity.id, language);
         setAnswers(getInitialAnswers(activity));
         setResults([]);
     };

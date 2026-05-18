@@ -875,6 +875,44 @@ export const clearActivityProgress = (activityId: string): void => {
   window.localStorage.removeItem(getTelemetryKey(activityId));
 };
 
+export const retryActivity = (
+  activityId: string,
+  language?: SessionLanguage
+): void => {
+  const activity = getActivityById(activityId, language);
+
+  if (activity) {
+    const currentState = getActivityState(activityId);
+    const eventState = {
+      activity: {
+        classId: activity.classId,
+        id: activity.id,
+        mode: activity.mode,
+        objective: activity.objective,
+        title: activity.title,
+      },
+      answers: currentState.answers,
+      completed: false,
+      completedCheckIds: [],
+      progress: {
+        completed: 0,
+        total: activity.validation.checks.length,
+      },
+      results: [],
+      validatedAt: Date.now(),
+    };
+
+    sendActivityPgEvent({
+      completed: false,
+      message: "se ha reiniciado la actividad",
+      reason: [],
+      state: eventState,
+    });
+  }
+
+  clearActivityProgress(activityId);
+};
+
 export const validateActivity = (
   activityId: string,
   language?: SessionLanguage

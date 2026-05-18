@@ -386,6 +386,10 @@
             ],
             "workspace": {
               "rootPath": "/miProyecto",
+              "git": {
+                "initialCommit": true,
+                "message": "Proyecto base para practicar estados"
+              },
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
