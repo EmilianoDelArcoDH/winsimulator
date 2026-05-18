@@ -26,7 +26,7 @@ En varias actividades practicas el sistema:
 
 El simulador ahora incluye una primera version de `Pages` para practicar publicacion:
 
-- comando disponible en la terminal de Monaco: `pages publish [nombre-del-proyecto]`
+- comando disponible en la terminal de Visual Studio Code: `pages publish [nombre-del-proyecto]`
 - genera una URL publica simulada con formato `https://estudiante.pages.dev/mi-proyecto`
 - abre automaticamente esa URL en el navegador interno
 - el navegador renderiza un snapshot publicado del proyecto, incluyendo HTML, CSS, JS e imagenes locales
@@ -101,6 +101,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Leer todas las tarjetas antes de arrastrarlas.
+  2. Ubicar en `Control de versiones` las tarjetas sobre historial, comparacion de cambios, autor, commits y trabajo sin pisarse.
+  3. Ubicar en `Copias/caos` las tarjetas sobre archivos final_final, carpetas por dia, dudas sobre la ultima version y copias separadas.
+  4. Escribir al menos 2 justificaciones con 20 caracteres o mas cada una.
+  5. Incluir en la justificacion una idea relacionada con historia, version, cambio o decision.
+
 - Solucion esperada:
   - Clasificar correctamente las tarjetas entre control de versiones y caos por copias.
   - Completar las justificaciones minimas pedidas.
@@ -172,6 +179,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Leer cada afirmacion y distinguir si describe una herramienta local o una plataforma web.
+  2. Clasificar en `Git` lo que habla de historial local, commits, ramas, merges y volver a versiones en la computadora.
+  3. Clasificar en `GitHub` lo que habla de nube, hosting, colaboracion remota, PRs y plataforma web.
+  4. Escribir una explicacion de al menos 30 caracteres.
+  5. Mencionar que Git trabaja localmente y que GitHub es una plataforma web o en la nube.
+
 - Solucion esperada:
   - Distinguir Git como herramienta local y GitHub como plataforma remota/web.
 
@@ -242,6 +256,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Ordenar los cambios desde la creacion inicial del proyecto hasta la publicacion estable.
+  2. Dejar la secuencia: proyecto inicial, contacto, correccion de formulario, estilos del boton y publicacion estable.
+  3. Elegir uno de los cambios candidatos que podria haber roto algo.
+  4. Escribir una justificacion de al menos 15 caracteres explicando el riesgo del cambio elegido.
+
 - Solucion esperada:
   - Ordenar correctamente la secuencia del ejercicio.
 
@@ -312,6 +332,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Leer el escenario e identificar que dos personas cambiaron la misma linea.
+  2. Marcar la casilla que indica que hay un conflicto.
+  3. Elegir una forma de resolverlo: conservar una version o combinar ambas ideas.
+  4. Escribir una explicacion de al menos 20 caracteres.
+  5. Incluir una idea vinculada con conflicto, resolver, decidir o combinar.
+
 - Solucion esperada:
   - Detectar el conflicto y justificar una resolucion valida.
 
@@ -384,6 +411,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir GitBash.
+  2. Ejecutar `git config --global user.name "Tu Nombre"` reemplazando el nombre por una identidad valida.
+  3. Ejecutar `git config --global user.email "tu@email.com"` usando un correo con formato valido.
+  4. Validar la actividad despues de configurar ambos datos.
+  5. No ejecutar `git init` en esta actividad; la inicializacion corresponde a `sch_git_c02_a01`.
+
 - Solucion esperada:
   - Ejecutar `git config --global user.name "..."`
   - Ejecutar `git config --global user.email "..."`
@@ -449,12 +483,22 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Usa GitBash para crear la carpeta <input class="texto-copiable" size="10" value="miProyecto" disabled> y entra en ella.</li>
-            <li>Dentro de esa carpeta, crea los archivos <input class="texto-copiable" size="10" value="index.html" disabled>, <input class="texto-copiable" size="9" value="style.css" disabled> y <input class="texto-copiable" size="6" value="app.js" disabled>.</li>
-            <li>Inicializa el repositorio dentro de <input class="texto-copiable" size="10" value="miProyecto" disabled> y verifica el estado si lo necesitas.</li>
+            <li>Usa GitBash para crear la carpeta con <input class="texto-copiable" size="15" value="mkdir miProyecto" disabled>.</li>
+            <li>Entra en esa carpeta con <input class="texto-copiable" size="13" value="cd miProyecto" disabled>.</li>
+            <li>Dentro de esa carpeta, crea los archivos con <input class="texto-copiable" size="29" value="touch index.html style.css app.js" disabled>.</li>
+            <li>Inicializa el repositorio dentro de <input class="texto-copiable" size="10" value="miProyecto" disabled> con <input class="texto-copiable" size="7" value="git init" disabled>.</li>
+            <li>Verifica el estado si lo necesitas con <input class="texto-copiable" size="10" value="git status" disabled>.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir GitBash.
+  2. Crear la carpeta del proyecto con `mkdir miProyecto`.
+  3. Entrar a la carpeta con `cd miProyecto`.
+  4. Crear los archivos base con `touch index.html style.css app.js`.
+  5. Ejecutar `git init` estando dentro de `/miProyecto`.
+  6. Opcionalmente ejecutar `git status` para comprobar que el repositorio quedo inicializado en la ubicacion correcta.
+
 - Solucion esperada:
   - Crear el proyecto base y ejecutar `git init`.
 
@@ -535,6 +579,14 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Entrar a la carpeta del proyecto con `cd miProyecto` si no estas dentro de `/miProyecto`.
+  2. Hacer un cambio en `index.html` y otro cambio en `style.css`; por ejemplo, editar cada archivo desde Visual Studio Code o usar comandos de terminal como `echo "<p>Cambio</p>" >> index.html` y `echo "body { color: #222; }" >> style.css`.
+  3. Ejecutar `git status` antes de preparar archivos.
+  4. Preparar solo `index.html` con `git add index.html`.
+  5. Ejecutar nuevamente `git status` para comprobar que solo `index.html` esta en staging.
+  6. Hacer el commit sin incluir `style.css`, usando un comando como `git commit -m "Actualiza contenido principal"`.
+
 - Solucion esperada:
   - Usar `git status`, preparar solo lo indicado y evitar agregar archivos no pedidos.
 
@@ -605,6 +657,14 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Entrar o confirmar que estas dentro de `/repo`.
+  2. Preparar los cambios del proyecto web con `git add <archivo>` o `git add index.html style.css app.js`, sin agregar archivos basura.
+  3. Ejecutar `git commit -m "..."` con un mensaje descriptivo.
+  4. Usar un mensaje de al menos 15 caracteres.
+  5. Comenzar el mensaje con un verbo valido como Agrega, Corrige, Elimina, Actualiza, Mejora o Refactoriza.
+  6. Evitar mensajes genericos como cambios, fix, arreglo, asdf o update.
+
 - Solucion esperada:
   - Ejecutar `git commit -m "..."` con un mensaje claro y suficientemente descriptivo.
 
@@ -675,6 +735,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Modificar archivos reales del proyecto web; por ejemplo `index.html`, `style.css` o `app.js`.
+  2. Revisar el estado con `git status` antes de commitear.
+  3. Preparar archivos de forma explicita, por ejemplo `git add index.html style.css app.js`, en lugar de usar `git add .` sin revisar.
+  4. No agregar `notes.tmp` al staging.
+  5. Hacer el commit final con un mensaje claro, dejando `notes.tmp` fuera del repositorio confirmado.
+
 - Solucion esperada:
   - Revisar el estado antes de commitear y evitar sumar basura al repo.
 
@@ -747,6 +814,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Ejecutar `git log` en la terminal.
+  2. Leer el commit mas reciente que aparece primero en el historial.
+  3. Copiar el autor del ultimo commit en el campo correspondiente.
+  4. Copiar el mensaje del ultimo commit en el campo correspondiente.
+  5. Validar despues de completar ambos datos exactamente como aparecen.
+
 
 ### `sch_git_c03_a02` - Vista resumida (git log --oneline)
 - Modo: `terminal+form`
@@ -815,6 +889,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Ejecutar `git log --oneline` en la terminal.
+  2. Leer las primeras dos lineas del historial resumido.
+  3. Copiar el primer commit con formato `hash mensaje`.
+  4. Copiar el segundo commit con formato `hash mensaje`.
+  5. Verificar que cada hash tenga al menos 7 caracteres hexadecimales antes del mensaje.
+
 
 ### `sch_git_c03_a03` - git diff antes del commit
 - Modo: `terminal+form`
@@ -883,6 +964,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Hacer o revisar el cambio preparado por la actividad.
+  2. Ejecutar `git diff` antes de cualquier commit.
+  3. Identificar en el diff la linea que cambio.
+  4. Copiar esa linea en el formulario.
+  5. Solo despues de revisar el diff, continuar con el flujo de commit si la actividad lo pide.
+
 
 ### `sch_git_c03_a04` - Debugging historico (git show)
 - Modo: `terminal+form`
@@ -951,6 +1039,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Ejecutar `git log --oneline` para ver los commits disponibles.
+  2. Ubicar el commit sospechoso por su hash corto y mensaje.
+  3. Ejecutar `git show <hash>` usando un hash de 7 caracteres o mas.
+  4. Pegar en el formulario el hash del commit culpable.
+  5. Explicar con al menos 30 caracteres que cambio introdujo ese commit.
+
 
 ## Clase `sch_git_c04` - Repositorios remotos y trabajo compartido
 
@@ -1021,6 +1116,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Trabajar en el repositorio indicado por la actividad.
+  2. Ejecutar `git remote add origin <URL>` usando una URL remota valida.
+  3. Ejecutar `git remote -v` para verificar que el remoto quedo registrado.
+  4. Comprobar que el remoto se llame exactamente `origin`.
+
 
 ### `sch_git_c04_a02` - Primer push con upstream
 - Modo: `terminal`
@@ -1089,6 +1190,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Trabajar en la rama `main` del repositorio.
+  2. Ejecutar `git push -u origin main` o `git push --set-upstream origin main`.
+  3. Verificar que la rama local quedo vinculada con `origin/main`.
+  4. Ejecutar luego un segundo envio usando solo `git push`.
+
 
 ### `sch_git_c04_a03` - Pull antes de push
 - Modo: `terminal`
@@ -1157,6 +1264,13 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Reconocer que el remoto tiene cambios nuevos.
+  2. Ejecutar `git pull` antes de intentar enviar cambios.
+  3. Resolver o aceptar la actualizacion local segun indique la terminal.
+  4. Ejecutar `git push` despues del pull.
+  5. Validar cuando el repositorio local y remoto queden sincronizados.
+
 
 ### `sch_git_c04_a04` - Flujo completo con remoto
 - Modo: `terminal+rubric`
@@ -1225,6 +1339,14 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Ejecutar primero `git pull` o `git pull origin main`.
+  2. Revisar el estado con `git status`.
+  3. Preparar los cambios con `git add <archivo>` o `git add .` si ya revisaste que no hay archivos de mas.
+  4. Crear un commit con un mensaje de al menos 12 caracteres, por ejemplo `git commit -m "Actualiza flujo remoto"`.
+  5. Enviar los cambios con `git push`.
+  6. Confirmar que el remoto quedo sincronizado.
+
 
 ### `sch_git_c04_a05` - Lab: solo clone
 - Modo: `terminal`
@@ -1288,11 +1410,18 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         <h3>Qu&eacute; hacer:</h3>
         <ul>
             <li>Usa GitBash o la terminal de la actividad.</li>
-            <li>Clona el laboratorio remoto indicado por la actividad.</li>
-            <li>Entra en la carpeta clonada y verifica que exista el archivo CSS del proyecto.</li>
+            <li>Clona el laboratorio remoto con <input class="texto-copiable" size="58" value="git clone https://github.com/winsim-labs/css-pull-lab.git" disabled>.</li>
+            <li>Entra en la carpeta clonada con <input class="texto-copiable" size="15" value="cd css-pull-lab" disabled>.</li>
+            <li>Lista los archivos con <input class="texto-copiable" size="2" value="ls" disabled> y verifica que exista <input class="texto-copiable" size="10" value="styles.css" disabled>.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Ejecutar `git clone https://github.com/winsim-labs/css-pull-lab.git`.
+  2. Entrar al repositorio clonado con `cd css-pull-lab`.
+  3. Listar los archivos con `ls`.
+  4. Verificar que exista `styles.css`.
+
 
 ### `sch_git_c04_a06` - Lab: solo pull
 - Modo: `terminal`
@@ -1361,6 +1490,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Entrar al proyecto con `cd css-pull-lab`.
+  2. Ejecutar `git pull` para traer cambios remotos.
+  3. Revisar el archivo actualizado con `cat styles.css`.
+  4. Validar cuando el contenido remoto haya sido traido correctamente.
+
 
 ### `sch_git_c04_a07` - Lab: clone + pull
 - Modo: `terminal`
@@ -1429,6 +1564,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Clonar el repositorio con `git clone https://github.com/winsim-labs/css-pull-lab.git`.
+  2. Entrar a la carpeta con `cd css-pull-lab`.
+  3. Ejecutar `git pull` para traer actualizaciones.
+  4. Verificar el contenido del CSS con `cat styles.css`.
+
 
 ## Clase `sch_publish_c01` - Preparar un proyecto para publicacion
 
@@ -1493,14 +1634,22 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Abre el proyecto semilla que se carga automaticamente en Monaco.</li>
+            <li>Abre el proyecto semilla que se carga automaticamente en Visual Studio Code.</li>
             <li>Revisa la estructura desordenada de la carpeta raiz.</li>
             <li>Edita y guarda <input class="texto-copiable" size="22" value="propuesta-estructura.txt" disabled> proponiendo <input class="texto-copiable" size="10" value="index.html" disabled> en raiz y carpetas separadas para CSS, JS e imagenes.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir el workspace generado en Visual Studio Code.
+  2. Revisar la estructura desordenada del proyecto.
+  3. Editar `propuesta-estructura.txt` desde Visual Studio Code y escribir la estructura propuesta en lineas separadas.
+  4. Proponer `index.html` en la raiz.
+  5. Proponer `css/estilos.css`, `js/script.js` y una carpeta `img/` para imagenes.
+  6. Guardar el archivo de propuesta con los cambios realizados.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a01`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/publish-c01-a01`.
   - Solo queda editable `/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt`.
   - La validacion exige proponer `index.html` en raiz, `css/estilos.css`, `js/script.js` e `img/...`.
 
@@ -1565,14 +1714,22 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Abre el proyecto semilla en Monaco y revisa los archivos de la raiz.</li>
+            <li>Abre el proyecto semilla en Visual Studio Code y revisa los archivos de la raiz.</li>
             <li>Edita y guarda <input class="texto-copiable" size="17" value="plan-limpieza.txt" disabled>.</li>
             <li>Indica que conservarias, que eliminarias y justifica que solo debe quedar lo necesario para que el proyecto funcione o se muestre.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir el proyecto semilla en Visual Studio Code.
+  2. Identificar que `index.html` debe conservarse.
+  3. Identificar como archivos a eliminar `notas.txt`, `prueba-layout-viejo.html` y `copia_final_ahora_si.png`.
+  4. Editar `plan-limpieza.txt` indicando que queda y que se elimina, por ejemplo con secciones `Conservar:` y `Eliminar:`.
+  5. Justificar que solo debe publicarse lo que el sitio necesita para funcionar o mostrarse.
+  6. Guardar el plan de limpieza.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a02`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/publish-c01-a02`.
   - Solo queda editable `/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt`.
   - La validacion exige conservar `index.html`.
   - La validacion exige eliminar `notas.txt`, `prueba-layout-viejo.html` y `copia_final_ahora_si.png`.
@@ -1639,7 +1796,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>En tu HTML:</h3>
         <ul>
-            <li>Abre <input class="texto-copiable" size="10" value="index.html" disabled> en Monaco.</li>
+            <li>Abre <input class="texto-copiable" size="10" value="index.html" disabled> en Visual Studio Code.</li>
             <li>Corrige las rutas del HTML para que apunten a archivos dentro del proyecto.</li>
             <li>Guarda el archivo cuando las referencias a CSS, imagenes y JS usen rutas relativas validas.</li>
         </ul>
@@ -1655,8 +1812,16 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir `/Users/Public/Desktop/publish-c01-a03/index.html`.
+  2. Buscar rutas absolutas que dependan de una computadora, como `C:/`, `D:/`, `E:/` o `/Users/`.
+  3. Reemplazar la ruta del CSS por `css/estilos.css` o `./css/estilos.css`.
+  4. Reemplazar la ruta de la imagen por `img/logo.png` o `./img/logo.png`.
+  5. Reemplazar la ruta del JS por `js/app.js` o `./js/app.js`.
+  6. Guardar `index.html`.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a03`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/publish-c01-a03`.
   - Esta actividad sigue siendo practica real: se edita `index.html`.
   - La validacion acepta `css/estilos.css`, `img/logo.png`, `js/app.js` y tambien variantes relativas validas como `./css/estilos.css`, `./img/logo.png` y `./js/app.js`.
   - La validacion rechaza rutas que dependan de `C:/`, `D:/`, `E:/` o `/Users/`.
@@ -1722,14 +1887,23 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Abre la carpeta del ejercicio en Monaco y revisa los nombres de archivo.</li>
+            <li>Abre la carpeta del ejercicio en Visual Studio Code y revisa los nombres de archivo.</li>
             <li>Edita y guarda <input class="texto-copiable" size="23" value="renombres-sugeridos.txt" disabled>.</li>
             <li>Propone nombres seguros para la imagen final, el banner de inicio y el archivo de estilos.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir la carpeta del ejercicio en Visual Studio Code.
+  2. Revisar los nombres inseguros con espacios, mayusculas raras, tildes, simbolos o caracteres especiales.
+  3. Editar `renombres-sugeridos.txt` desde Visual Studio Code.
+  4. Proponer `mi-foto-final.png`.
+  5. Proponer `banner-home.png`.
+  6. Proponer `estilos-finales.css`.
+  7. Guardar el archivo de renombres sugeridos.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a04`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/publish-c01-a04`.
   - Solo queda editable `/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt`.
   - La validacion exige proponer `mi-foto-final.png`, `banner-home.png` y `estilos-finales.css`.
   - El criterio aceptado incluye minusculas, guiones y evitar espacios, tildes, simbolos o caracteres especiales.
@@ -1795,14 +1969,21 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Explora el proyecto en Monaco.</li>
+            <li>Explora el proyecto en Visual Studio Code.</li>
             <li>Edita y guarda <input class="texto-copiable" size="19" value="checklist-previo.txt" disabled>.</li>
             <li>Marca los puntos de estructura, limpieza, rutas, navegacion y claridad del sitio usando casillas con [x] o [X].</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Explorar el proyecto en Visual Studio Code.
+  2. Abrir `checklist-previo.txt` y reemplazar las casillas pendientes `[ ]` por `[x]` o `[X]`.
+  3. Marcar con `[x]` o `[X]` el punto de estructura.
+  4. Marcar limpieza, rutas, navegacion y claridad del sitio.
+  5. Guardar el checklist completo.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/publish-c01-a05`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/publish-c01-a05`.
   - Solo queda editable `/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt`.
   - La validacion acepta checklist marcado con `[x]` o `[X]`.
   - Deben quedar marcados estructura, limpieza, rutas, navegacion y claridad del sitio.
@@ -1870,14 +2051,21 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Explora el proyecto en Monaco sin cambiar sus archivos base.</li>
+            <li>Explora el proyecto en Visual Studio Code sin cambiar sus archivos base.</li>
             <li>Edita y guarda <input class="texto-copiable" size="17" value="estado-previo.txt" disabled>.</li>
             <li>Indica si el proyecto esta listo para publicarse y menciona aspectos como index.html, rutas relativas, imagenes o archivos innecesarios.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Explorar el proyecto semilla en Visual Studio Code sin modificar los archivos del sitio.
+  2. Abrir `estado-previo.txt` desde Visual Studio Code.
+  3. Escribir un diagnostico indicando si el proyecto esta listo para publicar.
+  4. Mencionar elementos del checklist como `index.html`, rutas relativas, imagenes o archivos innecesarios.
+  5. Guardar `estado-previo.txt`.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/pages-c01-a01`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/pages-c01-a01`.
   - Solo queda editable `/Users/Public/Desktop/pages-c01-a01/estado-previo.txt`.
   - La validacion exige guardar el diagnostico y mencionar si el proyecto esta listo para publicar.
   - El texto debe mencionar elementos del checklist previo como `index.html`, rutas relativas, imagenes o archivos innecesarios.
@@ -1938,20 +2126,28 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </p>
 
         <p class="copy-warning">
-            Usa la terminal de Monaco o GitBash y ejecuta los pasos dentro de la carpeta del proyecto.
+            Usa la terminal de Visual Studio Code o GitBash y ejecuta los pasos dentro de la carpeta del proyecto.
         </p>
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Usa la terminal de Monaco o GitBash dentro de la carpeta del proyecto.</li>
+            <li>Usa la terminal de Visual Studio Code o GitBash dentro de la carpeta del proyecto.</li>
             <li>Inicializa el repositorio local.</li>
             <li>Prepara los archivos y registra un commit con un mensaje relacionado con preparar el proyecto para publicar.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir la carpeta del proyecto en Visual Studio Code.
+  2. Usar la terminal dentro del proyecto.
+  3. Ejecutar `git init`.
+  4. Ejecutar `git add .` para preparar todos los archivos del proyecto.
+  5. Ejecutar `git commit -m "Preparar proyecto para publicar"` o un mensaje descriptivo equivalente.
+  6. Validar cuando el repositorio tenga el commit creado.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/pages-c01-a02`.
-  - La actividad se resuelve desde la terminal de Monaco.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/pages-c01-a02`.
+  - La actividad se resuelve desde la terminal de Visual Studio Code.
   - La validacion exige `git init`, `git add .` y `git commit -m "..."`.
 
 ### `sch_pages_c01_a03` - Activar Pages y obtener la URL
@@ -2010,19 +2206,27 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </p>
 
         <p class="copy-warning">
-            Usa la terminal de Monaco o GitBash. Guarda la URL generada exactamente en el archivo pedido.
+            Usa la terminal de Visual Studio Code o GitBash. Guarda la URL generada exactamente en el archivo pedido.
         </p>
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Usa la terminal de Monaco o GitBash.</li>
+            <li>Usa la terminal de Visual Studio Code o GitBash.</li>
             <li>Ejecuta la publicacion con Pages para el nombre de proyecto indicado.</li>
             <li>Copia la URL publica generada y guarda la URL en <input class="texto-copiable" size="14" value="url-publica.txt" disabled>.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir la carpeta del proyecto en Visual Studio Code.
+  2. Ejecutar `pages publish mi-sitio` desde la terminal.
+  3. Esperar que el navegador interno abra la URL publica generada.
+  4. Copiar la URL con formato `https://estudiante.pages.dev/...`.
+  5. Pegarla en `url-publica.txt` desde Visual Studio Code.
+  6. Guardar `url-publica.txt`.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/pages-c01-a03`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/pages-c01-a03`.
   - Solo queda editable `/Users/Public/Desktop/pages-c01-a03/url-publica.txt`.
   - La validacion exige ejecutar `pages publish ...` desde la terminal.
   - La validacion exige detectar una URL publicada real en el runtime de Pages.
@@ -2095,8 +2299,17 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Publicar primero el sitio con Pages desde la terminal.
+  2. Abrir la URL generada en el navegador interno.
+  3. Abrir `checklist-post-publicacion.txt` y reemplazar las casillas pendientes `[ ]` por `[x]` o `[X]`.
+  4. Marcar con `[x]` que la URL abre sin errores.
+  5. Marcar que las imagenes cargan y que los estilos se aplican.
+  6. Marcar al menos la revision de links internos o la prueba desde celular.
+  7. Guardar el checklist.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/pages-c01-a04`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/pages-c01-a04`.
   - Solo queda editable `/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt`.
   - La validacion exige haber publicado antes con Pages.
   - El checklist debe marcar revision de URL, assets y parte de la verificacion final del sitio.
@@ -2164,7 +2377,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>En tu HTML:</h3>
         <ul>
-            <li>Abre <input class="texto-copiable" size="10" value="index.html" disabled> en Monaco.</li>
+            <li>Abre <input class="texto-copiable" size="10" value="index.html" disabled> en Visual Studio Code.</li>
             <li>Cambia el titulo principal para que diga exactamente <input class="texto-copiable" size="17" value="Sitio actualizado" disabled>.</li>
             <li>Guarda el archivo para dejar listo el cambio local.</li>
         </ul>
@@ -2180,8 +2393,15 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir `/Users/Public/Desktop/pages-c02-a01/index.html` en Visual Studio Code.
+  2. Buscar el `h1` actual.
+  3. Cambiarlo para que quede exactamente `<h1>Sitio actualizado</h1>`.
+  4. Guardar `index.html`.
+  5. Validar cuando el cambio quede guardado.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/pages-c02-a01`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/pages-c02-a01`.
   - La actividad exige editar y guardar `index.html`.
   - La validacion comprueba que el `h1` pase a `Sitio actualizado`.
 
@@ -2246,7 +2466,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>En tu HTML:</h3>
         <ul>
-            <li>Abre el proyecto en Monaco.</li>
+            <li>Abre el proyecto en Visual Studio Code.</li>
             <li>En <input class="texto-copiable" size="10" value="index.html" disabled>, agrega dentro del body el texto exacto <input class="texto-copiable" size="29" value="Cambios listos para publicar" disabled>.</li>
             <li>Guarda el archivo y registra el cambio con Git desde la terminal.</li>
         </ul>
@@ -2262,8 +2482,17 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir el proyecto en Visual Studio Code.
+  2. Editar `index.html` desde Visual Studio Code.
+  3. Agregar dentro del `body` el texto exacto `Cambios listos para publicar`.
+  4. Guardar `index.html`.
+  5. Ejecutar `git init` si el repositorio no esta inicializado.
+  6. Ejecutar `git add .`.
+  7. Ejecutar `git commit -m "Actualizo contenido del sitio"` o un mensaje descriptivo equivalente.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/pages-c02-a02`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/pages-c02-a02`.
   - La actividad exige un cambio real en `index.html`.
   - La validacion exige `git add .` y `git commit -m "..."` con mensaje descriptivo.
 
@@ -2328,7 +2557,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>En tu HTML:</h3>
         <ul>
-            <li>Abre <input class="texto-copiable" size="10" value="index.html" disabled> en Monaco y cambia el h1 para que diga exactamente <input class="texto-copiable" size="16" value="Sitio republicado" disabled>.</li>
+            <li>Abre <input class="texto-copiable" size="10" value="index.html" disabled> en Visual Studio Code y cambia el h1 para que diga exactamente <input class="texto-copiable" size="16" value="Sitio republicado" disabled>.</li>
             <li>Publica el sitio inicial con Pages usando el nombre de proyecto indicado por la actividad.</li>
             <li>Completa el ciclo de Git, verifica la URL publicada y guarda la URL en <input class="texto-copiable" size="18" value="url-republicada.txt" disabled>.</li>
         </ul>
@@ -2344,8 +2573,16 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Abrir `/Users/Public/Desktop/pages-c02-a03/index.html`.
+  2. Cambiar el `h1` para que diga exactamente `Sitio republicado`.
+  3. Ejecutar `pages publish ciclo-pages` para generar la publicacion inicial.
+  4. Ejecutar, en este orden, `git init`, `git add .`, `git commit -m "Actualizo el titulo del sitio"` y `git push`.
+  5. Abrir la URL actualizada y verificar el cambio publicado.
+  6. Guardar `https://estudiante.pages.dev/ciclo-pages` en `url-republicada.txt`.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/pages-c02-a03`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/pages-c02-a03`.
   - Quedan editables `index.html` y `url-republicada.txt`.
   - La actividad exige ejecutar `pages publish ciclo-pages`.
   - Despues exige completar el ciclo `git init`, `git add .`, `git commit -m "..."` y `git push`.
@@ -2412,14 +2649,21 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Explora el proyecto en Monaco sin modificar los archivos del sitio.</li>
+            <li>Explora el proyecto en Visual Studio Code sin modificar los archivos del sitio.</li>
             <li>Edita y guarda <input class="texto-copiable" size="20" value="reporte-errores.txt" disabled>.</li>
             <li>Explica posibles causas, como olvidar preparar o commitear cambios, no hacer push o tener problemas de cache, y como verificarias el sitio.</li>
         </ul>
     </article>
 </div>
+- Solucion esperada paso a paso:
+  1. Explorar el proyecto en Visual Studio Code sin modificar los archivos del sitio.
+  2. Abrir `reporte-errores.txt`.
+  3. Escribir causas posibles por las que un cambio no se ve online, como no hacer `git add`, no commitear, no hacer `git push` o cache.
+  4. Explicar como verificar el sitio, por ejemplo recargando fuerte con `Ctrl+Shift+R` o `Cmd+Shift+R`.
+  5. Guardar `reporte-errores.txt`.
+
 - Estado vigente:
-  - Monaco se abre sobre `/Users/Public/Desktop/pages-c02-a04`.
+  - Visual Studio Code se abre sobre `/Users/Public/Desktop/pages-c02-a04`.
   - Solo queda editable `/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt`.
   - La validacion exige mencionar causas reales como `push`, `git add`, `commit` o cache.
   - Tambien exige describir como verificar o recargar el sitio publicado.

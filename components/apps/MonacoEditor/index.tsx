@@ -12,6 +12,7 @@ import { getSaveFileInfo } from "components/apps/MonacoEditor/functions";
 import StatusBar from "components/apps/MonacoEditor/StatusBar";
 import StyledMonacoEditor from "components/apps/MonacoEditor/StyledMonacoEditor";
 import useMonaco from "components/apps/MonacoEditor/useMonaco";
+import { parseCommand } from "components/apps/Terminal/functions";
 import processGit from "components/apps/Terminal/processGit";
 import AppContainer from "components/system/Apps/AppContainer";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
@@ -1474,7 +1475,7 @@ function example() {
       }
 
       const nextLines = [`$ ${command}`];
-      const [instruction = "", ...args] = command.split(/\s+/);
+      const [instruction = "", ...args] = parseCommand(command);
 
       if (command === "help") {
         nextLines.push(

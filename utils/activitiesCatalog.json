@@ -1312,9 +1312,9 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "En Monaco vas a encontrar un proyecto con archivos mezclados en la raiz. Recorre la estructura, ordenala mentalmente y guarda una propuesta corregida editando el archivo de referencia.",
+            "scenario": "En Visual Studio Code vas a encontrar un proyecto con archivos mezclados en la raiz. Recorre la estructura, ordenala mentalmente y guarda una propuesta corregida editando el archivo de referencia.",
             "instructions": [
-              "Abre el proyecto semilla que se carga automaticamente en Monaco.",
+              "Abre el proyecto semilla que se carga automaticamente en Visual Studio Code.",
               "Revisa la estructura desordenada en la carpeta raiz.",
               "Edita y guarda /Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt con una estructura mas clara.",
               "La propuesta final debe dejar index.html en raiz y separar css, js e img en carpetas propias."
@@ -1361,7 +1361,7 @@
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
                 "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt"] },
-                "messageOk": "Guardaste la propuesta de estructura en Monaco.",
+                "messageOk": "Guardaste la propuesta de estructura en Visual Studio Code.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt con tu estructura corregida."
               },
               {
@@ -1407,9 +1407,9 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "El proyecto semilla incluye archivos utiles y archivos basura. Revisa la carpeta cargada en Monaco y completa un plan de limpieza antes de responder.",
+            "scenario": "El proyecto semilla incluye archivos utiles y archivos basura. Revisa la carpeta cargada en Visual Studio Code y completa un plan de limpieza antes de responder.",
             "instructions": [
-              "Abre el proyecto semilla en Monaco.",
+              "Abre el proyecto semilla en Visual Studio Code.",
               "Revisa que archivos parecen formar parte del sitio y cuales sobran.",
               "Edita y guarda /Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt indicando que se queda y que se elimina.",
               "Asegurate de justificar por que ciertos archivos no deberian publicarse."
@@ -1464,7 +1464,7 @@
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
                 "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt"] },
-                "messageOk": "Guardaste el plan de limpieza en Monaco.",
+                "messageOk": "Guardaste el plan de limpieza en Visual Studio Code.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt."
               },
               {
@@ -1518,9 +1518,9 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "El index del proyecto semilla tiene rutas que dependen de una computadora especifica. Revísalo en Monaco, corrígelo y después clasifica ejemplos.",
+            "scenario": "El index del proyecto semilla tiene rutas que dependen de una computadora especifica. Revísalo en Visual Studio Code, corrígelo y después clasifica ejemplos.",
             "instructions": [
-              "Abre /Users/Public/Desktop/publish-c01-a03/index.html en Monaco.",
+              "Abre /Users/Public/Desktop/publish-c01-a03/index.html en Visual Studio Code.",
               "Corrige las rutas problematicas para que apunten dentro del proyecto.",
               "Guarda index.html cuando todo quede con rutas relativas."
             ],
@@ -1558,7 +1558,7 @@
                 "target": "workspace",
                 "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a03/index.html"] },
                 "messageOk": "Guardaste index.html con una propuesta corregida.",
-                "messageFail": "Antes de validar, corrige y guarda /Users/Public/Desktop/publish-c01-a03/index.html en Monaco."
+                "messageFail": "Antes de validar, corrige y guarda /Users/Public/Desktop/publish-c01-a03/index.html en Visual Studio Code."
               },
               {
                 "checkId": "publish_c01_a03_css_relative",
@@ -1603,9 +1603,9 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "El proyecto semilla incluye archivos con nombres poco seguros. Revísalos en Monaco y deja una propuesta de renombre antes de elegir la mejor opción.",
+            "scenario": "El proyecto semilla incluye archivos con nombres poco seguros. Revísalos en Visual Studio Code y deja una propuesta de renombre antes de elegir la mejor opción.",
             "instructions": [
-              "Abre la carpeta del ejercicio en Monaco.",
+              "Abre la carpeta del ejercicio en Visual Studio Code.",
               "Revisa los nombres de archivo con espacios, simbolos o mayusculas raras.",
               "Edita y guarda /Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt con nombres mas seguros.",
               "Propone nombres en minusculas, sin espacios y usando guiones."
@@ -1648,7 +1648,7 @@
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
                 "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt"] },
-                "messageOk": "Guardaste la propuesta de renombres en Monaco.",
+                "messageOk": "Guardaste la propuesta de renombres en Visual Studio Code.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt."
               },
               {
@@ -1694,9 +1694,9 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Abre el proyecto semilla en Monaco, recorre sus archivos y completa un checklist previo a publicacion.",
+            "scenario": "Abre el proyecto semilla en Visual Studio Code, recorre sus archivos y completa un checklist previo a publicacion.",
             "instructions": [
-              "Explora el proyecto en Monaco.",
+              "Explora el proyecto en Visual Studio Code.",
               "Edita y guarda /Users/Public/Desktop/publish-c01-a05/checklist-previo.txt marcando con [x] los puntos que revisarías antes de mostrar el sitio.",
               "Cuando termines, el checklist completo debe quedar marcado."
             ],
@@ -1738,7 +1738,7 @@
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
                 "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt"] },
-                "messageOk": "Guardaste el checklist en Monaco.",
+                "messageOk": "Guardaste el checklist en Visual Studio Code.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a05/checklist-previo.txt."
               },
               {
@@ -1800,7 +1800,7 @@
           "data": {
             "scenario": "Antes de activar Pages conviene revisar si el proyecto ya esta listo. Explora el proyecto semilla y completa un breve diagnostico.",
             "instructions": [
-              "Explora el proyecto en Monaco.",
+              "Explora el proyecto en Visual Studio Code.",
               "No modifiques los archivos del sitio.",
               "Edita y guarda /Users/Public/Desktop/pages-c01-a01/estado-previo.txt indicando si el proyecto esta listo para publicarse y que deberias revisar."
             ],
@@ -1868,9 +1868,9 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Antes de publicar, el proyecto tiene que quedar guardado en un repositorio. Usa la terminal de Monaco para hacerlo.",
+            "scenario": "Antes de publicar, el proyecto tiene que quedar guardado en un repositorio. Usa la terminal de Visual Studio Code para hacerlo.",
             "instructions": [
-              "Abre la carpeta del proyecto en Monaco.",
+              "Abre la carpeta del proyecto en Visual Studio Code.",
               "En la terminal, ejecuta git init.",
               "Luego ejecuta git add .",
               "Finalmente ejecuta git commit -m \"Preparar proyecto para publicar\"."
@@ -1942,9 +1942,9 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Ya con el proyecto listo, publica el sitio con Pages simulado desde la terminal de Monaco.",
+            "scenario": "Ya con el proyecto listo, publica el sitio con Pages simulado desde la terminal de Visual Studio Code.",
             "instructions": [
-              "Abre la carpeta del proyecto en Monaco.",
+              "Abre la carpeta del proyecto en Visual Studio Code.",
               "En la terminal, ejecuta pages publish mi-sitio.",
               "Cuando se abra el navegador interno, copia la URL publica en /Users/Public/Desktop/pages-c01-a03/url-publica.txt y guardala."
             ],
@@ -2118,7 +2118,7 @@
           "data": {
             "scenario": "El sitio ya esta publicado, pero ahora hay que corregir un detalle local antes de volver a subirlo.",
             "instructions": [
-              "Abre /Users/Public/Desktop/pages-c02-a01/index.html en Monaco.",
+              "Abre /Users/Public/Desktop/pages-c02-a01/index.html en Visual Studio Code.",
               "Cambia el titulo principal a: Sitio actualizado.",
               "Guarda el archivo para dejar listo el cambio local."
             ],
@@ -2171,7 +2171,7 @@
           "data": {
             "scenario": "Despues de editar el proyecto, hay que registrar el cambio en el repositorio con un mensaje claro.",
             "instructions": [
-              "Abre el proyecto en Monaco.",
+              "Abre el proyecto en Visual Studio Code.",
               "Haz un cambio pequeño en index.html: agrega el texto Cambios listos para publicar dentro del body.",
               "En la terminal ejecuta git init, git add . y git commit -m \"Actualizo contenido del sitio\"."
             ],
@@ -2227,7 +2227,7 @@
           "data": {
             "scenario": "El sitio ya esta online. Ahora hay que cambiarlo, commitearlo, hacer push y comprobar que Pages refleja el nuevo estado.",
             "instructions": [
-              "Abre /Users/Public/Desktop/pages-c02-a03/index.html en Monaco y cambia el h1 a Sitio republicado.",
+              "Abre /Users/Public/Desktop/pages-c02-a03/index.html en Visual Studio Code y cambia el h1 a Sitio republicado.",
               "En la terminal ejecuta pages publish ciclo-pages para generar la URL inicial.",
               "Luego ejecuta git init, git add ., git commit -m \"Actualizo el titulo del sitio\" y git push.",
               "Cuando se actualice el sitio publicado, abre la URL y verifica el cambio.",
@@ -2311,7 +2311,7 @@
           "data": {
             "scenario": "A veces el cambio existe localmente pero no se ve online. Revisa el caso y completa un mini reporte.",
             "instructions": [
-              "Explora el proyecto en Monaco.",
+              "Explora el proyecto en Visual Studio Code.",
               "No modifiques los archivos del sitio.",
               "Edita y guarda /Users/Public/Desktop/pages-c02-a04/reporte-errores.txt explicando por que un cambio podria no verse online despues de editar."
             ],
