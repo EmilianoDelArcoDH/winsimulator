@@ -2026,11 +2026,15 @@ function example() {
       id={id}
       useHook={useMonaco}
     >
-      <div className={`editor-shell ${isTerminalPanelOpen ? "terminal-open" : ""}`}>
+      <div
+        className={`editor-shell ${isTerminalPanelOpen ? "terminal-open" : ""}`}
+        data-tour="monaco-shell"
+      >
         <div
           ref={workbenchRef}
           className={`workbench ${panelOpen ? "panel-open" : "panel-closed"} ${isCompactLayout ? "compact-layout" : ""
             }`}
+          data-tour="monaco-workbench"
           style={{ ["--side-panel-width" as string]: `${sidePanelWidth}px` }}
         >
           <header className="menu-bar">
@@ -2100,6 +2104,7 @@ function example() {
               <li>
                 <button
                   className={activeMenu === "terminal" ? "active" : ""}
+                  data-tour="monaco-terminal-menu"
                   onClick={(e) => {
                     e.stopPropagation();
                     toggleTopMenu("terminal");
@@ -2219,7 +2224,7 @@ function example() {
           </aside>
 
           {panelOpen && !isCompactLayout && (
-            <aside className="side-panel">
+            <aside className="side-panel" data-tour="monaco-explorer-panel">
               <header>
                 <div className="panel-header-row">
                   <span>
@@ -2863,7 +2868,7 @@ function example() {
             />
           )}
 
-          <main className="editor-area">
+          <main className="editor-area" data-tour="monaco-editor-area">
             {hasActiveFile ? (
               <>
                 <div className="breadcrumbs">
@@ -2907,7 +2912,11 @@ function example() {
                     </div>
                   ))}
                 </header>
-                <div className="editor-host" data-monaco-editor-host />
+                <div
+                  className="editor-host"
+                  data-monaco-editor-host
+                  data-tour="monaco-editor-host"
+                />
               </>
             ) : (
               <section aria-label="No file open" className="editor-empty-state">
@@ -2917,7 +2926,11 @@ function example() {
           </main>
         </div>
         {isTerminalPanelOpen && (
-          <section aria-label="Terminal" className="bottom-panel">
+          <section
+            aria-label="Terminal"
+            className="bottom-panel"
+            data-tour="monaco-terminal-panel"
+          >
             <div className="bottom-panel-header">TERMINAL</div>
             <div ref={terminalHistoryRef} className="terminal-history">
               {terminalHistory.length === 0 && (
@@ -2940,6 +2953,7 @@ function example() {
               <input
                 ref={terminalInputRef}
                 className="terminal-input"
+                data-tour="monaco-terminal-input"
                 onChange={(event) => setTerminalInput(event.currentTarget.value)}
                 type="text"
                 value={terminalInput}
