@@ -51,6 +51,7 @@ const StartButton: FC<StartButtonProps> = ({
       onClick={onClick}
       $highlight
       {...DIV_BUTTON_PROPS}
+      data-tour="taskbar-start-button"
       data-taskbar-id={START_BUTTON_ID}
       {...label(t(language, "taskbar.start"))}
       {...useTaskbarContextMenu(true)}

@@ -1,5 +1,6 @@
 /* eslint-disable sort-keys-fix/sort-keys-fix */
 import { type SessionLanguage } from "contexts/session/types";
+import { DEFAULT_LANGUAGE } from "utils/constants";
 
 type I18nKey =
   | "taskbar.search.bestMatch"
@@ -353,10 +354,8 @@ export const t = (language: SessionLanguage, key: I18nKey): string =>
 export const getActiveLanguage = (): SessionLanguage => {
   const documentLanguage =
     typeof document === "object" ? document.documentElement?.lang : "";
-  const navigatorLanguage =
-    typeof navigator === "object" ? navigator.language : "en";
 
-  return normalizeLanguage(documentLanguage || navigatorLanguage);
+  return normalizeLanguage(documentLanguage || DEFAULT_LANGUAGE);
 };
 
 export const translateUiText = (
