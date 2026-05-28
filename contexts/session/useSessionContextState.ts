@@ -41,6 +41,7 @@ import {
   preloadLibs,
   updateIconPositionsIfEmpty,
 } from "utils/functions";
+import { getLanguageFromValue, normalizeLanguage } from "utils/i18n";
 import { getShortcutInfo } from "components/system/Files/FileEntry/functions";
 import { WALLPAPER_PATHS } from "components/system/Desktop/Wallpapers/constants";
 
@@ -52,23 +53,13 @@ const DEFAULT_SESSION = (
 
 const KEEP_RECENT_FILES_LIST_COUNT = 10;
 
-const toSessionLanguage = (language?: string): SessionLanguage => {
-  const normalizedLanguage = language?.trim().toLowerCase().split("-")[0];
-
-  if (normalizedLanguage === "es" || normalizedLanguage === "pt") {
-    return normalizedLanguage;
-  }
-
-  return "en";
-};
-
 const getBrowserLanguage = (): SessionLanguage =>
-  toSessionLanguage(
+  normalizeLanguage(
     typeof navigator === "object" ? navigator.language : DEFAULT_LANGUAGE
   );
 
 const getDefaultLanguage = (): SessionLanguage =>
-  toSessionLanguage(DEFAULT_LANGUAGE);
+  normalizeLanguage(DEFAULT_LANGUAGE);
 
 const useSessionContextState = (): SessionContextState => {
   const { deletePath, readdir, readFile, rootFs, writeFile, lstat } =
@@ -303,8 +294,14 @@ const useSessionContextState = (): SessionContextState => {
           }
 
           if (session.clockSource) setClockSource(session.clockSource);
-          if (session.language) {
-            setLanguage(toSessionLanguage(session.language));
+          const urlLanguage = getLanguageFromValue(
+            new URLSearchParams(window.location.search).get("lang") || undefined
+          );
+
+          if (urlLanguage) {
+            setLanguage(urlLanguage);
+          } else if (session.language) {
+            setLanguage(normalizeLanguage(session.language));
           } else {
             setLanguage(getBrowserLanguage());
           }

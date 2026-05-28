@@ -2,8 +2,8 @@
   "version": "1.0.0",
   "app": "Activities",
   "routing": {
-    "appRoute": "/?app=Activities&activityId={id}",
-    "standaloneRoute": "/activities/{id}/index.html"
+    "appRoute": "/?app=Activities&activityId={id}&lang={lang}",
+    "standaloneRoute": "/activities/{id}/index.html?lang={lang}"
   },
   "classes": [
     {

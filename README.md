@@ -1,6 +1,6 @@
-# DH console
+﻿# DH console
 
-## 🌌 **DH console** 🌌
+## ðŸŒŒ **DH console** ðŸŒŒ
 
 ## _Desktop environment in the browser_
 
@@ -16,7 +16,7 @@ It is designed for:
 - Hands-on Git practice without local machine setup
 - Repeatable scenarios with automatic validation and feedback
 
-# System 🧠
+# System ðŸ§ 
 
 ### Educational Activities
 
@@ -115,10 +115,10 @@ It is designed for:
   - Examples:
     - `/?url=/CREDITS.md`
     - `/?app=Browser`
-    - `/?app=Activities&activityId=sch_git_c01_a01`
-    - `/activities/sch_git_c01_a01`
+    - `/?app=Activities&activityId=sch_git_c01_a01&lang=es`
+    - `/activities/sch_git_c01_a01?lang=es`
 
-# Apps 🧪
+# Apps ðŸ§ª
 
 ### Activities
 
@@ -258,7 +258,7 @@ It is designed for:
 - Playlist & streaming support
 - Visualization support ("Milkdrop")
 
-# Games 🎮
+# Games ðŸŽ®
 
 ### [ClassiCube](https://www.classicube.net/)
 
@@ -276,7 +276,7 @@ It is designed for:
 
 - Port of the classic first-person shooter
 
-# Recent Enhancements ✨
+# Recent Enhancements âœ¨
 
 - Realistic Git lab simulation for `clone` + `pull` with observable file changes
 - New Git activities for:
@@ -293,7 +293,7 @@ It is designed for:
 - Default app launch behavior set to maximized (fullscreen-like)
 - Build validated for production export and Vercel deployment flow
 
-# Try It 🚀
+# Try It ðŸš€
 
 ##### Requirements
 

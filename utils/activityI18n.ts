@@ -1,8 +1,16 @@
 import { type SessionLanguage } from "contexts/session/types";
+import activityTranslations from "utils/activityTranslations.json";
 
 type CatalogData = Record<string, unknown>;
 
 type Replacement = [string, string];
+
+type ActivityTranslations = Record<
+  Exclude<SessionLanguage, "es">,
+  Record<string, string>
+>;
+
+const ACTIVITY_TRANSLATIONS = activityTranslations as ActivityTranslations;
 
 const NON_TRANSLATABLE_KEYS = new Set([
   "activityId",
@@ -52,22 +60,106 @@ const EXACT_TEXT: Record<
 > = {
   en: {
     "Actividad": "Activity",
+    "Copias/caos": "Copies/chaos",
+    "Control de versiones": "Version control",
     "Consigna": "Instructions",
+    "Distinguir control de versiones de una estrategia de copias desordenadas.": "Distinguish version control from a messy copy-based strategy.",
+    "Versiones vs copias": "Versions vs copies",
     "No hay actividades cargadas.": "No activities loaded.",
     "Posición": "Position",
     "Reintentar": "Retry",
     "Seleccionar": "Select",
     "Validar": "Validate",
+    "Actualiza": "Update",
+    "Agrega": "Add",
+    "arreglo": "fix",
+    "cambio": "change",
+    "cambios": "changes",
+    "combinar": "merge",
+    "computadora": "computer",
+    "conflicto": "conflict",
+    "Corrige": "Fix",
+    "decidir": "decide",
+    "decisión": "decision",
+    "Elimina": "Delete",
+    "historia": "history",
+    "Mejora": "Improve",
+    "mi máquina": "my machine",
+    "nube": "cloud",
+    "plataforma": "platform",
+    "Refactoriza": "Refactor",
+    "remoto": "remote",
+    "resolver": "resolve",
+    "version": "version",
+    "Puedo ver el historial de cambios y volver a una versión anterior.": "I can view the change history and go back to an earlier version.",
+    "Me paso archivos por WhatsApp con nombres tipo final_final2.": "I send files over WhatsApp with names like final_final2.",
+    "Veo quién hizo cada cambio y cuándo.": "I can see who made each change and when.",
+    "Guardo una carpeta por día y espero no equivocarme.": "I save one folder per day and hope I do not make a mistake.",
+    "Puedo comparar cambios entre versiones (diff).": "I can compare changes between versions (diff).",
+    "No sé cuál es el último archivo correcto.": "I do not know which file is the latest correct one.",
+    "Trabajo en paralelo sin pisar el trabajo de otros.": "I work in parallel without overwriting other people's work.",
+    "Si algo se rompe, no puedo volver atrás con seguridad.": "If something breaks, I cannot safely go back.",
+    "Puedo crear versiones con mensajes (commits) y entender el contexto.": "I can create versions with messages (commits) and understand the context.",
+    "Cada integrante guarda su copia y después se juntan como se pueda.": "Each member saves their own copy and later everything is merged however possible.",
+    "Explicá 2 casos (mínimo 20 caracteres cada uno).": "Explain 2 cases (at least 20 characters each).",
+    "Clasificación correcta.": "Correct classification.",
+    "Revisá: algunas tarjetas quedaron en la columna equivocada.": "Review: some cards are in the wrong column.",
+    "Justificaciones completas.": "Complete justifications.",
+    "Escribí 2 justificaciones, con al menos 20 caracteres cada una.": "Write 2 justifications, with at least 20 characters each.",
+    "Tus justificaciones reflejan el concepto.": "Your justifications reflect the concept.",
+    "Sumá idea de historia/versiones/cambios en tu justificación.": "Add an idea about history/versions/changes to your justification.",
   },
   es: {},
   pt: {
     "Actividad": "Atividade",
-    "Consigna": "Instrucoes",
+    "Copias/caos": "Cópias/caos",
+    "Control de versiones": "Controle de versões",
+    "Consigna": "Instruções",
+    "Distinguir control de versiones de una estrategia de copias desordenadas.": "Distinguir controle de versões de uma estratégia desorganizada de cópias.",
+    "Versiones vs copias": "Versões vs cópias",
     "No hay actividades cargadas.": "Nenhuma atividade carregada.",
     "Posición": "Posicao",
     "Reintentar": "Tentar novamente",
     "Seleccionar": "Selecionar",
     "Validar": "Validar",
+    "Actualiza": "Atualiza",
+    "Agrega": "Adiciona",
+    "arreglo": "correção",
+    "cambio": "alteração",
+    "cambios": "alterações",
+    "combinar": "combinar",
+    "computadora": "computador",
+    "conflicto": "conflito",
+    "Corrige": "Corrige",
+    "decidir": "decidir",
+    "decisión": "decisão",
+    "Elimina": "Remove",
+    "historia": "histórico",
+    "Mejora": "Melhora",
+    "mi máquina": "minha máquina",
+    "nube": "nuvem",
+    "plataforma": "plataforma",
+    "Refactoriza": "Refatora",
+    "remoto": "remoto",
+    "resolver": "resolver",
+    "version": "versão",
+    "Puedo ver el historial de cambios y volver a una versión anterior.": "Posso ver o histórico de alterações e voltar para uma versão anterior.",
+    "Me paso archivos por WhatsApp con nombres tipo final_final2.": "Envio arquivos pelo WhatsApp com nomes como final_final2.",
+    "Veo quién hizo cada cambio y cuándo.": "Vejo quem fez cada alteração e quando.",
+    "Guardo una carpeta por día y espero no equivocarme.": "Salvo uma pasta por dia e espero não errar.",
+    "Puedo comparar cambios entre versiones (diff).": "Posso comparar alterações entre versões (diff).",
+    "No sé cuál es el último archivo correcto.": "Não sei qual é o último arquivo correto.",
+    "Trabajo en paralelo sin pisar el trabajo de otros.": "Trabalho em paralelo sem sobrescrever o trabalho de outras pessoas.",
+    "Si algo se rompe, no puedo volver atrás con seguridad.": "Se algo quebra, não consigo voltar com segurança.",
+    "Puedo crear versiones con mensajes (commits) y entender el contexto.": "Posso criar versões com mensagens (commits) e entender o contexto.",
+    "Cada integrante guarda su copia y después se juntan como se pueda.": "Cada integrante salva sua cópia e depois tudo é juntado como der.",
+    "Explicá 2 casos (mínimo 20 caracteres cada uno).": "Explique 2 casos (mínimo de 20 caracteres cada um).",
+    "Clasificación correcta.": "Classificação correta.",
+    "Revisá: algunas tarjetas quedaron en la columna equivocada.": "Revise: alguns cartões ficaram na coluna errada.",
+    "Justificaciones completas.": "Justificativas completas.",
+    "Escribí 2 justificaciones, con al menos 20 caracteres cada una.": "Escreva 2 justificativas, com pelo menos 20 caracteres cada uma.",
+    "Tus justificaciones reflejan el concepto.": "Suas justificativas refletem o conceito.",
+    "Sumá idea de historia/versiones/cambios en tu justificación.": "Inclua uma ideia de histórico/versões/alterações na sua justificativa.",
   },
 };
 
@@ -277,12 +369,19 @@ const shouldSkipString = (value: string, key?: string, inRules?: boolean): boole
   return false;
 };
 
-const translateText = (language: SessionLanguage, value: string): string => {
+export const translateActivityText = (
+  language: SessionLanguage,
+  value: string
+): string => {
   if (language === "es") return value;
 
   const exact = EXACT_TEXT[language][value];
 
   if (exact) return exact;
+
+  const translated = ACTIVITY_TRANSLATIONS[language]?.[value];
+
+  if (translated) return translated;
 
   return applyReplacements(value, language === "pt" ? PT_REPLACEMENTS : EN_REPLACEMENTS);
 };
@@ -298,7 +397,7 @@ const localizeValue = (
       return value;
     }
 
-    return translateText(language, value);
+    return translateActivityText(language, value);
   }
 
   if (Array.isArray(value)) {

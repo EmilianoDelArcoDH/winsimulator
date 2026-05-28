@@ -19,6 +19,8 @@ import {
     validateActivity,
 } from "utils/activityRuntime";
 import { getSearchParam } from "utils/functions";
+import { translateActivityText } from "utils/activityI18n";
+import { getLanguageFromValue } from "utils/i18n";
 
 type ActivitiesProps = ComponentProcessProps & {
     forcedActivityId?: string;
@@ -327,7 +329,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     const lastPreparedActivityIdRef = useRef("");
     const { fs, mkdirRecursive, writeFile } = useFileSystem();
     const { open: openProcess, processes, url: setProcessUrl } = useProcesses();
-    const { language } = useSession();
+    const { language, setLanguage } = useSession();
     const uiText = useMemo(() => {
         if (language === "pt") {
             return {
@@ -338,8 +340,9 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                 result: "Resultado",
                 runCommandsHint:
                     "Execute os comandos no GitBash e depois valide aqui. A validacao usa historico real de comandos e eventos.",
+                response: "Resposta",
                 workspaceHint:
-                    "Para esta atividade, trabalhe o projeto no Monaco e use o botao Validar no menu superior do editor.",
+                    "Para esta atividade, trabalhe o projeto no Visual Studio Code e use o botao Validar no menu superior do editor.",
                 select: "Selecionar",
                 selectColumn: "Selecionar coluna",
             };
@@ -354,8 +357,9 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                 result: "Result",
                 runCommandsHint:
                     "Run the commands in GitBash and then validate here. Validation uses real command and event history.",
+                response: "Answer",
                 workspaceHint:
-                    "For this activity, work on the project in Monaco and use the Validate button in the editor top menu.",
+                    "For this activity, work on the project in Visual Studio Code and use the Validate button in the editor top menu.",
                 select: "Select",
                 selectColumn: "Select column",
             };
@@ -369,8 +373,9 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             result: "Resultado",
             runCommandsHint:
                 "Ejecuta los comandos en GitBash y luego valida aca. La validacion usa historial real de comandos y eventos.",
+            response: "Respuesta",
             workspaceHint:
-                "Para esta actividad, trabaja el proyecto en Monaco y usa el boton Validar del menu superior del editor.",
+                "Para esta actividad, trabaja el proyecto en Visual Studio Code y usa el boton Validar del menu superior del editor.",
             select: "Seleccionar",
             selectColumn: "Seleccionar columna",
         };
@@ -402,6 +407,14 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
         () => activities.find((entry) => entry.id === activityId) || fallbackActivity,
         [activities, activityId, fallbackActivity]
     );
+
+    useEffect(() => {
+        const urlLanguage = getLanguageFromValue(getSearchParam("lang"));
+
+        if (urlLanguage && urlLanguage !== language) {
+            setLanguage(urlLanguage);
+        }
+    }, [language, setLanguage]);
 
     useEffect(() => {
         if (!activity) return;
@@ -638,7 +651,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                                         <option value="">{uiText.selectColumn}</option>
                                         {((activity.data.columns || []) as string[]).map((column) => (
                                             <option key={column} value={column}>
-                                                {column}
+                                                {translateActivityText(language, column)}
                                             </option>
                                         ))}
                                     </select>
@@ -786,7 +799,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                                                         [freeText.id]: next,
                                                     });
                                                 }}
-                                                placeholder={`Respuesta ${indexItem + 1}`}
+                                                placeholder={`${uiText.response} ${indexItem + 1}`}
                                                 rows={2}
                                                 style={{ ...inputStyle, resize: "vertical" }}
                                                 value={currentValue}

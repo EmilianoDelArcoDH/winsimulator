@@ -1,6 +1,9 @@
 import activitiesCatalog from "utils/activitiesCatalog.json";
 import { type SessionLanguage } from "contexts/session/types";
-import { localizeActivitiesCatalog } from "utils/activityI18n";
+import {
+  localizeActivitiesCatalog,
+  translateActivityText,
+} from "utils/activityI18n";
 import { getSearchParam } from "utils/functions";
 import { getActiveLanguage } from "utils/i18n";
 import { sendActivityPgEvent } from "utils/pg-events";
@@ -129,6 +132,14 @@ const asStringArray = (value: unknown): string[] =>
   Array.isArray(value)
     ? value.filter((entry): entry is string => typeof entry === "string")
     : [];
+
+const translateRuleWords = (
+  language: SessionLanguage,
+  words: string[]
+): string[] =>
+  language === "es"
+    ? words
+    : words.map((word) => translateActivityText(language, word));
 
 const containsAny = (text: string, words: string[]): boolean => {
   const normalizedText = normalize(text);
@@ -334,7 +345,8 @@ const evaluateCheck = (
   activity: ActivityDefinition,
   answers: Record<string, unknown>,
   telemetry: ActivityTelemetry,
-  check: ActivityCheck
+  check: ActivityCheck,
+  language: SessionLanguage
 ): ValidationResult => {
   const rules = asRecord(check.rules);
   const {commands} = telemetry;
@@ -398,7 +410,10 @@ const evaluateCheck = (
       const textValue = asString(answers[check.target]);
       const listValue = asStringArray(answers[check.target]).join(" ");
       const text = listValue || textValue;
-      const passed = containsAny(text, asStringArray(rules.mustIncludeAny));
+      const passed = containsAny(
+        text,
+        translateRuleWords(language, asStringArray(rules.mustIncludeAny))
+      );
 
       return {
         checkId: check.checkId,
@@ -410,7 +425,9 @@ const evaluateCheck = (
     case "TEXT_KEYWORDS_GROUPS": {
       const text = asString(answers[check.target]);
       const groups = (rules.mustSatisfyGroups as { any?: string[] }[]) || [];
-      const passed = groups.every((group) => containsAny(text, group.any || []));
+      const passed = groups.every((group) =>
+        containsAny(text, translateRuleWords(language, group.any || []))
+      );
 
       return {
         checkId: check.checkId,
@@ -711,8 +728,14 @@ const evaluateCheck = (
     case "COMMIT_MESSAGE_RULES": {
       const message = repo.lastCommitMessage;
       const minLength = asNumber(rules.minLength);
-      const mustStartWithAny = asStringArray(rules.mustStartWithAny);
-      const forbiddenExact = asStringArray(rules.forbiddenExact);
+      const mustStartWithAny = translateRuleWords(
+        language,
+        asStringArray(rules.mustStartWithAny)
+      );
+      const forbiddenExact = translateRuleWords(
+        language,
+        asStringArray(rules.forbiddenExact)
+      );
       const startsOk =
         mustStartWithAny.length === 0 ||
         mustStartWithAny.some((prefix) => message.startsWith(prefix));
@@ -938,8 +961,9 @@ export const validateActivity = (
 
   const currentState = getActivityState(activityId);
   const telemetry = readTelemetry(activityId);
+  const activeLanguage = language || getActiveLanguage();
   const results = activity.validation.checks.map((check) =>
-    evaluateCheck(activity, currentState.answers, telemetry, check)
+    evaluateCheck(activity, currentState.answers, telemetry, check, activeLanguage)
   );
   const completedCheckIds = results
     .filter(({ passed }) => passed)

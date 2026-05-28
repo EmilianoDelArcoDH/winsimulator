@@ -1,12 +1,18 @@
-# Activities (Git y Publicacion)
+﻿# Activities (Git y Publicacion)
 
 Este documento resume las actividades implementadas desde `utils/activitiesCatalog.json`, con URL directa y solucion esperada por actividad.
 
 ## Rutas base
 
-- App integrada: `/?app=Activities&activityId={id}`
-- Standalone (Next): `/activities/{id}`
-- Standalone (template del catalogo): `/activities/{id}/index.html`
+- App integrada ES: `/?app=Activities&activityId={id}&lang=es`
+- App integrada EN: `/?app=Activities&activityId={id}&lang=en`
+- App integrada PT: `/?app=Activities&activityId={id}&lang=pt`
+- Standalone ES (Next): `/activities/{id}?lang=es`
+- Standalone EN (Next): `/activities/{id}?lang=en`
+- Standalone PT (Next): `/activities/{id}?lang=pt`
+- Standalone ES (template del catalogo): `/activities/{id}/index.html?lang=es`
+- Standalone EN (template del catalogo): `/activities/{id}/index.html?lang=en`
+- Standalone PT (template del catalogo): `/activities/{id}/index.html?lang=pt`
 
 ## Senal de completitud
 
@@ -36,8 +42,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c01_a01` - Versiones vs copias
 - Modo: `classify`
-- URL app: `/?app=Activities&activityId=sch_git_c01_a01`
-- URL standalone: `/activities/sch_git_c01_a01`
+- URL app ES: `/?app=Activities&activityId=sch_git_c01_a01&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c01_a01&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c01_a01&lang=pt`
+- URL standalone ES: `/activities/sch_git_c01_a01?lang=es`
+- URL standalone EN: `/activities/sch_git_c01_a01?lang=en`
+- URL standalone PT: `/activities/sch_git_c01_a01?lang=pt`
 - Consigna:
 
 <div>
@@ -114,8 +124,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c01_a02` - Git vs GitHub
 - Modo: `classify`
-- URL app: `/?app=Activities&activityId=sch_git_c01_a02`
-- URL standalone: `/activities/sch_git_c01_a02`
+- URL app ES: `/?app=Activities&activityId=sch_git_c01_a02&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c01_a02&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c01_a02&lang=pt`
+- URL standalone ES: `/activities/sch_git_c01_a02?lang=es`
+- URL standalone EN: `/activities/sch_git_c01_a02?lang=en`
+- URL standalone PT: `/activities/sch_git_c01_a02?lang=pt`
 - Consigna:
 
 <div>
@@ -191,8 +205,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c01_a03` - Ordenar la historia de cambios
 - Modo: `order`
-- URL app: `/?app=Activities&activityId=sch_git_c01_a03`
-- URL standalone: `/activities/sch_git_c01_a03`
+- URL app ES: `/?app=Activities&activityId=sch_git_c01_a03&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c01_a03&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c01_a03&lang=pt`
+- URL standalone ES: `/activities/sch_git_c01_a03?lang=es`
+- URL standalone EN: `/activities/sch_git_c01_a03?lang=en`
+- URL standalone PT: `/activities/sch_git_c01_a03?lang=pt`
 - Consigna:
 
 <div>
@@ -267,8 +285,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c01_a04` - Conflicto no es error
 - Modo: `decision`
-- URL app: `/?app=Activities&activityId=sch_git_c01_a04`
-- URL standalone: `/activities/sch_git_c01_a04`
+- URL app ES: `/?app=Activities&activityId=sch_git_c01_a04&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c01_a04&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c01_a04&lang=pt`
+- URL standalone ES: `/activities/sch_git_c01_a04?lang=es`
+- URL standalone EN: `/activities/sch_git_c01_a04?lang=en`
+- URL standalone PT: `/activities/sch_git_c01_a04?lang=pt`
 - Consigna:
 
 <div>
@@ -346,8 +368,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c02_a00` - Configuracion inicial de Git
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c02_a00`
-- URL standalone: `/activities/sch_git_c02_a00`
+- URL app ES: `/?app=Activities&activityId=sch_git_c02_a00&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c02_a00&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c02_a00&lang=pt`
+- URL standalone ES: `/activities/sch_git_c02_a00?lang=es`
+- URL standalone EN: `/activities/sch_git_c02_a00?lang=en`
+- URL standalone PT: `/activities/sch_git_c02_a00?lang=pt`
 - Consigna:
 
 <div>
@@ -424,8 +450,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c02_a01` - Inicializar repo
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c02_a01`
-- URL standalone: `/activities/sch_git_c02_a01`
+- URL app ES: `/?app=Activities&activityId=sch_git_c02_a01&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c02_a01&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c02_a01&lang=pt`
+- URL standalone ES: `/activities/sch_git_c02_a01?lang=es`
+- URL standalone EN: `/activities/sch_git_c02_a01?lang=en`
+- URL standalone PT: `/activities/sch_git_c02_a01?lang=pt`
 - Consigna:
 
 <div>
@@ -504,8 +534,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c02_a02` - 3 estados: working / staging / commit
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c02_a02`
-- URL standalone: `/activities/sch_git_c02_a02`
+- URL app ES: `/?app=Activities&activityId=sch_git_c02_a02&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c02_a02&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c02_a02&lang=pt`
+- URL standalone ES: `/activities/sch_git_c02_a02?lang=es`
+- URL standalone EN: `/activities/sch_git_c02_a02?lang=en`
+- URL standalone PT: `/activities/sch_git_c02_a02?lang=pt`
 - Consigna:
 
 <div>
@@ -592,8 +626,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c02_a03` - Mensaje de commit profesional
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c02_a03`
-- URL standalone: `/activities/sch_git_c02_a03`
+- URL app ES: `/?app=Activities&activityId=sch_git_c02_a03&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c02_a03&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c02_a03&lang=pt`
+- URL standalone ES: `/activities/sch_git_c02_a03?lang=es`
+- URL standalone EN: `/activities/sch_git_c02_a03?lang=en`
+- URL standalone PT: `/activities/sch_git_c02_a03?lang=pt`
 - Consigna:
 
 <div>
@@ -670,8 +708,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c02_a04` - Evitar el git add . ciego
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c02_a04`
-- URL standalone: `/activities/sch_git_c02_a04`
+- URL app ES: `/?app=Activities&activityId=sch_git_c02_a04&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c02_a04&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c02_a04&lang=pt`
+- URL standalone ES: `/activities/sch_git_c02_a04?lang=es`
+- URL standalone EN: `/activities/sch_git_c02_a04?lang=en`
+- URL standalone PT: `/activities/sch_git_c02_a04?lang=pt`
 - Consigna:
 
 <div>
@@ -749,8 +791,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c03_a01` - Leer el historial (git log)
 - Modo: `terminal+form`
-- URL app: `/?app=Activities&activityId=sch_git_c03_a01`
-- URL standalone: `/activities/sch_git_c03_a01`
+- URL app ES: `/?app=Activities&activityId=sch_git_c03_a01&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c03_a01&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c03_a01&lang=pt`
+- URL standalone ES: `/activities/sch_git_c03_a01?lang=es`
+- URL standalone EN: `/activities/sch_git_c03_a01?lang=en`
+- URL standalone PT: `/activities/sch_git_c03_a01?lang=pt`
 - Consigna:
 
 <div>
@@ -824,8 +870,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c03_a02` - Vista resumida (git log --oneline)
 - Modo: `terminal+form`
-- URL app: `/?app=Activities&activityId=sch_git_c03_a02`
-- URL standalone: `/activities/sch_git_c03_a02`
+- URL app ES: `/?app=Activities&activityId=sch_git_c03_a02&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c03_a02&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c03_a02&lang=pt`
+- URL standalone ES: `/activities/sch_git_c03_a02?lang=es`
+- URL standalone EN: `/activities/sch_git_c03_a02?lang=en`
+- URL standalone PT: `/activities/sch_git_c03_a02?lang=pt`
 - Consigna:
 
 <div>
@@ -899,8 +949,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c03_a03` - git diff antes del commit
 - Modo: `terminal+form`
-- URL app: `/?app=Activities&activityId=sch_git_c03_a03`
-- URL standalone: `/activities/sch_git_c03_a03`
+- URL app ES: `/?app=Activities&activityId=sch_git_c03_a03&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c03_a03&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c03_a03&lang=pt`
+- URL standalone ES: `/activities/sch_git_c03_a03?lang=es`
+- URL standalone EN: `/activities/sch_git_c03_a03?lang=en`
+- URL standalone PT: `/activities/sch_git_c03_a03?lang=pt`
 - Consigna:
 
 <div>
@@ -974,8 +1028,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c03_a04` - Debugging historico (git show)
 - Modo: `terminal+form`
-- URL app: `/?app=Activities&activityId=sch_git_c03_a04`
-- URL standalone: `/activities/sch_git_c03_a04`
+- URL app ES: `/?app=Activities&activityId=sch_git_c03_a04&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c03_a04&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c03_a04&lang=pt`
+- URL standalone ES: `/activities/sch_git_c03_a04?lang=es`
+- URL standalone EN: `/activities/sch_git_c03_a04?lang=en`
+- URL standalone PT: `/activities/sch_git_c03_a04?lang=pt`
 - Consigna:
 
 <div>
@@ -1051,8 +1109,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c04_a01` - Configurar origin
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c04_a01`
-- URL standalone: `/activities/sch_git_c04_a01`
+- URL app ES: `/?app=Activities&activityId=sch_git_c04_a01&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c04_a01&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c04_a01&lang=pt`
+- URL standalone ES: `/activities/sch_git_c04_a01?lang=es`
+- URL standalone EN: `/activities/sch_git_c04_a01?lang=en`
+- URL standalone PT: `/activities/sch_git_c04_a01?lang=pt`
 - Consigna:
 
 <div>
@@ -1125,8 +1187,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c04_a02` - Primer push con upstream
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c04_a02`
-- URL standalone: `/activities/sch_git_c04_a02`
+- URL app ES: `/?app=Activities&activityId=sch_git_c04_a02&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c04_a02&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c04_a02&lang=pt`
+- URL standalone ES: `/activities/sch_git_c04_a02?lang=es`
+- URL standalone EN: `/activities/sch_git_c04_a02?lang=en`
+- URL standalone PT: `/activities/sch_git_c04_a02?lang=pt`
 - Consigna:
 
 <div>
@@ -1199,8 +1265,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c04_a03` - Pull antes de push
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c04_a03`
-- URL standalone: `/activities/sch_git_c04_a03`
+- URL app ES: `/?app=Activities&activityId=sch_git_c04_a03&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c04_a03&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c04_a03&lang=pt`
+- URL standalone ES: `/activities/sch_git_c04_a03?lang=es`
+- URL standalone EN: `/activities/sch_git_c04_a03?lang=en`
+- URL standalone PT: `/activities/sch_git_c04_a03?lang=pt`
 - Consigna:
 
 <div>
@@ -1274,8 +1344,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c04_a04` - Flujo completo con remoto
 - Modo: `terminal+rubric`
-- URL app: `/?app=Activities&activityId=sch_git_c04_a04`
-- URL standalone: `/activities/sch_git_c04_a04`
+- URL app ES: `/?app=Activities&activityId=sch_git_c04_a04&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c04_a04&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c04_a04&lang=pt`
+- URL standalone ES: `/activities/sch_git_c04_a04?lang=es`
+- URL standalone EN: `/activities/sch_git_c04_a04?lang=en`
+- URL standalone PT: `/activities/sch_git_c04_a04?lang=pt`
 - Consigna:
 
 <div>
@@ -1350,8 +1424,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c04_a05` - Lab: solo clone
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c04_a05`
-- URL standalone: `/activities/sch_git_c04_a05`
+- URL app ES: `/?app=Activities&activityId=sch_git_c04_a05&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c04_a05&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c04_a05&lang=pt`
+- URL standalone ES: `/activities/sch_git_c04_a05?lang=es`
+- URL standalone EN: `/activities/sch_git_c04_a05?lang=en`
+- URL standalone PT: `/activities/sch_git_c04_a05?lang=pt`
 - Consigna:
 
 <div>
@@ -1425,8 +1503,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c04_a06` - Lab: solo pull
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c04_a06`
-- URL standalone: `/activities/sch_git_c04_a06`
+- URL app ES: `/?app=Activities&activityId=sch_git_c04_a06&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c04_a06&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c04_a06&lang=pt`
+- URL standalone ES: `/activities/sch_git_c04_a06?lang=es`
+- URL standalone EN: `/activities/sch_git_c04_a06?lang=en`
+- URL standalone PT: `/activities/sch_git_c04_a06?lang=pt`
 - Consigna:
 
 <div>
@@ -1499,8 +1581,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_git_c04_a07` - Lab: clone + pull
 - Modo: `terminal`
-- URL app: `/?app=Activities&activityId=sch_git_c04_a07`
-- URL standalone: `/activities/sch_git_c04_a07`
+- URL app ES: `/?app=Activities&activityId=sch_git_c04_a07&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_git_c04_a07&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_git_c04_a07&lang=pt`
+- URL standalone ES: `/activities/sch_git_c04_a07?lang=es`
+- URL standalone EN: `/activities/sch_git_c04_a07?lang=en`
+- URL standalone PT: `/activities/sch_git_c04_a07?lang=pt`
 - Consigna:
 
 <div>
@@ -1575,8 +1661,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_publish_c01_a01` - Estructura clara vs desordenada
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_publish_c01_a01`
-- URL standalone: `/activities/sch_publish_c01_a01`
+- URL app ES: `/?app=Activities&activityId=sch_publish_c01_a01&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_publish_c01_a01&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_publish_c01_a01&lang=pt`
+- URL standalone ES: `/activities/sch_publish_c01_a01?lang=es`
+- URL standalone EN: `/activities/sch_publish_c01_a01?lang=en`
+- URL standalone PT: `/activities/sch_publish_c01_a01?lang=pt`
 - Consigna:
 
 <div>
@@ -1655,8 +1745,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_publish_c01_a02` - Limpiar antes de publicar
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_publish_c01_a02`
-- URL standalone: `/activities/sch_publish_c01_a02`
+- URL app ES: `/?app=Activities&activityId=sch_publish_c01_a02&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_publish_c01_a02&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_publish_c01_a02&lang=pt`
+- URL standalone ES: `/activities/sch_publish_c01_a02?lang=es`
+- URL standalone EN: `/activities/sch_publish_c01_a02?lang=en`
+- URL standalone PT: `/activities/sch_publish_c01_a02?lang=pt`
 - Consigna:
 
 <div>
@@ -1737,8 +1831,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_publish_c01_a03` - Rutas absolutas vs relativas
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_publish_c01_a03`
-- URL standalone: `/activities/sch_publish_c01_a03`
+- URL app ES: `/?app=Activities&activityId=sch_publish_c01_a03&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_publish_c01_a03&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_publish_c01_a03&lang=pt`
+- URL standalone ES: `/activities/sch_publish_c01_a03?lang=es`
+- URL standalone EN: `/activities/sch_publish_c01_a03?lang=en`
+- URL standalone PT: `/activities/sch_publish_c01_a03?lang=pt`
 - Consigna:
 
 <div>
@@ -1828,8 +1926,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_publish_c01_a04` - Nombres de archivo seguros para publicar
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_publish_c01_a04`
-- URL standalone: `/activities/sch_publish_c01_a04`
+- URL app ES: `/?app=Activities&activityId=sch_publish_c01_a04&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_publish_c01_a04&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_publish_c01_a04&lang=pt`
+- URL standalone ES: `/activities/sch_publish_c01_a04?lang=es`
+- URL standalone EN: `/activities/sch_publish_c01_a04?lang=en`
+- URL standalone PT: `/activities/sch_publish_c01_a04?lang=pt`
 - Consigna:
 
 <div>
@@ -1910,8 +2012,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_publish_c01_a05` - Checklist antes de mostrar
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_publish_c01_a05`
-- URL standalone: `/activities/sch_publish_c01_a05`
+- URL app ES: `/?app=Activities&activityId=sch_publish_c01_a05&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_publish_c01_a05&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_publish_c01_a05&lang=pt`
+- URL standalone ES: `/activities/sch_publish_c01_a05?lang=es`
+- URL standalone EN: `/activities/sch_publish_c01_a05?lang=en`
+- URL standalone PT: `/activities/sch_publish_c01_a05?lang=pt`
 - Consigna:
 
 <div>
@@ -1992,8 +2098,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_pages_c01_a01` - Antes de publicar: comprobar que esta listo
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_pages_c01_a01`
-- URL standalone: `/activities/sch_pages_c01_a01`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c01_a01&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c01_a01&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c01_a01&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c01_a01?lang=es`
+- URL standalone EN: `/activities/sch_pages_c01_a01?lang=en`
+- URL standalone PT: `/activities/sch_pages_c01_a01?lang=pt`
 - Consigna:
 
 <div>
@@ -2072,8 +2182,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_pages_c01_a02` - Guardar el proyecto en el repositorio
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_pages_c01_a02`
-- URL standalone: `/activities/sch_pages_c01_a02`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c01_a02&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c01_a02&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c01_a02&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c01_a02?lang=es`
+- URL standalone EN: `/activities/sch_pages_c01_a02?lang=en`
+- URL standalone PT: `/activities/sch_pages_c01_a02?lang=pt`
 - Consigna:
 
 <div>
@@ -2152,8 +2266,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_pages_c01_a03` - Activar Pages y obtener la URL
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_pages_c01_a03`
-- URL standalone: `/activities/sch_pages_c01_a03`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c01_a03&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c01_a03&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c01_a03&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c01_a03?lang=es`
+- URL standalone EN: `/activities/sch_pages_c01_a03?lang=en`
+- URL standalone PT: `/activities/sch_pages_c01_a03?lang=pt`
 - Consigna:
 
 <div>
@@ -2234,8 +2352,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_pages_c01_a04` - Verificar que la URL publicada funciona
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_pages_c01_a04`
-- URL standalone: `/activities/sch_pages_c01_a04`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c01_a04&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c01_a04&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c01_a04&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c01_a04?lang=es`
+- URL standalone EN: `/activities/sch_pages_c01_a04?lang=en`
+- URL standalone PT: `/activities/sch_pages_c01_a04?lang=pt`
 - Consigna:
 
 <div>
@@ -2318,8 +2440,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_pages_c02_a01` - Editar, guardar y dejar listo el cambio
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_pages_c02_a01`
-- URL standalone: `/activities/sch_pages_c02_a01`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c02_a01&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c02_a01&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c02_a01&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c02_a01?lang=es`
+- URL standalone EN: `/activities/sch_pages_c02_a01?lang=en`
+- URL standalone PT: `/activities/sch_pages_c02_a01?lang=pt`
 - Consigna:
 
 <div>
@@ -2407,8 +2533,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_pages_c02_a02` - Registrar el cambio con commit
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_pages_c02_a02`
-- URL standalone: `/activities/sch_pages_c02_a02`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c02_a02&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c02_a02&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c02_a02&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c02_a02?lang=es`
+- URL standalone EN: `/activities/sch_pages_c02_a02?lang=en`
+- URL standalone PT: `/activities/sch_pages_c02_a02?lang=pt`
 - Consigna:
 
 <div>
@@ -2498,8 +2628,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_pages_c02_a03` - Push y sitio actualizado
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_pages_c02_a03`
-- URL standalone: `/activities/sch_pages_c02_a03`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c02_a03&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c02_a03&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c02_a03&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c02_a03?lang=es`
+- URL standalone EN: `/activities/sch_pages_c02_a03?lang=en`
+- URL standalone PT: `/activities/sch_pages_c02_a03?lang=pt`
 - Consigna:
 
 <div>
@@ -2590,8 +2724,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
 ### `sch_pages_c02_a04` - Errores frecuentes despues del push
 - Modo: `workspace`
-- URL app: `/?app=Activities&activityId=sch_pages_c02_a04`
-- URL standalone: `/activities/sch_pages_c02_a04`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c02_a04&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c02_a04&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c02_a04&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c02_a04?lang=es`
+- URL standalone EN: `/activities/sch_pages_c02_a04?lang=en`
+- URL standalone PT: `/activities/sch_pages_c02_a04?lang=pt`
 - Consigna:
 
 <div>

@@ -337,6 +337,22 @@ export const normalizeLanguage = (language?: string): SessionLanguage => {
   return "en";
 };
 
+export const getLanguageFromValue = (
+  language?: string
+): SessionLanguage | undefined => {
+  const normalizedLanguage = language?.trim().toLowerCase().split("-")[0];
+
+  if (
+    normalizedLanguage === "en" ||
+    normalizedLanguage === "es" ||
+    normalizedLanguage === "pt"
+  ) {
+    return normalizedLanguage;
+  }
+
+  return undefined;
+};
+
 const getDictionary = (language: SessionLanguage): TranslationDictionary => {
   switch (language) {
     case "es":

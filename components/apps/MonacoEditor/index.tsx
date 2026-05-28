@@ -18,6 +18,7 @@ import AppContainer from "components/system/Apps/AppContainer";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useFileSystem } from "contexts/fileSystem";
 import { useProcesses } from "contexts/process";
+import { useSession } from "contexts/session";
 import {
   getActivityById,
   getCurrentActivityId,
@@ -74,6 +75,68 @@ const INVALID_ENTRY_NAME = /[\\/:*?"<>|]/;
 const SIDEBAR_WIDTH_STORAGE_KEY = "monaco:sidebar-width";
 const DEFAULT_SIDEBAR_WIDTH = 210;
 const GIT_CONFIG_KEY = "gitbash_global_config";
+
+const getEditorUiText = (language: "en" | "es" | "pt") => {
+  if (language === "pt") {
+    return {
+      cancel: "Cancelar",
+      closeDeleteConfirmation: "Fechar confirmacao de exclusao",
+      closeSaveAsDialog: "Fechar dialogo Salvar como",
+      delete: "Excluir",
+      deleteEntry: (name: string): string => `Excluir '${name}'?`,
+      fileNamePlaceholder: "Nome do arquivo (ex.: index.html)",
+      folderNamePlaceholder: "Nome da pasta",
+      readOnlyActivityMessage:
+        "Nesta atividade, voce so pode editar o arquivo de proposta.",
+      saveAs: "Salvar como",
+      saveAsPathPlaceholder: "index.html ou src/app.js",
+      saveAsSubtitle: (root: string): string =>
+        `Informe um nome de arquivo ou caminho relativo de ${root}`,
+      searchPlaceholder: "Use Ctrl+F dentro do editor para pesquisar.",
+      sourceControlPlaceholder:
+        "Controle de codigo-fonte simulado neste ambiente.",
+    };
+  }
+
+  if (language === "es") {
+    return {
+      cancel: "Cancelar",
+      closeDeleteConfirmation: "Cerrar confirmacion de eliminacion",
+      closeSaveAsDialog: "Cerrar dialogo Guardar como",
+      delete: "Eliminar",
+      deleteEntry: (name: string): string => `Eliminar '${name}'?`,
+      fileNamePlaceholder: "Nombre de archivo (ej.: index.html)",
+      folderNamePlaceholder: "Nombre de carpeta",
+      readOnlyActivityMessage:
+        "En esta actividad solo puedes editar el archivo de propuesta.",
+      saveAs: "Guardar como",
+      saveAsPathPlaceholder: "index.html o src/app.js",
+      saveAsSubtitle: (root: string): string =>
+        `Ingresa un nombre de archivo o ruta relativa desde ${root}`,
+      searchPlaceholder: "Usa Ctrl+F dentro del editor para buscar.",
+      sourceControlPlaceholder:
+        "Control de codigo fuente simulado en este entorno.",
+    };
+  }
+
+  return {
+    cancel: "Cancel",
+    closeDeleteConfirmation: "Close delete confirmation",
+    closeSaveAsDialog: "Close save as dialog",
+    delete: "Delete",
+    deleteEntry: (name: string): string => `Delete '${name}'?`,
+    fileNamePlaceholder: "File name (e.g., index.html)",
+    folderNamePlaceholder: "Folder name",
+    readOnlyActivityMessage:
+      "In this activity, you can only edit the proposal file.",
+    saveAs: "Save As",
+    saveAsPathPlaceholder: "index.html or src/app.js",
+    saveAsSubtitle: (root: string): string =>
+      `Enter a file name or relative path from ${root}`,
+    searchPlaceholder: "Use Ctrl+F inside editor to search.",
+    sourceControlPlaceholder: "Source control simulated in this workbench.",
+  };
+};
 
 const getTemplateCursorOffset = (filePath: string, content: string): number => {
   const extension = extname(filePath).toLowerCase();
@@ -223,6 +286,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     updateFolder,
     writeFile,
   } = useFileSystem();
+  const { language } = useSession();
+  const uiText = useMemo(() => getEditorUiText(language), [language]);
   const normalizeFsPath = useCallback(
     (value: string): string => value.replace(/\\/g, "/").replace(/\/+/g, "/"),
     []
@@ -347,7 +412,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     : !hasWorkspaceEditRestrictions;
   const canCreateEntriesInWorkspace = !hasWorkspaceEditRestrictions;
   const readOnlyActivityMessage = hasWorkspaceEditRestrictions
-    ? "En esta actividad solo puedes editar el archivo de propuesta."
+    ? uiText.readOnlyActivityMessage
     : "";
 
   useEffect(() => {
@@ -2447,8 +2512,8 @@ function example() {
                                     }}
                                     placeholder={
                                       isDirectory
-                                        ? "Folder name"
-                                        : "File name (e.g., index.html)"
+                                        ? uiText.folderNamePlaceholder
+                                        : uiText.fileNamePlaceholder
                                     }
                                     type="text"
                                     value={newEntryName}
@@ -2627,19 +2692,19 @@ function example() {
               )}
 
               {activeView === "search" && (
-                <p className="placeholder">Use Ctrl+F inside editor to search.</p>
+                <p className="placeholder">{uiText.searchPlaceholder}</p>
               )}
 
               {activeView === "git" && (
                 <p className="placeholder">
-                  Source control simulated in this workbench.
+                  {uiText.sourceControlPlaceholder}
                 </p>
               )}
 
               {confirmDelete && (
                 <>
                   <button
-                    aria-label="Close delete confirmation"
+                    aria-label={uiText.closeDeleteConfirmation}
                     className="modal-backdrop"
                     onClick={() => setConfirmDelete(undefined)}
                     type="button"
@@ -2648,7 +2713,7 @@ function example() {
                     className="confirm-dialog"
                   >
                     <p className="confirm-message">
-                      Delete &apos;{basename(confirmDelete)}&apos;?
+                      {uiText.deleteEntry(basename(confirmDelete))}
                     </p>
                     <div className="confirm-actions">
                       <button
@@ -2656,14 +2721,14 @@ function example() {
                         onClick={() => setConfirmDelete(undefined)}
                         type="button"
                       >
-                        Cancel
+                        {uiText.cancel}
                       </button>
                       <button
                         className="dialog-action danger"
                         onClick={() => deleteSelectedEntry(true)}
                         type="button"
                       >
-                        Delete
+                        {uiText.delete}
                       </button>
                     </div>
                   </div>
@@ -2673,7 +2738,7 @@ function example() {
               {isSaveAsOpen && (
                 <>
                   <button
-                    aria-label="Close save as dialog"
+                    aria-label={uiText.closeSaveAsDialog}
                     className="modal-backdrop"
                     onClick={() => {
                       setIsSaveAsOpen(false);
@@ -2682,9 +2747,9 @@ function example() {
                     type="button"
                   />
                   <div aria-modal="true" className="save-as-dialog" role="dialog">
-                    <p className="save-as-title">Save As</p>
+                    <p className="save-as-title">{uiText.saveAs}</p>
                     <p className="save-as-subtitle">
-                      Enter a file name or relative path from {explorerRoot}
+                      {uiText.saveAsSubtitle(explorerRoot)}
                     </p>
                     <input
                       ref={saveAsInputRef}
@@ -2705,7 +2770,7 @@ function example() {
                           setSaveAsError("");
                         }
                       }}
-                      placeholder="index.html or src/app.js"
+                      placeholder={uiText.saveAsPathPlaceholder}
                       type="text"
                       value={saveAsPath}
                     />
@@ -2719,7 +2784,7 @@ function example() {
                         }}
                         type="button"
                       >
-                        Cancel
+                        {uiText.cancel}
                       </button>
                       <button
                         className="dialog-action primary"

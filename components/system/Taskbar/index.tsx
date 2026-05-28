@@ -1,4 +1,4 @@
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import { AnimatePresence } from "motion/react";
 import {
@@ -16,6 +16,7 @@ import StyledTaskbar from "components/system/Taskbar/StyledTaskbar";
 import TaskbarEntries from "components/system/Taskbar/TaskbarEntries";
 import useTaskbarContextMenu from "components/system/Taskbar/useTaskbarContextMenu";
 import { CLOCK_CANVAS_BASE_WIDTH, FOCUSABLE_ELEMENT } from "utils/constants";
+import { getLanguageFromValue } from "utils/i18n";
 import { useWindowAI } from "hooks/useWindowAI";
 import { useSession } from "contexts/session";
 
@@ -33,8 +34,18 @@ const Taskbar: FC = () => {
   const [calendarVisible, setCalendarVisible] = useState(false);
   const [aiVisible, setAIVisible] = useState(false);
   const [clockWidth, setClockWidth] = useState(CLOCK_CANVAS_BASE_WIDTH);
+  const [languageLockedByUrl, setLanguageLockedByUrl] = useState(false);
   const { aiEnabled } = useSession();
   const hasWindowAI = useWindowAI();
+  useEffect(() => {
+    setLanguageLockedByUrl(
+      Boolean(
+        getLanguageFromValue(
+          new URLSearchParams(window.location.search).get("lang") || undefined
+        )
+      )
+    );
+  }, []);
   const toggleStartMenu = useCallback(
     (showMenu?: boolean): void =>
       setStartMenuVisible((currentMenuState) => showMenu ?? !currentMenuState),
@@ -79,10 +90,14 @@ const Taskbar: FC = () => {
           toggleSearch={toggleSearch}
         />
         <TaskbarEntries
-          clockWidth={clockWidth + LANGUAGE_SWITCHER_WIDTH}
+          clockWidth={
+            clockWidth + (languageLockedByUrl ? 0 : LANGUAGE_SWITCHER_WIDTH)
+          }
           hasAI={hasAI}
         />
-        <LanguageSwitcher clockWidth={clockWidth} hasAI={hasAI} />
+        {!languageLockedByUrl && (
+          <LanguageSwitcher clockWidth={clockWidth} hasAI={hasAI} />
+        )}
         <Clock
           hasAI={hasAI}
           setClockWidth={setClockWidth}
