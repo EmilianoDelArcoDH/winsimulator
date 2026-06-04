@@ -37,6 +37,7 @@ const Titlebar: FC<TitlebarProps> = ({ id }) => {
     icon,
     title,
     maximized,
+    preventClose,
   } = process || {};
   const isGitBashWindow = id.startsWith("GitBash");
   const resolvedAllowResizing = isGitBashWindow ? true : allowResizing;
@@ -182,6 +183,7 @@ const Titlebar: FC<TitlebarProps> = ({ id }) => {
         <Button
           $short={resolvedHideMaximizeButton && resolvedHideMinimizeButton}
           className="close"
+          disabled={preventClose}
           onClick={onClose}
           {...label("Close")}
         >

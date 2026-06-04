@@ -26,6 +26,10 @@ const setProcessSettings =
 export const closeProcess =
   (processId: string, closing?: boolean) =>
   (currentProcesses: Processes): Processes => {
+    if (currentProcesses[processId]?.preventClose) {
+      return currentProcesses;
+    }
+
     if (closing) {
       return setProcessSettings(processId, { closing })(currentProcesses);
     }

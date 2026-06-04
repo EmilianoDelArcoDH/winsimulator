@@ -37,6 +37,7 @@ const useTitlebarContextMenu = (id: string): ContextMenuCapture => {
     minimized,
     mute,
     muted,
+    preventClose,
     unmute,
   } = process || {};
 
@@ -86,6 +87,7 @@ const useTitlebarContextMenu = (id: string): ContextMenuCapture => {
             : []),
           {
             action: onClose,
+            disabled: preventClose,
             icon: CLOSE,
             label: "Close",
             primary: true,
@@ -105,6 +107,7 @@ const useTitlebarContextMenu = (id: string): ContextMenuCapture => {
       onClose,
       onMaximize,
       onMinimize,
+      preventClose,
       unmute,
     ]
   );

@@ -64,6 +64,7 @@ type BaseProcessArguments = {
   libs?: string[];
   lockAspectRatio?: boolean;
   peekImage?: string;
+  preventClose?: boolean;
   url?: string;
 };
 

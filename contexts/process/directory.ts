@@ -11,6 +11,7 @@ const directory: Processes = {
       width: 900,
     },
     icon: "/System/Icons/monaco.webp",
+    preventClose: true,
     title: "Activities",
   },
   GitBash: {

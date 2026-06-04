@@ -38,7 +38,14 @@ const PeekWindow: FC<PeekWindowProps> = ({ id }) => {
     minimize,
     processes: { [id]: process },
   } = useProcesses();
-  const { pause, paused, play, minimized = false, title = id } = process || {};
+  const {
+    pause,
+    paused,
+    play,
+    minimized = false,
+    preventClose,
+    title = id,
+  } = process || {};
   const { setForegroundId } = useSession();
   const { onClose } = useWindowActions(id);
   const [offsetX, setOffsetX] = useState(0);
@@ -82,7 +89,12 @@ const PeekWindow: FC<PeekWindowProps> = ({ id }) => {
         src={image}
         {...HIGH_PRIORITY_ELEMENT}
       />
-      <Button className="close" onClick={onClose} {...label("Close")}>
+      <Button
+        className="close"
+        disabled={preventClose}
+        onClick={onClose}
+        {...label("Close")}
+      >
         <CloseIcon />
       </Button>
       {showControls && (

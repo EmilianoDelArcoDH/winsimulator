@@ -39,6 +39,8 @@ const useWindowActions = (id: string): WindowActions => {
     }
   }, [id, maximize, processesRef, setForegroundId]);
   const onClose = useCallback((): void => {
+    if (processesRef.current[id]?.preventClose) return;
+
     removeFromStack(id);
     closeWithTransition(id);
     setForegroundId(nextFocusableId);
@@ -46,6 +48,7 @@ const useWindowActions = (id: string): WindowActions => {
     closeWithTransition,
     id,
     nextFocusableId,
+    processesRef,
     removeFromStack,
     setForegroundId,
   ]);
