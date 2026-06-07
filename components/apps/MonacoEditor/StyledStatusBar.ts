@@ -1,12 +1,24 @@
 import styled from "styled-components";
 
 const StyledStatusBar = styled.footer`
-  background-color: rgb(0 122 204);
+  --vscode-status-bg: #0078d4;
+  --vscode-status-bg-hover: #1683d8;
+  --vscode-status-bg-active: #006ab1;
+  --vscode-status-foreground: #ffffff;
+
+  background-color: var(--vscode-status-bg);
   border-top: 0;
-  color: rgb(255 255 255);
+  color: var(--vscode-status-foreground);
   display: flex;
-  font-size: 11px;
+  font-family:
+    "Segoe UI Variable",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    sans-serif;
+  font-size: 12px;
   height: 22px;
+  line-height: 22px;
   min-height: 22px;
   overflow: hidden;
   place-content: space-between;
@@ -16,45 +28,68 @@ const StyledStatusBar = styled.footer`
 
   ol.status {
     display: flex;
+    height: 22px;
     place-content: flex-end;
     place-items: center;
+    white-space: nowrap;
 
     &:first-of-type {
-      padding-left: 8px;
+      justify-content: flex-start;
+      min-width: 0;
+      padding-left: 6px;
     }
 
     &:last-of-type {
-      padding-right: 8px;
+      flex: 1;
+      min-width: 0;
+      padding-right: 6px;
     }
 
     li {
-      margin: 0 4px;
-      padding: 2px 8px;
+      align-items: center;
+      display: inline-flex;
+      height: 22px;
+      margin: 0;
+      max-width: min(320px, 40vw);
+      overflow: hidden;
+      padding: 0 8px;
+      text-overflow: ellipsis;
       white-space: nowrap;
 
       button {
+        align-items: center;
+        background: transparent;
+        border: 0;
         color: inherit;
+        display: inline-flex;
         font-size: inherit;
-        padding: 2px 8px;
+        height: 22px;
+        line-height: 22px;
+        max-width: 100%;
+        min-width: 0;
+        overflow: hidden;
+        padding: 0 8px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
 
         &.pretty {
           position: relative;
-          top: -2px;
+          top: -1px;
         }
 
         svg {
-          fill: rgb(255 255 255);
-          height: 16px;
-          width: 16px;
+          fill: currentColor;
+          height: 14px;
+          width: 14px;
         }
       }
 
       &:hover {
-        background-color: rgb(25 137 214);
+        background-color: var(--vscode-status-bg-hover);
       }
 
       &:active {
-        background-color: rgb(0 111 186);
+        background-color: var(--vscode-status-bg-active);
       }
 
       &.clickable {
