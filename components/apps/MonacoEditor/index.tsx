@@ -3246,7 +3246,20 @@ function example() {
             className="bottom-panel"
             data-tour="monaco-terminal-panel"
           >
-            <div className="bottom-panel-header">TERMINAL</div>
+            <div className="bottom-panel-header">
+              <div className="terminal-tabs" aria-hidden="true">
+                <span className="terminal-tab active">TERMINAL</span>
+                <span className="terminal-tab">PROBLEMS</span>
+                <span className="terminal-tab">OUTPUT</span>
+              </div>
+              <div className="terminal-toolbar" aria-hidden="true">
+                <span className="terminal-shell">powershell</span>
+                <span className="terminal-action add">+</span>
+                <span className="terminal-action dropdown">⌄</span>
+                <span className="terminal-action split">▯</span>
+                <span className="terminal-action close">×</span>
+              </div>
+            </div>
             <div ref={terminalHistoryRef} className="terminal-history">
               {terminalHistory.length === 0 && (
                 <div className="terminal-line">Terminal cleared.</div>
@@ -3264,7 +3277,10 @@ function example() {
                 void runTerminalCommand(terminalInput);
               }}
             >
-              <span>{terminalCwd} $</span>
+              <span className="terminal-prompt">
+                <span className="terminal-cwd">{terminalCwd}</span>
+                <span className="terminal-symbol">$</span>
+              </span>
               <input
                 ref={terminalInputRef}
                 className="terminal-input"

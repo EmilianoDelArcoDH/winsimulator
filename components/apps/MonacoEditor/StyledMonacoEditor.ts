@@ -1918,6 +1918,257 @@ const StyledMonacoEditor = styled.div`
       font-family: Consolas, "Cascadia Mono", "Courier New", monospace;
     }
   }
+
+  /* Integrated Terminal: VS Code Windows Dark Modern */
+  .editor-shell.terminal-open {
+    --vsc-terminal-bg: #1e1e1e;
+    --vsc-terminal-border: #3c3c3c;
+    --vsc-terminal-header-bg: #1f1f1f;
+    --vsc-terminal-tab-active: #ffffff;
+    --vsc-terminal-tab-inactive: #969696;
+    --vsc-terminal-text: #cccccc;
+    --vsc-terminal-muted: #858585;
+    --vsc-terminal-prompt-path: #4ec9b0;
+    --vsc-terminal-prompt-symbol: #569cd6;
+    --vsc-terminal-hover: #2a2d2e;
+    --vsc-terminal-focus: #007acc;
+  }
+
+  .editor-shell.terminal-open .panel-splitter {
+    background:
+      linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 1px,
+        var(--vsc-terminal-border) 1px,
+        var(--vsc-terminal-border) 2px,
+        transparent 2px
+      ),
+      var(--vsc-terminal-header-bg);
+    border: 0;
+    cursor: row-resize;
+    height: var(--panel-splitter-height);
+  }
+
+  .editor-shell.terminal-open .panel-splitter:hover {
+    background:
+      linear-gradient(
+        to bottom,
+        transparent 0,
+        transparent 1px,
+        var(--vsc-terminal-focus) 1px,
+        var(--vsc-terminal-focus) 2px,
+        transparent 2px
+      ),
+      var(--vsc-terminal-header-bg);
+  }
+
+  .bottom-panel {
+    background: var(--vsc-terminal-bg);
+    border-top: 1px solid var(--vsc-terminal-border);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 2%);
+    color: var(--vsc-terminal-text);
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    grid-template-rows: 35px minmax(0, 1fr) 30px;
+  }
+
+  .bottom-panel .bottom-panel-header {
+    align-items: stretch;
+    background: var(--vsc-terminal-header-bg);
+    border-bottom: 1px solid #2b2b2b;
+    color: var(--vsc-terminal-tab-inactive);
+    display: flex;
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    justify-content: space-between;
+    letter-spacing: 0;
+    min-height: 35px;
+    padding: 0 8px 0 10px;
+    text-transform: uppercase;
+  }
+
+  .bottom-panel .terminal-tabs {
+    align-items: stretch;
+    display: flex;
+    gap: 18px;
+    height: 35px;
+    min-width: 0;
+  }
+
+  .bottom-panel .terminal-tab {
+    align-items: center;
+    border-top: 1px solid transparent;
+    color: var(--vsc-terminal-tab-inactive);
+    display: inline-flex;
+    height: 35px;
+    line-height: 35px;
+    position: relative;
+    white-space: nowrap;
+  }
+
+  .bottom-panel .terminal-tab.active {
+    color: var(--vsc-terminal-tab-active);
+  }
+
+  .bottom-panel .terminal-tab.active::after {
+    background: var(--vsc-terminal-focus);
+    bottom: 0;
+    content: "";
+    height: 1px;
+    left: 0;
+    position: absolute;
+    right: 0;
+  }
+
+  .bottom-panel .terminal-toolbar {
+    align-items: center;
+    display: flex;
+    gap: 2px;
+    height: 35px;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+
+  .bottom-panel .terminal-shell {
+    align-items: center;
+    border-radius: 3px;
+    color: var(--vsc-terminal-text);
+    display: inline-flex;
+    font-size: 12px;
+    font-weight: 400;
+    height: 24px;
+    margin-right: 4px;
+    max-width: 150px;
+    overflow: hidden;
+    padding: 0 8px;
+    text-overflow: ellipsis;
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  .bottom-panel .terminal-shell::before {
+    color: var(--vsc-terminal-muted);
+    content: ">";
+    font-family: "Cascadia Mono", Consolas, monospace;
+    margin-right: 6px;
+  }
+
+  .bottom-panel .terminal-shell:hover,
+  .bottom-panel .terminal-action:hover {
+    background: var(--vsc-terminal-hover);
+    color: #ffffff;
+  }
+
+  .bottom-panel .terminal-action {
+    align-items: center;
+    border-radius: 3px;
+    color: var(--vsc-terminal-text);
+    display: inline-flex;
+    font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
+    font-size: 15px;
+    font-weight: 400;
+    height: 24px;
+    justify-content: center;
+    line-height: 1;
+    width: 24px;
+  }
+
+  .bottom-panel .terminal-action.dropdown {
+    font-size: 13px;
+  }
+
+  .bottom-panel .terminal-action.split {
+    font-size: 12px;
+    transform: translateY(-1px);
+  }
+
+  .bottom-panel .terminal-action.close {
+    font-size: 16px;
+  }
+
+  .bottom-panel .terminal-history {
+    background: var(--vsc-terminal-bg);
+    color: var(--vsc-terminal-text);
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    font-variant-ligatures: none;
+    line-height: 19px;
+    padding: 8px 14px 6px;
+    scrollbar-color: rgb(121 121 121 / 42%) transparent;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .bottom-panel .terminal-line {
+    color: var(--vsc-terminal-text);
+    line-height: 19px;
+    margin: 0;
+    min-height: 19px;
+  }
+
+  .bottom-panel .terminal-line:first-child {
+    color: var(--vsc-terminal-muted);
+  }
+
+  .bottom-panel .terminal-input-row {
+    align-items: center;
+    background: var(--vsc-terminal-bg);
+    border-top: 0;
+    display: grid;
+    gap: 8px;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+    min-height: 30px;
+    padding: 2px 14px 6px;
+  }
+
+  .bottom-panel .terminal-prompt {
+    align-items: center;
+    display: inline-flex;
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    line-height: 20px;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  .bottom-panel .terminal-cwd {
+    color: var(--vsc-terminal-prompt-path);
+    max-width: min(46vw, 560px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .bottom-panel .terminal-symbol {
+    color: var(--vsc-terminal-prompt-symbol);
+    margin-left: 6px;
+  }
+
+  .bottom-panel .terminal-input {
+    background: rgb(255 255 255 / 3%);
+    border: 1px solid transparent;
+    border-radius: 2px;
+    caret-color: #ffffff;
+    color: #ffffff;
+    font-family: "Cascadia Mono", Consolas, "Courier New", monospace;
+    font-size: 13px;
+    height: 22px;
+    line-height: 20px;
+    outline: none;
+    padding: 0 5px;
+  }
+
+  .bottom-panel .terminal-input:hover {
+    background: rgb(255 255 255 / 4%);
+  }
+
+  .bottom-panel .terminal-input:focus,
+  .bottom-panel .terminal-input:focus-visible {
+    background: rgb(255 255 255 / 5%);
+    border-color: rgb(0 122 204 / 70%);
+    box-shadow: 0 0 0 1px rgb(0 122 204 / 18%);
+  }
 `;
 
 export default StyledMonacoEditor;
