@@ -49,7 +49,8 @@ const writeRegistry = (registry: PublishedPagesRegistry): void => {
 export const buildPagesUrl = (
   projectName: string,
   username = DEFAULT_PAGES_USERNAME
-): string => `https://${slugify(username)}${PAGES_HOST_SUFFIX}/${slugify(projectName)}`;
+): string =>
+  `https://${slugify(username)}${PAGES_HOST_SUFFIX}/${slugify(projectName)}`;
 
 export const registerPublishedSite = (
   site: Omit<PublishedPagesSite, "publicUrl" | "publishedAt">
@@ -73,7 +74,9 @@ export const registerPublishedSite = (
   return nextSite;
 };
 
-export const getPublishedSite = (publicUrl: string): PublishedPagesSite | undefined =>
+export const getPublishedSite = (
+  publicUrl: string
+): PublishedPagesSite | undefined =>
   readRegistry()[publicUrl.replace(/\/$/, "")];
 
 export const getPublishedSitesBySourceRoot = (
@@ -118,7 +121,10 @@ export const isPublishedPagesUrl = (rawUrl: string): boolean => {
   try {
     const parsed = new URL(rawUrl);
 
-    return parsed.protocol.startsWith("http") && parsed.hostname.endsWith(PAGES_HOST_SUFFIX);
+    return (
+      parsed.protocol.startsWith("http") &&
+      parsed.hostname.endsWith(PAGES_HOST_SUFFIX)
+    );
   } catch {
     return false;
   }
@@ -142,14 +148,21 @@ export const resolvePublishedPagesUrl = (
       return undefined;
     }
 
-    const site = getPublishedSite(buildPagesUrl(projectName, parsed.hostname.replace(PAGES_HOST_SUFFIX, "")));
+    const site = getPublishedSite(
+      buildPagesUrl(projectName, parsed.hostname.replace(PAGES_HOST_SUFFIX, ""))
+    );
 
     if (!site) return undefined;
 
-    const publicPath = `/${projectName}/${restSegments.join("/")}`.replace(/\/+/g, "/");
+    const publicPath = `/${projectName}/${restSegments.join("/")}`.replace(
+      /\/+/g,
+      "/"
+    );
     const relativePath = restSegments.join("/");
     const localPath = normalizePath(
-      relativePath ? `${site.snapshotRoot}/${relativePath}` : `${site.snapshotRoot}/index.html`
+      relativePath
+        ? `${site.snapshotRoot}/${relativePath}`
+        : `${site.snapshotRoot}/index.html`
     );
 
     return {

@@ -4,7 +4,9 @@ import { FOLDER_ICON, TASKBAR_HEIGHT } from "utils/constants";
 
 const directory: Processes = {
   Activities: {
-    Component: dynamic(() => import("components/apps/Activities/ActivitiesApp")),
+    Component: dynamic(
+      () => import("components/apps/Activities/ActivitiesApp")
+    ),
     backgroundColor: "#111",
     defaultSize: {
       height: 620,

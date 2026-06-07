@@ -380,9 +380,8 @@ const useFileSystemContextState = (): FileSystemContextState => {
         throw new Error("Invalid HTTPRequest FS object.");
       }
 
-      const BrowserFSModule = (await import(
-        "public/System/BrowserFS/browserfs.min.js"
-      )) as any;
+      const BrowserFSModule =
+        (await import("public/System/BrowserFS/browserfs.min.js")) as any;
 
       const HTTPRequest = BrowserFSModule?.FileSystem?.HTTPRequest;
 
@@ -544,9 +543,8 @@ const useFileSystemContextState = (): FileSystemContextState => {
 
       if (hasNoHandle) return;
 
-      const { removeFileSystemHandle } = await import(
-        "contexts/fileSystem/functions"
-      );
+      const { removeFileSystemHandle } =
+        await import("contexts/fileSystem/functions");
 
       removeFileSystemHandle(directory);
     },

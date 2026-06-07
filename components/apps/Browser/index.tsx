@@ -50,7 +50,10 @@ import {
   haltEvent,
   label,
 } from "utils/functions";
-import { isPublishedPagesUrl, resolvePublishedPagesUrl } from "utils/pagesRuntime";
+import {
+  isPublishedPagesUrl,
+  resolvePublishedPagesUrl,
+} from "utils/pagesRuntime";
 import {
   getInfoWithExtension,
   getModifiedTime,
@@ -168,8 +171,10 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
 
       const linkHrefRegex =
         /<link\b[^>]*\brel\s*=\s*["'][^"']*stylesheet[^"']*["'][^>]*\bhref\s*=\s*["']([^"']+)["'][^>]*>/gi;
-      const scriptSrcRegex = /<script\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)><\/script>/gi;
-      const imageSrcRegex = /<img\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)>/gi;
+      const scriptSrcRegex =
+        /<script\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)><\/script>/gi;
+      const imageSrcRegex =
+        /<img\b([^>]*?)\bsrc\s*=\s*["']([^"']+)["']([^>]*)>/gi;
 
       const linkMatches = [...previewHtml.matchAll(linkHrefRegex)];
 
@@ -224,7 +229,10 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
 
         try {
           const imageBuffer = await readFile(localImagePath);
-          const imageUrl = bufferToUrl(imageBuffer, getMimeType(localImagePath));
+          const imageUrl = bufferToUrl(
+            imageBuffer,
+            getMimeType(localImagePath)
+          );
 
           dependencies.add(localImagePath);
           previewHtml = previewHtml.replace(
@@ -275,16 +283,15 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
 
         setLoading(true);
         if (isHtml) {
-          const { dependencies, html } = await buildLocalHtmlPreview(previewPath);
+          const { dependencies, html } =
+            await buildLocalHtmlPreview(previewPath);
 
           localPreviewDependenciesRef.current = dependencies;
           localPreviewHtmlPathRef.current = previewPath;
           localPreviewPublicUrlRef.current = publishedResolution
-            ? (
-              addressInput.endsWith(".html")
-                ? addressInput
-                : `${addressInput.replace(/\/$/, "")}/`
-            )
+            ? addressInput.endsWith(".html")
+              ? addressInput
+              : `${addressInput.replace(/\/$/, "")}/`
             : addressInput;
           setSrcDoc(html);
           prependFileToTitle(
@@ -486,12 +493,12 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
                 directory === "/"
                   ? dirStats
                   : [
-                    {
-                      href: resolve(directory, ".."),
-                      icon: "back",
-                    },
-                    ...dirStats,
-                  ]
+                      {
+                        href: resolve(directory, ".."),
+                        icon: "back",
+                      },
+                      ...dirStats,
+                    ]
               );
 
               newTitle = `Index of ${directory}`;
@@ -521,8 +528,9 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
               setIcon(id, "/System/Icons/Favicons/ipfs.webp");
             } else {
               const favicon = new Image();
-              const faviconUrl = `${new URL(addressUrl).origin
-                }${FAVICON_BASE_PATH}`;
+              const faviconUrl = `${
+                new URL(addressUrl).origin
+              }${FAVICON_BASE_PATH}`;
 
               favicon.addEventListener(
                 "error",
@@ -595,23 +603,25 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
 
     const createRefreshPreview =
       (watcherFolder: string) =>
-        async (newFile?: string, oldFile?: string): Promise<void> => {
-          const activePreviewPath = localPreviewHtmlPathRef.current;
-          const activeWatchedPaths = localPreviewDependenciesRef.current;
+      async (newFile?: string, oldFile?: string): Promise<void> => {
+        const activePreviewPath = localPreviewHtmlPathRef.current;
+        const activeWatchedPaths = localPreviewDependenciesRef.current;
 
-          if (!activePreviewPath || activeWatchedPaths.size === 0) return;
+        if (!activePreviewPath || activeWatchedPaths.size === 0) return;
 
-          const changedPaths = [newFile, oldFile]
-            .filter(Boolean)
-            .map((entryName) => join(watcherFolder, entryName as string));
-          const shouldRefresh =
-            changedPaths.length === 0 ||
-            changedPaths.some((changedPath) => activeWatchedPaths.has(changedPath));
+        const changedPaths = [newFile, oldFile]
+          .filter(Boolean)
+          .map((entryName) => join(watcherFolder, entryName as string));
+        const shouldRefresh =
+          changedPaths.length === 0 ||
+          changedPaths.some((changedPath) =>
+            activeWatchedPaths.has(changedPath)
+          );
 
-          if (!shouldRefresh) return;
+        if (!shouldRefresh) return;
 
-          await setUrl(activePreviewPath);
-        };
+        await setUrl(activePreviewPath);
+      };
 
     watcherFolders.forEach((watcherFolder) => {
       const refreshPreview = createRefreshPreview(watcherFolder);
@@ -700,7 +710,9 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
                 .forEach((anchor) => {
                   anchor.addEventListener("click", (event) => {
                     const href =
-                      (event.currentTarget as HTMLAnchorElement).getAttribute("href") || "";
+                      (event.currentTarget as HTMLAnchorElement).getAttribute(
+                        "href"
+                      ) || "";
 
                     if (
                       !href ||
@@ -720,7 +732,10 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
                     }
 
                     void goToLink(
-                      resolve(dirname(previewHtmlPath), href).replace(/\\/g, "/")
+                      resolve(dirname(previewHtmlPath), href).replace(
+                        /\\/g,
+                        "/"
+                      )
                     );
                   });
                 });

@@ -5,6 +5,7 @@ const TASKBAR_Z_INDEX = 100000;
 
 const StyledTaskbar = styled.nav`
   background-color: ${({ theme }) => theme.colors.taskbar.background};
+  border-top: ${({ theme }) => `1px solid ${theme.effects.border.subtle}`};
   bottom: 0;
   contain: size layout;
   height: ${TASKBAR_HEIGHT}px;
@@ -19,9 +20,10 @@ const StyledTaskbar = styled.nav`
     content: "";
     display: block;
     height: 100%;
-    position: relative;
+    inset: 0;
+    position: absolute;
     width: 100%;
-    z-index: -${TASKBAR_Z_INDEX};
+    z-index: -1;
   }
 `;
 

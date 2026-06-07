@@ -39,10 +39,12 @@ const StyledMonacoEditor = styled.div`
         "panel-splitter"
         "terminal"
         "statusbar";
-      grid-template-rows: minmax(0, 1fr) var(--panel-splitter-height) var(
+      grid-template-rows:
+        minmax(0, 1fr) var(--panel-splitter-height) var(
           --vsc-panel-height,
           220px
-        ) var(--status-bar-height);
+        )
+        var(--status-bar-height);
     }
   }
 
@@ -67,9 +69,11 @@ const StyledMonacoEditor = styled.div`
     grid-template-areas:
       "menu menu menu menu"
       "activity sidebar splitter editor";
-    grid-template-columns: var(--activity-bar-width) var(--side-panel-width) var(
+    grid-template-columns:
+      var(--activity-bar-width) var(--side-panel-width) var(
         --sidebar-splitter-width
-      ) minmax(0, 1fr);
+      )
+      minmax(0, 1fr);
     grid-template-rows: var(--menu-bar-height) 1fr;
     height: 100%;
     min-height: 0;

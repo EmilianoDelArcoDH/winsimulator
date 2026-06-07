@@ -54,118 +54,150 @@ const NON_TRANSLATABLE_KEYS = new Set([
   "version",
 ]);
 
-const EXACT_TEXT: Record<
-  SessionLanguage,
-  Record<string, string>
-> = {
+const EXACT_TEXT: Record<SessionLanguage, Record<string, string>> = {
   en: {
-    "Actividad": "Activity",
+    Actividad: "Activity",
     "Copias/caos": "Copies/chaos",
     "Control de versiones": "Version control",
-    "Consigna": "Instructions",
-    "Distinguir control de versiones de una estrategia de copias desordenadas.": "Distinguish version control from a messy copy-based strategy.",
+    Consigna: "Instructions",
+    "Distinguir control de versiones de una estrategia de copias desordenadas.":
+      "Distinguish version control from a messy copy-based strategy.",
     "Versiones vs copias": "Versions vs copies",
     "No hay actividades cargadas.": "No activities loaded.",
-    "Posición": "Position",
-    "Reintentar": "Retry",
-    "Seleccionar": "Select",
-    "Validar": "Validate",
-    "Actualiza": "Update",
-    "Agrega": "Add",
-    "arreglo": "fix",
-    "cambio": "change",
-    "cambios": "changes",
-    "combinar": "merge",
-    "computadora": "computer",
-    "conflicto": "conflict",
-    "Corrige": "Fix",
-    "decidir": "decide",
-    "decisión": "decision",
-    "Elimina": "Delete",
-    "historia": "history",
-    "Mejora": "Improve",
+    Posición: "Position",
+    Reintentar: "Retry",
+    Seleccionar: "Select",
+    Validar: "Validate",
+    Actualiza: "Update",
+    Agrega: "Add",
+    arreglo: "fix",
+    cambio: "change",
+    cambios: "changes",
+    combinar: "merge",
+    computadora: "computer",
+    conflicto: "conflict",
+    Corrige: "Fix",
+    decidir: "decide",
+    decisión: "decision",
+    Elimina: "Delete",
+    historia: "history",
+    Mejora: "Improve",
     "mi máquina": "my machine",
-    "nube": "cloud",
-    "plataforma": "platform",
-    "Refactoriza": "Refactor",
-    "remoto": "remote",
-    "resolver": "resolve",
-    "version": "version",
-    "Puedo ver el historial de cambios y volver a una versión anterior.": "I can view the change history and go back to an earlier version.",
-    "Me paso archivos por WhatsApp con nombres tipo final_final2.": "I send files over WhatsApp with names like final_final2.",
-    "Veo quién hizo cada cambio y cuándo.": "I can see who made each change and when.",
-    "Guardo una carpeta por día y espero no equivocarme.": "I save one folder per day and hope I do not make a mistake.",
-    "Puedo comparar cambios entre versiones (diff).": "I can compare changes between versions (diff).",
-    "No sé cuál es el último archivo correcto.": "I do not know which file is the latest correct one.",
-    "Trabajo en paralelo sin pisar el trabajo de otros.": "I work in parallel without overwriting other people's work.",
-    "Si algo se rompe, no puedo volver atrás con seguridad.": "If something breaks, I cannot safely go back.",
-    "Puedo crear versiones con mensajes (commits) y entender el contexto.": "I can create versions with messages (commits) and understand the context.",
-    "Cada integrante guarda su copia y después se juntan como se pueda.": "Each member saves their own copy and later everything is merged however possible.",
-    "Explicá 2 casos (mínimo 20 caracteres cada uno).": "Explain 2 cases (at least 20 characters each).",
+    nube: "cloud",
+    plataforma: "platform",
+    Refactoriza: "Refactor",
+    remoto: "remote",
+    resolver: "resolve",
+    version: "version",
+    "Puedo ver el historial de cambios y volver a una versión anterior.":
+      "I can view the change history and go back to an earlier version.",
+    "Me paso archivos por WhatsApp con nombres tipo final_final2.":
+      "I send files over WhatsApp with names like final_final2.",
+    "Veo quién hizo cada cambio y cuándo.":
+      "I can see who made each change and when.",
+    "Guardo una carpeta por día y espero no equivocarme.":
+      "I save one folder per day and hope I do not make a mistake.",
+    "Puedo comparar cambios entre versiones (diff).":
+      "I can compare changes between versions (diff).",
+    "No sé cuál es el último archivo correcto.":
+      "I do not know which file is the latest correct one.",
+    "Trabajo en paralelo sin pisar el trabajo de otros.":
+      "I work in parallel without overwriting other people's work.",
+    "Si algo se rompe, no puedo volver atrás con seguridad.":
+      "If something breaks, I cannot safely go back.",
+    "Puedo crear versiones con mensajes (commits) y entender el contexto.":
+      "I can create versions with messages (commits) and understand the context.",
+    "Cada integrante guarda su copia y después se juntan como se pueda.":
+      "Each member saves their own copy and later everything is merged however possible.",
+    "Explicá 2 casos (mínimo 20 caracteres cada uno).":
+      "Explain 2 cases (at least 20 characters each).",
     "Clasificación correcta.": "Correct classification.",
-    "Revisá: algunas tarjetas quedaron en la columna equivocada.": "Review: some cards are in the wrong column.",
+    "Revisá: algunas tarjetas quedaron en la columna equivocada.":
+      "Review: some cards are in the wrong column.",
     "Justificaciones completas.": "Complete justifications.",
-    "Escribí 2 justificaciones, con al menos 20 caracteres cada una.": "Write 2 justifications, with at least 20 characters each.",
-    "Tus justificaciones reflejan el concepto.": "Your justifications reflect the concept.",
-    "Sumá idea de historia/versiones/cambios en tu justificación.": "Add an idea about history/versions/changes to your justification.",
+    "Escribí 2 justificaciones, con al menos 20 caracteres cada una.":
+      "Write 2 justifications, with at least 20 characters each.",
+    "Tus justificaciones reflejan el concepto.":
+      "Your justifications reflect the concept.",
+    "Sumá idea de historia/versiones/cambios en tu justificación.":
+      "Add an idea about history/versions/changes to your justification.",
   },
   es: {},
   pt: {
-    "Actividad": "Atividade",
+    Actividad: "Atividade",
     "Copias/caos": "Cópias/caos",
     "Control de versiones": "Controle de versões",
-    "Consigna": "Instruções",
-    "Distinguir control de versiones de una estrategia de copias desordenadas.": "Distinguir controle de versões de uma estratégia desorganizada de cópias.",
+    Consigna: "Instruções",
+    "Distinguir control de versiones de una estrategia de copias desordenadas.":
+      "Distinguir controle de versões de uma estratégia desorganizada de cópias.",
     "Versiones vs copias": "Versões vs cópias",
     "No hay actividades cargadas.": "Nenhuma atividade carregada.",
-    "Posición": "Posicao",
-    "Reintentar": "Tentar novamente",
-    "Seleccionar": "Selecionar",
-    "Validar": "Validar",
-    "Actualiza": "Atualiza",
-    "Agrega": "Adiciona",
-    "arreglo": "correção",
-    "cambio": "alteração",
-    "cambios": "alterações",
-    "combinar": "combinar",
-    "computadora": "computador",
-    "conflicto": "conflito",
-    "Corrige": "Corrige",
-    "decidir": "decidir",
-    "decisión": "decisão",
-    "Elimina": "Remove",
-    "historia": "histórico",
-    "Mejora": "Melhora",
+    Posición: "Posicao",
+    Reintentar: "Tentar novamente",
+    Seleccionar: "Selecionar",
+    Validar: "Validar",
+    Actualiza: "Atualiza",
+    Agrega: "Adiciona",
+    arreglo: "correção",
+    cambio: "alteração",
+    cambios: "alterações",
+    combinar: "combinar",
+    computadora: "computador",
+    conflicto: "conflito",
+    Corrige: "Corrige",
+    decidir: "decidir",
+    decisión: "decisão",
+    Elimina: "Remove",
+    historia: "histórico",
+    Mejora: "Melhora",
     "mi máquina": "minha máquina",
-    "nube": "nuvem",
-    "plataforma": "plataforma",
-    "Refactoriza": "Refatora",
-    "remoto": "remoto",
-    "resolver": "resolver",
-    "version": "versão",
-    "Puedo ver el historial de cambios y volver a una versión anterior.": "Posso ver o histórico de alterações e voltar para uma versão anterior.",
-    "Me paso archivos por WhatsApp con nombres tipo final_final2.": "Envio arquivos pelo WhatsApp com nomes como final_final2.",
-    "Veo quién hizo cada cambio y cuándo.": "Vejo quem fez cada alteração e quando.",
-    "Guardo una carpeta por día y espero no equivocarme.": "Salvo uma pasta por dia e espero não errar.",
-    "Puedo comparar cambios entre versiones (diff).": "Posso comparar alterações entre versões (diff).",
-    "No sé cuál es el último archivo correcto.": "Não sei qual é o último arquivo correto.",
-    "Trabajo en paralelo sin pisar el trabajo de otros.": "Trabalho em paralelo sem sobrescrever o trabalho de outras pessoas.",
-    "Si algo se rompe, no puedo volver atrás con seguridad.": "Se algo quebra, não consigo voltar com segurança.",
-    "Puedo crear versiones con mensajes (commits) y entender el contexto.": "Posso criar versões com mensagens (commits) e entender o contexto.",
-    "Cada integrante guarda su copia y después se juntan como se pueda.": "Cada integrante salva sua cópia e depois tudo é juntado como der.",
-    "Explicá 2 casos (mínimo 20 caracteres cada uno).": "Explique 2 casos (mínimo de 20 caracteres cada um).",
+    nube: "nuvem",
+    plataforma: "plataforma",
+    Refactoriza: "Refatora",
+    remoto: "remoto",
+    resolver: "resolver",
+    version: "versão",
+    "Puedo ver el historial de cambios y volver a una versión anterior.":
+      "Posso ver o histórico de alterações e voltar para uma versão anterior.",
+    "Me paso archivos por WhatsApp con nombres tipo final_final2.":
+      "Envio arquivos pelo WhatsApp com nomes como final_final2.",
+    "Veo quién hizo cada cambio y cuándo.":
+      "Vejo quem fez cada alteração e quando.",
+    "Guardo una carpeta por día y espero no equivocarme.":
+      "Salvo uma pasta por dia e espero não errar.",
+    "Puedo comparar cambios entre versiones (diff).":
+      "Posso comparar alterações entre versões (diff).",
+    "No sé cuál es el último archivo correcto.":
+      "Não sei qual é o último arquivo correto.",
+    "Trabajo en paralelo sin pisar el trabajo de otros.":
+      "Trabalho em paralelo sem sobrescrever o trabalho de outras pessoas.",
+    "Si algo se rompe, no puedo volver atrás con seguridad.":
+      "Se algo quebra, não consigo voltar com segurança.",
+    "Puedo crear versiones con mensajes (commits) y entender el contexto.":
+      "Posso criar versões com mensagens (commits) e entender o contexto.",
+    "Cada integrante guarda su copia y después se juntan como se pueda.":
+      "Cada integrante salva sua cópia e depois tudo é juntado como der.",
+    "Explicá 2 casos (mínimo 20 caracteres cada uno).":
+      "Explique 2 casos (mínimo de 20 caracteres cada um).",
     "Clasificación correcta.": "Classificação correta.",
-    "Revisá: algunas tarjetas quedaron en la columna equivocada.": "Revise: alguns cartões ficaram na coluna errada.",
+    "Revisá: algunas tarjetas quedaron en la columna equivocada.":
+      "Revise: alguns cartões ficaram na coluna errada.",
     "Justificaciones completas.": "Justificativas completas.",
-    "Escribí 2 justificaciones, con al menos 20 caracteres cada una.": "Escreva 2 justificativas, com pelo menos 20 caracteres cada uma.",
-    "Tus justificaciones reflejan el concepto.": "Suas justificativas refletem o conceito.",
-    "Sumá idea de historia/versiones/cambios en tu justificación.": "Inclua uma ideia de histórico/versões/alterações na sua justificativa.",
+    "Escribí 2 justificaciones, con al menos 20 caracteres cada una.":
+      "Escreva 2 justificativas, com pelo menos 20 caracteres cada uma.",
+    "Tus justificaciones reflejan el concepto.":
+      "Suas justificativas refletem o conceito.",
+    "Sumá idea de historia/versiones/cambios en tu justificación.":
+      "Inclua uma ideia de histórico/versões/alterações na sua justificativa.",
   },
 };
 
 const EN_REPLACEMENTS: Replacement[] = [
   ["Configuración inicial de Git", "Initial Git setup"],
-  ["Configurar identidad global de autor para commits.", "Set global author identity for commits."],
+  [
+    "Configurar identidad global de autor para commits.",
+    "Set global author identity for commits.",
+  ],
   [
     "Antes de crear repos, configurá tu identidad global de Git en GitBash.",
     "Before creating repos, configure your global Git identity in GitBash.",
@@ -192,10 +224,16 @@ const EN_REPLACEMENTS: Replacement[] = [
   ["repo", "repo"],
   ["Configuración", "Setup"],
   ["Configuracion", "Setup"],
-  ["Control de versiones y trabajo colaborativo", "Version control and collaborative work"],
+  [
+    "Control de versiones y trabajo colaborativo",
+    "Version control and collaborative work",
+  ],
   ["Crear y guardar cambios", "Create and save changes"],
   ["Revisar historial y versiones", "Review history and versions"],
-  ["Repositorios remotos y trabajo compartido", "Remote repositories and shared work"],
+  [
+    "Repositorios remotos y trabajo compartido",
+    "Remote repositories and shared work",
+  ],
   ["Lab: solo clone", "Lab: clone only"],
   ["Lab: solo pull", "Lab: pull only"],
   ["Lab: clone + pull", "Lab: clone + pull"],
@@ -271,7 +309,10 @@ const EN_REPLACEMENTS: Replacement[] = [
 
 const PT_REPLACEMENTS: Replacement[] = [
   ["Configuración inicial de Git", "Configuracao inicial do Git"],
-  ["Configurar identidad global de autor para commits.", "Configurar identidade global de autor para commits."],
+  [
+    "Configurar identidad global de autor para commits.",
+    "Configurar identidade global de autor para commits.",
+  ],
   [
     "Antes de crear repos, configurá tu identidad global de Git en GitBash.",
     "Antes de criar repositorios, configure sua identidade global do Git no GitBash.",
@@ -294,10 +335,16 @@ const PT_REPLACEMENTS: Replacement[] = [
   ["Inicializar", "Inicializar"],
   ["inicializar", "inicializar"],
   ["Configuración", "Configuracao"],
-  ["Control de versiones y trabajo colaborativo", "Controle de versoes e trabalho colaborativo"],
+  [
+    "Control de versiones y trabajo colaborativo",
+    "Controle de versoes e trabalho colaborativo",
+  ],
   ["Crear y guardar cambios", "Criar e salvar alteracoes"],
   ["Revisar historial y versiones", "Revisar historico e versoes"],
-  ["Repositorios remotos y trabajo compartido", "Repositorios remotos e trabalho compartilhado"],
+  [
+    "Repositorios remotos y trabajo compartido",
+    "Repositorios remotos e trabalho compartilhado",
+  ],
   ["Lab: solo clone", "Lab: somente clone"],
   ["Lab: solo pull", "Lab: somente pull"],
   ["Configuracion", "Configuracao"],
@@ -349,17 +396,28 @@ const PT_REPLACEMENTS: Replacement[] = [
 const escapeRegExp = (value: string): string =>
   value.replace(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 
-const applyReplacements = (value: string, replacements: Replacement[]): string =>
+const applyReplacements = (
+  value: string,
+  replacements: Replacement[]
+): string =>
   replacements.reduce(
     (text, [from, to]) => text.replace(new RegExp(escapeRegExp(from), "g"), to),
     value
   );
 
-const shouldSkipString = (value: string, key?: string, inRules?: boolean): boolean => {
+const shouldSkipString = (
+  value: string,
+  key?: string,
+  inRules?: boolean
+): boolean => {
   if (!value) return true;
   if (inRules) return true;
   if (key && NON_TRANSLATABLE_KEYS.has(key)) return true;
-  if (value.startsWith("/") || value.startsWith("http://") || value.startsWith("https://")) {
+  if (
+    value.startsWith("/") ||
+    value.startsWith("http://") ||
+    value.startsWith("https://")
+  ) {
     return true;
   }
   if (/^git\s+/i.test(value.trim())) {
@@ -383,7 +441,10 @@ export const translateActivityText = (
 
   if (translated) return translated;
 
-  return applyReplacements(value, language === "pt" ? PT_REPLACEMENTS : EN_REPLACEMENTS);
+  return applyReplacements(
+    value,
+    language === "pt" ? PT_REPLACEMENTS : EN_REPLACEMENTS
+  );
 };
 
 const localizeValue = (
@@ -401,7 +462,9 @@ const localizeValue = (
   }
 
   if (Array.isArray(value)) {
-    return value.map((entry) => localizeValue(language, entry, currentKey, inRules));
+    return value.map((entry) =>
+      localizeValue(language, entry, currentKey, inRules)
+    );
   }
 
   if (value && typeof value === "object") {

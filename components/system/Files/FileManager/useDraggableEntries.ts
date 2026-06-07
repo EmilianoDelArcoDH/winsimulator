@@ -74,9 +74,8 @@ const useDraggableEntries = (
         if (!htmlToImage) return;
 
         try {
-          const { UNKNOWN_ICON } = await import(
-            "components/system/Files/FileManager/icons"
-          );
+          const { UNKNOWN_ICON } =
+            await import("components/system/Files/FileManager/icons");
           const elementsHavePositions = focusedElements.every(
             ({ style }) => style?.gridRowStart && style?.gridColumnStart
           );

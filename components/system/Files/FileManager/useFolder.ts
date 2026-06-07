@@ -453,9 +453,8 @@ const useFolder = (
       const filePaths = await Promise.all(
         allPaths.map((path) => getFile(path))
       );
-      const { addEntryToZippable, createZippable } = await import(
-        "utils/zipFunctions"
-      );
+      const { addEntryToZippable, createZippable } =
+        await import("utils/zipFunctions");
 
       return filePaths
         .filter(Boolean)

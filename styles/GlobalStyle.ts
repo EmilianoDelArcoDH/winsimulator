@@ -22,6 +22,18 @@ const GlobalStyle = styled.createGlobalStyle`
     font-family: ${({ theme }) => theme.formats.systemFont};
   }
 
+  :root {
+    color-scheme: dark;
+
+    --win11-accent: ${({ theme }) => theme.colors.accent};
+    --win11-accent-hover: ${({ theme }) => theme.colors.accentHover};
+    --win11-accent-pressed: ${({ theme }) => theme.colors.accentPressed};
+    --win11-control-radius: ${({ theme }) => theme.effects.radius.control};
+    --win11-menu-radius: ${({ theme }) => theme.effects.radius.menu};
+    --win11-panel-radius: ${({ theme }) => theme.effects.radius.panel};
+    --win11-window-radius: ${({ theme }) => theme.effects.radius.window};
+  }
+
   body {
     height: 100%;
     overflow: hidden;
@@ -71,6 +83,21 @@ const GlobalStyle = styled.createGlobalStyle`
     user-select: text;
   }
 
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid ${({ theme }) => theme.colors.highlight};
+    outline-offset: -2px;
+  }
+
   picture > img {
     display: block;
   }
@@ -78,6 +105,17 @@ const GlobalStyle = styled.createGlobalStyle`
   ol,
   ul {
     list-style: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 1ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 1ms !important;
+    }
   }
 `;
 

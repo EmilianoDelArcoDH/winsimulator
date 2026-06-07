@@ -1,5 +1,13 @@
 import { basename, dirname, extname } from "path";
-import { memo, useCallback, useEffect, useMemo, useRef, useState, type ReactElement } from "react";
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactElement,
+} from "react";
 import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
 import DescriptionRoundedIcon from "@mui/icons-material/DescriptionRounded";
 import CodeRoundedIcon from "@mui/icons-material/CodeRounded";
@@ -32,10 +40,7 @@ import {
   registerPublishedSite,
   updatePublishedSite,
 } from "utils/pagesRuntime";
-import {
-  DEFAULT_TEXT_FILE_SAVE_PATH,
-  DESKTOP_PATH,
-} from "utils/constants";
+import { DEFAULT_TEXT_FILE_SAVE_PATH, DESKTOP_PATH } from "utils/constants";
 
 type ExplorerEntry = {
   isDirectory: boolean;
@@ -311,7 +316,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [folderContents, setFolderContents] = useState<
     Record<string, ExplorerEntry[]>
   >({});
-  const [expandedFolders, setExpandedFolders] = useState<string[]>([explorerRoot]);
+  const [expandedFolders, setExpandedFolders] = useState<string[]>([
+    explorerRoot,
+  ]);
   const [openFiles, setOpenFiles] = useState<string[]>([]);
   const [panelOpen, setPanelOpen] = useState(true);
   const [isTerminalPanelOpen, setIsTerminalPanelOpen] = useState(false);
@@ -323,7 +330,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   );
   const [contextMenu, setContextMenu] = useState<ContextMenuState>();
   const [creatingEntry, setCreatingEntry] = useState<"file" | "folder">();
-  const [creatingParentPath, setCreatingParentPath] = useState<string>(explorerRoot);
+  const [creatingParentPath, setCreatingParentPath] =
+    useState<string>(explorerRoot);
   const [newEntryName, setNewEntryName] = useState("");
   const [newEntryError, setNewEntryError] = useState("");
   const [renamingId, setRenamingId] = useState<string>();
@@ -335,13 +343,14 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [saveAsError, setSaveAsError] = useState("");
   const [terminalHistory, setTerminalHistory] = useState<
     { id: string; value: string }[]
-  >([
-    { id: "terminal-init", value: "VS Code Terminal initialized." },
-  ]);
+  >([{ id: "terminal-init", value: "VS Code Terminal initialized." }]);
   const [terminalInput, setTerminalInput] = useState("");
   const [terminalCwd, setTerminalCwd] = useState<string>(explorerRoot);
-  const [pendingEditorFocusPath, setPendingEditorFocusPath] = useState<string>("");
-  const [pendingCursorOffset, setPendingCursorOffset] = useState<number | undefined>();
+  const [pendingEditorFocusPath, setPendingEditorFocusPath] =
+    useState<string>("");
+  const [pendingCursorOffset, setPendingCursorOffset] = useState<
+    number | undefined
+  >();
   const [draggedPath, setDraggedPath] = useState("");
   const [dragOverPath, setDragOverPath] = useState("");
   const [activityValidationState, setActivityValidationState] =
@@ -359,11 +368,15 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const hasActiveFile = Boolean(activeFileUrl);
   const currentActivityId = getCurrentActivityId();
   const currentActivity = getActivityById(currentActivityId);
-  const activityWorkspace = (currentActivity?.data?.workspace as {
-    editablePaths?: string[];
-    rootPath?: string;
-  } | undefined);
-  const activityWorkspaceRoot = normalizeFsPath(activityWorkspace?.rootPath || "");
+  const activityWorkspace = currentActivity?.data?.workspace as
+    | {
+        editablePaths?: string[];
+        rootPath?: string;
+      }
+    | undefined;
+  const activityWorkspaceRoot = normalizeFsPath(
+    activityWorkspace?.rootPath || ""
+  );
   const activityEditablePaths = useMemo(
     () =>
       (activityWorkspace?.editablePaths || [])
@@ -382,9 +395,11 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     (path: string): boolean => {
       const normalizedPath = normalizeFsPath(path);
 
-      return Boolean(activityWorkspaceRoot) &&
+      return (
+        Boolean(activityWorkspaceRoot) &&
         (normalizedPath === activityWorkspaceRoot ||
-          normalizedPath.startsWith(`${activityWorkspaceRoot}/`));
+          normalizedPath.startsWith(`${activityWorkspaceRoot}/`))
+      );
     },
     [activityWorkspaceRoot, normalizeFsPath]
   );
@@ -445,7 +460,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const closeFile = useCallback(
     (filePath: string): void => {
       setOpenFiles((currentFiles) => {
-        const nextFiles = currentFiles.filter((openFilePath) => openFilePath !== filePath);
+        const nextFiles = currentFiles.filter(
+          (openFilePath) => openFilePath !== filePath
+        );
         const nextActiveFile = nextFiles[nextFiles.length - 1] || "";
 
         if (filePath === activeFileUrl) {
@@ -500,7 +517,11 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     [lstat, normalizeFsPath, readdir, sortEntries]
   );
   const getSiblingNameError = useCallback(
-    async (value: string, parentPath: string, ignorePath?: string): Promise<string> => {
+    async (
+      value: string,
+      parentPath: string,
+      ignorePath?: string
+    ): Promise<string> => {
       const trimmedName = value.trim();
 
       if (!trimmedName) {
@@ -557,8 +578,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
       ...expandedFolders,
     ]);
 
-    await Promise.all([...foldersToRefresh].map((folderPath) => loadFolder(folderPath)));
-
+    await Promise.all(
+      [...foldersToRefresh].map((folderPath) => loadFolder(folderPath))
+    );
   }, [expandedFolders, explorerRoot, loadFolder]);
 
   useEffect(() => {
@@ -592,7 +614,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
         ? currentFiles
         : [...currentFiles, normalizedUrl]
     );
-    setSelectedPath((currentSelectedPath) => currentSelectedPath || normalizedUrl);
+    setSelectedPath(
+      (currentSelectedPath) => currentSelectedPath || normalizedUrl
+    );
   }, [activeFileUrl, normalizeFsPath]);
 
   useEffect(() => {
@@ -637,9 +661,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
       }
 
       if (
-        !target.closest('.menu-bar') &&
-        !target.closest('.menu-dropdown') &&
-        !target.closest('.context-menu')
+        !target.closest(".menu-bar") &&
+        !target.closest(".menu-dropdown") &&
+        !target.closest(".context-menu")
       ) {
         setContextMenu(undefined);
         setActiveMenu("");
@@ -697,7 +721,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
       );
 
       const onMouseMove = (moveEvent: MouseEvent): void => {
-        const desiredWidth = moveEvent.clientX - workbenchRect.left - activityBarWidth;
+        const desiredWidth =
+          moveEvent.clientX - workbenchRect.left - activityBarWidth;
 
         setSidePanelWidth(Math.max(minWidth, Math.min(maxWidth, desiredWidth)));
       };
@@ -814,7 +839,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
       currentDepth: number,
       folderEntries: ExplorerEntry[]
     ): void => {
-      const shouldInsertNewEntry = creatingEntry && creatingParentPath === folderPath;
+      const shouldInsertNewEntry =
+        creatingEntry && creatingParentPath === folderPath;
 
       if (shouldInsertNewEntry) {
         flattenedEntries.push({
@@ -1010,14 +1036,17 @@ function example() {
     [expandedFolders, loadFolder]
   );
 
-  const startRename = useCallback((path: string): void => {
-    if (!isEditableActivityPath(path)) return;
+  const startRename = useCallback(
+    (path: string): void => {
+      if (!isEditableActivityPath(path)) return;
 
-    setContextMenu(undefined);
-    setRenamingId(path);
-    setDraftName(basename(path));
-    setRenameError("");
-  }, [isEditableActivityPath]);
+      setContextMenu(undefined);
+      setRenamingId(path);
+      setDraftName(basename(path));
+      setRenameError("");
+    },
+    [isEditableActivityPath]
+  );
 
   useEffect(() => {
     if (!renamingId) return;
@@ -1039,7 +1068,9 @@ function example() {
       const list = folderEntriesRef.current;
       if (!list) return;
 
-      const el = list.querySelector<HTMLElement>(`[data-path="${selectedPath}"]`);
+      const el = list.querySelector<HTMLElement>(
+        `[data-path="${selectedPath}"]`
+      );
       el?.scrollIntoView({ block: "nearest" });
     });
   }, [selectedPath]);
@@ -1063,7 +1094,10 @@ function example() {
         newEntryName,
       });
 
-      const nameError = await getSiblingNameError(newEntryName, creatingParentPath);
+      const nameError = await getSiblingNameError(
+        newEntryName,
+        creatingParentPath
+      );
 
       if (nameError) {
         setNewEntryError(nameError);
@@ -1091,9 +1125,13 @@ function example() {
           setPendingEditorFocusPath(createdPath);
 
           const createdContent =
-            (await readFile(createdPath).catch(() => Buffer.from("")))?.toString() || "";
+            (
+              await readFile(createdPath).catch(() => Buffer.from(""))
+            )?.toString() || "";
 
-          setPendingCursorOffset(getTemplateCursorOffset(createdPath, createdContent));
+          setPendingCursorOffset(
+            getTemplateCursorOffset(createdPath, createdContent)
+          );
         }
       }
     } finally {
@@ -1286,7 +1324,8 @@ function example() {
   const moveEntry = useCallback(
     async (sourcePath: string, targetDirectoryPath: string): Promise<void> => {
       const normalizedSourcePath = normalizeFsPath(sourcePath);
-      const normalizedTargetDirectoryPath = normalizeFsPath(targetDirectoryPath);
+      const normalizedTargetDirectoryPath =
+        normalizeFsPath(targetDirectoryPath);
 
       if (!normalizedSourcePath || !normalizedTargetDirectoryPath) return;
       if (
@@ -1568,7 +1607,9 @@ function example() {
             nextLines.push(`ls: ${args[0] || listingPath}: Not a directory`);
           }
         } catch {
-          nextLines.push(`ls: ${args[0] || listingPath}: No such file or directory`);
+          nextLines.push(
+            `ls: ${args[0] || listingPath}: No such file or directory`
+          );
         }
       } else if (instruction === "cd") {
         const targetPath = args[0]
@@ -1584,7 +1625,9 @@ function example() {
             nextLines.push(`cd: ${args[0]}: Not a directory`);
           }
         } catch {
-          nextLines.push(`cd: ${args[0] || targetPath}: No such file or directory`);
+          nextLines.push(
+            `cd: ${args[0] || targetPath}: No such file or directory`
+          );
         }
       } else if (instruction === "mkdir") {
         if (args[0]) {
@@ -1651,9 +1694,13 @@ function example() {
           const configValue = args.slice(3).join(" ");
 
           if (scope !== "--global") {
-            nextLines.push("Only git config --global is supported in this terminal.");
+            nextLines.push(
+              "Only git config --global is supported in this terminal."
+            );
           } else if (!key || !configValue) {
-            nextLines.push("usage: git config --global user.name|user.email <value>");
+            nextLines.push(
+              "usage: git config --global user.name|user.email <value>"
+            );
           } else if (key !== "user.name" && key !== "user.email") {
             nextLines.push("Supported keys: user.name, user.email");
           } else {
@@ -1669,7 +1716,10 @@ function example() {
                   : { userEmail: configValue }),
               };
 
-              window.localStorage.setItem(GIT_CONFIG_KEY, JSON.stringify(nextConfig));
+              window.localStorage.setItem(
+                GIT_CONFIG_KEY,
+                JSON.stringify(nextConfig)
+              );
               nextLines.push(`Set global ${key} to '${configValue}'`);
             } catch {
               nextLines.push("Failed to save git config in local storage.");
@@ -1717,7 +1767,9 @@ function example() {
         } else {
           const sourceRoot = terminalCwd || explorerRoot;
           const inferredProjectName =
-            args.slice(1).join(" ").trim() || basename(sourceRoot) || "mi-proyecto";
+            args.slice(1).join(" ").trim() ||
+            basename(sourceRoot) ||
+            "mi-proyecto";
           const snapshotRoot = normalizeFsPath(
             `/Users/Public/Pages/${inferredProjectName}-${Date.now()}`
           );
@@ -1726,7 +1778,9 @@ function example() {
             const sourceStats = await lstat(sourceRoot);
 
             if (!sourceStats.isDirectory()) {
-              nextLines.push("pages publish must be run from a project folder.");
+              nextLines.push(
+                "pages publish must be run from a project folder."
+              );
             } else {
               await snapshotDirectory(sourceRoot, snapshotRoot);
 
@@ -1835,7 +1889,9 @@ function example() {
 
       if (menuAction === "open-folder") {
         try {
-          const handles = await (window as WindowWithDirectoryPicker).showDirectoryPicker?.();
+          const handles = await (
+            window as WindowWithDirectoryPicker
+          ).showDirectoryPicker?.();
           if (handles) {
             setProcessUrl(id, "/Users/Documents");
             await loadEntries();
@@ -2016,7 +2072,13 @@ function example() {
       (currentUrlTargetType === "directory" ? currentUrl : activeFileUrl);
 
     setSelectedPath(initialSelection);
-  }, [activeFileUrl, currentUrl, currentUrlTargetType, openFiles, selectedPath]);
+  }, [
+    activeFileUrl,
+    currentUrl,
+    currentUrlTargetType,
+    openFiles,
+    selectedPath,
+  ]);
 
   useEffect(() => {
     if (!currentEditor) return;
@@ -2097,8 +2159,9 @@ function example() {
       >
         <div
           ref={workbenchRef}
-          className={`workbench ${panelOpen ? "panel-open" : "panel-closed"} ${isCompactLayout ? "compact-layout" : ""
-            }`}
+          className={`workbench ${panelOpen ? "panel-open" : "panel-closed"} ${
+            isCompactLayout ? "compact-layout" : ""
+          }`}
           data-tour="monaco-workbench"
           style={{ ["--side-panel-width" as string]: `${sidePanelWidth}px` }}
         >
@@ -2118,13 +2181,95 @@ function example() {
                 </button>
                 {activeMenu === "file" && (
                   <menu className="menu-dropdown">
-                    <li><button disabled={!canCreateEntriesInWorkspace} onClick={(e) => { e.stopPropagation(); runMenuAction("new-file"); }} onMouseDown={(e) => e.preventDefault()} type="button">New File</button></li>
-                    <li><button disabled={!canCreateEntriesInWorkspace} onClick={(e) => { e.stopPropagation(); runMenuAction("new-folder"); }} onMouseDown={(e) => e.preventDefault()} type="button">New Folder</button></li>
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("open-folder"); }} onMouseDown={(e) => e.preventDefault()} type="button">Open Folder</button></li>
-                    <li><button disabled={!isActiveFileEditable} onClick={(e) => { e.stopPropagation(); runMenuAction("save"); }} onMouseDown={(e) => e.preventDefault()} type="button">Save</button></li>
-                    <li><button disabled={!isActiveFileEditable} onClick={(e) => { e.stopPropagation(); runMenuAction("save-as"); }} onMouseDown={(e) => e.preventDefault()} type="button">Save As...</button></li>
-                    <li><button disabled={!canMutateSelectedPath} onClick={(e) => { e.stopPropagation(); runMenuAction("delete"); }} onMouseDown={(e) => e.preventDefault()} type="button">Delete Selected</button></li>
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("refresh"); }} onMouseDown={(e) => e.preventDefault()} type="button">Refresh Explorer</button></li>
+                    <li>
+                      <button
+                        disabled={!canCreateEntriesInWorkspace}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("new-file");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        New File
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        disabled={!canCreateEntriesInWorkspace}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("new-folder");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        New Folder
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("open-folder");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Open Folder
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        disabled={!isActiveFileEditable}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("save");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Save
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        disabled={!isActiveFileEditable}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("save-as");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Save As...
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        disabled={!canMutateSelectedPath}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("delete");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Delete Selected
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("refresh");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Refresh Explorer
+                      </button>
+                    </li>
                   </menu>
                 )}
               </li>
@@ -2142,8 +2287,30 @@ function example() {
                 </button>
                 {activeMenu === "edit" && (
                   <menu className="menu-dropdown">
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("palette"); }} onMouseDown={(e) => e.preventDefault()} type="button">Command Palette</button></li>
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("format"); }} onMouseDown={(e) => e.preventDefault()} type="button">Format Document</button></li>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("palette");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Command Palette
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("format");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Format Document
+                      </button>
+                    </li>
                   </menu>
                 )}
               </li>
@@ -2161,8 +2328,30 @@ function example() {
                 </button>
                 {activeMenu === "view" && (
                   <menu className="menu-dropdown">
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("toggle-sidebar"); }} onMouseDown={(e) => e.preventDefault()} type="button">Toggle Side Bar</button></li>
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("reset-sidebar-width"); }} onMouseDown={(e) => e.preventDefault()} type="button">Reset Sidebar Width</button></li>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("toggle-sidebar");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Toggle Side Bar
+                      </button>
+                    </li>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("reset-sidebar-width");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Reset Sidebar Width
+                      </button>
+                    </li>
                   </menu>
                 )}
               </li>
@@ -2181,7 +2370,18 @@ function example() {
                 </button>
                 {activeMenu === "terminal" && (
                   <menu className="menu-dropdown">
-                    <li><button onClick={(e) => { e.stopPropagation(); runMenuAction("toggle-terminal"); }} onMouseDown={(e) => e.preventDefault()} type="button">Toggle Terminal</button></li>
+                    <li>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          runMenuAction("toggle-terminal");
+                        }}
+                        onMouseDown={(e) => e.preventDefault()}
+                        type="button"
+                      >
+                        Toggle Terminal
+                      </button>
+                    </li>
                   </menu>
                 )}
               </li>
@@ -2335,7 +2535,11 @@ function example() {
                     {openFiles.map((openFilePath) => {
                       if (renamingId === openFilePath) {
                         return (
-                          <li key={openFilePath} className="entry-editing" data-path={openFilePath}>
+                          <li
+                            key={openFilePath}
+                            className="entry-editing"
+                            data-path={openFilePath}
+                          >
                             <div className="entry-input-wrap">
                               <input
                                 ref={renameInputRef}
@@ -2364,7 +2568,9 @@ function example() {
                                 value={draftName}
                               />
                               {renameError && (
-                                <span className="entry-error">{renameError}</span>
+                                <span className="entry-error">
+                                  {renameError}
+                                </span>
                               )}
                             </div>
                           </li>
@@ -2374,14 +2580,18 @@ function example() {
                       return (
                         <li key={openFilePath}>
                           <button
-                            className={openFilePath === activeFileUrl ? "active" : ""}
+                            className={
+                              openFilePath === activeFileUrl ? "active" : ""
+                            }
                             onClick={() => openFile(openFilePath)}
                             onContextMenu={(event) => {
                               event.preventDefault();
                               event.stopPropagation();
                               setSelectedPath(openFilePath);
                               setContextMenu({
-                                directoryPath: normalizeFsPath(dirname(openFilePath)),
+                                directoryPath: normalizeFsPath(
+                                  dirname(openFilePath)
+                                ),
                                 targetIsDirectory: false,
                                 targetPath: openFilePath,
                                 x: event.clientX,
@@ -2412,7 +2622,9 @@ function example() {
                     })}
                   </ol>
                   <p className="section-title">Folder</p>
-                  <p className="folder-title">{basename(explorerRoot) || "Root"}</p>
+                  <p className="folder-title">
+                    {basename(explorerRoot) || "Root"}
+                  </p>
                   <ol
                     ref={folderEntriesRef}
                     className="folder-entries"
@@ -2492,7 +2704,9 @@ function example() {
                                       setNewEntryError("");
                                     }}
                                     onChange={(event) => {
-                                      setNewEntryName(event.currentTarget.value);
+                                      setNewEntryName(
+                                        event.currentTarget.value
+                                      );
                                       if (newEntryError) {
                                         setNewEntryError("");
                                       }
@@ -2520,7 +2734,9 @@ function example() {
                                     autoFocus
                                   />
                                   {newEntryError && (
-                                    <span className="entry-error">{newEntryError}</span>
+                                    <span className="entry-error">
+                                      {newEntryError}
+                                    </span>
                                   )}
                                 </div>
                               </div>
@@ -2531,11 +2747,19 @@ function example() {
                         const itemPath = path;
                         const isExpandedFolder =
                           isDirectory && expandedFolders.includes(itemPath);
-                        const isActive = !isDirectory && itemPath === activeFileUrl;
+                        const isActive =
+                          !isDirectory && itemPath === activeFileUrl;
 
-                        if (renamingId === itemPath && !openFiles.includes(itemPath)) {
+                        if (
+                          renamingId === itemPath &&
+                          !openFiles.includes(itemPath)
+                        ) {
                           return (
-                            <li key={itemId} className="entry-editing" data-path={itemPath}>
+                            <li
+                              key={itemId}
+                              className="entry-editing"
+                              data-path={itemPath}
+                            >
                               <div
                                 className="entry-editor-row"
                                 style={{ paddingLeft: explorerPadding }}
@@ -2571,7 +2795,9 @@ function example() {
                                     value={draftName}
                                   />
                                   {renameError && (
-                                    <span className="entry-error">{renameError}</span>
+                                    <span className="entry-error">
+                                      {renameError}
+                                    </span>
                                   )}
                                 </div>
                               </div>
@@ -2580,72 +2806,82 @@ function example() {
                         }
 
                         return (
-                        <li
-                          key={itemId}
-                          className={
-                            dragOverPath === itemPath && isDirectory
-                              ? "drag-over"
-                              : ""
-                          }
-                          data-path={itemPath}
-                          draggable={!isNew && isEditableActivityPath(itemPath)}
-                          onDragEnd={() => {
-                            setDraggedPath("");
-                            setDragOverPath("");
-                          }}
-                          onDragOver={(event) => {
-                            if (
-                              !isDirectory ||
-                              !draggedPath ||
-                              draggedPath === itemPath ||
-                              !isEditableActivityPath(itemPath)
-                            ) {
-                              return;
+                          <li
+                            key={itemId}
+                            className={
+                              dragOverPath === itemPath && isDirectory
+                                ? "drag-over"
+                                : ""
                             }
-
-                            event.preventDefault();
-                            event.stopPropagation();
-                            event.dataTransfer.dropEffect = "move";
-                            setDragOverPath(itemPath);
-                          }}
-                          onDragStart={(event) => {
-                            if (!isEditableActivityPath(itemPath)) {
-                              event.preventDefault();
-                              return;
+                            data-path={itemPath}
+                            draggable={
+                              !isNew && isEditableActivityPath(itemPath)
                             }
-                            event.dataTransfer.effectAllowed = "move";
-                            event.dataTransfer.setData("text/plain", itemPath);
-                            setDraggedPath(itemPath);
-                            setSelectedPath(itemPath);
-                          }}
-                          onDragLeave={() => {
-                            if (dragOverPath === itemPath) {
+                            onDragEnd={() => {
+                              setDraggedPath("");
                               setDragOverPath("");
-                            }
-                          }}
-                          onDrop={(event) => {
-                            if (!isDirectory) {
-                              return;
-                            }
-                            if (!isEditableActivityPath(itemPath)) {
-                              return;
-                            }
+                            }}
+                            onDragOver={(event) => {
+                              if (
+                                !isDirectory ||
+                                !draggedPath ||
+                                draggedPath === itemPath ||
+                                !isEditableActivityPath(itemPath)
+                              ) {
+                                return;
+                              }
 
-                            event.preventDefault();
-                            event.stopPropagation();
-                            const sourcePath =
-                              event.dataTransfer.getData("text/plain") || draggedPath;
+                              event.preventDefault();
+                              event.stopPropagation();
+                              event.dataTransfer.dropEffect = "move";
+                              setDragOverPath(itemPath);
+                            }}
+                            onDragStart={(event) => {
+                              if (!isEditableActivityPath(itemPath)) {
+                                event.preventDefault();
+                                return;
+                              }
+                              event.dataTransfer.effectAllowed = "move";
+                              event.dataTransfer.setData(
+                                "text/plain",
+                                itemPath
+                              );
+                              setDraggedPath(itemPath);
+                              setSelectedPath(itemPath);
+                            }}
+                            onDragLeave={() => {
+                              if (dragOverPath === itemPath) {
+                                setDragOverPath("");
+                              }
+                            }}
+                            onDrop={(event) => {
+                              if (!isDirectory) {
+                                return;
+                              }
+                              if (!isEditableActivityPath(itemPath)) {
+                                return;
+                              }
 
-                            setDraggedPath("");
-                            setDragOverPath("");
+                              event.preventDefault();
+                              event.stopPropagation();
+                              const sourcePath =
+                                event.dataTransfer.getData("text/plain") ||
+                                draggedPath;
 
-                            if (sourcePath) {
-                              void moveEntry(sourcePath, itemPath);
-                            }
-                          }}
-                        >
+                              setDraggedPath("");
+                              setDragOverPath("");
+
+                              if (sourcePath) {
+                                void moveEntry(sourcePath, itemPath);
+                              }
+                            }}
+                          >
                             <button
-                              className={isActive || selectedPath === itemPath ? "active" : ""}
+                              className={
+                                isActive || selectedPath === itemPath
+                                  ? "active"
+                                  : ""
+                              }
                               onClick={async () => {
                                 setSelectedPath(itemPath);
 
@@ -2677,7 +2913,11 @@ function example() {
                               type="button"
                             >
                               <span>
-                                {isDirectory ? (isExpandedFolder ? "▾" : "▸") : "•"}
+                                {isDirectory
+                                  ? isExpandedFolder
+                                    ? "▾"
+                                    : "▸"
+                                  : "•"}
                               </span>
                               <span className="entry-icon">
                                 {getEntryIcon(name, isDirectory)}
@@ -2686,7 +2926,8 @@ function example() {
                             </button>
                           </li>
                         );
-                      })}
+                      }
+                    )}
                   </ol>
                 </>
               )}
@@ -2696,9 +2937,7 @@ function example() {
               )}
 
               {activeView === "git" && (
-                <p className="placeholder">
-                  {uiText.sourceControlPlaceholder}
-                </p>
+                <p className="placeholder">{uiText.sourceControlPlaceholder}</p>
               )}
 
               {confirmDelete && (
@@ -2709,9 +2948,7 @@ function example() {
                     onClick={() => setConfirmDelete(undefined)}
                     type="button"
                   />
-                  <div
-                    className="confirm-dialog"
-                  >
+                  <div className="confirm-dialog">
                     <p className="confirm-message">
                       {uiText.deleteEntry(basename(confirmDelete))}
                     </p>
@@ -2746,7 +2983,11 @@ function example() {
                     }}
                     type="button"
                   />
-                  <div aria-modal="true" className="save-as-dialog" role="dialog">
+                  <div
+                    aria-modal="true"
+                    className="save-as-dialog"
+                    role="dialog"
+                  >
                     <p className="save-as-title">{uiText.saveAs}</p>
                     <p className="save-as-subtitle">
                       {uiText.saveAsSubtitle(explorerRoot)}
@@ -2774,7 +3015,9 @@ function example() {
                       type="text"
                       value={saveAsPath}
                     />
-                    {saveAsError && <p className="save-as-error">{saveAsError}</p>}
+                    {saveAsError && (
+                      <p className="save-as-error">{saveAsError}</p>
+                    )}
                     <div className="save-as-actions">
                       <button
                         className="dialog-action"
@@ -2856,7 +3099,10 @@ function example() {
                         const targetPath = contextMenu.targetPath as string;
                         const targetName = basename(targetPath).toLowerCase();
 
-                        if (targetName === "index.html" || targetName === "index.htm") {
+                        if (
+                          targetName === "index.html" ||
+                          targetName === "index.htm"
+                        ) {
                           openProcess("Browser", { url: targetPath });
                         } else {
                           openFile(targetPath);
@@ -2887,7 +3133,9 @@ function example() {
                       Rename
                     </button>
                   )}
-                  {contextMenu.targetPath && <div className="context-menu-separator" />}
+                  {contextMenu.targetPath && (
+                    <div className="context-menu-separator" />
+                  )}
                   <button
                     className="context-menu-action"
                     disabled={
@@ -2949,7 +3197,9 @@ function example() {
                   </p>
                 )}
                 <header className="tabs">
-                  {openFiles.length === 0 && <span className="empty-tab">No open files</span>}
+                  {openFiles.length === 0 && (
+                    <span className="empty-tab">No open files</span>
+                  )}
                   {openFiles.map((openFilePath) => (
                     <div
                       key={openFilePath}
@@ -3019,7 +3269,9 @@ function example() {
                 ref={terminalInputRef}
                 className="terminal-input"
                 data-tour="monaco-terminal-input"
-                onChange={(event) => setTerminalInput(event.currentTarget.value)}
+                onChange={(event) =>
+                  setTerminalInput(event.currentTarget.value)
+                }
                 type="text"
                 value={terminalInput}
               />

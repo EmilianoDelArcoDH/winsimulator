@@ -295,8 +295,8 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
                   tab === "All"
                     ? t(language, "taskbar.search.findMostRelevantResults")
                     : tf(language, "taskbar.search.findResultsIn", {
-                      section: tabTitleMap[tab],
-                    })
+                        section: tabTitleMap[tab],
+                      })
                 )}
               >
                 {tabTitleMap[tab]}
@@ -319,7 +319,9 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
             >
               <section>
                 <figure>
-                  <figcaption>{t(language, "taskbar.search.suggested")}</figcaption>
+                  <figcaption>
+                    {t(language, "taskbar.search.suggested")}
+                  </figcaption>
                   <StyledSuggestions>
                     {SUGGESTED.map((app) => (
                       // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
@@ -344,7 +346,9 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
               <section>
                 {recentFiles.length > 0 && (
                   <StyledFiles>
-                    <figcaption>{t(language, "taskbar.search.recent")}</figcaption>
+                    <figcaption>
+                      {t(language, "taskbar.search.recent")}
+                    </figcaption>
                     <ol>
                       {recentFiles.map(([file, pid, title], index) => (
                         // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
@@ -356,7 +360,7 @@ const Search: FC<SearchProps> = ({ toggleSearch }) => {
                               setTimeout(
                                 () => updateRecentFiles(file, pid, title),
                                 TRANSITIONS_IN_SECONDS.TASKBAR_ITEM *
-                                MILLISECONDS_IN_SECOND
+                                  MILLISECONDS_IN_SECOND
                               );
                             }
                           }}

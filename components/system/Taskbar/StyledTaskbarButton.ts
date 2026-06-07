@@ -10,14 +10,21 @@ type StyledTaskbarButtonProps = {
 const StyledTaskbarButton = styled(Button)<StyledTaskbarButtonProps>`
   background-color: ${({ $active, $highlight, theme }) =>
     $active &&
-    ($highlight ? theme.colors.taskbar.foreground : "hsla(0, 0%, 25%, 50%)")};
+    ($highlight
+      ? theme.colors.taskbar.foreground
+      : theme.colors.taskbar.active)};
+  border-radius: ${({ theme }) => theme.effects.radius.control};
   display: flex;
   fill: ${({ theme }) => theme.colors.taskbar.button.color};
   height: 100%;
-  left: ${({ $left }) => ($left ? `${$left}px` : 0)};
+  left: auto;
+  margin: 4px 1px;
   place-content: center;
   place-items: center;
-  position: absolute;
+  position: relative;
+  transition:
+    background-color ${({ theme }) => theme.effects.transition.fast},
+    transform ${({ theme }) => theme.effects.transition.fast};
 
   && {
     width: ${({ theme }) => theme.sizes.taskbar.button.width}px;
@@ -44,6 +51,8 @@ const StyledTaskbarButton = styled(Button)<StyledTaskbarButtonProps>`
       fill: ${({ $highlight }) =>
         $highlight ? "hsla(207, 100%, 60%, 80%)" : undefined};
     }
+
+    transform: scale(0.92);
   }
 `;
 

@@ -13,6 +13,7 @@ import LanguageSwitcher from "components/system/Taskbar/LanguageSwitcher";
 import SearchButton from "components/system/Taskbar/Search/SearchButton";
 import StartButton from "components/system/Taskbar/StartButton";
 import StyledTaskbar from "components/system/Taskbar/StyledTaskbar";
+import StyledTaskbarCenter from "components/system/Taskbar/StyledTaskbarCenter";
 import TaskbarEntries from "components/system/Taskbar/TaskbarEntries";
 import useTaskbarContextMenu from "components/system/Taskbar/useTaskbarContextMenu";
 import { CLOCK_CANVAS_BASE_WIDTH, FOCUSABLE_ELEMENT } from "utils/constants";
@@ -80,21 +81,27 @@ const Taskbar: FC = () => {
         )}
         {searchVisible && <Search key="search" toggleSearch={toggleSearch} />}
       </AnimatePresence>
-      <StyledTaskbar {...useTaskbarContextMenu()} {...FOCUSABLE_ELEMENT}>
-        <StartButton
-          startMenuVisible={startMenuVisible}
-          toggleStartMenu={toggleStartMenu}
-        />
-        <SearchButton
-          searchVisible={searchVisible}
-          toggleSearch={toggleSearch}
-        />
-        <TaskbarEntries
-          clockWidth={
-            clockWidth + (languageLockedByUrl ? 0 : LANGUAGE_SWITCHER_WIDTH)
-          }
-          hasAI={hasAI}
-        />
+      <StyledTaskbar
+        data-tour="taskbar"
+        {...useTaskbarContextMenu()}
+        {...FOCUSABLE_ELEMENT}
+      >
+        <StyledTaskbarCenter>
+          <StartButton
+            startMenuVisible={startMenuVisible}
+            toggleStartMenu={toggleStartMenu}
+          />
+          <SearchButton
+            searchVisible={searchVisible}
+            toggleSearch={toggleSearch}
+          />
+          <TaskbarEntries
+            clockWidth={
+              clockWidth + (languageLockedByUrl ? 0 : LANGUAGE_SWITCHER_WIDTH)
+            }
+            hasAI={hasAI}
+          />
+        </StyledTaskbarCenter>
         {!languageLockedByUrl && (
           <LanguageSwitcher clockWidth={clockWidth} hasAI={hasAI} />
         )}

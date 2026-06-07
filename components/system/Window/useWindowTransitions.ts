@@ -9,11 +9,13 @@ const active = {
   opacity: 1,
   scale: 1,
   width: "inherit",
+  y: 0,
 };
 
 const exit = {
   opacity: 0,
-  scale: 0.95,
+  scale: 0.96,
+  y: 8,
 };
 
 const initial = {
@@ -34,7 +36,7 @@ const baseMaximize = {
 
 const baseMinimize = {
   opacity: 0,
-  scale: 0.7,
+  scale: 0.82,
 };
 
 const getMaxDimensions = (): Variant => ({

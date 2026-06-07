@@ -76,11 +76,11 @@ const ResultEntry: FC<ResultEntryProps> = ({
     () =>
       stats && !stats.isDirectory()
         ? `${t(language, "taskbar.search.lastModified")}: ${new Date(
-          getModifiedTime(baseUrl, stats)
-        ).toLocaleString(language, {
-          dateStyle: "short",
-          timeStyle: "short",
-        })}`
+            getModifiedTime(baseUrl, stats)
+          ).toLocaleString(language, {
+            dateStyle: "short",
+            timeStyle: "short",
+          })}`
         : "",
     [baseUrl, language, stats]
   );
@@ -155,11 +155,11 @@ const ResultEntry: FC<ResultEntryProps> = ({
             isAppShortcut
               ? undefined
               : {
-                url:
-                  extname(baseUrl) === SHORTCUT_EXTENSION
-                    ? getShortcutInfo(await readFile(baseUrl))?.url || baseUrl
-                    : baseUrl,
-              }
+                  url:
+                    extname(baseUrl) === SHORTCUT_EXTENSION
+                      ? getShortcutInfo(await readFile(baseUrl))?.url || baseUrl
+                      : baseUrl,
+                }
           );
           if (baseUrl && info?.pid) updateRecentFiles(baseUrl, info?.pid);
         }}

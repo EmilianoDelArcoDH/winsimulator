@@ -8,7 +8,9 @@ type StyledTaskbarEntryProps = {
 };
 
 const StyledTaskbarEntry = styled(motion.li)<StyledTaskbarEntryProps>`
+  border-radius: ${({ theme }) => theme.effects.radius.control};
   display: flex;
+  margin: 4px 0;
   min-width: 0;
   overflow: hidden;
   place-content: center;
@@ -33,15 +35,16 @@ const StyledTaskbarEntry = styled(motion.li)<StyledTaskbarEntryProps>`
             : theme.colors.highlight
         }
       `};
+    border-radius: ${({ theme }) => theme.effects.radius.control};
     bottom: 0;
     content: "";
-    height: ${({ $foreground }) => ($foreground ? "100%" : 0)};
+    height: ${({ $foreground }) => ($foreground ? "100%" : "3px")};
     margin: ${({ $foreground }) => ($foreground ? "" : "0 4px")};
     position: absolute;
     transition-duration: 0.1s;
     transition-property: ${({ $foreground }) =>
       $foreground ? "all" : "width"};
-    width: ${({ $foreground }) => ($foreground ? "100%" : `calc(100% - 8px)`)};
+    width: ${({ $foreground }) => ($foreground ? "100%" : "6px")};
     z-index: -1;
   }
 
@@ -69,14 +72,14 @@ const StyledTaskbarEntry = styled(motion.li)<StyledTaskbarEntryProps>`
   figure {
     align-items: center;
     display: flex;
-    margin-bottom: ${({ theme }) => theme.sizes.taskbar.entry.borderSize};
-    margin-left: 4px;
-    padding: 4px;
+    justify-content: center;
+    margin-bottom: 0;
+    padding: 5px;
 
     figcaption {
       color: ${({ theme }) => theme.colors.text};
+      display: none;
       font-size: ${({ theme }) => theme.sizes.taskbar.entry.fontSize};
-      margin: 0 4px;
       overflow-x: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -85,7 +88,7 @@ const StyledTaskbarEntry = styled(motion.li)<StyledTaskbarEntryProps>`
     picture {
       height: ${({ theme }) => theme.sizes.taskbar.entry.iconSize};
       position: relative;
-      top: 1px;
+      top: 0;
       width: ${({ theme }) => theme.sizes.taskbar.entry.iconSize};
     }
   }

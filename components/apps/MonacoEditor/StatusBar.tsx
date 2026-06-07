@@ -67,7 +67,8 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
         : "";
 
       setPosition(
-        `Ln ${positionLineNumber}, Col ${positionColumn}${selectedText ? ` (${selectedText.length} selected)` : ""
+        `Ln ${positionLineNumber}, Col ${positionColumn}${
+          selectedText ? ` (${selectedText.length} selected)` : ""
         }`
       );
     };

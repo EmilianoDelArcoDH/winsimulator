@@ -172,7 +172,9 @@ const printCommit = (
 ): void => {
   printLn(`commit ${entry.oid}`);
   printLn(`Author: ${entry.commit.author.name} <${entry.commit.author.email}>`);
-  printLn(`Date:   ${new Date(entry.commit.author.timestamp * 1000).toString()}`);
+  printLn(
+    `Date:   ${new Date(entry.commit.author.timestamp * 1000).toString()}`
+  );
   printLn("");
   printLn(`    ${entry.commit.message.trim()}`);
 };
@@ -185,7 +187,9 @@ const ensureRepoRoot = async (
   const repoRoot = await findRepoRoot(fs, cd);
 
   if (!repoRoot) {
-    printLn("fatal: not a git repository (or any of the parent directories): .git");
+    printLn(
+      "fatal: not a git repository (or any of the parent directories): .git"
+    );
   }
 
   return repoRoot;
@@ -228,18 +232,24 @@ const processCliGit = async (
           allFiles.forEach((file) => filepaths.add(file));
         } else {
           allFiles
-            .filter((file) => file === filepath || file.startsWith(`${filepath}/`))
+            .filter(
+              (file) => file === filepath || file.startsWith(`${filepath}/`)
+            )
             .forEach((file) => filepaths.add(file));
         }
       });
 
       if (filepaths.size === 0) {
-        printLn(`fatal: pathspec '${targets.join(" ")}' did not match any files`);
+        printLn(
+          `fatal: pathspec '${targets.join(" ")}' did not match any files`
+        );
         return true;
       }
 
       await Promise.all(
-        [...filepaths].map((filepath) => git.add({ dir: repoRoot, filepath, fs }))
+        [...filepaths].map((filepath) =>
+          git.add({ dir: repoRoot, filepath, fs })
+        )
       );
       return true;
     }
@@ -299,7 +309,11 @@ const processCliGit = async (
         untracked.forEach((file) => printLn(`  ${file}`));
       }
 
-      if (staged.length === 0 && unstaged.length === 0 && untracked.length === 0) {
+      if (
+        staged.length === 0 &&
+        unstaged.length === 0 &&
+        untracked.length === 0
+      ) {
         printLn("nothing to commit, working tree clean");
       }
 
@@ -346,7 +360,9 @@ const processCliGit = async (
       if (!repoRoot) return true;
 
       const oneline = args.includes("--oneline");
-      const depthFlag = args.findIndex((arg) => arg === "-n" || arg === "--max-count");
+      const depthFlag = args.findIndex(
+        (arg) => arg === "-n" || arg === "--max-count"
+      );
       const depth =
         depthFlag !== -1 && Number.isFinite(Number(args[depthFlag + 1]))
           ? Number(args[depthFlag + 1])
@@ -390,7 +406,9 @@ const processCliGit = async (
       });
       const branches = await git.listBranches({ dir: repoRoot, fs });
 
-      branches.forEach((branch) => printLn(`${branch === current ? "*" : " "} ${branch}`));
+      branches.forEach((branch) =>
+        printLn(`${branch === current ? "*" : " "} ${branch}`)
+      );
       return true;
     }
 

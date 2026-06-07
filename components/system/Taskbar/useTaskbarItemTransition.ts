@@ -26,16 +26,22 @@ const useTaskbarItemTransition = (
     initial: "initial",
     transition: {
       duration: TRANSITIONS_IN_SECONDS.TASKBAR_ITEM,
-      ease: "circOut",
+      ease: [0.1, 0.9, 0.2, 1],
     },
     variants: {
       active: {
         height: `${height}px`,
+        opacity: 1,
         paddingTop: 0,
+        scale: 1,
+        y: 0,
       },
       initial: {
         height: `${height * heightOffset}px`,
+        opacity: 0,
         paddingTop: dynamicPadding ? `${height * paddingOffset}px` : 0,
+        scale: 0.96,
+        y: 8,
       },
     },
   };

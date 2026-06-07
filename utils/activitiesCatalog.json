@@ -23,16 +23,43 @@
           "data": {
             "columns": ["Control de versiones", "Copias/caos"],
             "cards": [
-              { "id": "c1", "text": "Puedo ver el historial de cambios y volver a una versión anterior." },
-              { "id": "c2", "text": "Me paso archivos por WhatsApp con nombres tipo final_final2." },
+              {
+                "id": "c1",
+                "text": "Puedo ver el historial de cambios y volver a una versión anterior."
+              },
+              {
+                "id": "c2",
+                "text": "Me paso archivos por WhatsApp con nombres tipo final_final2."
+              },
               { "id": "c3", "text": "Veo quién hizo cada cambio y cuándo." },
-              { "id": "c4", "text": "Guardo una carpeta por día y espero no equivocarme." },
-              { "id": "c5", "text": "Puedo comparar cambios entre versiones (diff)." },
-              { "id": "c6", "text": "No sé cuál es el último archivo correcto." },
-              { "id": "c7", "text": "Trabajo en paralelo sin pisar el trabajo de otros." },
-              { "id": "c8", "text": "Si algo se rompe, no puedo volver atrás con seguridad." },
-              { "id": "c9", "text": "Puedo crear versiones con mensajes (commits) y entender el contexto." },
-              { "id": "c10", "text": "Cada integrante guarda su copia y después se juntan como se pueda." }
+              {
+                "id": "c4",
+                "text": "Guardo una carpeta por día y espero no equivocarme."
+              },
+              {
+                "id": "c5",
+                "text": "Puedo comparar cambios entre versiones (diff)."
+              },
+              {
+                "id": "c6",
+                "text": "No sé cuál es el último archivo correcto."
+              },
+              {
+                "id": "c7",
+                "text": "Trabajo en paralelo sin pisar el trabajo de otros."
+              },
+              {
+                "id": "c8",
+                "text": "Si algo se rompe, no puedo volver atrás con seguridad."
+              },
+              {
+                "id": "c9",
+                "text": "Puedo crear versiones con mensajes (commits) y entender el contexto."
+              },
+              {
+                "id": "c10",
+                "text": "Cada integrante guarda su copia y después se juntan como se pueda."
+              }
             ],
             "answerKey": {
               "Control de versiones": ["c1", "c3", "c5", "c7", "c9"],
@@ -67,7 +94,14 @@
                 "checkId": "c01_a01_keywords",
                 "type": "TEXT_KEYWORDS",
                 "target": "justificacion",
-                "rules": { "mustIncludeAny": ["historia", "version", "cambio", "decisión"] },
+                "rules": {
+                  "mustIncludeAny": [
+                    "historia",
+                    "version",
+                    "cambio",
+                    "decisión"
+                  ]
+                },
                 "messageOk": "Tus justificaciones reflejan el concepto.",
                 "messageFail": "Sumá idea de historia/versiones/cambios en tu justificación."
               }
@@ -84,14 +118,29 @@
           "data": {
             "columns": ["Git", "GitHub"],
             "cards": [
-              { "id": "g1", "text": "Funciona en tu computadora (local) para llevar historial." },
+              {
+                "id": "g1",
+                "text": "Funciona en tu computadora (local) para llevar historial."
+              },
               { "id": "g2", "text": "Permite alojar repositorios en la nube." },
               { "id": "g3", "text": "Usa commits para registrar cambios." },
-              { "id": "g4", "text": "Sirve para colaborar mediante repos remotos y PRs." },
-              { "id": "g5", "text": "Te deja volver a una versión anterior en tu máquina." },
-              { "id": "g6", "text": "Es una empresa/plataforma web de hosting de repos." },
+              {
+                "id": "g4",
+                "text": "Sirve para colaborar mediante repos remotos y PRs."
+              },
+              {
+                "id": "g5",
+                "text": "Te deja volver a una versión anterior en tu máquina."
+              },
+              {
+                "id": "g6",
+                "text": "Es una empresa/plataforma web de hosting de repos."
+              },
               { "id": "g7", "text": "Maneja ramas y merges (branch/merge)." },
-              { "id": "g8", "text": "Se usa para compartir y revisar código con otras personas." }
+              {
+                "id": "g8",
+                "text": "Se usa para compartir y revisar código con otras personas."
+              }
             ],
             "answerKey": {
               "Git": ["g1", "g3", "g5", "g7"],
@@ -129,7 +178,15 @@
                 "rules": {
                   "mustSatisfyGroups": [
                     { "any": ["local", "computadora", "mi pc", "mi máquina"] },
-                    { "any": ["plataforma", "nube", "web", "internet", "hosting"] }
+                    {
+                      "any": [
+                        "plataforma",
+                        "nube",
+                        "web",
+                        "internet",
+                        "hosting"
+                      ]
+                    }
                   ]
                 },
                 "messageOk": "Incluiste la idea de local vs plataforma.",
@@ -159,7 +216,11 @@
               "label": "¿Cuál cambio podría haber roto algo? (elegí 1) ",
               "options": ["t2", "t3", "t4"]
             },
-            "freeText": { "id": "justificacion", "label": "Justificá tu elección (mínimo 15 caracteres).", "minLength": 15 }
+            "freeText": {
+              "id": "justificacion",
+              "label": "Justificá tu elección (mínimo 15 caracteres).",
+              "minLength": 15
+            }
           },
           "validation": {
             "checks": [
@@ -193,7 +254,10 @@
             "options": [
               { "id": "keepA", "label": "Me quedo con la versión A" },
               { "id": "keepB", "label": "Me quedo con la versión B" },
-              { "id": "combine", "label": "Combino ambas ideas en una nueva frase" }
+              {
+                "id": "combine",
+                "label": "Combino ambas ideas en una nueva frase"
+              }
             ],
             "required": {
               "checkboxId": "detectoConflicto",
@@ -233,7 +297,14 @@
                 "checkId": "c01_a04_text_keywords",
                 "type": "TEXT_KEYWORDS",
                 "target": "explicacion",
-                "rules": { "mustIncludeAny": ["conflicto", "resolver", "decidir", "combinar"] },
+                "rules": {
+                  "mustIncludeAny": [
+                    "conflicto",
+                    "resolver",
+                    "decidir",
+                    "combinar"
+                  ]
+                },
                 "messageOk": "Explicación alineada al concepto.",
                 "messageFail": "Mencioná la idea de conflicto/resolución en tu explicación."
               }
@@ -266,7 +337,9 @@
                 "checkId": "c02_a00_name_set",
                 "type": "TERMINAL_COMMAND_REGEX_EXECUTED",
                 "target": "commands",
-                "rules": { "pattern": "git\\s+config\\s+--global\\s+user\\.name\\s+.+" },
+                "rules": {
+                  "pattern": "git\\s+config\\s+--global\\s+user\\.name\\s+.+"
+                },
                 "messageOk": "Configuraste user.name.",
                 "messageFail": "Falta configurar user.name con git config --global user.name \"...\""
               },
@@ -274,7 +347,9 @@
                 "checkId": "c02_a00_email_set",
                 "type": "TERMINAL_COMMAND_REGEX_EXECUTED",
                 "target": "commands",
-                "rules": { "pattern": "git\\s+config\\s+--global\\s+user\\.email\\s+.+@.+" },
+                "rules": {
+                  "pattern": "git\\s+config\\s+--global\\s+user\\.email\\s+.+@.+"
+                },
                 "messageOk": "Configuraste user.email.",
                 "messageFail": "Falta configurar user.email con git config --global user.email \"...\""
               }
@@ -299,7 +374,18 @@
             ],
             "terminal": {
               "expectedWorkingDir": "/miProyecto",
-              "allowedCommands": ["pwd", "ls", "cd", "mkdir", "touch", "echo", "cat", "git init", "git status", "help"]
+              "allowedCommands": [
+                "pwd",
+                "ls",
+                "cd",
+                "mkdir",
+                "touch",
+                "echo",
+                "cat",
+                "git init",
+                "git status",
+                "help"
+              ]
             },
             "workspace": {
               "rootPath": "/",
@@ -329,7 +415,13 @@
                 "checkId": "c02_a01_entered_repo_dir",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
-                "rules": { "mustIncludeAny": ["cd miProyecto", "cd ./miProyecto", "cd /miProyecto"] },
+                "rules": {
+                  "mustIncludeAny": [
+                    "cd miProyecto",
+                    "cd ./miProyecto",
+                    "cd /miProyecto"
+                  ]
+                },
                 "messageOk": "Entraste a la carpeta miProyecto.",
                 "messageFail": "Entrá a la carpeta con cd miProyecto antes de inicializar Git."
               },
@@ -439,7 +531,10 @@
                 "checkId": "c02_a02_not_added_other",
                 "type": "REPO_STATE",
                 "target": "repo",
-                "rules": { "stagedIncludes": ["index.html"], "stagedExcludes": ["style.css"] },
+                "rules": {
+                  "stagedIncludes": ["index.html"],
+                  "stagedExcludes": ["style.css"]
+                },
                 "messageOk": "Staging correcto: solo index.html.",
                 "messageFail": "Staging incorrecto: no debe entrar style.css."
               },
@@ -447,7 +542,10 @@
                 "checkId": "c02_a02_commit_contains_only_staged",
                 "type": "REPO_STATE",
                 "target": "repo",
-                "rules": { "lastCommitIncludes": ["index.html"], "lastCommitExcludes": ["style.css"] },
+                "rules": {
+                  "lastCommitIncludes": ["index.html"],
+                  "lastCommitExcludes": ["style.css"]
+                },
                 "messageOk": "Commit correcto: solo index.html.",
                 "messageFail": "El commit no cumple: debe incluir index.html y NO incluir style.css."
               }
@@ -491,8 +589,21 @@
               ]
             },
             "rules": {
-              "forbiddenMessages": ["cambios", "fix", "arreglo", "asdf", "update"],
-              "mustStartWithAny": ["Agrega", "Corrige", "Elimina", "Actualiza", "Mejora", "Refactoriza"],
+              "forbiddenMessages": [
+                "cambios",
+                "fix",
+                "arreglo",
+                "asdf",
+                "update"
+              ],
+              "mustStartWithAny": [
+                "Agrega",
+                "Corrige",
+                "Elimina",
+                "Actualiza",
+                "Mejora",
+                "Refactoriza"
+              ],
               "minLength": 15
             }
           },
@@ -512,8 +623,21 @@
                 "target": "repo.lastCommit.message",
                 "rules": {
                   "minLength": 15,
-                  "mustStartWithAny": ["Agrega", "Corrige", "Elimina", "Actualiza", "Mejora", "Refactoriza"],
-                  "forbiddenExact": ["cambios", "fix", "arreglo", "asdf", "update"]
+                  "mustStartWithAny": [
+                    "Agrega",
+                    "Corrige",
+                    "Elimina",
+                    "Actualiza",
+                    "Mejora",
+                    "Refactoriza"
+                  ],
+                  "forbiddenExact": [
+                    "cambios",
+                    "fix",
+                    "arreglo",
+                    "asdf",
+                    "update"
+                  ]
                 },
                 "messageOk": "Mensaje de commit claro.",
                 "messageFail": "Tu mensaje debe ser específico, empezar con un verbo (Agrega/Corrige/...) y no ser genérico."
@@ -577,7 +701,11 @@
                 "checkId": "c02_a04_status_before_commit",
                 "type": "TERMINAL_COMMAND_COUNT_MIN",
                 "target": "commands",
-                "rules": { "command": "git status", "minCount": 1, "mustOccurBefore": "git commit" },
+                "rules": {
+                  "command": "git status",
+                  "minCount": 1,
+                  "mustOccurBefore": "git commit"
+                },
                 "messageOk": "Verificaste el estado antes de commitear.",
                 "messageFail": "Usá git status antes de hacer git commit."
               },
@@ -606,7 +734,12 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "expected": { "lastCommit": { "author": "__FROM_REPO__", "message": "__FROM_REPO__" } },
+            "expected": {
+              "lastCommit": {
+                "author": "__FROM_REPO__",
+                "message": "__FROM_REPO__"
+              }
+            },
             "form": [
               { "id": "author", "label": "Autor del último commit" },
               { "id": "message", "label": "Mensaje del último commit" }
@@ -670,8 +803,14 @@
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
             "form": [
-              { "id": "commit1", "label": "Copiá el 1er commit (hash + mensaje)" },
-              { "id": "commit2", "label": "Copiá el 2do commit (hash + mensaje)" }
+              {
+                "id": "commit1",
+                "label": "Copiá el 1er commit (hash + mensaje)"
+              },
+              {
+                "id": "commit2",
+                "label": "Copiá el 2do commit (hash + mensaje)"
+              }
             ],
             "workspace": {
               "rootPath": "/repo",
@@ -731,7 +870,9 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "form": [{ "id": "linea", "label": "¿Qué línea cambió? (copiala)" }],
+            "form": [
+              { "id": "linea", "label": "¿Qué línea cambió? (copiala)" }
+            ],
             "workspace": {
               "rootPath": "/repo",
               "openInVscode": true,
@@ -837,7 +978,10 @@
                 "checkId": "c03_a04_hash_correct",
                 "type": "ANSWER_EQUALS_REPO_VALUE",
                 "target": "form.hash",
-                "rules": { "repoPath": "repo.exercise.culpritHash", "normalizeHash": true },
+                "rules": {
+                  "repoPath": "repo.exercise.culpritHash",
+                  "normalizeHash": true
+                },
                 "messageOk": "Hash correcto.",
                 "messageFail": "No es el commit culpable. Revisá el show del commit."
               },
@@ -897,7 +1041,9 @@
                 "checkId": "c04_a01_remote_add",
                 "type": "TERMINAL_COMMAND_REGEX_EXECUTED",
                 "target": "commands",
-                "rules": { "pattern": "git\\s+remote\\s+add\\s+origin\\s+(.+)" },
+                "rules": {
+                  "pattern": "git\\s+remote\\s+add\\s+origin\\s+(.+)"
+                },
                 "messageOk": "Agregaste origin.",
                 "messageFail": "Usá: git remote add origin <URL>"
               },
@@ -956,7 +1102,12 @@
                 "checkId": "c04_a02_push_u",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
-                "rules": { "mustIncludeAny": ["git push -u origin main", "git push --set-upstream origin main"] },
+                "rules": {
+                  "mustIncludeAny": [
+                    "git push -u origin main",
+                    "git push --set-upstream origin main"
+                  ]
+                },
                 "messageOk": "Hiciste el push con upstream.",
                 "messageFail": "Tenés que hacer: git push -u origin main"
               },
@@ -964,7 +1115,9 @@
                 "checkId": "c04_a02_tracking_set",
                 "type": "REPO_STATE",
                 "target": "repo",
-                "rules": { "branchTracking": { "branch": "main", "remote": "origin" } },
+                "rules": {
+                  "branchTracking": { "branch": "main", "remote": "origin" }
+                },
                 "messageOk": "Tracking configurado.",
                 "messageFail": "No se detecta upstream/tracking para main."
               },
@@ -972,7 +1125,13 @@
                 "checkId": "c04_a02_second_push_simple",
                 "type": "TERMINAL_COMMAND_EXECUTED_AFTER",
                 "target": "commands",
-                "rules": { "mustInclude": ["git push"], "afterMustIncludeAny": ["git push -u origin main", "git push --set-upstream origin main"] },
+                "rules": {
+                  "mustInclude": ["git push"],
+                  "afterMustIncludeAny": [
+                    "git push -u origin main",
+                    "git push --set-upstream origin main"
+                  ]
+                },
                 "messageOk": "Luego pudiste pushear con git push sin argumentos.",
                 "messageFail": "Después del -u, hacé otro push usando solo: git push"
               }
@@ -1049,7 +1208,13 @@
           "mode": "terminal+rubric",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "requiredSequence": ["git pull", "git status", "git add", "git commit", "git push"],
+            "requiredSequence": [
+              "git pull",
+              "git status",
+              "git add",
+              "git commit",
+              "git push"
+            ],
             "commitMessageRules": { "minLength": 12 },
             "workspace": {
               "rootPath": "/repo",
@@ -1078,7 +1243,10 @@
                 "checkId": "c04_a04_pull_before_push",
                 "type": "TERMINAL_ORDER",
                 "target": "commands",
-                "rules": { "before": "git push", "mustAppearAny": ["git pull origin main", "git pull"] },
+                "rules": {
+                  "before": "git push",
+                  "mustAppearAny": ["git pull origin main", "git pull"]
+                },
                 "messageOk": "Pull antes de push.",
                 "messageFail": "Primero hacé pull y recién después push."
               },
@@ -1150,7 +1318,11 @@
                 "checkId": "c04_a05_clone_done",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
-                "rules": { "mustInclude": ["git clone https://github.com/winsim-labs/css-pull-lab.git"] },
+                "rules": {
+                  "mustInclude": [
+                    "git clone https://github.com/winsim-labs/css-pull-lab.git"
+                  ]
+                },
                 "messageOk": "Clonado realizado.",
                 "messageFail": "Primero hacé el clone del laboratorio remoto."
               },
@@ -1166,7 +1338,10 @@
                 "checkId": "c04_a05_clone_before_cd",
                 "type": "TERMINAL_ORDER",
                 "target": "commands",
-                "rules": { "before": "cd css-pull-lab", "mustAppear": "git clone https://github.com/winsim-labs/css-pull-lab.git" },
+                "rules": {
+                  "before": "cd css-pull-lab",
+                  "mustAppear": "git clone https://github.com/winsim-labs/css-pull-lab.git"
+                },
                 "messageOk": "Orden correcto: primero clone y luego cd.",
                 "messageFail": "Primero hacé clone y después entrá al repo."
               },
@@ -1271,7 +1446,11 @@
                 "checkId": "c04_a07_clone_done",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
-                "rules": { "mustInclude": ["git clone https://github.com/winsim-labs/css-pull-lab.git"] },
+                "rules": {
+                  "mustInclude": [
+                    "git clone https://github.com/winsim-labs/css-pull-lab.git"
+                  ]
+                },
                 "messageOk": "Clone realizado.",
                 "messageFail": "Primero hacé git clone del laboratorio."
               },
@@ -1287,7 +1466,10 @@
                 "checkId": "c04_a07_clone_before_pull",
                 "type": "TERMINAL_ORDER",
                 "target": "commands",
-                "rules": { "before": "git pull", "mustAppear": "git clone https://github.com/winsim-labs/css-pull-lab.git" },
+                "rules": {
+                  "before": "git pull",
+                  "mustAppear": "git clone https://github.com/winsim-labs/css-pull-lab.git"
+                },
                 "messageOk": "Orden correcto: clone antes de pull.",
                 "messageFail": "Hacé clone primero y después pull."
               },
@@ -1325,11 +1507,17 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/publish-c01-a01",
-              "editablePaths": ["/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/publish-c01-a01/css", "/Users/Public/Desktop/publish-c01-a01/js", "/Users/Public/Desktop/publish-c01-a01/img"],
+              "folders": [
+                "/Users/Public/Desktop/publish-c01-a01/css",
+                "/Users/Public/Desktop/publish-c01-a01/js",
+                "/Users/Public/Desktop/publish-c01-a01/img"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/publish-c01-a01/index.html",
@@ -1364,7 +1552,11 @@
                 "checkId": "publish_c01_a01_saved_structure_file",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt"
+                  ]
+                },
                 "messageOk": "Guardaste la propuesta de estructura en Visual Studio Code.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt con tu estructura corregida."
               },
@@ -1372,7 +1564,10 @@
                 "checkId": "publish_c01_a01_index_in_root",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt", "pattern": "index\\.html" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt",
+                  "pattern": "index\\.html"
+                },
                 "messageOk": "La propuesta mantiene index.html en la raiz.",
                 "messageFail": "La propuesta debe dejar index.html en la raiz del proyecto."
               },
@@ -1380,7 +1575,10 @@
                 "checkId": "publish_c01_a01_css_folder",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt", "pattern": "css[\\\\/]estilos\\.css" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt",
+                  "pattern": "css[\\\\/]estilos\\.css"
+                },
                 "messageOk": "Incluiste una carpeta css con un nombre de archivo claro.",
                 "messageFail": "Tu propuesta debe incluir css/estilos.css."
               },
@@ -1388,7 +1586,10 @@
                 "checkId": "publish_c01_a01_js_folder",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt", "pattern": "js[\\\\/]script\\.js" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt",
+                  "pattern": "js[\\\\/]script\\.js"
+                },
                 "messageOk": "Incluiste una carpeta js con script.js.",
                 "messageFail": "Tu propuesta debe incluir js/script.js."
               },
@@ -1396,7 +1597,10 @@
                 "checkId": "publish_c01_a01_img_folder",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt", "pattern": "img[\\\\/].+\\.(png|jpg|jpeg|svg)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a01/propuesta-estructura.txt",
+                  "pattern": "img[\\\\/].+\\.(png|jpg|jpeg|svg)"
+                },
                 "messageOk": "La propuesta separa las imagenes en img/.",
                 "messageFail": "La propuesta debe mover las imagenes a una carpeta img/."
               }
@@ -1420,11 +1624,16 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/publish-c01-a02",
-              "editablePaths": ["/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/publish-c01-a02/css", "/Users/Public/Desktop/publish-c01-a02/img"],
+              "folders": [
+                "/Users/Public/Desktop/publish-c01-a02/css",
+                "/Users/Public/Desktop/publish-c01-a02/img"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/publish-c01-a02/index.html",
@@ -1467,7 +1676,11 @@
                 "checkId": "publish_c01_a02_saved_cleanup_plan",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt"
+                  ]
+                },
                 "messageOk": "Guardaste el plan de limpieza en Visual Studio Code.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt."
               },
@@ -1475,7 +1688,10 @@
                 "checkId": "publish_c01_a02_keeps_index",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "Se queda:[\\s\\S]*index\\.html" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
+                  "pattern": "Se queda:[\\s\\S]*index\\.html"
+                },
                 "messageOk": "Marcaste index.html como archivo que se queda.",
                 "messageFail": "El plan debe dejar claro que index.html se conserva."
               },
@@ -1483,7 +1699,10 @@
                 "checkId": "publish_c01_a02_remove_notes",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "Se elimina:[\\s\\S]*notas\\.txt" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
+                  "pattern": "Se elimina:[\\s\\S]*notas\\.txt"
+                },
                 "messageOk": "Identificaste notas.txt como archivo para eliminar.",
                 "messageFail": "El plan debe indicar que notas.txt se elimina."
               },
@@ -1491,7 +1710,10 @@
                 "checkId": "publish_c01_a02_remove_old_layout",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "Se elimina:[\\s\\S]*prueba-layout-viejo\\.html" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
+                  "pattern": "Se elimina:[\\s\\S]*prueba-layout-viejo\\.html"
+                },
                 "messageOk": "Identificaste el layout viejo como archivo sobrante.",
                 "messageFail": "El plan debe indicar que prueba-layout-viejo.html se elimina."
               },
@@ -1499,7 +1721,10 @@
                 "checkId": "publish_c01_a02_remove_duplicate_asset",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "Se elimina:[\\s\\S]*copia_final_ahora_si\\.png" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
+                  "pattern": "Se elimina:[\\s\\S]*copia_final_ahora_si\\.png"
+                },
                 "messageOk": "Identificaste la copia duplicada como archivo para eliminar.",
                 "messageFail": "El plan deberia indicar que copia_final_ahora_si.png tambien se elimina."
               },
@@ -1507,7 +1732,10 @@
                 "checkId": "publish_c01_a02_rule_explained",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt", "pattern": "(funcion|necesit|mostrar|public|sitio|proyecto)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
+                  "pattern": "(funcion|necesit|mostrar|public|sitio|proyecto)"
+                },
                 "messageOk": "La regla de limpieza esta explicada dentro del plan.",
                 "messageFail": "Explica en el plan que solo debe quedar lo que el proyecto necesita para funcionar o mostrarse."
               }
@@ -1533,7 +1761,11 @@
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/publish-c01-a03/css", "/Users/Public/Desktop/publish-c01-a03/img", "/Users/Public/Desktop/publish-c01-a03/js"],
+              "folders": [
+                "/Users/Public/Desktop/publish-c01-a03/css",
+                "/Users/Public/Desktop/publish-c01-a03/img",
+                "/Users/Public/Desktop/publish-c01-a03/js"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/publish-c01-a03/index.html",
@@ -1560,7 +1792,9 @@
                 "checkId": "publish_c01_a03_saved_index",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a03/index.html"] },
+                "rules": {
+                  "paths": ["/Users/Public/Desktop/publish-c01-a03/index.html"]
+                },
                 "messageOk": "Guardaste index.html con una propuesta corregida.",
                 "messageFail": "Antes de validar, corrige y guarda /Users/Public/Desktop/publish-c01-a03/index.html en Visual Studio Code."
               },
@@ -1568,7 +1802,10 @@
                 "checkId": "publish_c01_a03_css_relative",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a03/index.html", "pattern": "href\\s*=\\s*[\\\"'](?:\\./)?css/estilos\\.css[\\\"']" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a03/index.html",
+                  "pattern": "href\\s*=\\s*[\\\"'](?:\\./)?css/estilos\\.css[\\\"']"
+                },
                 "messageOk": "La hoja de estilos ya usa una ruta relativa correcta.",
                 "messageFail": "Corrige el href para que apunte a css/estilos.css."
               },
@@ -1576,7 +1813,10 @@
                 "checkId": "publish_c01_a03_img_relative",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a03/index.html", "pattern": "src\\s*=\\s*[\\\"'](?:\\./)?img/logo\\.png[\\\"']" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a03/index.html",
+                  "pattern": "src\\s*=\\s*[\\\"'](?:\\./)?img/logo\\.png[\\\"']"
+                },
                 "messageOk": "La imagen ya usa una ruta relativa correcta.",
                 "messageFail": "Corrige la imagen para que use img/logo.png."
               },
@@ -1584,7 +1824,10 @@
                 "checkId": "publish_c01_a03_js_relative",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a03/index.html", "pattern": "src\\s*=\\s*[\\\"'](?:\\./)?js/app\\.js[\\\"']" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a03/index.html",
+                  "pattern": "src\\s*=\\s*[\\\"'](?:\\./)?js/app\\.js[\\\"']"
+                },
                 "messageOk": "El script ya usa una ruta relativa correcta.",
                 "messageFail": "Corrige el script para que use js/app.js."
               },
@@ -1592,7 +1835,10 @@
                 "checkId": "publish_c01_a03_no_absolute",
                 "type": "FILE_CONTENT_NOT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a03/index.html", "pattern": "(C:|D:|E:|/Users/)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a03/index.html",
+                  "pattern": "(C:|D:|E:|/Users/)"
+                },
                 "messageOk": "Ya no quedan rutas absolutas en index.html.",
                 "messageFail": "Todavia quedan rutas absolutas en index.html."
               }
@@ -1616,11 +1862,16 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/publish-c01-a04",
-              "editablePaths": ["/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/publish-c01-a04/img", "/Users/Public/Desktop/publish-c01-a04/css"],
+              "folders": [
+                "/Users/Public/Desktop/publish-c01-a04/img",
+                "/Users/Public/Desktop/publish-c01-a04/css"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/publish-c01-a04/index.html",
@@ -1651,7 +1902,11 @@
                 "checkId": "publish_c01_a04_saved_rename_plan",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt"
+                  ]
+                },
                 "messageOk": "Guardaste la propuesta de renombres en Visual Studio Code.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt."
               },
@@ -1659,7 +1914,10 @@
                 "checkId": "publish_c01_a04_safe_photo_name",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt", "pattern": "mi-foto-final\\.png" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt",
+                  "pattern": "mi-foto-final\\.png"
+                },
                 "messageOk": "Propusiste un nombre seguro para la foto principal.",
                 "messageFail": "Propone mi-foto-final.png como nombre seguro para la foto."
               },
@@ -1667,7 +1925,10 @@
                 "checkId": "publish_c01_a04_safe_banner_name",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt", "pattern": "banner-home\\.png" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt",
+                  "pattern": "banner-home\\.png"
+                },
                 "messageOk": "Propusiste un nombre seguro para el banner.",
                 "messageFail": "Propone banner-home.png como nombre seguro para el banner."
               },
@@ -1675,7 +1936,10 @@
                 "checkId": "publish_c01_a04_safe_css_name",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt", "pattern": "estilos-finales\\.css" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt",
+                  "pattern": "estilos-finales\\.css"
+                },
                 "messageOk": "Propusiste un nombre seguro para la hoja de estilos.",
                 "messageFail": "Propone estilos-finales.css como nombre seguro para la hoja de estilos."
               },
@@ -1683,7 +1947,10 @@
                 "checkId": "publish_c01_a04_mentions_reason",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt", "pattern": "(minusculas|guiones|espacios|tildes|simbolos|caracteres especiales)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt",
+                  "pattern": "(minusculas|guiones|espacios|tildes|simbolos|caracteres especiales)"
+                },
                 "messageOk": "La propuesta deja asentado el criterio de renombre.",
                 "messageFail": "En la propuesta menciona el criterio: minusculas, guiones y sin espacios o simbolos."
               }
@@ -1706,11 +1973,17 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/publish-c01-a05",
-              "editablePaths": ["/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/publish-c01-a05/css", "/Users/Public/Desktop/publish-c01-a05/img", "/Users/Public/Desktop/publish-c01-a05/js"],
+              "folders": [
+                "/Users/Public/Desktop/publish-c01-a05/css",
+                "/Users/Public/Desktop/publish-c01-a05/img",
+                "/Users/Public/Desktop/publish-c01-a05/js"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/publish-c01-a05/index.html",
@@ -1741,7 +2014,11 @@
                 "checkId": "publish_c01_a05_saved_checklist",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt"
+                  ]
+                },
                 "messageOk": "Guardaste el checklist en Visual Studio Code.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/publish-c01-a05/checklist-previo.txt."
               },
@@ -1749,7 +2026,10 @@
                 "checkId": "publish_c01_a05_checked_structure",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Revisar estructura" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
+                  "pattern": "\\[[xX]\\]\\s*Revisar estructura"
+                },
                 "messageOk": "Marcaste la revision de estructura.",
                 "messageFail": "Marca con [x] la revision de estructura."
               },
@@ -1757,7 +2037,10 @@
                 "checkId": "publish_c01_a05_checked_cleanup",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Limpiar archivos innecesarios" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
+                  "pattern": "\\[[xX]\\]\\s*Limpiar archivos innecesarios"
+                },
                 "messageOk": "Marcaste la limpieza de archivos innecesarios.",
                 "messageFail": "Marca con [x] la limpieza de archivos innecesarios."
               },
@@ -1765,7 +2048,10 @@
                 "checkId": "publish_c01_a05_checked_routes",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Corregir rutas" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
+                  "pattern": "\\[[xX]\\]\\s*Corregir rutas"
+                },
                 "messageOk": "Marcaste la revision de rutas.",
                 "messageFail": "Marca con [x] la revision de rutas."
               },
@@ -1773,7 +2059,10 @@
                 "checkId": "publish_c01_a05_checked_navigation",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Probar toda la navegacion" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
+                  "pattern": "\\[[xX]\\]\\s*Probar toda la navegacion"
+                },
                 "messageOk": "Marcaste la prueba de navegacion.",
                 "messageFail": "Marca con [x] la prueba de navegacion."
               },
@@ -1781,7 +2070,10 @@
                 "checkId": "publish_c01_a05_checked_clarity",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt", "pattern": "\\[[xX]\\]\\s*Confirmar que el sitio se entiende solo" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
+                  "pattern": "\\[[xX]\\]\\s*Confirmar que el sitio se entiende solo"
+                },
                 "messageOk": "Marcaste la revision de claridad del sitio.",
                 "messageFail": "Marca con [x] la revision de claridad del sitio."
               }
@@ -1810,11 +2102,16 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/pages-c01-a01",
-              "editablePaths": ["/Users/Public/Desktop/pages-c01-a01/estado-previo.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/pages-c01-a01/css", "/Users/Public/Desktop/pages-c01-a01/img"],
+              "folders": [
+                "/Users/Public/Desktop/pages-c01-a01/css",
+                "/Users/Public/Desktop/pages-c01-a01/img"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/pages-c01-a01/index.html",
@@ -1841,7 +2138,11 @@
                 "checkId": "pages_c01_a01_saved_report",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/pages-c01-a01/estado-previo.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt"
+                  ]
+                },
                 "messageOk": "Guardaste el diagnostico previo.",
                 "messageFail": "Antes de validar, guarda /Users/Public/Desktop/pages-c01-a01/estado-previo.txt."
               },
@@ -1849,7 +2150,10 @@
                 "checkId": "pages_c01_a01_mentions_ready",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt", "pattern": "(listo|publicar|publicacion)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt",
+                  "pattern": "(listo|publicar|publicacion)"
+                },
                 "messageOk": "El diagnostico deja claro el estado previo a publicar.",
                 "messageFail": "Indica en el diagnostico si el proyecto esta listo para publicar."
               },
@@ -1857,7 +2161,10 @@
                 "checkId": "pages_c01_a01_mentions_core_checks",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt", "pattern": "(index\\.html|rutas relativas|imagenes|archivos innecesarios)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt",
+                  "pattern": "(index\\.html|rutas relativas|imagenes|archivos innecesarios)"
+                },
                 "messageOk": "Mencionaste al menos parte del checklist previo.",
                 "messageFail": "Tu diagnostico debe mencionar elementos del checklist previo: index.html, rutas relativas, imagenes o archivos innecesarios."
               }
@@ -1884,7 +2191,10 @@
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/pages-c01-a02/css", "/Users/Public/Desktop/pages-c01-a02/img"],
+              "folders": [
+                "/Users/Public/Desktop/pages-c01-a02/css",
+                "/Users/Public/Desktop/pages-c01-a02/img"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/pages-c01-a02/index.html",
@@ -1931,7 +2241,10 @@
                 "checkId": "pages_c01_a02_order",
                 "type": "TERMINAL_ORDER",
                 "target": "commands",
-                "rules": { "before": "git commit -m \"Preparar proyecto para publicar\"", "mustAppearAny": ["git init", "git add ."] },
+                "rules": {
+                  "before": "git commit -m \"Preparar proyecto para publicar\"",
+                  "mustAppearAny": ["git init", "git add ."]
+                },
                 "messageOk": "El flujo de repositorio fue en orden logico.",
                 "messageFail": "Inicializa y agrega archivos antes de hacer el commit."
               }
@@ -1954,11 +2267,17 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/pages-c01-a03",
-              "editablePaths": ["/Users/Public/Desktop/pages-c01-a03/url-publica.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/pages-c01-a03/url-publica.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/pages-c01-a03/css", "/Users/Public/Desktop/pages-c01-a03/img", "/Users/Public/Desktop/pages-c01-a03/js"],
+              "folders": [
+                "/Users/Public/Desktop/pages-c01-a03/css",
+                "/Users/Public/Desktop/pages-c01-a03/img",
+                "/Users/Public/Desktop/pages-c01-a03/js"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/pages-c01-a03/index.html",
@@ -1997,7 +2316,9 @@
                 "checkId": "pages_c01_a03_published_url_runtime",
                 "type": "PAGES_PUBLISHED_URL_REGEX",
                 "target": "pages",
-                "rules": { "pattern": "^https://estudiante\\.pages\\.dev/[a-z0-9-]+$" },
+                "rules": {
+                  "pattern": "^https://estudiante\\.pages\\.dev/[a-z0-9-]+$"
+                },
                 "messageOk": "Se detecto una publicacion valida en Pages.",
                 "messageFail": "Todavia no se detecta una URL publicada por Pages."
               },
@@ -2005,7 +2326,11 @@
                 "checkId": "pages_c01_a03_saved_url_file",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/pages-c01-a03/url-publica.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/pages-c01-a03/url-publica.txt"
+                  ]
+                },
                 "messageOk": "Guardaste la URL publica en el archivo pedido.",
                 "messageFail": "Guarda la URL en /Users/Public/Desktop/pages-c01-a03/url-publica.txt."
               },
@@ -2013,7 +2338,10 @@
                 "checkId": "pages_c01_a03_url_format",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c01-a03/url-publica.txt", "pattern": "https://estudiante\\.pages\\.dev/[a-z0-9-]+" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c01-a03/url-publica.txt",
+                  "pattern": "https://estudiante\\.pages\\.dev/[a-z0-9-]+"
+                },
                 "messageOk": "El archivo contiene una URL publica valida.",
                 "messageFail": "El archivo debe contener la URL publica generada por Pages."
               }
@@ -2036,11 +2364,16 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/pages-c01-a04",
-              "editablePaths": ["/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
-              "folders": ["/Users/Public/Desktop/pages-c01-a04/css", "/Users/Public/Desktop/pages-c01-a04/img"],
+              "folders": [
+                "/Users/Public/Desktop/pages-c01-a04/css",
+                "/Users/Public/Desktop/pages-c01-a04/img"
+              ],
               "files": [
                 {
                   "path": "/Users/Public/Desktop/pages-c01-a04/index.html",
@@ -2067,7 +2400,9 @@
                 "checkId": "pages_c01_a04_published_runtime",
                 "type": "PAGES_PUBLISHED_URL_REGEX",
                 "target": "pages",
-                "rules": { "pattern": "^https://estudiante\\.pages\\.dev/[a-z0-9-]+$" },
+                "rules": {
+                  "pattern": "^https://estudiante\\.pages\\.dev/[a-z0-9-]+$"
+                },
                 "messageOk": "La publicacion ya existe para revisar el sitio.",
                 "messageFail": "Primero publica el sitio con Pages."
               },
@@ -2075,7 +2410,11 @@
                 "checkId": "pages_c01_a04_saved_checklist",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt"
+                  ]
+                },
                 "messageOk": "Guardaste el checklist post-publicacion.",
                 "messageFail": "Guarda /Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt antes de validar."
               },
@@ -2083,7 +2422,10 @@
                 "checkId": "pages_c01_a04_checked_url",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt", "pattern": "\\[[xX]\\]\\s*La URL abre sin errores" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt",
+                  "pattern": "\\[[xX]\\]\\s*La URL abre sin errores"
+                },
                 "messageOk": "Marcaste la revision de la URL.",
                 "messageFail": "Marca con [x] que la URL abre sin errores."
               },
@@ -2091,7 +2433,10 @@
                 "checkId": "pages_c01_a04_checked_assets",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt", "pattern": "\\[[xX]\\]\\s*Las imagenes cargan[\\s\\S]*\\[[xX]\\]\\s*Los estilos se aplican" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt",
+                  "pattern": "\\[[xX]\\]\\s*Las imagenes cargan[\\s\\S]*\\[[xX]\\]\\s*Los estilos se aplican"
+                },
                 "messageOk": "Revisaste imagenes y estilos.",
                 "messageFail": "Marca con [x] que las imagenes cargan y que los estilos se aplican."
               },
@@ -2099,7 +2444,10 @@
                 "checkId": "pages_c01_a04_checked_links_or_mobile",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt", "pattern": "(\\[[xX]\\]\\s*Los links internos funcionan|\\[[xX]\\]\\s*Lo probe desde el celular)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt",
+                  "pattern": "(\\[[xX]\\]\\s*Los links internos funcionan|\\[[xX]\\]\\s*Lo probe desde el celular)"
+                },
                 "messageOk": "Completaste parte de la verificacion final.",
                 "messageFail": "Marca al menos la revision de links internos o la prueba desde el celular."
               }
@@ -2150,7 +2498,9 @@
                 "checkId": "pages_c02_a01_saved_index",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/pages-c02-a01/index.html"] },
+                "rules": {
+                  "paths": ["/Users/Public/Desktop/pages-c02-a01/index.html"]
+                },
                 "messageOk": "Guardaste el cambio local.",
                 "messageFail": "Guarda index.html despues de editarlo."
               },
@@ -2158,7 +2508,10 @@
                 "checkId": "pages_c02_a01_updated_heading",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c02-a01/index.html", "pattern": "<h1>\\s*Sitio actualizado\\s*</h1>" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c02-a01/index.html",
+                  "pattern": "<h1>\\s*Sitio actualizado\\s*</h1>"
+                },
                 "messageOk": "El titulo principal ya refleja el cambio pedido.",
                 "messageFail": "Cambia el h1 para que diga Sitio actualizado."
               }
@@ -2198,7 +2551,10 @@
                 "checkId": "pages_c02_a02_content_saved",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c02-a02/index.html", "pattern": "Cambios listos para publicar" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c02-a02/index.html",
+                  "pattern": "Cambios listos para publicar"
+                },
                 "messageOk": "El cambio local fue agregado al archivo.",
                 "messageFail": "Agrega el texto Cambios listos para publicar dentro de index.html y guardalo."
               },
@@ -2214,7 +2570,9 @@
                 "checkId": "pages_c02_a02_git_commit",
                 "type": "TERMINAL_REGEX",
                 "target": "commands",
-                "rules": { "pattern": "^git commit -m \\\"(?!cambios$|arregle cosas$|arreglé cosas$).+\\\"$" },
+                "rules": {
+                  "pattern": "^git commit -m \\\"(?!cambios$|arregle cosas$|arreglé cosas$).+\\\"$"
+                },
                 "messageOk": "Registraste un commit con mensaje descriptivo.",
                 "messageFail": "Haz git commit -m con un mensaje mas descriptivo que cambios o arregle cosas."
               }
@@ -2239,7 +2597,10 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/pages-c02-a03",
-              "editablePaths": ["/Users/Public/Desktop/pages-c02-a03/index.html", "/Users/Public/Desktop/pages-c02-a03/url-republicada.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/pages-c02-a03/index.html",
+                "/Users/Public/Desktop/pages-c02-a03/url-republicada.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
@@ -2282,7 +2643,11 @@
                 "checkId": "pages_c02_a03_saved_url",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/pages-c02-a03/url-republicada.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/pages-c02-a03/url-republicada.txt"
+                  ]
+                },
                 "messageOk": "Guardaste la URL republicada.",
                 "messageFail": "Guarda la URL en /Users/Public/Desktop/pages-c02-a03/url-republicada.txt."
               },
@@ -2290,7 +2655,10 @@
                 "checkId": "pages_c02_a03_url_format",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c02-a03/url-republicada.txt", "pattern": "https://estudiante\\.pages\\.dev/ciclo-pages" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c02-a03/url-republicada.txt",
+                  "pattern": "https://estudiante\\.pages\\.dev/ciclo-pages"
+                },
                 "messageOk": "La URL guardada coincide con la publicacion esperada.",
                 "messageFail": "El archivo debe contener la URL https://estudiante.pages.dev/ciclo-pages."
               },
@@ -2298,7 +2666,9 @@
                 "checkId": "pages_c02_a03_runtime_publish",
                 "type": "PAGES_PUBLISHED_URL_REGEX",
                 "target": "pages",
-                "rules": { "pattern": "^https://estudiante\\.pages\\.dev/ciclo-pages$" },
+                "rules": {
+                  "pattern": "^https://estudiante\\.pages\\.dev/ciclo-pages$"
+                },
                 "messageOk": "Pages detecto la publicacion del proyecto.",
                 "messageFail": "Todavia no se detecta publicada la URL de ciclo-pages."
               }
@@ -2321,7 +2691,9 @@
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/pages-c02-a04",
-              "editablePaths": ["/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt"],
+              "editablePaths": [
+                "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt"
+              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
@@ -2343,7 +2715,11 @@
                 "checkId": "pages_c02_a04_saved_report",
                 "type": "FILE_SAVED_PATHS_INCLUDE",
                 "target": "workspace",
-                "rules": { "paths": ["/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt"] },
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt"
+                  ]
+                },
                 "messageOk": "Guardaste el reporte de errores frecuentes.",
                 "messageFail": "Guarda /Users/Public/Desktop/pages-c02-a04/reporte-errores.txt antes de validar."
               },
@@ -2351,7 +2727,10 @@
                 "checkId": "pages_c02_a04_mentions_push_or_cache",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt", "pattern": "(push|cache|cach[eé]|git add|commit)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt",
+                  "pattern": "(push|cache|cach[eé]|git add|commit)"
+                },
                 "messageOk": "Mencionaste una causa realista del problema.",
                 "messageFail": "Menciona en el reporte causas como no hacer push, olvidar git add o problemas de cache."
               },
@@ -2359,7 +2738,10 @@
                 "checkId": "pages_c02_a04_mentions_reload",
                 "type": "FILE_CONTENT_REGEX",
                 "target": "workspace",
-                "rules": { "path": "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt", "pattern": "(ctrl\\s*\\+\\s*shift\\s*\\+\\s*r|cmd\\s*\\+\\s*shift\\s*\\+\\s*r|recargar|reload)" },
+                "rules": {
+                  "path": "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt",
+                  "pattern": "(ctrl\\s*\\+\\s*shift\\s*\\+\\s*r|cmd\\s*\\+\\s*shift\\s*\\+\\s*r|recargar|reload)"
+                },
                 "messageOk": "El reporte incluye una verificacion concreta para comprobar el cambio.",
                 "messageFail": "Explica como verificarias el cambio, por ejemplo recargando fuerte con Ctrl+Shift+R o Cmd+Shift+R."
               }

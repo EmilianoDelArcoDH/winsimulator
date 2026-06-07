@@ -8,9 +8,11 @@ const styledBorder = ({
   $foreground,
   theme,
 }: StyledTitlebarProps & { theme: DefaultTheme }): string =>
-  $foreground
-    ? `1px solid ${theme.colors.titleBar.background}`
-    : `1px solid ${theme.colors.titleBar.backgroundInactive}`;
+  `1px solid ${
+    $foreground
+      ? theme.effects.border.subtle
+      : theme.colors.window.outlineInactive
+  }`;
 
 const StyledTitlebar = styled.header<StyledTitlebarProps>`
   background-color: ${({ $foreground, theme }) =>
@@ -22,6 +24,9 @@ const StyledTitlebar = styled.header<StyledTitlebarProps>`
   height: ${({ theme }) => theme.sizes.titleBar.height}px;
   position: relative;
   top: 0;
+  transition:
+    background-color ${({ theme }) => theme.effects.transition.normal},
+    color ${({ theme }) => theme.effects.transition.normal};
   z-index: 2;
 
   > button {
@@ -68,11 +73,15 @@ const StyledTitlebar = styled.header<StyledTitlebarProps>`
     display: flex;
 
     button {
-      border-left: ${styledBorder};
+      border-left: 0;
+      border-radius: 0;
       box-sizing: content-box;
       display: flex;
       place-content: center;
       place-items: center;
+      transition:
+        background-color ${({ theme }) => theme.effects.transition.fast},
+        transform ${({ theme }) => theme.effects.transition.fast};
       width: ${({ theme }) => theme.sizes.titleBar.buttonWidth};
 
       svg {
@@ -106,7 +115,8 @@ const StyledTitlebar = styled.header<StyledTitlebarProps>`
       }
 
       &:active {
-        background-color: rgb(51 51 51);
+        background-color: ${({ theme }) => theme.colors.taskbar.active};
+        transform: scale(0.94);
 
         &.close {
           background-color: rgb(139 10 20);

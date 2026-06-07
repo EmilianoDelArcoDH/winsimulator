@@ -10,6 +10,7 @@ type SidebarButton = {
   icon: React.JSX.Element;
   name: string;
   tooltip?: string;
+  tourId?: string;
 };
 
 export type SidebarButtons = SidebarButton[];
@@ -21,6 +22,7 @@ const SidebarButtonComponent: FC<SidebarButton> = ({
   icon,
   name,
   tooltip,
+  tourId,
 }) => (
   <StyledSidebarButton
     ref={useCallback((buttonRef: HTMLLIElement) => {
@@ -28,6 +30,7 @@ const SidebarButtonComponent: FC<SidebarButton> = ({
     }, [])}
     $active={active}
     aria-label={name}
+    data-tour={tourId}
     onClick={action}
     title={tooltip}
   >
