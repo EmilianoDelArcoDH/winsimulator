@@ -63,10 +63,6 @@ type ContextMenuState = {
   y: number;
 };
 
-type WindowWithDirectoryPicker = Window & {
-  showDirectoryPicker?: () => Promise<unknown>;
-};
-
 type UrlTargetType = "none" | "file" | "directory";
 
 type ActivityValidationState = {
@@ -1888,19 +1884,35 @@ function example() {
       }
 
       if (menuAction === "open-folder") {
+        let virtualWorkspacePath = normalizeFsPath(
+          selectedPath || DESKTOP_PATH || "/Users/Documents"
+        );
+
         try {
-          const handles = await (
-            window as WindowWithDirectoryPicker
-          ).showDirectoryPicker?.();
-          if (handles) {
-            setProcessUrl(id, "/Users/Documents");
-            await loadEntries();
+          const selectedStats = await lstat(virtualWorkspacePath);
+
+          if (!selectedStats.isDirectory()) {
+            virtualWorkspacePath = normalizeFsPath(
+              dirname(virtualWorkspacePath)
+            );
           }
-        } catch (error) {
-          if (error instanceof Error && error.name !== "AbortError") {
-            console.error("Could not open folder:", error);
-          }
+        } catch {
+          virtualWorkspacePath = normalizeFsPath(
+            DESKTOP_PATH || "/Users/Documents"
+          );
         }
+
+        await loadFolder(virtualWorkspacePath);
+        setProcessUrl(id, virtualWorkspacePath);
+        setPanelOpen(true);
+        setActiveView("explorer");
+        setSelectedPath(virtualWorkspacePath);
+        setTerminalCwd(virtualWorkspacePath);
+        setExpandedFolders((currentFolders) =>
+          currentFolders.includes(virtualWorkspacePath)
+            ? currentFolders
+            : [virtualWorkspacePath, ...currentFolders]
+        );
         return;
       }
 
@@ -1989,6 +2001,7 @@ function example() {
       id,
       isActiveFileEditable,
       isCompactLayout,
+      loadFolder,
       logExplorer,
       normalizeFsPath,
       openSaveAsDialog,
