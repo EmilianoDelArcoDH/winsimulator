@@ -2179,7 +2179,6 @@ function example() {
           style={{ ["--side-panel-width" as string]: `${sidePanelWidth}px` }}
         >
           <header className="menu-bar">
-            <span aria-hidden="true" className="window-app-mark" />
             <ol>
               <li className="top-menu-file">
                 <button
@@ -2328,9 +2327,6 @@ function example() {
                   </menu>
                 )}
               </li>
-              <li className="visual-menu-item top-menu-selection">
-                <button type="button">Selection</button>
-              </li>
               <li className="top-menu-view">
                 <button
                   className={activeMenu === "view" ? "active" : ""}
@@ -2372,12 +2368,6 @@ function example() {
                   </menu>
                 )}
               </li>
-              <li className="visual-menu-item top-menu-go">
-                <button type="button">Go</button>
-              </li>
-              <li className="visual-menu-item top-menu-run">
-                <button type="button">Run</button>
-              </li>
               <li className="top-menu-terminal">
                 <button
                   className={activeMenu === "terminal" ? "active" : ""}
@@ -2408,72 +2398,6 @@ function example() {
                   </menu>
                 )}
               </li>
-              <li className="visual-menu-item top-menu-help">
-                <button type="button">Help</button>
-              </li>
-              <li className="overflow-menu">
-                <button type="button">...</button>
-                <menu className="menu-dropdown overflow-dropdown">
-                  <li className="overflow-selection">
-                    <button type="button">Selection</button>
-                  </li>
-                  <li className="overflow-go">
-                    <button type="button">Go</button>
-                  </li>
-                  <li className="overflow-run">
-                    <button type="button">Run</button>
-                  </li>
-                  <li className="overflow-submenu overflow-view">
-                    <button type="button">View</button>
-                    <menu className="menu-dropdown submenu-dropdown">
-                      <li>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            runMenuAction("toggle-sidebar");
-                          }}
-                          onMouseDown={(e) => e.preventDefault()}
-                          type="button"
-                        >
-                          Toggle Side Bar
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            runMenuAction("reset-sidebar-width");
-                          }}
-                          onMouseDown={(e) => e.preventDefault()}
-                          type="button"
-                        >
-                          Reset Sidebar Width
-                        </button>
-                      </li>
-                    </menu>
-                  </li>
-                  <li className="overflow-submenu overflow-terminal">
-                    <button type="button">Terminal</button>
-                    <menu className="menu-dropdown submenu-dropdown">
-                      <li>
-                        <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            runMenuAction("toggle-terminal");
-                          }}
-                          onMouseDown={(e) => e.preventDefault()}
-                          type="button"
-                        >
-                          Toggle Terminal
-                        </button>
-                      </li>
-                    </menu>
-                  </li>
-                  <li className="overflow-help">
-                    <button type="button">Help</button>
-                  </li>
-                </menu>
-              </li>
               {canValidateCurrentActivity && (
                 <li className="validate-item">
                   <button
@@ -2489,13 +2413,6 @@ function example() {
                 </li>
               )}
             </ol>
-            <div aria-hidden="true" className="command-center">
-              <span className="command-center-search" />
-              <span>
-                {basename(activeFileUrl || explorerRoot) ||
-                  "Visual Studio Code"}
-              </span>
-            </div>
           </header>
           {activityValidationState && (
             <section className="validation-panel">

@@ -2219,32 +2219,11 @@ const StyledMonacoEditor = styled.div`
     box-shadow: inset 0 1px 0 rgb(255 255 255 / 4%);
     display: grid;
     gap: 8px;
-    grid-template-columns: auto minmax(0, 1fr) minmax(120px, 420px);
+    grid-template-columns: minmax(0, 1fr);
     height: auto;
     max-height: none;
     min-height: var(--menu-bar-height);
     padding: 0 0 0 8px;
-  }
-
-  .window-app-mark {
-    background: linear-gradient(135deg, #24a8ff 0%, #007acc 45%, #68217a 100%);
-    border-radius: 4px;
-    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
-    height: 16px;
-    position: relative;
-    width: 16px;
-  }
-
-  .window-app-mark::after {
-    color: #ffffff;
-    content: "<";
-    font-family: "Cascadia Mono", Consolas, monospace;
-    font-size: 11px;
-    font-weight: 700;
-    left: 4px;
-    line-height: 16px;
-    position: absolute;
-    top: -1px;
   }
 
   .menu-bar > ol {
@@ -2270,10 +2249,6 @@ const StyledMonacoEditor = styled.div`
 
   .menu-bar > ol > li {
     height: 24px;
-  }
-
-  .menu-bar > ol > li.visual-menu-item > button {
-    cursor: default;
   }
 
   .menu-bar > ol > li > button:hover,
@@ -2318,59 +2293,6 @@ const StyledMonacoEditor = styled.div`
   .menu-bar > ol > li > menu.menu-dropdown li button:disabled {
     color: #6a6a6a;
     cursor: default;
-  }
-
-  .command-center {
-    align-items: center;
-    align-self: center;
-    background: rgb(255 255 255 / 6%);
-    border: 1px solid rgb(255 255 255 / 8%);
-    border-radius: 6px;
-    box-shadow:
-      inset 0 1px 0 rgb(255 255 255 / 4%),
-      0 1px 2px rgb(0 0 0 / 18%);
-    color: #cccccc;
-    display: inline-flex;
-    font-size: 12px;
-    gap: 7px;
-    height: 22px;
-    justify-self: center;
-    max-width: 100%;
-    min-width: 140px;
-    overflow: hidden;
-    padding: 0 12px;
-    pointer-events: none;
-    text-overflow: ellipsis;
-    transition:
-      background-color 120ms ease,
-      border-color 120ms ease;
-    white-space: nowrap;
-  }
-
-  .command-center:hover {
-    background: rgb(255 255 255 / 9%);
-    border-color: rgb(255 255 255 / 13%);
-  }
-
-  .command-center-search {
-    border: 1.5px solid currentColor;
-    border-radius: 999px;
-    display: inline-block;
-    height: 10px;
-    opacity: 0.82;
-    position: relative;
-    width: 10px;
-  }
-
-  .command-center-search::after {
-    background: currentColor;
-    content: "";
-    height: 5px;
-    position: absolute;
-    right: -4px;
-    top: 7px;
-    transform: rotate(45deg);
-    width: 1.5px;
   }
 
   .activity-bar {
@@ -2832,17 +2754,13 @@ const StyledMonacoEditor = styled.div`
 
     .menu-bar {
       align-items: center;
-      grid-template-columns: auto minmax(0, 1fr) minmax(90px, 180px);
+      grid-template-columns: minmax(0, 1fr);
       padding-left: 6px;
     }
 
     .menu-bar > ol {
       display: flex;
       max-width: 100%;
-    }
-
-    .command-center {
-      min-width: 0;
     }
 
     .activity-bar button {
@@ -2878,94 +2796,16 @@ const StyledMonacoEditor = styled.div`
     height: 100%;
   }
 
-  .menu-bar .overflow-menu {
-    display: none;
-  }
-
-  .menu-bar .overflow-view,
-  .menu-bar .overflow-terminal {
-    display: none;
-  }
-
-  .menu-bar .overflow-menu > button {
-    font-weight: 700;
-    min-width: 30px;
-    padding: 0 9px;
-  }
-
-  .menu-bar .overflow-menu > .overflow-dropdown {
-    left: auto;
-    right: 0;
-  }
-
-  .menu-bar .overflow-submenu {
-    position: relative;
-  }
-
-  .menu-bar .overflow-submenu > button::after {
-    color: #cccccc;
-    content: ">";
-    position: absolute;
-    right: 10px;
-  }
-
-  .menu-bar .overflow-submenu > .submenu-dropdown {
-    display: none;
-    left: calc(100% - 4px);
-    min-width: 200px;
-    top: -5px;
-  }
-
-  .menu-bar .overflow-submenu:hover > .submenu-dropdown {
-    display: block;
-  }
-
   @media (max-width: 760px) {
     .menu-bar {
-      grid-template-columns: auto minmax(0, 1fr);
-    }
-
-    .menu-bar .top-menu-selection,
-    .menu-bar .top-menu-go,
-    .menu-bar .top-menu-run,
-    .menu-bar .top-menu-help {
-      display: none;
-    }
-
-    .menu-bar .overflow-menu {
-      display: flex;
-    }
-
-    .command-center {
-      display: none;
+      padding-left: 4px;
     }
   }
 
   @media (max-width: 620px) {
-    .menu-bar {
-      grid-template-columns: auto minmax(0, 1fr);
+    .menu-bar > ol > li > button {
+      padding: 0 6px;
     }
-
-    .menu-bar .top-menu-view,
-    .menu-bar .top-menu-terminal {
-      display: none;
-    }
-
-    .command-center {
-      display: none;
-    }
-
-    .menu-bar .overflow-view,
-    .menu-bar .overflow-terminal {
-      display: list-item;
-    }
-  }
-
-  @media (max-width: 430px) {
-    .menu-bar .top-menu-edit {
-      display: none;
-    }
-
   }
 `;
 
