@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-unnecessary-type-conversion, consistent-return, no-await-in-loop, no-param-reassign, no-void, react-hooks-addons/no-unused-deps, sonarjs/argument-type, sonarjs/null-dereference */
 import { basename, dirname, extname } from "path";
 import {
   memo,
@@ -1758,9 +1759,7 @@ function example() {
       } else if (instruction === "pages") {
         const pagesSubCommand = args[0] || "";
 
-        if (pagesSubCommand !== "publish") {
-          nextLines.push("usage: pages publish [project-name]");
-        } else {
+        if (pagesSubCommand === "publish") {
           const sourceRoot = terminalCwd || explorerRoot;
           const inferredProjectName =
             args.slice(1).join(" ").trim() ||
@@ -1773,11 +1772,7 @@ function example() {
           try {
             const sourceStats = await lstat(sourceRoot);
 
-            if (!sourceStats.isDirectory()) {
-              nextLines.push(
-                "pages publish must be run from a project folder."
-              );
-            } else {
+            if (sourceStats.isDirectory()) {
               await snapshotDirectory(sourceRoot, snapshotRoot);
 
               const publishedSite = registerPublishedSite({
@@ -1791,15 +1786,20 @@ function example() {
                 type: "pagesPublished",
                 url: publishedSite.publicUrl,
               });
-              nextLines.push("Pages published successfully.");
-              nextLines.push(`Public URL: ${publishedSite.publicUrl}`);
+              nextLines.push("Pages published successfully.", `Public URL: ${publishedSite.publicUrl}`);
               openProcess("Browser", { url: publishedSite.publicUrl });
+            } else {
+              nextLines.push(
+                "pages publish must be run from a project folder."
+              );
             }
           } catch (error) {
             nextLines.push(
               `pages publish failed: ${(error as Error)?.message || "unknown error"}`
             );
           }
+        } else {
+          nextLines.push("usage: pages publish [project-name]");
         }
       } else {
         nextLines.push(`Command not found: ${command}`);
@@ -2179,8 +2179,9 @@ function example() {
           style={{ ["--side-panel-width" as string]: `${sidePanelWidth}px` }}
         >
           <header className="menu-bar">
+            <span aria-hidden="true" className="window-app-mark" />
             <ol>
-              <li>
+              <li className="top-menu-file">
                 <button
                   className={activeMenu === "file" ? "active" : ""}
                   onClick={(e) => {
@@ -2286,7 +2287,7 @@ function example() {
                   </menu>
                 )}
               </li>
-              <li>
+              <li className="top-menu-edit">
                 <button
                   className={activeMenu === "edit" ? "active" : ""}
                   onClick={(e) => {
@@ -2327,7 +2328,10 @@ function example() {
                   </menu>
                 )}
               </li>
-              <li>
+              <li className="visual-menu-item top-menu-selection">
+                <button type="button">Selection</button>
+              </li>
+              <li className="top-menu-view">
                 <button
                   className={activeMenu === "view" ? "active" : ""}
                   onClick={(e) => {
@@ -2368,7 +2372,13 @@ function example() {
                   </menu>
                 )}
               </li>
-              <li>
+              <li className="visual-menu-item top-menu-go">
+                <button type="button">Go</button>
+              </li>
+              <li className="visual-menu-item top-menu-run">
+                <button type="button">Run</button>
+              </li>
+              <li className="top-menu-terminal">
                 <button
                   className={activeMenu === "terminal" ? "active" : ""}
                   data-tour="monaco-terminal-menu"
@@ -2398,6 +2408,72 @@ function example() {
                   </menu>
                 )}
               </li>
+              <li className="visual-menu-item top-menu-help">
+                <button type="button">Help</button>
+              </li>
+              <li className="overflow-menu">
+                <button type="button">...</button>
+                <menu className="menu-dropdown overflow-dropdown">
+                  <li className="overflow-selection">
+                    <button type="button">Selection</button>
+                  </li>
+                  <li className="overflow-go">
+                    <button type="button">Go</button>
+                  </li>
+                  <li className="overflow-run">
+                    <button type="button">Run</button>
+                  </li>
+                  <li className="overflow-submenu overflow-view">
+                    <button type="button">View</button>
+                    <menu className="menu-dropdown submenu-dropdown">
+                      <li>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            runMenuAction("toggle-sidebar");
+                          }}
+                          onMouseDown={(e) => e.preventDefault()}
+                          type="button"
+                        >
+                          Toggle Side Bar
+                        </button>
+                      </li>
+                      <li>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            runMenuAction("reset-sidebar-width");
+                          }}
+                          onMouseDown={(e) => e.preventDefault()}
+                          type="button"
+                        >
+                          Reset Sidebar Width
+                        </button>
+                      </li>
+                    </menu>
+                  </li>
+                  <li className="overflow-submenu overflow-terminal">
+                    <button type="button">Terminal</button>
+                    <menu className="menu-dropdown submenu-dropdown">
+                      <li>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            runMenuAction("toggle-terminal");
+                          }}
+                          onMouseDown={(e) => e.preventDefault()}
+                          type="button"
+                        >
+                          Toggle Terminal
+                        </button>
+                      </li>
+                    </menu>
+                  </li>
+                  <li className="overflow-help">
+                    <button type="button">Help</button>
+                  </li>
+                </menu>
+              </li>
               {canValidateCurrentActivity && (
                 <li className="validate-item">
                   <button
@@ -2413,6 +2489,13 @@ function example() {
                 </li>
               )}
             </ol>
+            <div aria-hidden="true" className="command-center">
+              <span className="command-center-search" />
+              <span>
+                {basename(activeFileUrl || explorerRoot) ||
+                  "Visual Studio Code"}
+              </span>
+            </div>
           </header>
           {activityValidationState && (
             <section className="validation-panel">
@@ -2481,7 +2564,14 @@ function example() {
             >
               ⎇
             </button>
+            <button title="Run and Debug" type="button">
+              Run and Debug
+            </button>
+            <button title="Extensions" type="button">
+              Extensions
+            </button>
             <button
+              className="toggle-sidebar-control"
               onClick={() => {
                 if (isCompactLayout) {
                   setPanelOpen(false);
@@ -2641,6 +2731,22 @@ function example() {
                   <ol
                     ref={folderEntriesRef}
                     className="folder-entries"
+                    onContextMenu={(event) => {
+                      const target = event.target as HTMLElement;
+                      const clickedEntry = target.closest("li[data-path]");
+
+                      if (clickedEntry) {
+                        return;
+                      }
+
+                      event.preventDefault();
+                      setContextMenu({
+                        directoryPath: explorerRoot,
+                        targetIsDirectory: true,
+                        x: event.clientX,
+                        y: event.clientY,
+                      });
+                    }}
                     onDragLeave={() => {
                       setDragOverPath("");
                     }}
@@ -2660,22 +2766,6 @@ function example() {
                       if (sourcePath && canCreateEntriesInWorkspace) {
                         void moveEntry(sourcePath, explorerRoot);
                       }
-                    }}
-                    onContextMenu={(event) => {
-                      const target = event.target as HTMLElement;
-                      const clickedEntry = target.closest("li[data-path]");
-
-                      if (clickedEntry) {
-                        return;
-                      }
-
-                      event.preventDefault();
-                      setContextMenu({
-                        directoryPath: explorerRoot,
-                        targetIsDirectory: true,
-                        x: event.clientX,
-                        y: event.clientY,
-                      });
                     }}
                   >
                     {explorerEntries.length === 0 && !creatingEntry && (
@@ -2834,6 +2924,11 @@ function example() {
                               setDraggedPath("");
                               setDragOverPath("");
                             }}
+                            onDragLeave={() => {
+                              if (dragOverPath === itemPath) {
+                                setDragOverPath("");
+                              }
+                            }}
                             onDragOver={(event) => {
                               if (
                                 !isDirectory ||
@@ -2861,11 +2956,6 @@ function example() {
                               );
                               setDraggedPath(itemPath);
                               setSelectedPath(itemPath);
-                            }}
-                            onDragLeave={() => {
-                              if (dragOverPath === itemPath) {
-                                setDragOverPath("");
-                              }
                             }}
                             onDrop={(event) => {
                               if (!isDirectory) {
@@ -3242,8 +3332,8 @@ function example() {
                 </header>
                 <div
                   className="editor-host"
-                  data-monaco-editor-host
                   data-tour="monaco-editor-host"
+                  data-monaco-editor-host
                 />
               </>
             ) : (
@@ -3260,12 +3350,12 @@ function example() {
             data-tour="monaco-terminal-panel"
           >
             <div className="bottom-panel-header">
-              <div className="terminal-tabs" aria-hidden="true">
+              <div aria-hidden="true" className="terminal-tabs">
                 <span className="terminal-tab active">TERMINAL</span>
                 <span className="terminal-tab">PROBLEMS</span>
                 <span className="terminal-tab">OUTPUT</span>
               </div>
-              <div className="terminal-toolbar" aria-hidden="true">
+              <div aria-hidden="true" className="terminal-toolbar">
                 <span className="terminal-shell">powershell</span>
                 <span className="terminal-action add">+</span>
                 <span className="terminal-action dropdown">⌄</span>

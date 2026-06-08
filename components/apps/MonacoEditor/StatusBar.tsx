@@ -77,7 +77,7 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
     const updateModel = (): void => {
       const model = editor?.getModel() as Model;
       const modelLanguage = model?.getLanguageId();
-      const monaco = window.monaco;
+      const {monaco} = window;
 
       if (modelLanguage) {
         setLanguage(
@@ -104,10 +104,20 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
     <StyledStatusBar onContextMenuCapture={haltEvent}>
       {editor && (
         <>
-          <ol className="status">
+          <ol className="status status-left">
+            <li className="branch" title="Git Branch">
+              main
+            </li>
+            <li className="sync" title="Synchronize Changes">
+              0
+            </li>
+            <li className="problems" title="Problems">
+              <span className="problem error-count">0</span>
+              <span className="problem warning-count">0</span>
+            </li>
             <li>Lines {lineCount}</li>
           </ol>
-          <ol className="status">
+          <ol className="status status-right">
             <li className="clickable save">
               <Button
                 onClick={async () => {
@@ -183,7 +193,7 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
             <li className="clickable">
               <Button
                 onClick={() => {
-                  const monaco = window.monaco;
+                  const {monaco} = window;
 
                   if (!monaco) return;
 
@@ -206,7 +216,7 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
             <li className="clickable">
               <Button
                 onClick={() => {
-                  const monaco = window.monaco;
+                  const {monaco} = window;
 
                   if (!monaco) return;
 
@@ -244,7 +254,11 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
                 </Button>
               </li>
             )}
-            {language !== "" && <li>{language}</li>}
+            <li>UTF-8</li>
+            <li>CRLF</li>
+            <li>Spaces: 2</li>
+            {language !== "" && <li className="language-mode">{language}</li>}
+            <li className="feedback">Prettier</li>
           </ol>
           <StyledNotifications>
             {notifications.map(({ message, type }) => (
