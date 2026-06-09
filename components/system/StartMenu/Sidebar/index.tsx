@@ -6,6 +6,7 @@ import SidebarButton, {
 import {
   AllApps,
   Documents,
+  Help,
   Pictures,
   Power,
   SideMenu,
@@ -84,6 +85,7 @@ const Sidebar: FC<SidebarProps> = ({ height }) => {
               icon: <Documents />,
               name: "Documents",
               ...(collapsed && { tooltip: "Documents" }),
+              tourId: "start-menu-documents",
             }
           : undefined,
         buttonAreaCount > 4
@@ -110,6 +112,15 @@ const Sidebar: FC<SidebarProps> = ({ height }) => {
               icon: <Videos />,
               name: "Videos",
               ...(collapsed && { tooltip: "Videos" }),
+            }
+          : undefined,
+        buttonAreaCount > 2
+          ? {
+              action: () => window.location.assign("/tutorial"),
+              icon: <Help />,
+              name: "Ver Tutorial",
+              tooltip: "Abrir el tour guiado de DH Console.",
+              tourId: "tutorial-link",
             }
           : undefined,
         {

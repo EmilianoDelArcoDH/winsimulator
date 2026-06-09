@@ -100,10 +100,10 @@ const MenuItemEntry: FC<MenuItemEntryProps> = ({
     () =>
       menu
         ? {
-          onBlur: onMouseLeave as unknown as React.FocusEventHandler,
-          onMouseEnter,
-          onMouseLeave,
-        }
+            onBlur: onMouseLeave as unknown as React.FocusEventHandler,
+            onMouseEnter,
+            onMouseLeave,
+          }
         : {},
     [menu, onMouseEnter, onMouseLeave]
   );

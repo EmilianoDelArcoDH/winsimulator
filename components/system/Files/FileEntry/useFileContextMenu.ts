@@ -138,8 +138,7 @@ const useFileContextMenu = (
         const pathExtension = getExtension(path);
         const normalizedPath = path.endsWith("/") ? path.slice(0, -1) : path;
         const isDesktopFolder =
-          dirname(normalizedPath) === DESKTOP_PATH &&
-          stats.isDirectory();
+          dirname(normalizedPath) === DESKTOP_PATH && stats.isDirectory();
         const isShortcut = pathExtension === SHORTCUT_EXTENSION;
         const remoteMount = rootFs?.mountList.some(
           (mountPath) =>
@@ -386,9 +385,8 @@ const useFileContextMenu = (
                             absoluteEntry,
                             extname(absoluteEntry)
                           )}.${extension}`;
-                          const { convertSheet } = await import(
-                            "utils/sheetjs"
-                          );
+                          const { convertSheet } =
+                            await import("utils/sheetjs");
                           const workBook = await convertSheet(
                             await readFile(absoluteEntry),
                             extension

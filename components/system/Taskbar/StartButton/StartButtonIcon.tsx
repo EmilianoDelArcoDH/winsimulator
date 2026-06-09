@@ -11,7 +11,9 @@ const StartButtonIcon = memo(() => (
       textAnchor="middle"
       x="50%"
       y="72%"
-    >DHS</text>
+    >
+      DHS
+    </text>
   </svg>
 ));
 

@@ -26,10 +26,12 @@ export const getNavButtonByTitle = (
   title: string
 ): HTMLButtonElement | undefined => {
   try {
-    return (
-      document.querySelector(`main > nav > div[data-taskbar-id='${CSS.escape(title)}']`) ||
-      document.querySelector(`main > nav > div[title='${CSS.escape(title)}']`)
-    ) as HTMLButtonElement;
+    return (document.querySelector(
+      `main > nav > div[data-taskbar-id='${CSS.escape(title)}']`
+    ) ||
+      document.querySelector(
+        `main > nav > div[title='${CSS.escape(title)}']`
+      )) as HTMLButtonElement;
   } catch {
     return undefined;
   }

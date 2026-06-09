@@ -37,7 +37,7 @@ const Desktop: FC = ({ children }) => {
   }, []);
 
   return (
-    <StyledDesktop ref={desktopRef}>
+    <StyledDesktop ref={desktopRef} data-tour="desktop">
       {showPanel && process.env.NODE_ENV === "development" && (
         <div
           style={{

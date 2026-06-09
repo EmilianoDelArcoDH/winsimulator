@@ -83,12 +83,14 @@ const I18N_DICTIONARY: Record<SessionLanguage, TranslationDictionary> = {
     "taskbar.search.fileType.folder": "Carpeta",
     "taskbar.search.fileType.nostrUri": "URI de Nostr",
     "taskbar.search.fileType.youtubeVideo": "Video de YouTube",
-    "taskbar.search.findMostRelevantResults": "Encontrar los resultados más relevantes",
+    "taskbar.search.findMostRelevantResults":
+      "Encontrar los resultados más relevantes",
     "taskbar.search.findResultsIn": "Buscar resultados en {{section}}",
     "taskbar.search.gamesForYou": "Juegos para ti",
     "taskbar.search.lastModified": "Última modificación",
     "taskbar.search.location": "Ubicación",
-    "taskbar.search.noResultsFoundFor": "No se encontraron resultados para '{{term}}'",
+    "taskbar.search.noResultsFoundFor":
+      "No se encontraron resultados para '{{term}}'",
     "taskbar.search.open": "Abrir",
     "taskbar.search": "Escribe aquí para buscar",
     "taskbar.search.openFileLocation": "Abrir ubicación del archivo",
@@ -96,7 +98,8 @@ const I18N_DICTIONARY: Record<SessionLanguage, TranslationDictionary> = {
     "taskbar.search.placeholder": "Escribe aquí para buscar",
     "taskbar.search.recent": "Recientes",
     "taskbar.search.searchIn": "Buscar en {{section}}",
-    "taskbar.search.startTypingToSearch": "Empieza a escribir para buscar {{section}}",
+    "taskbar.search.startTypingToSearch":
+      "Empieza a escribir para buscar {{section}}",
     "taskbar.search.suggested": "Sugeridos",
     "taskbar.search.tab.all": "Todo",
     "taskbar.search.tab.documents": "Documentos",
@@ -116,12 +119,14 @@ const I18N_DICTIONARY: Record<SessionLanguage, TranslationDictionary> = {
     "taskbar.search.fileType.folder": "Pasta",
     "taskbar.search.fileType.nostrUri": "URI do Nostr",
     "taskbar.search.fileType.youtubeVideo": "Vídeo do YouTube",
-    "taskbar.search.findMostRelevantResults": "Encontrar os resultados mais relevantes",
+    "taskbar.search.findMostRelevantResults":
+      "Encontrar os resultados mais relevantes",
     "taskbar.search.findResultsIn": "Encontrar resultados em {{section}}",
     "taskbar.search.gamesForYou": "Jogos para você",
     "taskbar.search.lastModified": "Última modificação",
     "taskbar.search.location": "Localização",
-    "taskbar.search.noResultsFoundFor": "Nenhum resultado encontrado para '{{term}}'",
+    "taskbar.search.noResultsFoundFor":
+      "Nenhum resultado encontrado para '{{term}}'",
     "taskbar.search.open": "Abrir",
     "taskbar.search": "Digite aqui para pesquisar",
     "taskbar.search.openFileLocation": "Abrir localização do arquivo",
@@ -129,7 +134,8 @@ const I18N_DICTIONARY: Record<SessionLanguage, TranslationDictionary> = {
     "taskbar.search.placeholder": "Digite aqui para pesquisar",
     "taskbar.search.recent": "Recentes",
     "taskbar.search.searchIn": "Pesquisar em {{section}}",
-    "taskbar.search.startTypingToSearch": "Comece a digitar para pesquisar {{section}}",
+    "taskbar.search.startTypingToSearch":
+      "Comece a digitar para pesquisar {{section}}",
     "taskbar.search.suggested": "Sugeridos",
     "taskbar.search.tab.all": "Tudo",
     "taskbar.search.tab.documents": "Documentos",
@@ -392,8 +398,8 @@ export const translateUiText = (
     language === "es"
       ? UI_TEXT_TRANSLATIONS.es
       : language === "pt"
-      ? UI_TEXT_TRANSLATIONS.pt
-      : UI_TEXT_TRANSLATIONS.en;
+        ? UI_TEXT_TRANSLATIONS.pt
+        : UI_TEXT_TRANSLATIONS.en;
 
   return translationsByLanguage[value] || value;
 };

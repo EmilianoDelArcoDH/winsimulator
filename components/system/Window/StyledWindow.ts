@@ -6,11 +6,15 @@ type StyledWindowProps = {
   $backgroundBlur?: string;
   $backgroundColor?: string;
   $isForeground: boolean;
+  $maximized?: boolean;
 };
 
 const StyledWindow = styled(motion.section)<StyledWindowProps>`
-  background-color: ${({ $backgroundColor, theme }) =>
-    $backgroundColor || theme.colors.window.background};
+  background-color: ${({ $backgroundColor, $isForeground, theme }) =>
+    $backgroundColor ||
+    ($isForeground ? theme.effects.mica.active : theme.effects.mica.inactive)};
+  border-radius: ${({ $maximized, theme }) =>
+    $maximized ? 0 : theme.effects.radius.window};
   box-shadow: ${({ $isForeground, theme }) =>
     $isForeground
       ? theme.colors.window.shadow
@@ -25,6 +29,10 @@ const StyledWindow = styled(motion.section)<StyledWindowProps>`
     }`};
   overflow: hidden;
   position: absolute;
+  transition:
+    background-color ${({ theme }) => theme.effects.transition.normal},
+    border-radius ${({ theme }) => theme.effects.transition.normal},
+    box-shadow ${({ theme }) => theme.effects.transition.normal};
   width: 100%;
 
   > div > header:first-child + * {

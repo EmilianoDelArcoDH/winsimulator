@@ -7,6 +7,14 @@ import {
 import { getSearchParam } from "utils/functions";
 import { getActiveLanguage } from "utils/i18n";
 import { sendActivityPgEvent } from "utils/pg-events";
+import {
+  applyGitCommand,
+  createInitialGitRepository,
+  gitAdd,
+  gitCommit,
+  gitInit,
+  type VirtualGitRepository,
+} from "utils/virtualGitRepository";
 
 const ACTIVE_ACTIVITY_ID_KEY = "winsim_active_activity_id";
 const ACTIVITY_STATE_PREFIX = "winsim_activity_state_";
@@ -69,6 +77,7 @@ type TrackedCommand = {
 type InferredRepoState = {
   author: string;
   commitsCount: number;
+  currentBranch?: string;
   initialized: boolean;
   lastCommitIncludes: string[];
   lastCommitMessage: string;
@@ -87,6 +96,7 @@ type ActivityTelemetry = {
   fileSavedPaths: string[];
   inferredRepo: InferredRepoState;
   publishedUrls: string[];
+  virtualRepo?: VirtualGitRepository;
 };
 
 export type ActivityEvent =
@@ -121,9 +131,11 @@ const normalize = (value: string): string => value.trim().toLowerCase();
 const normalizePath = (value: string): string =>
   value.replace(/\\/g, "/").replace(/\/+/g, "/").toLowerCase();
 
-const asString = (value: unknown): string => (typeof value === "string" ? value : "");
+const asString = (value: unknown): string =>
+  typeof value === "string" ? value : "";
 
-const asNumber = (value: unknown): number => (typeof value === "number" ? value : 0);
+const asNumber = (value: unknown): number =>
+  typeof value === "number" ? value : 0;
 
 const asRecord = (value: unknown): Record<string, unknown> =>
   value && typeof value === "object" ? (value as Record<string, unknown>) : {};
@@ -147,7 +159,8 @@ const containsAny = (text: string, words: string[]): boolean => {
   return words.some((word) => normalizedText.includes(normalize(word)));
 };
 
-const getStateKey = (activityId: string): string => `${ACTIVITY_STATE_PREFIX}${activityId}`;
+const getStateKey = (activityId: string): string =>
+  `${ACTIVITY_STATE_PREFIX}${activityId}`;
 
 const getTelemetryKey = (activityId: string): string =>
   `${TELEMETRY_PREFIX}${activityId}`;
@@ -175,6 +188,7 @@ const writeJson = (key: string, data: unknown): void => {
 const getDefaultRepoState = (): InferredRepoState => ({
   author: "user",
   commitsCount: 0,
+  currentBranch: "main",
   initialized: false,
   lastCommitIncludes: [],
   lastCommitMessage: "",
@@ -191,10 +205,153 @@ const getDefaultTelemetry = (): ActivityTelemetry => ({
   publishedUrls: [],
 });
 
+const getWorkspace = (activity?: ActivityDefinition): Record<string, unknown> =>
+  asRecord(activity?.data.workspace);
+
+const getWorkspaceRoot = (activity?: ActivityDefinition): string =>
+  normalizePath(asString(getWorkspace(activity).rootPath) || "/").replace(
+    /\/$/,
+    ""
+  ) || "/";
+
+const toRepoPath = (path: string, rootPath: string): string => {
+  const normalizedPath = normalizePath(path).replace(/^\/+/, "");
+  const normalizedRoot = normalizePath(rootPath).replace(/^\/+|\/+$/g, "");
+
+  if (!normalizedRoot) return normalizedPath;
+  if (normalizedPath === normalizedRoot) return "";
+  if (normalizedPath.startsWith(`${normalizedRoot}/`)) {
+    return normalizedPath.slice(normalizedRoot.length + 1);
+  }
+
+  return normalizedPath;
+};
+
+const getWorkspaceFiles = (
+  activity: ActivityDefinition | undefined,
+  telemetry: ActivityTelemetry
+): Record<string, string> => {
+  const workspace = getWorkspace(activity);
+  const rootPath = getWorkspaceRoot(activity);
+  const seededFiles = Array.isArray(workspace.files)
+    ? Object.fromEntries(
+        workspace.files
+          .map((entry) => asRecord(entry))
+          .map((entry) => [
+            toRepoPath(asString(entry.path), rootPath),
+            asString(entry.content),
+          ])
+          .filter(([path]) => Boolean(path))
+      )
+    : {};
+  const savedFiles = Object.fromEntries(
+    Object.entries(telemetry.fileContents)
+      .map(([path, content]) => [toRepoPath(path, rootPath), content])
+      .filter(([path]) => Boolean(path))
+  );
+
+  return {
+    ...seededFiles,
+    ...savedFiles,
+  };
+};
+
+const createActivityGitRepository = (
+  activity: ActivityDefinition | undefined,
+  telemetry: ActivityTelemetry
+): VirtualGitRepository => {
+  const workspace = getWorkspace(activity);
+  const gitConfig = asRecord(workspace.git);
+  const files = getWorkspaceFiles(activity, telemetry);
+  let repo = createInitialGitRepository();
+
+  // Activities rooted at /repo start in an existing repository context.
+  if (
+    getWorkspaceRoot(activity) === "/repo" ||
+    gitConfig.initialCommit === true
+  ) {
+    repo = gitInit(repo);
+  }
+
+  if (gitConfig.initialCommit === true && Object.keys(files).length > 0) {
+    repo = gitAdd(repo, ".", files);
+    repo = gitCommit(
+      repo,
+      asString(gitConfig.message) || "Initial activity workspace"
+    );
+  } else {
+    repo.files = files;
+  }
+
+  return repo;
+};
+
+const readVirtualRepo = (value: unknown): VirtualGitRepository | undefined => {
+  const parsed = asRecord(value);
+
+  if (typeof parsed.initialized !== "boolean") return undefined;
+
+  const fallback = createInitialGitRepository();
+  const commits = Array.isArray(parsed.commits)
+    ? parsed.commits
+        .map((entry) => asRecord(entry))
+        .filter(
+          (entry) =>
+            typeof entry.id === "string" &&
+            typeof entry.message === "string" &&
+            typeof entry.branch === "string"
+        )
+        .map((entry) => ({
+          branch: asString(entry.branch),
+          changedFiles: asStringArray(entry.changedFiles),
+          createdAt: asString(entry.createdAt),
+          files: Object.fromEntries(
+            Object.entries(asRecord(entry.files)).filter(
+              (file): file is [string, string] => typeof file[1] === "string"
+            )
+          ),
+          id: asString(entry.id),
+          message: asString(entry.message),
+        }))
+    : [];
+
+  return {
+    ...fallback,
+    ...parsed,
+    branchHeads: Object.fromEntries(
+      Object.entries(asRecord(parsed.branchHeads)).filter(
+        (entry): entry is [string, string] => typeof entry[1] === "string"
+      )
+    ),
+    branches: asStringArray(parsed.branches),
+    commits,
+    currentBranch: asString(parsed.currentBranch) || "main",
+    files: Object.fromEntries(
+      Object.entries(asRecord(parsed.files)).filter(
+        (entry): entry is [string, string] => typeof entry[1] === "string"
+      )
+    ),
+    initialized: parsed.initialized,
+    remotes: Object.fromEntries(
+      Object.entries(asRecord(parsed.remotes)).filter(
+        (entry): entry is [string, string] => typeof entry[1] === "string"
+      )
+    ),
+    staged: asStringArray(parsed.staged),
+    stagedFiles: Object.fromEntries(
+      Object.entries(asRecord(parsed.stagedFiles)).filter(
+        (entry): entry is [string, string] => typeof entry[1] === "string"
+      )
+    ),
+  } as VirtualGitRepository;
+};
+
 const getActivityClasses = (language?: SessionLanguage): ActivityClass[] =>
   (getActivitiesCatalog(language).classes as ActivityClass[]) || [];
 
-const getActivitiesMap = (language?: SessionLanguage): Record<string, ActivityDefinition> =>
+const getActivitiesMap = (
+  language?: SessionLanguage
+): Record<string, ActivityDefinition> =>
   Object.fromEntries(
     getActivityClasses(language).flatMap(({ activities }) =>
       activities.map((activity) => [activity.id, activity])
@@ -209,7 +366,7 @@ const parseCommitMessage = (command: string): string => {
 
   const fromMarker = command.slice(markerIndex + marker.length).trim();
 
-  if (fromMarker.startsWith("\"") && fromMarker.endsWith("\"")) {
+  if (fromMarker.startsWith('"') && fromMarker.endsWith('"')) {
     return fromMarker.slice(1, -1);
   }
 
@@ -296,19 +453,28 @@ const inferRepoFromCommand = (
   return next;
 };
 
-const findCommandIndex = (commands: TrackedCommand[], fragment: string): number =>
-  commands.findIndex(({ command }) => normalize(command).includes(normalize(fragment)));
+const findCommandIndex = (
+  commands: TrackedCommand[],
+  fragment: string
+): number =>
+  commands.findIndex(({ command }) =>
+    normalize(command).includes(normalize(fragment))
+  );
 
 const hasCommand = (commands: TrackedCommand[], fragment: string): boolean =>
   findCommandIndex(commands, fragment) >= 0;
 
 const countCommand = (commands: TrackedCommand[], fragment: string): number =>
-  commands.filter(({ command }) => normalize(command).includes(normalize(fragment))).length;
+  commands.filter(({ command }) =>
+    normalize(command).includes(normalize(fragment))
+  ).length;
 
 const hasSavedPath = (savedPaths: string[], expectedPath: string): boolean => {
   const normalizedExpected = normalizePath(expectedPath);
 
-  return savedPaths.some((savedPath) => normalizePath(savedPath) === normalizedExpected);
+  return savedPaths.some(
+    (savedPath) => normalizePath(savedPath) === normalizedExpected
+  );
 };
 
 const getSavedFileContent = (
@@ -320,12 +486,14 @@ const resolveExpectedRepoValue = (
   repoPath: string,
   telemetry: ActivityTelemetry
 ): string => {
+  const repo = getValidationRepo(telemetry);
+
   if (repoPath === "repo.lastCommit.author") {
-    return telemetry.inferredRepo.author;
+    return repo.author;
   }
 
   if (repoPath === "repo.lastCommit.message") {
-    return telemetry.inferredRepo.lastCommitMessage;
+    return repo.lastCommitMessage;
   }
 
   if (repoPath === "repo.exercise.culpritHash") {
@@ -341,6 +509,25 @@ const resolveExpectedRepoValue = (
   return "";
 };
 
+const getValidationRepo = (telemetry: ActivityTelemetry): InferredRepoState => {
+  const virtualRepo = telemetry.virtualRepo;
+
+  if (!virtualRepo) return telemetry.inferredRepo;
+
+  const lastCommit = virtualRepo.commits[virtualRepo.commits.length - 1];
+
+  return {
+    ...telemetry.inferredRepo,
+    commitsCount: virtualRepo.commits.length,
+    currentBranch: virtualRepo.currentBranch,
+    initialized: virtualRepo.initialized,
+    lastCommitIncludes: lastCommit?.changedFiles || [],
+    lastCommitMessage: lastCommit?.message || "",
+    remotes: virtualRepo.remotes,
+    staged: virtualRepo.staged,
+  };
+};
+
 const evaluateCheck = (
   activity: ActivityDefinition,
   answers: Record<string, unknown>,
@@ -349,21 +536,23 @@ const evaluateCheck = (
   language: SessionLanguage
 ): ValidationResult => {
   const rules = asRecord(check.rules);
-  const {commands} = telemetry;
+  const { commands } = telemetry;
   const fileContents = telemetry.fileContents;
   const savedPaths = telemetry.fileSavedPaths;
   const publishedUrls = telemetry.publishedUrls;
-  const repo = telemetry.inferredRepo;
+  const repo = getValidationRepo(telemetry);
 
   switch (check.type) {
     case "CLASSIFY_EXACT": {
       const cardAnswers = asRecord(answers.cards);
       const answerKey = asRecord(activity.data.answerKey);
-      const expectedPairs = Object.entries(answerKey).flatMap(([column, cardIds]) =>
-        asStringArray(cardIds).map((cardId) => ({ cardId, column }))
+      const expectedPairs = Object.entries(answerKey).flatMap(
+        ([column, cardIds]) =>
+          asStringArray(cardIds).map((cardId) => ({ cardId, column }))
       );
       const passed = expectedPairs.every(
-        ({ cardId, column }) => normalize(asString(cardAnswers[cardId])) === normalize(column)
+        ({ cardId, column }) =>
+          normalize(asString(cardAnswers[cardId])) === normalize(column)
       );
 
       return {
@@ -376,11 +565,13 @@ const evaluateCheck = (
     case "CLASSIFY_THRESHOLD": {
       const cardAnswers = asRecord(answers.cards);
       const answerKey = asRecord(activity.data.answerKey);
-      const expectedPairs = Object.entries(answerKey).flatMap(([column, cardIds]) =>
-        asStringArray(cardIds).map((cardId) => ({ cardId, column }))
+      const expectedPairs = Object.entries(answerKey).flatMap(
+        ([column, cardIds]) =>
+          asStringArray(cardIds).map((cardId) => ({ cardId, column }))
       );
       const correct = expectedPairs.filter(
-        ({ cardId, column }) => normalize(asString(cardAnswers[cardId])) === normalize(column)
+        ({ cardId, column }) =>
+          normalize(asString(cardAnswers[cardId])) === normalize(column)
       ).length;
       const passed = correct >= asNumber(rules.minCorrect);
 
@@ -484,8 +675,9 @@ const evaluateCheck = (
     case "TERMINAL_COMMAND_EXECUTED": {
       const mustInclude = asStringArray(rules.mustInclude);
       const mustIncludeAny = asStringArray(rules.mustIncludeAny);
-      const allIncluded =
-        mustInclude.every((entry) => hasCommand(commands, entry));
+      const allIncluded = mustInclude.every((entry) =>
+        hasCommand(commands, entry)
+      );
       const anyIncluded =
         mustIncludeAny.length === 0 ||
         mustIncludeAny.some((entry) => hasCommand(commands, entry));
@@ -547,7 +739,9 @@ const evaluateCheck = (
     case "TERMINAL_IN_DIR": {
       const expectedDir = normalizePath(asString(rules.equals));
       const expectedDirSuffix = normalizePath(asString(rules.endsWith));
-      const commandEvent = commands.find(({ command }) => normalize(command) === "git init");
+      const commandEvent = commands.find(
+        ({ command }) => normalize(command) === "git init"
+      );
       const commandCwd = normalizePath(commandEvent?.cwd || "");
       const matchesExact = Boolean(expectedDir) && commandCwd === expectedDir;
       const matchesExpectedAsSuffix =
@@ -579,8 +773,10 @@ const evaluateCheck = (
         ? [findCommandIndex(commands, mustAppear)]
         : mustAppearAny.map((entry) => findCommandIndex(commands, entry));
       const validIndexes = candidateIndexes.filter((index) => index >= 0);
-      const firstMustIndex = validIndexes.length > 0 ? Math.min(...validIndexes) : -1;
-      const passed = beforeIndex >= 0 && firstMustIndex >= 0 && firstMustIndex < beforeIndex;
+      const firstMustIndex =
+        validIndexes.length > 0 ? Math.min(...validIndexes) : -1;
+      const passed =
+        beforeIndex >= 0 && firstMustIndex >= 0 && firstMustIndex < beforeIndex;
 
       return {
         checkId: check.checkId,
@@ -595,13 +791,15 @@ const evaluateCheck = (
       const afterIndexes = afterAny
         .map((entry) => findCommandIndex(commands, entry))
         .filter((index) => index >= 0);
-      const baseIndex = afterIndexes.length > 0 ? Math.max(...afterIndexes) : -1;
+      const baseIndex =
+        afterIndexes.length > 0 ? Math.max(...afterIndexes) : -1;
       const passed =
         baseIndex >= 0 &&
         mustInclude.some((entry) =>
           commands.some(
             ({ command }, index) =>
-              index > baseIndex && normalize(command).startsWith(normalize(entry))
+              index > baseIndex &&
+              normalize(command).startsWith(normalize(entry))
           )
         );
 
@@ -649,7 +847,9 @@ const evaluateCheck = (
 
     case "FILE_SAVED_PATHS_EXCLUDE": {
       const forbiddenPaths = asStringArray(rules.paths);
-      const passed = forbiddenPaths.every((path) => !hasSavedPath(savedPaths, path));
+      const passed = forbiddenPaths.every(
+        (path) => !hasSavedPath(savedPaths, path)
+      );
 
       return {
         checkId: check.checkId,
@@ -716,7 +916,8 @@ const evaluateCheck = (
 
     case "ANSWER_INCLUDES_REPO_DIFF_SNIPPET": {
       const answerText = asString(answers[check.target.replace("form.", "")]);
-      const passed = hasCommand(commands, "git diff") && normalize(answerText).length > 1;
+      const passed =
+        hasCommand(commands, "git diff") && normalize(answerText).length > 1;
 
       return {
         checkId: check.checkId,
@@ -742,7 +943,8 @@ const evaluateCheck = (
       const forbidden = forbiddenExact.some(
         (word) => normalize(word) === normalize(message)
       );
-      const passed = normalize(message).length >= minLength && startsOk && !forbidden;
+      const passed =
+        normalize(message).length >= minLength && startsOk && !forbidden;
 
       return {
         checkId: check.checkId,
@@ -765,15 +967,25 @@ const evaluateCheck = (
           repo.tracking?.remote === asString(trackingRule.remote));
 
       const passed =
-        (typeof rules.initialized !== "boolean" || repo.initialized === rules.initialized) &&
+        (typeof rules.initialized !== "boolean" ||
+          repo.initialized === rules.initialized) &&
         stagedIncludes.every((entry) => repo.staged.includes(entry)) &&
         stagedExcludes.every((entry) => !repo.staged.includes(entry)) &&
-        lastCommitIncludes.every((entry) => repo.lastCommitIncludes.includes(entry)) &&
-        lastCommitExcludes.every((entry) => !repo.lastCommitIncludes.includes(entry)) &&
+        lastCommitIncludes.every((entry) =>
+          repo.lastCommitIncludes.includes(entry)
+        ) &&
+        lastCommitExcludes.every(
+          (entry) => !repo.lastCommitIncludes.includes(entry)
+        ) &&
         remotesIncludes.every((entry) => Object.hasOwn(repo.remotes, entry)) &&
-        (typeof rules.remoteInSync !== "boolean" || repo.remoteInSync === rules.remoteInSync) &&
+        (typeof rules.remoteInSync !== "boolean" ||
+          repo.remoteInSync === rules.remoteInSync) &&
+        (typeof rules.commitsCount !== "number" ||
+          repo.commitsCount === rules.commitsCount) &&
         (typeof rules.hasAtLeastCommits !== "number" ||
           repo.commitsCount >= rules.hasAtLeastCommits) &&
+        (typeof rules.currentBranch !== "string" ||
+          repo.currentBranch === rules.currentBranch) &&
         trackingOk;
 
       return {
@@ -856,6 +1068,7 @@ const readTelemetry = (activityId: string): ActivityTelemetry => {
     getTelemetryKey(activityId),
     getDefaultTelemetry()
   );
+  const virtualRepo = readVirtualRepo(parsed.virtualRepo);
 
   return {
     commands: Array.isArray(parsed.commands)
@@ -878,13 +1091,16 @@ const readTelemetry = (activityId: string): ActivityTelemetry => {
         : {},
     fileSavedPaths: asStringArray(parsed.fileSavedPaths),
     publishedUrls: asStringArray(parsed.publishedUrls),
+    virtualRepo,
     inferredRepo: {
       ...getDefaultRepoState(),
       ...asRecord(parsed.inferredRepo),
-      lastCommitIncludes: asStringArray(parsed.inferredRepo?.lastCommitIncludes),
+      lastCommitIncludes: asStringArray(
+        parsed.inferredRepo?.lastCommitIncludes
+      ),
       remotes:
         parsed.inferredRepo && typeof parsed.inferredRepo.remotes === "object"
-          ? (parsed.inferredRepo.remotes)
+          ? parsed.inferredRepo.remotes
           : {},
       staged: asStringArray(parsed.inferredRepo?.staged),
     },
@@ -963,7 +1179,13 @@ export const validateActivity = (
   const telemetry = readTelemetry(activityId);
   const activeLanguage = language || getActiveLanguage();
   const results = activity.validation.checks.map((check) =>
-    evaluateCheck(activity, currentState.answers, telemetry, check, activeLanguage)
+    evaluateCheck(
+      activity,
+      currentState.answers,
+      telemetry,
+      check,
+      activeLanguage
+    )
   );
   const completedCheckIds = results
     .filter(({ passed }) => passed)
@@ -1046,6 +1268,9 @@ export const trackActivityEvent = (
   }
 
   const telemetry = readTelemetry(activityId);
+  const activity = getActivityById(activityId);
+
+  telemetry.virtualRepo ||= createActivityGitRepository(activity, telemetry);
 
   if (event.type === "commandExecuted") {
     const command = event.command.trim();
@@ -1056,7 +1281,15 @@ export const trackActivityEvent = (
         cwd: event.cwd || "/",
         timestamp: Date.now(),
       });
-      telemetry.inferredRepo = inferRepoFromCommand(command, telemetry.inferredRepo);
+      telemetry.inferredRepo = inferRepoFromCommand(
+        command,
+        telemetry.inferredRepo
+      );
+      telemetry.virtualRepo = applyGitCommand(
+        telemetry.virtualRepo,
+        command,
+        getWorkspaceFiles(activity, telemetry)
+      );
     }
   }
 
@@ -1067,7 +1300,13 @@ export const trackActivityEvent = (
 
     if (typeof event.content === "string") {
       telemetry.fileContents[normalizePath(event.path)] = event.content;
+    } else if (
+      !Object.hasOwn(telemetry.fileContents, normalizePath(event.path))
+    ) {
+      telemetry.fileContents[normalizePath(event.path)] = "";
     }
+
+    telemetry.virtualRepo.files = getWorkspaceFiles(activity, telemetry);
   }
 
   if (event.type === "pagesPublished" && event.url) {

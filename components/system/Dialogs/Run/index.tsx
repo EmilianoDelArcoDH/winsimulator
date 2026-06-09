@@ -88,7 +88,6 @@ const Run: FC<ComponentProcessProps> = ({ id }) => {
 
       const isNostr = resourcePath.startsWith("nostr:");
 
-
       const isIpfs = resourcePath.startsWith("ipfs://");
 
       if (resourceExists || isNostr || isIpfs || (await exists(resourcePath))) {

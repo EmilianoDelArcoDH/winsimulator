@@ -1,54 +1,68 @@
 import styled from "styled-components";
 
 const StyledNotifications = styled.ol`
-  bottom: calc(18px + 29px);
+  bottom: calc(22px + 18px);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   place-items: flex-end;
   position: absolute;
-  right: 26px;
+  right: 22px;
   width: calc(100% - 80px);
 
   .notification {
-    background: rgb(54 53 55);
+    background: #252526;
+    border: 1px solid #454545;
     border-radius: 4px;
-    box-shadow: 0 0 15px rgb(0 0 0 / 50%);
-    color: rgb(186 182 192);
+    box-shadow:
+      0 8px 24px rgb(0 0 0 / 38%),
+      0 0 0 1px rgb(255 255 255 / 2%);
+    color: #cccccc;
+    font-family:
+      "Segoe UI Variable",
+      "Segoe UI",
+      system-ui,
+      -apple-system,
+      sans-serif;
     max-width: 100%;
-    padding: 12px 14px 12px 12px;
+    min-height: 42px;
+    padding: 10px 13px 10px 11px;
     width: fit-content;
 
     &:hover {
-      background: rgb(54 53 55);
+      background: #2d2d30;
+      border-color: #5a5a5a;
     }
 
     figure {
       display: flex;
+      margin: 0;
       place-items: center;
 
       svg {
         height: 16px;
+        min-width: 16px;
         width: 16px;
 
         &.warning {
-          color: rgb(253 147 71);
+          color: #cca700;
         }
 
         &.error {
-          color: rgb(241 76 76);
+          color: #f14c4c;
         }
 
         &.info {
-          color: rgb(55 148 255);
+          color: #3794ff;
         }
       }
 
       figcaption {
-        font-size: 14px;
+        font-size: 13px;
+        line-height: 18px;
         max-width: calc(100% - 16px);
         overflow: hidden;
-        padding-left: 6px;
+        padding-left: 8px;
         text-overflow: ellipsis;
         white-space: nowrap;
       }

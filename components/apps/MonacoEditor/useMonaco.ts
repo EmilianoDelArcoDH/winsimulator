@@ -54,9 +54,8 @@ const useMonaco = ({
   const ensureEditorDomEditable = useCallback(
     (currentEditor?: Monaco.editor.IStandaloneCodeEditor): void => {
       const editorDomNode = currentEditor?.getDomNode();
-      const inputArea = editorDomNode?.querySelector<HTMLTextAreaElement>(
-        "textarea.inputarea"
-      );
+      const inputArea =
+        editorDomNode?.querySelector<HTMLTextAreaElement>("textarea.inputarea");
 
       if (inputArea) {
         inputArea.disabled = false;
@@ -150,8 +149,8 @@ const useMonaco = ({
 
     if (monaco && editor && url.startsWith("/")) {
       const currentModel = editor.getModel();
-      const currentModelPath = (currentModel as Model | undefined)?._associatedResource
-        ?.path;
+      const currentModelPath = (currentModel as Model | undefined)
+        ?._associatedResource?.path;
 
       if (currentModelPath?.startsWith(`${url}${URL_DELIMITER}`)) {
         editor.updateOptions({
@@ -177,7 +176,14 @@ const useMonaco = ({
     }
 
     prependFileToTitle(basename(url || DEFAULT_TEXT_FILE_SAVE_PATH));
-  }, [createModel, editor, ensureEditorDomEditable, monaco, prependFileToTitle, url]);
+  }, [
+    createModel,
+    editor,
+    ensureEditorDomEditable,
+    monaco,
+    prependFileToTitle,
+    url,
+  ]);
 
   useEffect(() => {
     if (!monaco) {
@@ -375,9 +381,8 @@ const useMonaco = ({
 
     if (!editorDomNode) return undefined;
 
-    const inputArea = editorDomNode.querySelector<HTMLTextAreaElement>(
-      "textarea.inputarea"
-    );
+    const inputArea =
+      editorDomNode.querySelector<HTMLTextAreaElement>("textarea.inputarea");
 
     if (!inputArea) return undefined;
 

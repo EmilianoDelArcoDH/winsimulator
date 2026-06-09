@@ -109,7 +109,9 @@ export const resetStorage = (rootFs?: RootFileSystem): Promise<void> =>
       if (writable?.getName() === "InMemory" || !writable?.empty) {
         resolve();
       } else {
-        writable.empty((apiError: any) => (apiError ? reject(apiError) : resolve()));
+        writable.empty((apiError: any) =>
+          apiError ? reject(apiError) : resolve()
+        );
       }
     };
 

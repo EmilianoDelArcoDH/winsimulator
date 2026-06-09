@@ -930,9 +930,9 @@ export const clsx = (classes: Record<string, boolean>): string =>
     .join(" ");
 
 export const label = (value: string): React.HTMLAttributes<HTMLElement> => ({
-    "aria-label": translateUiText(getActiveLanguage(), value),
-    title: translateUiText(getActiveLanguage(), value),
-  });
+  "aria-label": translateUiText(getActiveLanguage(), value),
+  title: translateUiText(getActiveLanguage(), value),
+});
 
 export const isYouTubeUrl = (url: string): boolean =>
   (url.includes("youtube.com/") || url.includes("youtu.be/")) &&
@@ -1232,7 +1232,9 @@ export const maybeRequestIdleCallback = (
 };
 
 export const displayVersion = (): string => {
-  const { __NEXT_DATA__: { buildId } } = window;
+  const {
+    __NEXT_DATA__: { buildId },
+  } = window;
 
   return `${PACKAGE_DATA.version}${buildId ? `-${buildId}` : ""}`;
 };
