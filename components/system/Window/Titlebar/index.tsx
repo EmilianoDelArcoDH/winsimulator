@@ -134,6 +134,7 @@ const Titlebar: FC<TitlebarProps> = ({ id }) => {
     <StyledTitlebar
       $foreground={isForeground}
       className={rndDefaults.dragHandleClassName}
+      data-tour="window-controls"
       onDragOver={haltEvent}
       onDrop={haltEvent}
       {...titlebarContextMenu}

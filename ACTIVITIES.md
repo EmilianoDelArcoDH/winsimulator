@@ -4,6 +4,7 @@ Este documento resume las actividades implementadas desde `utils/activitiesCatal
 
 ## Rutas base
 
+- Tour guiado / onboarding: `/tutorial`
 - App integrada ES: `/?app=Activities&activityId={id}&lang=es`
 - App integrada EN: `/?app=Activities&activityId={id}&lang=en`
 - App integrada PT: `/?app=Activities&activityId={id}&lang=pt`
@@ -41,6 +42,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 ## Clase `sch_git_c01` - Control de versiones y trabajo colaborativo
 
 ### `sch_git_c01_a01` - Versiones vs copias
+
 - Modo: `classify`
 - URL app ES: `/?app=Activities&activityId=sch_git_c01_a01&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c01_a01&lang=en`
@@ -110,6 +112,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Completa las justificaciones minimas explicando por que esos casos representan historial, versiones o cambios.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Leer todas las tarjetas antes de arrastrarlas.
@@ -123,6 +126,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - Completar las justificaciones minimas pedidas.
 
 ### `sch_git_c01_a02` - Git vs GitHub
+
 - Modo: `classify`
 - URL app ES: `/?app=Activities&activityId=sch_git_c01_a02&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c01_a02&lang=en`
@@ -192,6 +196,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Escribe una explicacion breve que incluya la idea de herramienta local y plataforma en la nube.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Leer cada afirmacion y distinguir si describe una herramienta local o una plataforma web.
@@ -204,6 +209,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - Distinguir Git como herramienta local y GitHub como plataforma remota/web.
 
 ### `sch_git_c01_a03` - Ordenar la historia de cambios
+
 - Modo: `order`
 - URL app ES: `/?app=Activities&activityId=sch_git_c01_a03&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c01_a03&lang=en`
@@ -273,6 +279,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Elige el cambio que podria haber roto algo y justifica brevemente tu decision.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Ordenar los cambios desde la creacion inicial del proyecto hasta la publicacion estable.
@@ -284,6 +291,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - Ordenar correctamente la secuencia del ejercicio.
 
 ### `sch_git_c01_a04` - Conflicto no es error
+
 - Modo: `decision`
 - URL app ES: `/?app=Activities&activityId=sch_git_c01_a04&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c01_a04&lang=en`
@@ -353,6 +361,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Elige una estrategia de resolucion y explica por que tiene sentido en ese caso.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Leer el escenario e identificar que dos personas cambiaron la misma linea.
@@ -367,6 +376,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 ## Clase `sch_git_c02` - Crear y guardar cambios
 
 ### `sch_git_c02_a00` - Configuracion inicial de Git
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c02_a00&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c02_a00&lang=en`
@@ -436,6 +446,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Configura el correo global de usuario y verifica que ambos datos queden cargados.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir GitBash.
@@ -449,6 +460,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - Ejecutar `git config --global user.email "..."`
 
 ### `sch_git_c02_a01` - Inicializar repo
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c02_a01&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c02_a01&lang=en`
@@ -520,6 +532,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Verifica el estado si lo necesitas con <input class="texto-copiable" size="10" value="git status" disabled>.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir GitBash.
@@ -533,6 +546,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - Crear el proyecto base y ejecutar `git init`.
 
 ### `sch_git_c02_a02` - 3 estados: working / staging / commit
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c02_a02&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c02_a02&lang=en`
@@ -612,6 +626,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>En esta actividad no es necesario agregar codigo JavaScript.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Entrar a la carpeta del proyecto con `cd miProyecto` si no estas dentro de `/miProyecto`.
@@ -625,6 +640,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - Usar `git status`, preparar solo lo indicado y evitar agregar archivos no pedidos.
 
 ### `sch_git_c02_a03` - Mensaje de commit profesional
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c02_a03&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c02_a03&lang=en`
@@ -694,6 +710,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Escribe un mensaje de commit claro, relacionado con los cambios realizados y con la longitud minima esperada.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Entrar o confirmar que estas dentro de `/repo`.
@@ -707,6 +724,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - Ejecutar `git commit -m "..."` con un mensaje claro y suficientemente descriptivo.
 
 ### `sch_git_c02_a04` - Evitar el git add . ciego
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c02_a04&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c02_a04&lang=en`
@@ -776,6 +794,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Agrega de forma explicita solo los archivos que deben entrar al commit y deja fuera <input class="texto-copiable" size="9" value="notes.tmp" disabled>.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Modificar archivos reales del proyecto web; por ejemplo `index.html`, `style.css` o `app.js`.
@@ -790,6 +809,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 ## Clase `sch_git_c03` - Revisar historial y versiones
 
 ### `sch_git_c03_a01` - Leer el historial (git log)
+
 - Modo: `terminal+form`
 - URL app ES: `/?app=Activities&activityId=sch_git_c03_a01&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c03_a01&lang=en`
@@ -859,6 +879,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Completa el formulario con el autor y el mensaje del ultimo commit tal como aparecen.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Ejecutar `git log` en la terminal.
@@ -867,8 +888,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   4. Copiar el mensaje del ultimo commit en el campo correspondiente.
   5. Validar despues de completar ambos datos exactamente como aparecen.
 
-
 ### `sch_git_c03_a02` - Vista resumida (git log --oneline)
+
 - Modo: `terminal+form`
 - URL app ES: `/?app=Activities&activityId=sch_git_c03_a02&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c03_a02&lang=en`
@@ -938,6 +959,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Copia el primer y el segundo commit con el formato que muestra la terminal.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Ejecutar `git log --oneline` en la terminal.
@@ -946,8 +968,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   4. Copiar el segundo commit con formato `hash mensaje`.
   5. Verificar que cada hash tenga al menos 7 caracteres hexadecimales antes del mensaje.
 
-
 ### `sch_git_c03_a03` - git diff antes del commit
+
 - Modo: `terminal+form`
 - URL app ES: `/?app=Activities&activityId=sch_git_c03_a03&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c03_a03&lang=en`
@@ -1017,6 +1039,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Completa el formulario con esa linea respetando lo que muestra la terminal.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Hacer o revisar el cambio preparado por la actividad.
@@ -1025,8 +1048,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   4. Copiar esa linea en el formulario.
   5. Solo despues de revisar el diff, continuar con el flujo de commit si la actividad lo pide.
 
-
 ### `sch_git_c03_a04` - Debugging historico (git show)
+
 - Modo: `terminal+form`
 - URL app ES: `/?app=Activities&activityId=sch_git_c03_a04&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c03_a04&lang=en`
@@ -1096,6 +1119,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Completa el formulario con el hash y una explicacion breve sobre que cambio.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Ejecutar `git log --oneline` para ver los commits disponibles.
@@ -1104,10 +1128,10 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   4. Pegar en el formulario el hash del commit culpable.
   5. Explicar con al menos 30 caracteres que cambio introdujo ese commit.
 
-
 ## Clase `sch_git_c04` - Repositorios remotos y trabajo compartido
 
 ### `sch_git_c04_a01` - Configurar origin
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c04_a01&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c04_a01&lang=en`
@@ -1177,6 +1201,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Verifica que el remoto haya quedado registrado correctamente.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Trabajar en el repositorio indicado por la actividad.
@@ -1184,8 +1209,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   3. Ejecutar `git remote -v` para verificar que el remoto quedo registrado.
   4. Comprobar que el remoto se llame exactamente `origin`.
 
-
 ### `sch_git_c04_a02` - Primer push con upstream
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c04_a02&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c04_a02&lang=en`
@@ -1255,6 +1280,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Despues comprueba que puedes enviar cambios usando un push simple.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Trabajar en la rama `main` del repositorio.
@@ -1262,8 +1288,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   3. Verificar que la rama local quedo vinculada con `origin/main`.
   4. Ejecutar luego un segundo envio usando solo `git push`.
 
-
 ### `sch_git_c04_a03` - Pull antes de push
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c04_a03&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c04_a03&lang=en`
@@ -1333,6 +1359,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Luego envia tus cambios y verifica que el repositorio quede actualizado.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Reconocer que el remoto tiene cambios nuevos.
@@ -1341,8 +1368,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   4. Ejecutar `git push` despues del pull.
   5. Validar cuando el repositorio local y remoto queden sincronizados.
 
-
 ### `sch_git_c04_a04` - Flujo completo con remoto
+
 - Modo: `terminal+rubric`
 - URL app ES: `/?app=Activities&activityId=sch_git_c04_a04&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c04_a04&lang=en`
@@ -1412,6 +1439,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Verifica que el remoto quede sincronizado despues del push.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Ejecutar primero `git pull` o `git pull origin main`.
@@ -1421,8 +1449,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   5. Enviar los cambios con `git push`.
   6. Confirmar que el remoto quedo sincronizado.
 
-
 ### `sch_git_c04_a05` - Lab: solo clone
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c04_a05&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c04_a05&lang=en`
@@ -1493,6 +1521,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Lista los archivos con <input class="texto-copiable" size="2" value="ls" disabled> y verifica que exista <input class="texto-copiable" size="10" value="styles.css" disabled>.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Ejecutar `git clone https://github.com/winsim-labs/css-pull-lab.git`.
@@ -1500,8 +1529,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   3. Listar los archivos con `ls`.
   4. Verificar que exista `styles.css`.
 
-
 ### `sch_git_c04_a06` - Lab: solo pull
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c04_a06&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c04_a06&lang=en`
@@ -1571,6 +1600,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Trae los cambios remotos y revisa el contenido actualizado del CSS.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Entrar al proyecto con `cd css-pull-lab`.
@@ -1578,8 +1608,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   3. Revisar el archivo actualizado con `cat styles.css`.
   4. Validar cuando el contenido remoto haya sido traido correctamente.
 
-
 ### `sch_git_c04_a07` - Lab: clone + pull
+
 - Modo: `terminal`
 - URL app ES: `/?app=Activities&activityId=sch_git_c04_a07&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_git_c04_a07&lang=en`
@@ -1649,6 +1679,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Trae las actualizaciones remotas y verifica el archivo CSS.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Clonar el repositorio con `git clone https://github.com/winsim-labs/css-pull-lab.git`.
@@ -1656,10 +1687,10 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   3. Ejecutar `git pull` para traer actualizaciones.
   4. Verificar el contenido del CSS con `cat styles.css`.
 
-
 ## Clase `sch_publish_c01` - Preparar un proyecto para publicacion
 
 ### `sch_publish_c01_a01` - Estructura clara vs desordenada
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_publish_c01_a01&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_publish_c01_a01&lang=en`
@@ -1729,6 +1760,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Edita y guarda <input class="texto-copiable" size="22" value="propuesta-estructura.txt" disabled> proponiendo <input class="texto-copiable" size="10" value="index.html" disabled> en raiz y carpetas separadas para CSS, JS e imagenes.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir el workspace generado en Visual Studio Code.
@@ -1744,6 +1776,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - La validacion exige proponer `index.html` en raiz, `css/estilos.css`, `js/script.js` e `img/...`.
 
 ### `sch_publish_c01_a02` - Limpiar antes de publicar
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_publish_c01_a02&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_publish_c01_a02&lang=en`
@@ -1813,6 +1846,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Indica que conservarias, que eliminarias y justifica que solo debe quedar lo necesario para que el proyecto funcione o se muestre.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir el proyecto semilla en Visual Studio Code.
@@ -1830,6 +1864,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - La justificacion debe explicar que solo debe quedar lo que el proyecto necesita para funcionar o mostrarse.
 
 ### `sch_publish_c01_a03` - Rutas absolutas vs relativas
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_publish_c01_a03&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_publish_c01_a03&lang=en`
@@ -1909,6 +1944,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>No es necesario agregar codigo JavaScript; solo verifica que la ruta al archivo JS quede correctamente enlazada desde el HTML.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir `/Users/Public/Desktop/publish-c01-a03/index.html`.
@@ -1925,6 +1961,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - La validacion rechaza rutas que dependan de `C:/`, `D:/`, `E:/` o `/Users/`.
 
 ### `sch_publish_c01_a04` - Nombres de archivo seguros para publicar
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_publish_c01_a04&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_publish_c01_a04&lang=en`
@@ -1994,6 +2031,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Propone nombres seguros para la imagen final, el banner de inicio y el archivo de estilos.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir la carpeta del ejercicio en Visual Studio Code.
@@ -2011,6 +2049,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - El criterio aceptado incluye minusculas, guiones y evitar espacios, tildes, simbolos o caracteres especiales.
 
 ### `sch_publish_c01_a05` - Checklist antes de mostrar
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_publish_c01_a05&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_publish_c01_a05&lang=en`
@@ -2080,6 +2119,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Marca los puntos de estructura, limpieza, rutas, navegacion y claridad del sitio usando casillas con [x] o [X].</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Explorar el proyecto en Visual Studio Code.
@@ -2097,6 +2137,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 ## Clase `sch_pages_c01` - Publicar un sitio con Pages
 
 ### `sch_pages_c01_a01` - Antes de publicar: comprobar que esta listo
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_pages_c01_a01&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_pages_c01_a01&lang=en`
@@ -2166,6 +2207,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Indica si el proyecto esta listo para publicarse y menciona aspectos como index.html, rutas relativas, imagenes o archivos innecesarios.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Explorar el proyecto semilla en Visual Studio Code sin modificar los archivos del sitio.
@@ -2181,6 +2223,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - El texto debe mencionar elementos del checklist previo como `index.html`, rutas relativas, imagenes o archivos innecesarios.
 
 ### `sch_pages_c01_a02` - Guardar el proyecto en el repositorio
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_pages_c01_a02&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_pages_c01_a02&lang=en`
@@ -2250,6 +2293,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Prepara los archivos y registra un commit con un mensaje relacionado con preparar el proyecto para publicar.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir la carpeta del proyecto en Visual Studio Code.
@@ -2265,6 +2309,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - La validacion exige `git init`, `git add .` y `git commit -m "..."`.
 
 ### `sch_pages_c01_a03` - Activar Pages y obtener la URL
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_pages_c01_a03&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_pages_c01_a03&lang=en`
@@ -2334,6 +2379,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Copia la URL publica generada y guarda la URL en <input class="texto-copiable" size="14" value="url-publica.txt" disabled>.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir la carpeta del proyecto en Visual Studio Code.
@@ -2351,6 +2397,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - Tambien exige guardar esa URL en `url-publica.txt`.
 
 ### `sch_pages_c01_a04` - Verificar que la URL publicada funciona
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_pages_c01_a04&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_pages_c01_a04&lang=en`
@@ -2420,6 +2467,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Edita y guarda <input class="texto-copiable" size="31" value="checklist-post-publicacion.txt" disabled> marcando con [x] los puntos revisados.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Publicar primero el sitio con Pages desde la terminal.
@@ -2439,6 +2487,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 ## Clase `sch_pages_c02` - Gestionar cambios y republicar
 
 ### `sch_pages_c02_a01` - Editar, guardar y dejar listo el cambio
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_pages_c02_a01&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_pages_c02_a01&lang=en`
@@ -2518,6 +2567,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>En esta actividad no es necesario agregar codigo JavaScript.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir `/Users/Public/Desktop/pages-c02-a01/index.html` en Visual Studio Code.
@@ -2532,6 +2582,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - La validacion comprueba que el `h1` pase a `Sitio actualizado`.
 
 ### `sch_pages_c02_a02` - Registrar el cambio con commit
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_pages_c02_a02&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_pages_c02_a02&lang=en`
@@ -2611,6 +2662,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>En esta actividad no es necesario agregar codigo JavaScript.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir el proyecto en Visual Studio Code.
@@ -2627,6 +2679,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - La validacion exige `git add .` y `git commit -m "..."` con mensaje descriptivo.
 
 ### `sch_pages_c02_a03` - Push y sitio actualizado
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_pages_c02_a03&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_pages_c02_a03&lang=en`
@@ -2706,6 +2759,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>En esta actividad no es necesario agregar codigo JavaScript.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Abrir `/Users/Public/Desktop/pages-c02-a03/index.html`.
@@ -2723,6 +2777,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   - El runtime de Pages actualiza el snapshot publicado cuando detecta `git push` sobre un sitio ya publicado.
 
 ### `sch_pages_c02_a04` - Errores frecuentes despues del push
+
 - Modo: `workspace`
 - URL app ES: `/?app=Activities&activityId=sch_pages_c02_a04&lang=es`
 - URL app EN: `/?app=Activities&activityId=sch_pages_c02_a04&lang=en`
@@ -2792,6 +2847,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
             <li>Explica posibles causas, como olvidar preparar o commitear cambios, no hacer push o tener problemas de cache, y como verificarias el sitio.</li>
         </ul>
     </article>
+
 </div>
 - Solucion esperada paso a paso:
   1. Explorar el proyecto en Visual Studio Code sin modificar los archivos del sitio.

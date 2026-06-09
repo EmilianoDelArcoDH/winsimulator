@@ -76,9 +76,7 @@ type VideoElementWithSeek = HTMLVideoElement & {
   seekToNextFrame: () => Promise<void>;
 };
 
-export const isExistingFile = (
-  stats: Stats = {} as Stats
-): boolean => {
+export const isExistingFile = (stats: Stats = {} as Stats): boolean => {
   const birthtimeMs = (stats as any).birthtimeMs;
   const ctimeMs = (stats as any).ctimeMs;
   return Boolean(birthtimeMs && birthtimeMs === ctimeMs);
@@ -567,9 +565,8 @@ export const getInfoWithExtension = (
       getInfoByFileExtension("/System/Icons/executable.webp", (signal) =>
         fs.readFile(path, async (error, contents = Buffer.from("")) => {
           if (!error && contents.length > 0 && !signal.aborted) {
-            const { extractExeIcon } = await import(
-              "components/system/Files/FileEntry/exeIcons"
-            );
+            const { extractExeIcon } =
+              await import("components/system/Files/FileEntry/exeIcons");
             const exeIcon = await extractExeIcon(contents);
 
             if (exeIcon && !signal.aborted) {

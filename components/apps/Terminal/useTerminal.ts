@@ -52,9 +52,7 @@ const useTerminal = ({
   const [fitAddon, setFitAddon] = useState<FitAddon>();
   const [localEcho, setLocalEcho] = useState<LocalEcho>();
   const cd = useRef((!localEcho && url && !extname(url) ? url : "") || HOME);
-  const promptCharacter = id.startsWith("GitBash")
-    ? "$"
-    : PROMPT_CHARACTER;
+  const promptCharacter = id.startsWith("GitBash") ? "$" : PROMPT_CHARACTER;
   const [initialCommand, setInitialCommand] = useState("");
   const [prompted, setPrompted] = useState(false);
   const processCommand = useCommandInterpreter(id, cd, terminal, localEcho);

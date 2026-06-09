@@ -5,11 +5,13 @@ import AppContainer from "components/system/Apps/AppContainer";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 
 const Terminal: FC<ComponentProcessProps> = ({ id }) => (
-  <AppContainer
-    StyledComponent={StyledTerminal}
-    id={id}
-    useHook={useTerminal}
-  />
+  <div data-tour="terminal" style={{ height: "100%" }}>
+    <AppContainer
+      StyledComponent={StyledTerminal}
+      id={id}
+      useHook={useTerminal}
+    />
+  </div>
 );
 
 export default memo(Terminal);

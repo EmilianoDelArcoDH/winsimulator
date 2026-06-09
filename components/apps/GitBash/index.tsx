@@ -259,7 +259,9 @@ const toRelativePath = (basePath: string, fullPath: string): string => {
 };
 
 const wildcardToRegex = (pattern: string): RegExp => {
-  const escaped = pattern.replace(/[.+^${}()|[\]\\]/g, String.raw`\$&`).replace(/\*/g, ".*");
+  const escaped = pattern
+    .replace(/[.+^${}()|[\]\\]/g, String.raw`\$&`)
+    .replace(/\*/g, ".*");
 
   return new RegExp(`^${escaped}$`);
 };
@@ -294,10 +296,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     userName: "user",
   });
 
-  const prompt = useMemo(
-    () => `MINGW64 ${formatPathForPrompt(cwd)}$`,
-    [cwd]
-  );
+  const prompt = useMemo(() => `MINGW64 ${formatPathForPrompt(cwd)}$`, [cwd]);
 
   const appendLine = useCallback((value: string): void => {
     const id = lineIdRef.current;
@@ -387,7 +386,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
       };
       const ensureDir = async (path: string): Promise<void> =>
         fileSystem.mkdirRecursive(normalizePath(path));
-      const findRepoRoot = async (startPath: string): Promise<string | undefined> => {
+      const findRepoRoot = async (
+        startPath: string
+      ): Promise<string | undefined> => {
         const probePath = normalizePath(startPath);
         const gitDirPath = joinPath(probePath, ".git");
 
@@ -427,7 +428,10 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
           // Ignore failures saving config
         }
       };
-      const collectFiles = async (basePath: string, fromPath = basePath): Promise<string[]> => {
+      const collectFiles = async (
+        basePath: string,
+        fromPath = basePath
+      ): Promise<string[]> => {
         const entries = (await fileSystem.readdir(fromPath)).filter(
           (entry) => entry !== ".git"
         );
@@ -448,7 +452,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
       };
       const getHeadCommit = (repo: GitRepoState): GitCommit | undefined =>
         (repo.branches[repo.branch] || [])[0];
-      const createSnapshot = async (repoRoot: string): Promise<Record<string, string>> => {
+      const createSnapshot = async (
+        repoRoot: string
+      ): Promise<Record<string, string>> => {
         const snapshotFiles = await collectFiles(repoRoot);
         const snapshotEntries = await Promise.all(
           snapshotFiles.map(async (file) => {
@@ -660,9 +666,13 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
             break;
           case "ls": {
             const showAll =
-              params.includes("-a") || params.includes("-la") || params.includes("-al");
+              params.includes("-a") ||
+              params.includes("-la") ||
+              params.includes("-al");
             const longFormat =
-              params.includes("-l") || params.includes("-la") || params.includes("-al");
+              params.includes("-l") ||
+              params.includes("-la") ||
+              params.includes("-al");
             const files = await fileSystem.readdir(currentCwd);
             const filteredFiles = showAll
               ? files
@@ -743,14 +753,18 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               const parentDir = parentPath(filePath);
 
               if (!(await fileSystem.exists(parentDir))) {
-                print(`touch: no se puede crear '${entry}': No existe el directorio`);
+                print(
+                  `touch: no se puede crear '${entry}': No existe el directorio`
+                );
                 continue;
               }
 
               const parentStat = await fileSystem.lstat(parentDir);
 
               if (!parentStat.isDirectory()) {
-                print(`touch: no se puede crear '${entry}': El padre no es un directorio`);
+                print(
+                  `touch: no se puede crear '${entry}': El padre no es un directorio`
+                );
                 continue;
               }
 
@@ -758,7 +772,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 const existingStat = await fileSystem.lstat(filePath);
 
                 if (existingStat.isDirectory()) {
-                  print(`touch: no se puede tocar '${entry}': Es un directorio`);
+                  print(
+                    `touch: no se puede tocar '${entry}': Es un directorio`
+                  );
                 }
 
                 continue;
@@ -807,7 +823,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
             if (subCommand === "config") {
               if (params[1] !== "--global") {
-                print("Solo se soporta git config --global en esta simulación.");
+                print(
+                  "Solo se soporta git config --global en esta simulación."
+                );
                 break;
               }
 
@@ -888,7 +906,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
                 getRepoState(repoInitRoot);
 
-                print(`Initialized empty Git repository in ${repoInitRoot}/.git/`);
+                print(
+                  `Initialized empty Git repository in ${repoInitRoot}/.git/`
+                );
               }
               break;
             }
@@ -906,12 +926,15 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 sourceInput.startsWith("http://") ||
                 sourceInput.startsWith("https://") ||
                 sourceInput.startsWith("git@");
-              const remoteName = sourceInput
-                .split("/")
-                .pop()
-                ?.replace(/\.git$/, "") || "git-demo";
+              const remoteName =
+                sourceInput
+                  .split("/")
+                  .pop()
+                  ?.replace(/\.git$/, "") || "git-demo";
               const cloneFolderName = destinationInput || remoteName;
-              const destinationPath = normalizePath(resolvePath(cloneFolderName));
+              const destinationPath = normalizePath(
+                resolvePath(cloneFolderName)
+              );
 
               if (await fileSystem.exists(destinationPath)) {
                 print(
@@ -939,7 +962,10 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
                   await Promise.all(
                     Object.entries(seed.snapshot).map(([filePath, content]) =>
-                      fileSystem.writeFile(joinPath(destinationPath, filePath), content)
+                      fileSystem.writeFile(
+                        joinPath(destinationPath, filePath),
+                        content
+                      )
                     )
                   );
                   await fileSystem.writeFile(
@@ -1026,7 +1052,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                   initialized: true,
                   pendingPulls: sourceRepoState.pendingPulls.map((entry) => ({
                     ...entry,
-                    changedFiles: entry.changedFiles.map((file) => ({ ...file })),
+                    changedFiles: entry.changedFiles.map((file) => ({
+                      ...file,
+                    })),
                     objects: { ...entry.objects },
                     updates: { ...entry.updates },
                   })),
@@ -1047,7 +1075,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
             const repoRoot = await findRepoRoot(currentCwd);
 
             if (!repoRoot) {
-              print("fatal: not a git repository (or any of the parent directories): .git");
+              print(
+                "fatal: not a git repository (or any of the parent directories): .git"
+              );
               break;
             }
 
@@ -1060,7 +1090,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
               if (!addArg || addArg === "." || addArg === "--all") {
                 allFiles.forEach((file) => repo.staged.add(file));
-                print(`Se agregaron ${allFiles.length} archivo(s) al staging area.`);
+                print(
+                  `Se agregaron ${allFiles.length} archivo(s) al staging area.`
+                );
                 break;
               }
 
@@ -1096,7 +1128,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 const matched = await collectFiles(repoRoot, addPath);
 
                 matched.forEach((file) => repo.staged.add(file));
-                print(`Se agregaron ${matched.length} archivo(s) de '${addArg}'.`);
+                print(
+                  `Se agregaron ${matched.length} archivo(s) de '${addArg}'.`
+                );
                 break;
               }
 
@@ -1123,9 +1157,10 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 stagedFiles.forEach((file) => print(`  ${file}`));
               }
 
-              const unstaged = [...workingDiff.modified, ...workingDiff.deleted].filter(
-                (file) => !repo.staged.has(file)
-              );
+              const unstaged = [
+                ...workingDiff.modified,
+                ...workingDiff.deleted,
+              ].filter((file) => !repo.staged.has(file));
 
               if (unstaged.length > 0) {
                 print("");
@@ -1160,10 +1195,12 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               const baseSnapshot = headCommit?.snapshot || {};
               const diff = diffSnapshots(baseSnapshot, workingSnapshot);
               const candidateFiles = stagedMode
-                ? [...repo.staged].sort((left, right) => left.localeCompare(right))
-                : [...diff.added, ...diff.modified, ...diff.deleted].sort((left, right) =>
-                  left.localeCompare(right)
-                );
+                ? [...repo.staged].sort((left, right) =>
+                    left.localeCompare(right)
+                  )
+                : [...diff.added, ...diff.modified, ...diff.deleted].sort(
+                    (left, right) => left.localeCompare(right)
+                  );
 
               if (candidateFiles.length === 0) {
                 print("No differences");
@@ -1201,11 +1238,16 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               if (hasAllFlag) {
                 const workingSnapshot = await createSnapshot(repoRoot);
                 const baseSnapshot = headCommit?.snapshot || {};
-                const trackedChanges = diffSnapshots(baseSnapshot, workingSnapshot);
+                const trackedChanges = diffSnapshots(
+                  baseSnapshot,
+                  workingSnapshot
+                );
 
-                [...trackedChanges.modified, ...trackedChanges.deleted].forEach((file) => {
-                  repo.staged.add(file);
-                });
+                [...trackedChanges.modified, ...trackedChanges.deleted].forEach(
+                  (file) => {
+                    repo.staged.add(file);
+                  }
+                );
               }
 
               if (repo.staged.size === 0) {
@@ -1278,7 +1320,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                     const parent = branchCommits[index + 1]?.snapshot || {};
                     const stat = diffSnapshots(parent, entry.snapshot);
                     const changedCount =
-                      stat.added.length + stat.deleted.length + stat.modified.length;
+                      stat.added.length +
+                      stat.deleted.length +
+                      stat.modified.length;
 
                     print(
                       ` ${changedCount} files changed (${stat.added.length} additions, ${stat.deleted.length} deletions)`
@@ -1303,7 +1347,10 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               const targetInput = stagedMode ? params[2] : params[1];
 
               if (stagedMode) {
-                const stagedTargets = await collectTargetFiles(repoRoot, targetInput);
+                const stagedTargets = await collectTargetFiles(
+                  repoRoot,
+                  targetInput
+                );
 
                 if (stagedTargets.length === 0) {
                   print(
@@ -1324,7 +1371,10 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 break;
               }
 
-              const restoreTargets = await collectTargetFiles(repoRoot, targetInput);
+              const restoreTargets = await collectTargetFiles(
+                repoRoot,
+                targetInput
+              );
               const restorableFiles = restoreTargets.filter((file) =>
                 Object.hasOwn(headCommit.snapshot, file)
               );
@@ -1380,7 +1430,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 if (hardMode) {
                   await applyCommitSnapshot(repoRoot, targetCommit.snapshot);
                   repo.staged.clear();
-                  print(`HEAD is now at ${targetCommit.hash} ${targetCommit.message}`);
+                  print(
+                    `HEAD is now at ${targetCommit.hash} ${targetCommit.message}`
+                  );
                 } else {
                   const previousHead = branchCommits[0];
                   const diff = diffSnapshots(
@@ -1388,8 +1440,8 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                     previousHead?.snapshot || targetCommit.snapshot
                   );
 
-                  [...diff.added, ...diff.modified, ...diff.deleted].forEach((file) =>
-                    repo.staged.add(file)
+                  [...diff.added, ...diff.modified, ...diff.deleted].forEach(
+                    (file) => repo.staged.add(file)
                   );
                   print(`Soft reset to ${targetCommit.hash}`);
                 }
@@ -1403,15 +1455,22 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               }
 
               const targetInput = params[1];
-              const targetFiles = await collectTargetFiles(repoRoot, targetInput);
+              const targetFiles = await collectTargetFiles(
+                repoRoot,
+                targetInput
+              );
 
               if (targetInput && targetFiles.length === 0) {
-                print(`fatal: pathspec '${targetInput}' did not match any files`);
+                print(
+                  `fatal: pathspec '${targetInput}' did not match any files`
+                );
                 break;
               }
 
               const filesToReset =
-                targetFiles.length > 0 ? targetFiles : [...repo.staged, ...repo.tracked];
+                targetFiles.length > 0
+                  ? targetFiles
+                  : [...repo.staged, ...repo.tracked];
 
               filesToReset.forEach((file) => {
                 repo.staged.delete(file);
@@ -1502,7 +1561,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               const branchName = params[2] || repo.branch;
 
               if (!repo.remotes[remoteName]) {
-                print(`fatal: '${remoteName}' does not appear to be a git repository`);
+                print(
+                  `fatal: '${remoteName}' does not appear to be a git repository`
+                );
                 break;
               }
 
@@ -1522,7 +1583,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               const branchName = params[2] || repo.branch;
 
               if (!repo.remotes[remoteName]) {
-                print(`fatal: '${remoteName}' does not appear to be a git repository`);
+                print(
+                  `fatal: '${remoteName}' does not appear to be a git repository`
+                );
                 break;
               }
 
@@ -1534,8 +1597,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
               if (pendingPull) {
                 await Promise.all(
-                  Object.entries(pendingPull.updates).map(([relativePath, content]) =>
-                    writeSnapshotFile(repoRoot, relativePath, content)
+                  Object.entries(pendingPull.updates).map(
+                    ([relativePath, content]) =>
+                      writeSnapshotFile(repoRoot, relativePath, content)
                   )
                 );
 
@@ -1549,7 +1613,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                   snapshot: nextSnapshot,
                   timestamp: Date.now(),
                 });
-                Object.keys(nextSnapshot).forEach((entry) => repo.tracked.add(entry));
+                Object.keys(nextSnapshot).forEach((entry) =>
+                  repo.tracked.add(entry)
+                );
 
                 repo.pendingPulls = repo.pendingPulls.filter(
                   (entry) => entry !== pendingPull
@@ -1578,7 +1644,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 print(
                   `   ${pendingPull.fromHash}..${pendingPull.targetHash}  ${branchName}       -> ${remoteName}/${branchName}`
                 );
-                print(`Updating ${pendingPull.fromHash}..${pendingPull.targetHash}`);
+                print(
+                  `Updating ${pendingPull.fromHash}..${pendingPull.targetHash}`
+                );
                 print("Fast-forward");
                 pendingPull.changedFiles.forEach((entry) => {
                   print(
@@ -1603,7 +1671,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
                 pendingPull.changedFiles
                   .filter((entry) => entry.created)
-                  .forEach((entry) => print(` create mode 100644 ${entry.path}`));
+                  .forEach((entry) =>
+                    print(` create mode 100644 ${entry.path}`)
+                  );
                 break;
               }
 
@@ -1633,8 +1703,13 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                   break;
                 }
 
-                if (!forceDelete && (repo.branches[branchName] || []).length > 0) {
-                  print(`error: The branch '${branchName}' is not fully merged.`);
+                if (
+                  !forceDelete &&
+                  (repo.branches[branchName] || []).length > 0
+                ) {
+                  print(
+                    `error: The branch '${branchName}' is not fully merged.`
+                  );
                   break;
                 }
 
@@ -1663,7 +1738,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 break;
               }
 
-              repo.branches[newBranch] = [...(repo.branches[repo.branch] || [])];
+              repo.branches[newBranch] = [
+                ...(repo.branches[repo.branch] || []),
+              ];
               await fileSystem.writeFile(
                 joinPath(repoRoot, `.git/refs/heads/${newBranch}`),
                 "",
@@ -1717,7 +1794,10 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                   break;
                 }
 
-                const checkoutFiles = await collectTargetFiles(repoRoot, params[2]);
+                const checkoutFiles = await collectTargetFiles(
+                  repoRoot,
+                  params[2]
+                );
                 const knownFiles = checkoutFiles.filter((file) =>
                   Object.hasOwn(headCommit.snapshot, file)
                 );
@@ -1731,7 +1811,11 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 break;
               }
 
-              if (params[1] === "-b" && params[2] && params[3]?.startsWith("origin/")) {
+              if (
+                params[1] === "-b" &&
+                params[2] &&
+                params[3]?.startsWith("origin/")
+              ) {
                 const localName = params[2];
 
                 if (repo.branches[localName]) {
@@ -1739,7 +1823,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                   break;
                 }
 
-                repo.branches[localName] = [...(repo.branches[repo.branch] || [])];
+                repo.branches[localName] = [
+                  ...(repo.branches[repo.branch] || []),
+                ];
                 repo.branch = localName;
                 print(`Branch '${localName}' set up to track '${params[3]}'.`);
                 print(`Switched to a new branch '${localName}'`);
@@ -1763,7 +1849,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                   break;
                 }
 
-                repo.branches[branchName] = [...(repo.branches[repo.branch] || [])];
+                repo.branches[branchName] = [
+                  ...(repo.branches[repo.branch] || []),
+                ];
                 await fileSystem.writeFile(
                   joinPath(repoRoot, `.git/refs/heads/${branchName}`),
                   "",
@@ -1804,7 +1892,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
                 }
               }
 
-              print(`error: pathspec '${branchName}' did not match any branch or tag`);
+              print(
+                `error: pathspec '${branchName}' did not match any branch or tag`
+              );
               break;
             }
 
@@ -1885,7 +1975,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               const targetPath = normalizePath(resolvePath(targetFile));
 
               if (!(await fileSystem.exists(targetPath))) {
-                print(`fatal: pathspec '${targetFile}' did not match any files`);
+                print(
+                  `fatal: pathspec '${targetFile}' did not match any files`
+                );
                 break;
               }
 
@@ -1949,7 +2041,8 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
             print(`${cmd}: comando no encontrado`);
         }
       } catch (error) {
-        const message = error instanceof Error ? error.message : "Error desconocido";
+        const message =
+          error instanceof Error ? error.message : "Error desconocido";
 
         print(`Error: ${message}`);
       }

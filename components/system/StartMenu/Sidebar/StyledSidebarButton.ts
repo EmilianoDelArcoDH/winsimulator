@@ -7,6 +7,7 @@ type StyledSidebarButtonProps = {
 
 const StyledSidebarButton = styled.li<StyledSidebarButtonProps>`
   border: 1px solid transparent;
+  border-radius: ${({ theme }) => theme.effects.radius.control};
   display: flex;
   height: ${({ theme }) => theme.sizes.startMenu.sideBar.buttonHeight}px;
   place-content: center;
@@ -15,13 +16,14 @@ const StyledSidebarButton = styled.li<StyledSidebarButtonProps>`
   width: ${({ theme }) => theme.sizes.startMenu.sideBar.width}px;
 
   &::before {
-    border-left: ${({ $active, theme }) =>
-      `4px solid ${$active ? theme.colors.selectionHighlight : "transparent"}`};
+    background-color: ${({ $active, theme }) =>
+      $active ? theme.colors.selectionHighlight : "transparent"};
+    border-radius: 2px;
     content: "";
     height: ${({ theme }) => theme.sizes.startMenu.sideBar.buttonHeight}px;
     left: 0;
     position: absolute;
-    width: ${({ theme }) => theme.sizes.startMenu.sideBar.width}px;
+    width: 3px;
   }
 
   figure {
@@ -60,8 +62,8 @@ const StyledSidebarButton = styled.li<StyledSidebarButtonProps>`
   }
 
   &:hover {
-    background-color: hsl(0 0% 35% / 70%);
-    border: 1px solid hsl(0 0% 45% / 70%);
+    background-color: ${({ theme }) => theme.colors.taskbar.hover};
+    border-color: ${({ theme }) => theme.effects.border.subtle};
   }
 
   &:active {

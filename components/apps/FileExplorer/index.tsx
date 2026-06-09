@@ -122,7 +122,7 @@ const FileExplorer: FC<ComponentProcessProps> = ({ id }) => {
   }, [componentWindow, onKeyDown]);
 
   return url ? (
-    <StyledFileExplorer>
+    <StyledFileExplorer data-tour="file-explorer">
       <Navigation
         addressBarRef={addressBarRef}
         hideSearch={Boolean(mountUrl)}

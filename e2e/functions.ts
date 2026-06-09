@@ -128,9 +128,7 @@ export const disableOffscreenCanvas = async ({
   });
 };
 
-export const disableWallpaper = async ({
-  page,
-}: TestProps): Promise<void> => {
+export const disableWallpaper = async ({ page }: TestProps): Promise<void> => {
   await page.addInitScript(() => {
     window.DEBUG_DISABLE_WALLPAPER = true;
   });

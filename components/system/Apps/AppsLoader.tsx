@@ -1,15 +1,7 @@
 import { AnimatePresence } from "motion/react";
 import dynamic from "next/dynamic";
-import {
-  memo,
-  useEffect,
-  useMemo,
-  useState,
-} from "react";
-import {
-  Mosaic,
-  type MosaicNode,
-} from "react-mosaic-component";
+import { memo, useEffect, useMemo, useState } from "react";
+import { Mosaic, type MosaicNode } from "react-mosaic-component";
 import { useProcesses } from "contexts/process";
 import { type Process } from "contexts/process/types";
 import { PROCESS_DELIMITER } from "utils/constants";
@@ -63,18 +55,16 @@ const AppsLoader: FC = () => {
   const tiledProcessIds = useMemo(
     () =>
       processEntries
-        .filter(
-          ([id, { dialogProcess, hasWindow = true, minimized }]) => {
-            const [processId = ""] = id.split(PROCESS_DELIMITER);
+        .filter(([id, { dialogProcess, hasWindow = true, minimized }]) => {
+          const [processId = ""] = id.split(PROCESS_DELIMITER);
 
-            return (
-              processId === "MonacoEditor" &&
-              hasWindow &&
-              !dialogProcess &&
-              !minimized
-            );
-          }
-        )
+          return (
+            processId === "MonacoEditor" &&
+            hasWindow &&
+            !dialogProcess &&
+            !minimized
+          );
+        })
         .map(([id]) => id),
     [processEntries]
   );
@@ -92,16 +82,17 @@ const AppsLoader: FC = () => {
   if (tiledProcessIds.length <= 1 || !mosaicLayout) {
     return (
       <AnimatePresence initial={false} presenceAffectsLayout={false}>
-        {processEntries.map(([id, { Component, hasWindow }]) =>
-          id &&
-          Component && (
-            <RenderComponent
-              key={id}
-              Component={Component}
-              hasWindow={hasWindow}
-              id={id}
-            />
-          )
+        {processEntries.map(
+          ([id, { Component, hasWindow }]) =>
+            id &&
+            Component && (
+              <RenderComponent
+                key={id}
+                Component={Component}
+                hasWindow={hasWindow}
+                id={id}
+              />
+            )
         )}
       </AnimatePresence>
     );
@@ -137,16 +128,17 @@ const AppsLoader: FC = () => {
       </div>
 
       <AnimatePresence initial={false} presenceAffectsLayout={false}>
-        {floatingEntries.map(([id, { Component, hasWindow }]) =>
-          id &&
-          Component && (
-            <RenderComponent
-              key={id}
-              Component={Component}
-              hasWindow={hasWindow}
-              id={id}
-            />
-          )
+        {floatingEntries.map(
+          ([id, { Component, hasWindow }]) =>
+            id &&
+            Component && (
+              <RenderComponent
+                key={id}
+                Component={Component}
+                hasWindow={hasWindow}
+                id={id}
+              />
+            )
         )}
       </AnimatePresence>
     </>

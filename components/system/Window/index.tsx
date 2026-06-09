@@ -23,6 +23,7 @@ const Window: FC<WindowProps> = ({ children, docked = false, id }) => {
     backgroundColor,
     Component,
     hideTitlebar,
+    maximized,
     peekElement,
   } = process || {};
   const resolvedHideTitlebar = id.startsWith("GitBash") ? true : hideTitlebar;
@@ -53,6 +54,7 @@ const Window: FC<WindowProps> = ({ children, docked = false, id }) => {
       $backgroundBlur={backgroundBlur}
       $backgroundColor={backgroundColor}
       $isForeground={isForeground}
+      $maximized={maximized}
       {...focusableProps}
       {...windowTransitions}
     >

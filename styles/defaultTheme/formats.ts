@@ -4,7 +4,8 @@ const formats = {
     hour12: true,
     minute: "2-digit",
   } as Intl.DateTimeFormatOptions,
-  systemFont: "'Segoe UI', system-ui, Roboto, 'Helvetica Neue', sans-serif",
+  systemFont:
+    "'Segoe UI Variable', 'Segoe UI', system-ui, Roboto, 'Helvetica Neue', sans-serif",
 };
 
 export default formats;

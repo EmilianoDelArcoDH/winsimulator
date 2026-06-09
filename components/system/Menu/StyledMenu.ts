@@ -12,17 +12,17 @@ const StyledMenu = styled(motion.nav).attrs<StyledMenuProps>(({ $x, $y }) => ({
     transform: `translate(${$x}px, ${$y}px)`,
   },
 }))<StyledMenuProps>`
-  background-color: rgb(43 43 43);
-  border: 1px solid rgb(160 160 160);
-  box-shadow:
-    1px 1px 1px hsl(0 0% 20% / 70%),
-    2px 2px 2px hsl(0 0% 10% / 70%);
+  backdrop-filter: ${({ theme }) => `blur(${theme.effects.acrylic.blur})`};
+  background-color: ${({ theme }) => theme.effects.acrylic.background};
+  border: ${({ theme }) => `1px solid ${theme.effects.border.strong}`};
+  border-radius: ${({ theme }) => theme.effects.radius.menu};
+  box-shadow: ${({ theme }) => theme.effects.shadow.flyout};
   color: rgb(255 255 255);
   contain: layout;
   font-size: 12px;
   max-height: fit-content;
   max-width: fit-content;
-  padding: 4px 2px;
+  padding: 4px;
   pointer-events: none;
   position: fixed;
   width: max-content;
@@ -37,18 +37,19 @@ const StyledMenu = styled(motion.nav).attrs<StyledMenuProps>(({ $x, $y }) => ({
     }
 
     hr {
-      background-color: rgb(128 128 128);
+      background-color: ${({ theme }) => theme.effects.border.strong};
       height: 1px;
       margin: 3px 8px;
     }
 
     li > div {
+      border-radius: ${({ theme }) => theme.effects.radius.control};
       display: flex;
       padding: 3px 0;
 
       &:hover,
       &.active {
-        background-color: rgb(65 65 65);
+        background-color: ${({ theme }) => theme.colors.taskbar.hover};
       }
 
       figcaption {
