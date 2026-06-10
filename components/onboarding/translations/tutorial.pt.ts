@@ -58,7 +58,7 @@ const tutorialPt: TutorialTranslation = {
     "open-terminal": {
       ...navigation,
       description:
-        "Clique em Iniciar e depois em Terminal. A janela só será aberta quando você selecionar o aplicativo.",
+        "Clique em Iniciar 🏠 e depois em Terminal. A janela só será aberta quando você selecionar o aplicativo.",
       optionalHint: "Clique em Iniciar 🏠 e depois em Terminal",
       title: "Abra o Terminal",
     },
