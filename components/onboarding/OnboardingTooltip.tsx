@@ -158,8 +158,16 @@ const OnboardingTooltip: FC<TooltipRenderProps> = ({
   step,
   tooltipProps,
 }) => {
-  const { actionLabel, requiresAction } =
-    (step.data as OnboardingStepData | undefined) || {};
+  const {
+    actionLabel,
+    buttonBack,
+    buttonFinish,
+    buttonNext,
+    buttonPause,
+    buttonSkip,
+    progress,
+    requiresAction,
+  } = (step.data as OnboardingStepData | undefined) || {};
 
   return (
     <>
@@ -171,15 +179,25 @@ const OnboardingTooltip: FC<TooltipRenderProps> = ({
           {requiresAction && (
             <strong className="action-label">{actionLabel}</strong>
           )}
-          <button {...skipProps}>Saltar</button>
+          <button type="button" {...skipProps}>
+            {buttonSkip}
+          </button>
           <button onClick={() => controls.stop()} type="button">
-            Pausar
+            {buttonPause}
           </button>
           <span className="spacer" />
-          {index > 0 && <button {...backProps}>Atrás</button>}
+          {index > 0 && (
+            <button type="button" {...backProps}>
+              {buttonBack}
+            </button>
+          )}
           {!requiresAction && (
-            <button className="primary" {...primaryProps}>
-              {isLastStep ? "Finalizar" : `Siguiente (${index + 1} de ${size})`}
+            <button className="primary" type="button" {...primaryProps}>
+              {isLastStep
+                ? buttonFinish
+                : `${buttonNext} (${(progress || "{current} de {total}")
+                    .replace("{current}", String(index + 1))
+                    .replace("{total}", String(size))})`}
             </button>
           )}
         </footer>

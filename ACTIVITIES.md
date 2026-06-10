@@ -5,6 +5,14 @@ Este documento resume las actividades implementadas desde `utils/activitiesCatal
 ## Rutas base
 
 - Tour guiado / onboarding: `/tutorial`
+
+### Traducciones del tutorial
+
+Los textos están en `components/onboarding/translations/tutorial.es.ts`,
+`tutorial.en.ts` y `tutorial.pt.ts`. Para agregar un texto, define primero la
+clave completa en español y luego su equivalente en inglés y portugués. Los
+campos omitidos en EN o PT usan automáticamente el valor en español.
+
 - App integrada ES: `/?app=Activities&activityId={id}&lang=es`
 - App integrada EN: `/?app=Activities&activityId={id}&lang=en`
 - App integrada PT: `/?app=Activities&activityId={id}&lang=pt`

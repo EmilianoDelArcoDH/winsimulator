@@ -1,4 +1,4 @@
-import useOnboardingTour from "hooks/useOnboardingTour";
+import useTour from "hooks/useOnboardingTour";
 
 const OnboardingTour: FC = () => {
   const {
@@ -9,41 +9,35 @@ const OnboardingTour: FC = () => {
     resetTour,
     resumeTour,
     startTour,
+    text,
     Tour,
-  } = useOnboardingTour();
+  } = useTour();
 
   return (
     <>
       {Tour}
       <div className="onboarding-actions" data-tour="welcome">
-        <p>
-          Recorre el escritorio, las aplicaciones y el flujo completo de una
-          actividad Git.
-        </p>
+        <p>{text.panel.description}</p>
         <div>
           {!isRunning && !isPaused && (
             <button className="primary" onClick={startTour} type="button">
-              Iniciar Tour Guiado
+              {text.panel.start}
             </button>
           )}
-          {isRunning && (
-            <span>Tour en curso. Puedes pausarlo desde el panel.</span>
-          )}
+          {isRunning && <span>{text.panel.inProgress}</span>}
           {isPaused && (
             <button className="primary" onClick={resumeTour} type="button">
-              Continuar desde el paso {currentStep + 1}
+              {text.panel.resume.replace("{step}", String(currentStep + 1))}
             </button>
           )}
           {(completed || isPaused) && (
             <button onClick={resetTour} type="button">
-              Reiniciar
+              {text.panel.reset}
             </button>
           )}
         </div>
         {completed && (
-          <strong className="completed-message">
-            Tour completado. Ya tienes el mapa general de la plataforma.
-          </strong>
+          <strong className="completed-message">{text.panel.completed}</strong>
         )}
       </div>
     </>
