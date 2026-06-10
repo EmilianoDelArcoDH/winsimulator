@@ -5,6 +5,9 @@ Este documento resume las actividades implementadas desde `utils/activitiesCatal
 ## Rutas base
 
 - Tour guiado / onboarding: `/tutorial`
+- Tutorial interactivo de Visual Studio Code: `/tutorial/vscode`
+- Tutorial de VS Code localizado: `/es/tutorial/vscode`,
+  `/en/tutorial/vscode`, `/pt/tutorial/vscode`
 
 ### Traducciones del tutorial
 

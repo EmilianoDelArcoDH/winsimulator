@@ -151,6 +151,17 @@ const StyledMonacoEditor = styled.div`
       .editor-area {
         grid-column: 2;
       }
+
+      &.creating-entry .side-panel {
+        bottom: 0;
+        display: block;
+        left: var(--activity-bar-width);
+        max-width: calc(100% - var(--activity-bar-width));
+        position: absolute;
+        top: var(--menu-bar-height);
+        width: min(260px, calc(100% - var(--activity-bar-width)));
+        z-index: 8;
+      }
     }
 
     &.panel-open {
@@ -2401,9 +2412,7 @@ const StyledMonacoEditor = styled.div`
   }
 
   .activity-bar button[title*="Side Bar"]::before {
-    clip-path: path(
-      "M4 5h16v2H4V5Zm0 6h16v2H4v-2Zm0 6h16v2H4v-2Z"
-    );
+    clip-path: path("M4 5h16v2H4V5Zm0 6h16v2H4v-2Zm0 6h16v2H4v-2Z");
   }
 
   .side-panel {
