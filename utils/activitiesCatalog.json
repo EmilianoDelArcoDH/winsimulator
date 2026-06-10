@@ -370,7 +370,7 @@
               "Creá la carpeta \"miProyecto\" y entrá a esa carpeta.",
               "Creá los archivos index.html, style.css y app.js.",
               "Ejecutá git init dentro de /miProyecto.",
-              "Opcional: verificá con git status."
+              "Verificá con git status."
             ],
             "terminal": {
               "expectedWorkingDir": "/miProyecto",
