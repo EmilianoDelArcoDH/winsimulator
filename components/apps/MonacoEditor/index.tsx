@@ -1786,7 +1786,10 @@ function example() {
                 type: "pagesPublished",
                 url: publishedSite.publicUrl,
               });
-              nextLines.push("Pages published successfully.", `Public URL: ${publishedSite.publicUrl}`);
+              nextLines.push(
+                "Pages published successfully.",
+                `Public URL: ${publishedSite.publicUrl}`
+              );
               openProcess("Browser", { url: publishedSite.publicUrl });
             } else {
               nextLines.push(
@@ -1863,6 +1866,8 @@ function example() {
 
       if (menuAction === "new-folder") {
         if (!canCreateEntriesInWorkspace) return;
+        setPanelOpen(true);
+        setActiveView("explorer");
         const targetFolder = normalizeFsPath(await resolveTargetFolder());
 
         logExplorer("menu:new-folder", {
@@ -2168,13 +2173,15 @@ function example() {
     >
       <div
         className={`editor-shell ${isTerminalPanelOpen ? "terminal-open" : ""}`}
+        data-active-file={activeFileUrl}
+        data-selected-path={selectedPath}
         data-tour="monaco-shell"
       >
         <div
           ref={workbenchRef}
           className={`workbench ${panelOpen ? "panel-open" : "panel-closed"} ${
             isCompactLayout ? "compact-layout" : ""
-          }`}
+          } ${creatingEntry ? "creating-entry" : ""}`}
           data-tour="monaco-workbench"
           style={{ ["--side-panel-width" as string]: `${sidePanelWidth}px` }}
         >
@@ -2508,7 +2515,7 @@ function example() {
             </button>
           </aside>
 
-          {panelOpen && !isCompactLayout && (
+          {panelOpen && (!isCompactLayout || creatingEntry) && (
             <aside className="side-panel" data-tour="monaco-explorer-panel">
               <header>
                 <div className="panel-header-row">
@@ -2521,6 +2528,7 @@ function example() {
                     <div className="panel-actions">
                       <button
                         className="icon-action"
+                        data-tour="monaco-new-file"
                         disabled={!canCreateEntriesInWorkspace}
                         onClick={(e) => {
                           e.stopPropagation();
@@ -2533,6 +2541,7 @@ function example() {
                       </button>
                       <button
                         className="icon-action"
+                        data-tour="monaco-new-folder"
                         disabled={!canCreateEntriesInWorkspace}
                         onClick={(e) => {
                           e.stopPropagation();
