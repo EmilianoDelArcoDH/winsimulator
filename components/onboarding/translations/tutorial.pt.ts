@@ -51,7 +51,7 @@ const tutorialPt: TutorialTranslation = {
     "open-files": {
       ...navigation,
       description:
-        "Abra o Iniciar e selecione Documents para conhecer o Explorador de Arquivos.",
+        "Abra o Iniciar 🏠 e selecione Documents para conhecer o Explorador de Arquivos.",
       optionalHint: "Clique em Iniciar e depois em Documents",
       title: "Abra Documents",
     },
@@ -65,7 +65,7 @@ const tutorialPt: TutorialTranslation = {
     "open-vscode": {
       ...navigation,
       description:
-        "Abra o Iniciar e selecione Visual Studio Code para conhecer o editor real.",
+        "Abra o Iniciar 🏠 e selecione Visual Studio Code para conhecer o editor real.",
       optionalHint: "Clique em Iniciar e depois em Visual Studio Code",
       title: "Abra o Visual Studio Code",
     },
