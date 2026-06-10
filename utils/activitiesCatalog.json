@@ -109,92 +109,93 @@
           }
         },
         {
-          "id": "sch_git_c01_a02",
-          "classId": "sch_git_c01",
-          "title": "Git vs GitHub",
-          "objective": "Diferenciar herramienta (Git) de plataforma (GitHub).",
-          "mode": "classify",
-          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
-          "data": {
-            "columns": ["Git", "GitHub"],
-            "cards": [
-              {
-                "id": "g1",
-                "text": "Funciona en tu computadora (local) para llevar historial."
-              },
-              { "id": "g2", "text": "Permite alojar repositorios en la nube." },
-              { "id": "g3", "text": "Usa commits para registrar cambios." },
-              {
-                "id": "g4",
-                "text": "Sirve para colaborar mediante repos remotos y PRs."
-              },
-              {
-                "id": "g5",
-                "text": "Te deja volver a una versión anterior en tu máquina."
-              },
-              {
-                "id": "g6",
-                "text": "Es una empresa/plataforma web de hosting de repos."
-              },
-              { "id": "g7", "text": "Maneja ramas y merges (branch/merge)." },
-              {
-                "id": "g8",
-                "text": "Se usa para compartir y revisar código con otras personas."
-              }
-            ],
-            "answerKey": {
-              "Git": ["g1", "g3", "g5", "g7"],
-              "GitHub": ["g2", "g4", "g6", "g8"]
-            },
-            "freeText": {
-              "id": "explicacion",
-              "label": "Explicá con tus palabras la diferencia (mínimo 30 caracteres).",
-              "minLength": 30
+  "id": "sch_git_c01_a02",
+  "classId": "sch_git_c01",
+  "title": "Git vs GitHub",
+  "objective": "Diferenciar herramienta (Git) de plataforma (GitHub).",
+  "mode": "classify",
+  "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+  "data": {
+    "columns": ["Git", "GitHub"],
+    "cards": [
+      {
+        "id": "g1",
+        "text": "Funciona en tu computadora (local) para llevar historial."
+      },
+      { "id": "g2", "text": "Permite alojar repositorios en la nube." },
+      { "id": "g3", "text": "Usa commits para registrar cambios." },
+      {
+        "id": "g4",
+        "text": "Sirve para colaborar con otras personas mediante repositorios remotos y Pull Requests (PRs)."
+      },
+      {
+        "id": "g5",
+        "text": "Te deja volver a una versión anterior en tu máquina."
+      },
+      {
+        "id": "g6",
+        "text": "Es una empresa/plataforma web de hosting de repos."
+      },
+      { "id": "g7", "text": "Maneja ramas y merges (branch/merge)." },
+      {
+        "id": "g8",
+        "text": "Se usa para compartir y revisar código con otras personas."
+      }
+    ],
+    "answerKey": {
+      "Git": ["g1", "g3", "g5", "g7"],
+      "GitHub": ["g2", "g4", "g6", "g8"]
+    },
+    "freeText": {
+      "id": "explicacion",
+      "label": "Explicá con tus palabras la diferencia (mínimo 30 caracteres).",
+      "minLength": 30
+    }
+  },
+  "validation": {
+    "okThreshold": { "cardsCorrectMin": 7 },
+    "checks": [
+      {
+        "checkId": "c01_a02_cards_threshold",
+        "type": "CLASSIFY_THRESHOLD",
+        "target": "cards",
+        "rules": { "minCorrect": 7, "total": 8 },
+        "messageOk": "Muy bien: distinguís Git de GitHub.",
+        "messageFail": "Te faltó distinguir algunas afirmaciones entre Git y GitHub."
+      },
+      {
+        "checkId": "c01_a02_explicacion_min",
+        "type": "TEXT_MIN_LENGTH",
+        "target": "explicacion",
+        "rules": { "minLength": 30 },
+        "messageOk": "Explicación completa.",
+        "messageFail": "Tu explicación es muy corta. Sumá un poco más."
+      },
+      {
+        "checkId": "c01_a02_explicacion_keywords",
+        "type": "TEXT_KEYWORDS_GROUPS",
+        "target": "explicacion",
+        "rules": {
+          "mustSatisfyGroups": [
+            { "any": ["local", "computadora", "mi pc", "mi máquina"] },
+            {
+              "any": [
+                "plataforma",
+                "nube",
+                "web",
+                "internet",
+                "hosting",
+                "github"
+              ]
             }
-          },
-          "validation": {
-            "okThreshold": { "cardsCorrectMin": 7 },
-            "checks": [
-              {
-                "checkId": "c01_a02_cards_threshold",
-                "type": "CLASSIFY_THRESHOLD",
-                "target": "cards",
-                "rules": { "minCorrect": 7, "total": 8 },
-                "messageOk": "Muy bien: distinguís Git de GitHub.",
-                "messageFail": "Te faltó distinguir algunas afirmaciones entre Git y GitHub."
-              },
-              {
-                "checkId": "c01_a02_explicacion_min",
-                "type": "TEXT_MIN_LENGTH",
-                "target": "explicacion",
-                "rules": { "minLength": 30 },
-                "messageOk": "Explicación completa.",
-                "messageFail": "Tu explicación es muy corta. Sumá un poco más."
-              },
-              {
-                "checkId": "c01_a02_explicacion_keywords",
-                "type": "TEXT_KEYWORDS_GROUPS",
-                "target": "explicacion",
-                "rules": {
-                  "mustSatisfyGroups": [
-                    { "any": ["local", "computadora", "mi pc", "mi máquina"] },
-                    {
-                      "any": [
-                        "plataforma",
-                        "nube",
-                        "web",
-                        "internet",
-                        "hosting"
-                      ]
-                    }
-                  ]
-                },
-                "messageOk": "Incluiste la idea de local vs plataforma.",
-                "messageFail": "Tu explicación debe mencionar que Git es local y GitHub es una plataforma en la nube/web."
-              }
-            ]
-          }
+          ]
         },
+        "messageOk": "Incluiste la idea de local vs plataforma.",
+        "messageFail": "Tu explicación debe mencionar que Git es local y GitHub es una plataforma en la nube/web."
+      }
+    ]
+  }
+},
         {
           "id": "sch_git_c01_a03",
           "classId": "sch_git_c01",
@@ -357,109 +358,85 @@
           }
         },
         {
-          "id": "sch_git_c02_a01",
-          "classId": "sch_git_c02",
-          "title": "Inicializar repo",
-          "objective": "Crear carpeta de proyecto web, generar archivos base e inicializar Git en el lugar correcto.",
-          "mode": "terminal",
-          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
-          "data": {
-            "scenario": "Abrí GitBash y prepará un proyecto web básico en /miProyecto para luego inicializar el repositorio.",
-            "instructions": [
-              "Abrí GitBash.",
-              "Creá la carpeta \"miProyecto\" y entrá a esa carpeta.",
-              "Creá los archivos index.html, style.css y app.js.",
-              "Ejecutá git init dentro de /miProyecto.",
-              "Verificá con git status."
-            ],
-            "terminal": {
-              "expectedWorkingDir": "/miProyecto",
-              "allowedCommands": [
-                "pwd",
-                "ls",
-                "cd",
-                "mkdir",
-                "touch",
-                "echo",
-                "cat",
-                "git init",
-                "git status",
-                "help"
-              ]
-            },
-            "workspace": {
-              "rootPath": "/",
-              "openInVscode": true,
-              "overwriteFiles": true,
-              "resetOnEnter": true,
-              "folders": ["/miProyecto"],
-              "files": [
-                {
-                  "path": "/miProyecto/README.md",
-                  "content": "# miProyecto\n\nPrework de la actividad: crea archivos web base y luego ejecuta git init.\n"
-                }
-              ]
-            }
-          },
-          "validation": {
-            "checks": [
-              {
-                "checkId": "c02_a01_created_repo_dir",
-                "type": "TERMINAL_REGEX",
-                "target": "commands",
-                "rules": { "pattern": "mkdir\\s+(-p\\s+)?miProyecto" },
-                "messageOk": "Creaste la carpeta miProyecto.",
-                "messageFail": "Primero creá la carpeta del proyecto con mkdir miProyecto."
-              },
-              {
-                "checkId": "c02_a01_entered_repo_dir",
-                "type": "TERMINAL_COMMAND_EXECUTED",
-                "target": "commands",
-                "rules": {
-                  "mustIncludeAny": [
-                    "cd miProyecto",
-                    "cd ./miProyecto",
-                    "cd /miProyecto"
-                  ]
-                },
-                "messageOk": "Entraste a la carpeta miProyecto.",
-                "messageFail": "Entrá a la carpeta con cd miProyecto antes de inicializar Git."
-              },
-              {
-                "checkId": "c02_a01_mentions_html_css_js",
-                "type": "TERMINAL_REGEX",
-                "target": "commands",
-                "rules": { "pattern": "index\\.html|style\\.css|app\\.js" },
-                "messageOk": "Usaste nombres de archivos web (html/css/js).",
-                "messageFail": "Trabajá con archivos web: index.html, style.css y app.js."
-              },
-              {
-                "checkId": "c02_a01_ran_git_init",
-                "type": "TERMINAL_COMMAND_EXECUTED",
-                "target": "commands",
-                "rules": { "mustInclude": ["git init"] },
-                "messageOk": "Ejecutaste git init.",
-                "messageFail": "Tenés que ejecutar: git init"
-              },
-              {
-                "checkId": "c02_a01_correct_dir",
-                "type": "TERMINAL_IN_DIR",
-                "target": "cwd",
-                "rules": { "equals": "/miProyecto", "endsWith": "/miProyecto" },
-                "messageOk": "Lo hiciste en el directorio correcto.",
-                "messageFail": "Ejecutá git init dentro de /miProyecto (no en otra carpeta)."
-              },
-              {
-                "checkId": "c02_a01_repo_initialized",
-                "type": "REPO_STATE",
-                "target": "repo",
-                "rules": { "initialized": true },
-                "messageOk": "Repo inicializado correctamente.",
-                "messageFail": "No se detecta un repo inicializado (.git)."
-              }
-            ]
-          }
+  "id": "sch_git_c02_a01",
+  "classId": "sch_git_c02",
+  "title": "Crear un repositorio local",
+  "objective": "Crear carpeta, inicializar Git y hacer el primer commit.",
+  "mode": "terminal",
+  "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+  "data": {
+    "scenario": "Creá tu primer repositorio Git desde cero.",
+    "instructions": [
+      "Abrí la terminal (Git Bash).",
+      "Creá una carpeta llamada <strong>miProyecto</strong> con el comando: <code>mkdir miProyecto</code>",
+      "Entrá dentro de esa carpeta: <code>cd miProyecto</code>",
+      "Inicializá el repositorio Git: <code>git init</code>",
+      "Creá un archivo <strong>index.html</strong> (usá <code>touch index.html</code> o crealo desde VS Code).",
+      "Hacé tu primer commit con un mensaje claro."
+    ],
+    "workspace": {
+      "rootPath": "/repo",
+      "openInVscode": true,
+      "overwriteFiles": true,
+      "resetOnEnter": true,
+      "files": [
+        {
+          "path": "/repo/README.md",
+          "content": "# Mi Primer Proyecto\n\nEste es un proyecto de prueba para aprender Git."
+        }
+      ]
+    }
+  },
+  "validation": {
+    "checks": [
+      {
+        "checkId": "c02_a01_mkdir",
+        "type": "TERMINAL_COMMAND_EXECUTED",
+        "target": "commands",
+        "rules": { "mustInclude": ["mkdir miProyecto"] },
+        "messageFail": "Creá la carpeta con: mkdir miProyecto"
+      },
+      {
+        "checkId": "c02_a01_cd",
+        "type": "TERMINAL_COMMAND_EXECUTED",
+        "target": "commands",
+        "rules": { "mustInclude": ["cd miProyecto"] },
+        "messageFail": "Entrá a la carpeta con: cd miProyecto"
+      },
+      {
+        "checkId": "c02_a01_git_init",
+        "type": "TERMINAL_COMMAND_EXECUTED",
+        "target": "commands",
+        "rules": { "mustInclude": ["git init"] },
+        "messageFail": "Inicializá el repositorio con: git init"
+      },
+      {
+        "checkId": "c02_a01_correct_dir",
+        "type": "TERMINAL_IN_DIR",
+        "target": "terminal",
+        "rules": { "expectedWorkingDir": "miProyecto" },
+        "messageFail": "Tenés que estar dentro de la carpeta miProyecto"
+      },
+      {
+        "checkId": "c02_a01_file_name",
+        "type": "REPO_STATE",
+        "target": "repo",
+        "rules": {
+          "filesMustExist": ["index.html"],
+          "filesMustNotExist": ["index.htmi", "index.htm", "index.html.txt"]
         },
+        "messageFail": "El archivo debe llamarse exactamente 'index.html'"
+      },
+      {
+        "checkId": "c02_a01_at_least_one_commit",
+        "type": "REPO_STATE",
+        "target": "repo",
+        "rules": { "hasAtLeastCommits": 1 },
+        "messageFail": "Hacé al menos un commit"
+      }
+    ]
+  }
+},
         {
           "id": "sch_git_c02_a02",
           "classId": "sch_git_c02",
@@ -646,82 +623,92 @@
           }
         },
         {
-          "id": "sch_git_c02_a04",
-          "classId": "sch_git_c02",
-          "title": "Evitar el git add . ciego",
-          "objective": "No commitear archivos basura.",
-          "mode": "terminal",
-          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
-          "data": {
-            "scenario": "En un proyecto web con index.html, style.css y app.js, evitá incluir notes.tmp en el commit final.",
-            "instructions": [
-              "Hacé cambios en archivos web (html/css/js).",
-              "Existe un archivo basura notes.tmp que NO debe entrar al commit.",
-              "Revisá con git status antes de commitear.",
-              "Seleccioná archivos de forma explícita.",
-              "Evitá git add . ciego."
-            ],
-            "workspace": {
-              "rootPath": "/repo",
-              "openInVscode": true,
-              "overwriteFiles": true,
-              "resetOnEnter": true,
-              "files": [
-                {
-                  "path": "/repo/index.html",
-                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Repo Clase</title>\n  </head>\n  <body>\n    <h1>Control de staging</h1>\n  </body>\n</html>\n"
-                },
-                {
-                  "path": "/repo/style.css",
-                  "content": "h1 {\n  color: #0f172a;\n}\n"
-                },
-                {
-                  "path": "/repo/app.js",
-                  "content": "console.log('Selecciona archivos explicitamente');\n"
-                },
-                {
-                  "path": "/repo/notes.tmp",
-                  "content": "archivo temporal - no debe ir al commit\n"
-                }
-              ]
-            },
-            "policy": { "warnOnAddDot": true }
-          },
-          "validation": {
-            "checks": [
-              {
-                "checkId": "c02_a04_no_junk_in_commit",
-                "type": "REPO_STATE",
-                "target": "repo",
-                "rules": { "lastCommitExcludes": ["notes.tmp"] },
-                "messageOk": "Bien: no commiteaste el archivo basura.",
-                "messageFail": "El commit incluye notes.tmp. Tenés que excluirlo del commit."
-              },
-              {
-                "checkId": "c02_a04_status_before_commit",
-                "type": "TERMINAL_COMMAND_COUNT_MIN",
-                "target": "commands",
-                "rules": {
-                  "command": "git status",
-                  "minCount": 1,
-                  "mustOccurBefore": "git commit"
-                },
-                "messageOk": "Verificaste el estado antes de commitear.",
-                "messageFail": "Usá git status antes de hacer git commit."
-              },
-              {
-                "checkId": "c02_a04_add_dot_warning",
-                "type": "TERMINAL_WARNING_IF_MATCH",
-                "target": "commands",
-                "rules": { "pattern": "git\\s+add\\s+\\." },
-                "messageOk": "OK.",
-                "messageFail": "Warning: evitá git add . sin revisar qué se está agregando."
-              }
-            ]
-          }
+  "id": "sch_git_c02_a04",
+  "classId": "sch_git_c02",
+  "title": "Evitar el git add . ciego",
+  "objective": "No commitear archivos basura. Practicar selección explícita de archivos.",
+  "mode": "terminal",
+  "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+  "data": {
+    "scenario": "En un proyecto web con index.html, style.css y app.js, evitá incluir notes.tmp en el commit final.",
+    "instructions": [
+      "Hacé cambios en archivos web (html/css/js).",
+      "Existe un archivo basura **notes.tmp** que NO debe entrar al commit.",
+      "Revisá con `git status` antes de commitear.",
+      "Seleccioná archivos de forma explícita (`git add index.html`, etc.).",
+      "**NO uses** `git add .` ni `git add *`."
+    ],
+    "workspace": {
+      "rootPath": "/repo",
+      "openInVscode": true,
+      "overwriteFiles": true,
+      "resetOnEnter": true,
+      "files": [
+        {
+          "path": "/repo/index.html",
+          "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Repo Clase</title>\n  </head>\n  <body>\n    <h1>Control de staging</h1>\n  </body>\n</html>\n"
+        },
+        {
+          "path": "/repo/style.css",
+          "content": "h1 {\n  color: #0f172a;\n}\n"
+        },
+        {
+          "path": "/repo/app.js",
+          "content": "console.log('Selecciona archivos explicitamente');\n"
+        },
+        {
+          "path": "/repo/notes.tmp",
+          "content": "archivo temporal - no debe ir al commit\n"
         }
       ]
     },
+    "policy": { "warnOnAddDot": true }
+  },
+  "validation": {
+    "checks": [
+      {
+        "checkId": "c02_a04_forbid_add_dot",
+        "type": "TERMINAL_COMMAND_FORBIDDEN",
+        "target": "commands",
+        "rules": { "pattern": "git\\s+add\\s+\\." },
+        "messageFail": "❌ No uses 'git add .' en esta actividad. Seleccioná archivos individuales (ej: git add index.html)"
+      },
+      {
+        "checkId": "c02_a04_no_junk_in_commit",
+        "type": "REPO_STATE",
+        "target": "repo",
+        "rules": {
+          "lastCommitExcludes": ["notes.tmp"],
+          "stagedExcludes": ["notes.tmp"]
+        },
+        "messageOk": "✅ No commiteaste el archivo basura.",
+        "messageFail": "El commit (o staging) incluye notes.tmp. Excluílo usando git add solo en los archivos correctos."
+      },
+      {
+        "checkId": "c02_a04_status_before_commit",
+        "type": "TERMINAL_COMMAND_COUNT_MIN",
+        "target": "commands",
+        "rules": {
+          "command": "git status",
+          "minCount": 1,
+          "mustOccurBefore": "git commit"
+        },
+        "messageOk": "✅ Verificaste el estado antes de commitear.",
+        "messageFail": "Usá git status antes de hacer git commit."
+      },
+      {
+        "checkId": "c02_a04_add_specific_files",
+        "type": "TERMINAL_COMMAND_MATCH",
+        "target": "commands",
+        "rules": {
+          "mustMatchAny": ["git add index.html", "git add style.css", "git add app.js"]
+        },
+        "messageOk": "✅ Usaste git add de forma explícita.",
+        "messageFail": "Debés agregar archivos de forma específica (no con git add .)"
+      }
+    ]
+  }
+},
     {
       "classId": "sch_git_c03",
       "title": "Revisar historial y versiones",
@@ -795,73 +782,69 @@
           }
         },
         {
-          "id": "sch_git_c03_a02",
-          "classId": "sch_git_c03",
-          "title": "Vista resumida (git log --oneline)",
-          "objective": "Reconocer hash corto + mensaje en oneline.",
-          "mode": "terminal+form",
-          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
-          "data": {
-            "form": [
-              {
-                "id": "commit1",
-                "label": "Copiá el 1er commit (hash + mensaje)"
-              },
-              {
-                "id": "commit2",
-                "label": "Copiá el 2do commit (hash + mensaje)"
-              }
-            ],
-            "workspace": {
-              "rootPath": "/repo",
-              "openInVscode": true,
-              "overwriteFiles": true,
-              "resetOnEnter": true,
-              "files": [
-                {
-                  "path": "/repo/index.html",
-                  "content": "<!doctype html>\n<html><body><h1>Oneline log</h1></body></html>\n"
-                },
-                {
-                  "path": "/repo/style.css",
-                  "content": "h1 { font-size: 2rem; }\n"
-                },
-                {
-                  "path": "/repo/app.js",
-                  "content": "console.log('Actividad c03_a02');\n"
-                }
-              ]
-            }
-          },
-          "validation": {
-            "checks": [
-              {
-                "checkId": "c03_a02_used_oneline",
-                "type": "TERMINAL_COMMAND_EXECUTED",
-                "target": "commands",
-                "rules": { "mustInclude": ["git log --oneline"] },
-                "messageOk": "Usaste git log --oneline.",
-                "messageFail": "Tenés que usar git log --oneline."
-              },
-              {
-                "checkId": "c03_a02_hash_format_1",
-                "type": "TEXT_REGEX",
-                "target": "form.commit1",
-                "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
-                "messageOk": "Formato correcto (hash + mensaje).",
-                "messageFail": "Formato incorrecto. Debe ser: <hash> <mensaje> (hash de 7+ caracteres)."
-              },
-              {
-                "checkId": "c03_a02_hash_format_2",
-                "type": "TEXT_REGEX",
-                "target": "form.commit2",
-                "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
-                "messageOk": "Formato correcto (hash + mensaje).",
-                "messageFail": "Formato incorrecto. Debe ser: <hash> <mensaje>."
-              }
-            ]
-          }
-        },
+  "id": "sch_git_c03_a02",
+  "classId": "sch_git_c03",
+  "title": "Vista resumida (git log --oneline)",
+  "objective": "Reconocer hash corto + mensaje en oneline.",
+  "mode": "terminal+form",
+  "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+  "data": {
+    "scenario": "Creá al menos dos commits y luego revisá el historial resumido.",
+    "instructions": [
+      "Accedé a la carpeta del proyecto con: cd /repo",
+      "Modificá archivos desde Visual Studio Code (index.html, style.css o app.js).",
+      "Hacé git add + git commit (al menos DOS commits con mensajes claros).",
+      "Ejecutá: git log --oneline",
+      "Copiá exactamente las primeras dos líneas (hash + mensaje)."
+    ],
+    "workspace": {
+      "rootPath": "/repo",
+      "openInVscode": true,
+      "overwriteFiles": true,
+      "resetOnEnter": false,
+      "files": [ ]
+    }
+  },
+  "validation": {
+    "checks": [
+      {
+        "checkId": "c03_a02_cd_repo",
+        "type": "TERMINAL_COMMAND_EXECUTED",
+        "target": "commands",
+        "rules": { "mustInclude": ["cd /repo", "cd repo"] },
+        "messageFail": "Primero accedé a la carpeta del proyecto con: cd /repo"
+      },
+      {
+        "checkId": "c03_a02_used_oneline",
+        "type": "TERMINAL_COMMAND_EXECUTED",
+        "target": "commands",
+        "rules": { "mustInclude": ["git log --oneline"] },
+        "messageFail": "Tenés que usar git log --oneline."
+      },
+      {
+        "checkId": "c03_a02_at_least_two_commits",
+        "type": "REPO_STATE",
+        "target": "repo",
+        "rules": { "hasAtLeastCommits": 2 },
+        "messageFail": "Necesitás hacer al menos 2 commits para esta actividad."
+      },
+      {
+        "checkId": "c03_a02_hash_format_1",
+        "type": "TEXT_REGEX",
+        "target": "form.commit1",
+        "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
+        "messageFail": "Formato incorrecto. Debe ser: <hash> <mensaje>"
+      },
+      {
+        "checkId": "c03_a02_hash_format_2",
+        "type": "TEXT_REGEX",
+        "target": "form.commit2",
+        "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
+        "messageFail": "Formato incorrecto. Debe ser: <hash> <mensaje>"
+      }
+    ]
+  }
+},
         {
           "id": "sch_git_c03_a03",
           "classId": "sch_git_c03",
