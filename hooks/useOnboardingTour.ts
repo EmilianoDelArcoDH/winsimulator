@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   EVENTS,
@@ -9,13 +10,35 @@ import {
   useJoyride,
 } from "react-joyride";
 import OnboardingTooltip from "components/onboarding/OnboardingTooltip";
+import {
+  getLocaleFromPathname,
+  getTutorialText,
+  type TutorialLocale,
+  type TutorialStepId,
+  type TutorialText,
+} from "components/onboarding/translations";
+import {
+  getBestTooltipPlacement,
+  TOOLTIP_REPOSITION_EVENT,
+  TOOLTIP_RESIZE_EVENT,
+  type SizeLike,
+  type TooltipPlacement,
+  type TooltipPosition,
+} from "components/onboarding/tooltipPlacement";
 
 export const ONBOARDING_COMPLETED_KEY = "winsim_onboarding_completed";
 
 export type OnboardingStepData = {
   actionLabel?: string;
+  buttonBack: string;
+  buttonFinish: string;
+  buttonNext: string;
+  buttonPause: string;
+  buttonSkip: string;
   followUpTarget?: string;
+  progress: string;
   requiresAction?: boolean;
+  usesModalFallback?: boolean;
 };
 
 const safeTooltipPosition = {
@@ -36,6 +59,7 @@ const safeTooltipPosition = {
 } satisfies NonNullable<Step["floatingOptions"]>;
 
 const safeStep = (step: Step): Step => ({
+  beaconTrigger: "click",
   isFixed: true,
   offset: 12,
   scrollOffset: 86,
@@ -62,129 +86,104 @@ const safeStep = (step: Step): Step => ({
   },
 });
 
-const actionStep = (
-  step: Step,
-  actionLabel: string,
-  followUpTarget?: string
-): Step => ({
+const actionStep = (step: Step, followUpTarget?: string): Step => ({
   ...step,
-  disableFocusTrap: true,
-  hideOverlay: Boolean(followUpTarget),
   data: {
-    actionLabel,
+    ...(step.data as OnboardingStepData),
     followUpTarget,
     requiresAction: true,
   } satisfies OnboardingStepData,
+  disableFocusTrap: true,
+  hideOverlay: Boolean(followUpTarget),
 });
 
-export const getOnboardingTourSteps = (): Step[] => {
+export const getOnboardingTourSteps = (
+  locale: TutorialLocale = "es"
+): Step[] => {
+  const text = getTutorialText(locale);
+  const translatedStep = (
+    id: TutorialStepId,
+    step: Omit<Step, "content" | "data" | "id" | "title">
+  ): Step => {
+    const stepText = text.steps[id];
+
+    return {
+      ...step,
+      content: stepText.description,
+      data: {
+        actionLabel: stepText.optionalHint,
+        buttonBack: stepText.buttonBack,
+        buttonFinish: stepText.buttonFinish,
+        buttonNext: stepText.buttonNext,
+        buttonPause: text.controls.pause,
+        buttonSkip: text.controls.skip,
+        progress: text.controls.progress,
+      } satisfies OnboardingStepData,
+      id,
+      title: stepText.title,
+    };
+  };
   const tourSteps: Step[] = [
-    {
-      content:
-        "Bienvenido a DH Console. Vas a recorrer la plataforma usando sus controles y aplicaciones reales.",
-      id: "welcome",
+    translatedStep("welcome", {
       placement: "center",
       target: '[data-tour="welcome"]',
-      title: "Bienvenido a DH Console",
-    },
-    {
-      content:
-        "Este es el escritorio real. Aquí aparecen accesos, ventanas abiertas y la barra de tareas.",
-      id: "desktop",
+    }),
+    translatedStep("desktop", {
       placement: "center",
       target: '[data-tour="desktop"]',
-      title: "El escritorio",
-    },
+    }),
     actionStep(
-      {
-        content:
-          "Haz clic en Inicio y luego en Terminal. La ventana solo se abrirá cuando selecciones la aplicación.",
-        id: "open-terminal",
+      translatedStep("open-terminal", {
         placement: "center",
         target: '[data-tour="taskbar-start-button"]',
-        title: "Abre Terminal",
-      },
-      "Haz clic en Inicio y luego en Terminal",
+      }),
       '[data-tour="start-menu-terminal"]'
     ),
-    {
-      content:
-        "En Terminal puedes escribir comandos y ejecutarlos con Enter. Las actividades Git registran los comandos y el estado resultante.",
-      id: "terminal",
+    translatedStep("terminal", {
       placement: "auto",
       target: '[data-tour="terminal"]',
-      title: "Usar Terminal",
-    },
-    {
-      content:
-        "Todas las aplicaciones usan estos controles reales para minimizar, maximizar o cerrar la ventana.",
-      id: "window-controls",
+    }),
+    translatedStep("window-controls", {
       placement: "auto",
       target: '[data-tour="window-controls"]',
-      title: "Controles de ventana",
-    },
+    }),
     actionStep(
-      {
-        content:
-          "Abre Inicio y selecciona Visual Studio Code para conocer el editor real.",
-        id: "open-vscode",
+      translatedStep("open-vscode", {
         placement: "center",
         target: '[data-tour="taskbar-start-button"]',
-        title: "Abre Visual Studio Code",
-      },
-      "Haz clic en Inicio y luego en Visual Studio Code",
+      }),
       '[data-tour="start-menu-vscode"]'
     ),
-    {
-      content:
-        "Aquí puedes editar los archivos de los proyectos, usar la terminal integrada y validar actividades de workspace.",
-      id: "vscode",
+    translatedStep("vscode", {
       placement: "auto",
       target: '[data-tour="monaco-shell"]',
-      title: "Visual Studio Code",
-    },
+    }),
     actionStep(
-      {
-        content:
-          "Abre Inicio y selecciona Documents para conocer el Explorador de Archivos.",
-        id: "open-files",
+      translatedStep("open-files", {
         placement: "center",
         target: '[data-tour="taskbar-start-button"]',
-        title: "Abre Documents",
-      },
-      "Haz clic en Inicio y luego en Documents",
+      }),
       '[data-tour="start-menu-documents"]'
     ),
-    {
-      content:
-        "El Explorador permite navegar carpetas, abrir archivos y organizar el workspace usado por las aplicaciones.",
-      id: "file-explorer",
+    translatedStep("file-explorer", {
       placement: "auto",
       target: '[data-tour="file-explorer"]',
-      title: "Explorador de Archivos",
-    },
-    {
-      content:
-        "Las actividades combinan objetivos, instrucciones, herramientas y validaciones. Se abren cuando eliges una actividad, no durante este recorrido general.",
-      id: "activities-info",
+    }),
+    translatedStep("activities-info", {
       placement: "center",
       target: '[data-tour="welcome"]',
-      title: "Cómo funcionan las actividades",
-    },
-    {
-      content:
-        "Ya conoces el escritorio, Inicio, Terminal, Visual Studio Code, el Explorador y los controles de ventana. Puedes empezar a practicar.",
-      id: "finish",
+    }),
+    translatedStep("finish", {
       placement: "center",
       target: '[data-tour="welcome"]',
-      title: "Tour completado",
-    },
+    }),
   ];
 
-  return tourSteps.map(safeStep);
+  return tourSteps.map((step) => safeStep(step));
 };
 
 export type OnboardingTour = {
+  Tour: React.ReactElement | null;
   completed: boolean;
   currentStep: number;
   isPaused: boolean;
@@ -192,95 +191,191 @@ export type OnboardingTour = {
   resetTour: () => void;
   resumeTour: () => void;
   startTour: () => void;
-  Tour: React.ReactElement | null;
+  text: TutorialText;
 };
 
-const resolveTarget = (target: StepTarget): HTMLElement | null => {
+const resolveTarget = (target: StepTarget): HTMLElement | undefined => {
   if (typeof target === "string") {
-    return document.querySelector<HTMLElement>(target);
+    return document.querySelector<HTMLElement>(target) || undefined;
   }
 
-  if (typeof target === "function") return target();
-  if (target && "current" in target) return target.current;
+  if (typeof target === "function") {
+    const resolvedTarget = target();
 
-  return target instanceof HTMLElement ? target : null;
+    return resolvedTarget === null ? undefined : resolvedTarget;
+  }
+
+  if (target && "current" in target) {
+    return target.current === null ? undefined : target.current;
+  }
+
+  return target instanceof HTMLElement ? target : undefined;
+};
+
+const noop = (): void => {
+  // No cleanup is registered until an action step is active.
 };
 
 export const useOnboardingTour = (): OnboardingTour => {
+  const router = useRouter();
+  const locale = getLocaleFromPathname(router.asPath);
+  const text = useMemo(() => getTutorialText(locale), [locale]);
   const [completed, setCompleted] = useState(false);
-  const actionCleanupRef = useRef<() => void>(() => {});
-  const steps = useMemo(getOnboardingTourSteps, []);
-  const onEvent = useCallback((event: EventData, controls: Controls): void => {
-    actionCleanupRef.current();
-    actionCleanupRef.current = () => {};
+  const [activeStep, setActiveStep] = useState(0);
+  const [responsivePositions, setResponsivePositions] = useState<
+    Record<number, TooltipPosition>
+  >({});
+  const [tooltipSize, setTooltipSize] = useState<SizeLike>({
+    height: 220,
+    width: 360,
+  });
+  const actionCleanupRef = useRef<() => void>(noop);
+  const baseSteps = useMemo(() => getOnboardingTourSteps(locale), [locale]);
+  const steps = useMemo(
+    () =>
+      baseSteps.map((step, index) => {
+        const responsivePosition = responsivePositions[index];
 
-    const stepData = event.step.data as OnboardingStepData | undefined;
+        if (!responsivePosition) return step;
 
-    if (event.type === EVENTS.TOOLTIP && stepData?.requiresAction) {
-      const target = resolveTarget(event.step.target);
+        return {
+          ...step,
+          data: {
+            ...(step.data as OnboardingStepData),
+            usesModalFallback: responsivePosition.isFallback,
+          } satisfies OnboardingStepData,
+          floatingOptions: {
+            ...step.floatingOptions,
+            flipOptions:
+              step.floatingOptions?.flipOptions === false
+                ? false
+                : {
+                    ...step.floatingOptions?.flipOptions,
+                    fallbackPlacements: ["bottom", "top", "right", "left"],
+                    padding: responsivePosition.margin,
+                  },
+            hideArrow: responsivePosition.placement === "center",
+            shiftOptions: {
+              ...step.floatingOptions?.shiftOptions,
+              padding: responsivePosition.margin,
+            },
+          },
+          placement: responsivePosition.placement,
+        } satisfies Step;
+      }),
+    [baseSteps, responsivePositions]
+  );
+  const recalculatePlacement = useCallback((): void => {
+    const step = baseSteps[activeStep];
+    const target = step ? resolveTarget(step.target) : undefined;
 
-      if (target) {
-        const cleanups: Array<() => void> = [];
-        const advance = (): void => {
-          window.setTimeout(() => controls.next(), 150);
-        };
+    if (!step || !target) return;
 
-        if (!stepData.followUpTarget) {
-          target.addEventListener("click", advance, { once: true });
-          cleanups.push(() => target.removeEventListener("click", advance));
-        } else {
-          const attachFollowUp = (): void => {
-            let attempts = 0;
+    const viewportSize = {
+      height: window.innerHeight,
+      width: window.innerWidth,
+    };
+    const preferredPlacement = step.placement as TooltipPlacement | undefined;
+    const nextPosition = getBestTooltipPlacement(
+      target.getBoundingClientRect(),
+      tooltipSize,
+      viewportSize,
+      preferredPlacement
+    );
 
-            document.body.classList.add("onboarding-follow-up-active");
+    setResponsivePositions((currentPositions) => {
+      const currentPosition = currentPositions[activeStep];
 
-            const interval = window.setInterval(() => {
-              attempts += 1;
-              const followUp = resolveTarget(stepData.followUpTarget!);
+      if (
+        currentPosition?.placement === nextPosition.placement &&
+        currentPosition.isFallback === nextPosition.isFallback &&
+        currentPosition.margin === nextPosition.margin
+      ) {
+        return currentPositions;
+      }
 
-              if (followUp) {
-                window.clearInterval(interval);
-                followUp.addEventListener("click", advance, { once: true });
-                cleanups.push(() =>
-                  followUp.removeEventListener("click", advance)
-                );
-              } else if (attempts >= 50) {
-                window.clearInterval(interval);
-                document.body.classList.remove("onboarding-follow-up-active");
-              }
-            }, 100);
+      return {
+        ...currentPositions,
+        [activeStep]: nextPosition,
+      };
+    });
+  }, [activeStep, baseSteps, tooltipSize]);
+  const onEvent = useCallback(
+    (event: EventData, eventControls: Controls): void => {
+      setActiveStep(event.index);
+      actionCleanupRef.current();
+      actionCleanupRef.current = noop;
 
-            cleanups.push(() => window.clearInterval(interval));
+      const stepData = event.step.data as OnboardingStepData | undefined;
+
+      if (event.type === EVENTS.TOOLTIP && stepData?.requiresAction) {
+        const target = resolveTarget(event.step.target);
+
+        if (target) {
+          const cleanups: (() => void)[] = [];
+          const advance = (): void => {
+            window.setTimeout(() => eventControls.next(), 150);
           };
 
-          target.addEventListener("click", attachFollowUp, { once: true });
-          cleanups.push(() =>
-            target.removeEventListener("click", attachFollowUp)
-          );
+          if (stepData.followUpTarget) {
+            const { followUpTarget } = stepData;
+            const attachFollowUp = (): void => {
+              let attempts = 0;
+
+              document.body.classList.add("onboarding-follow-up-active");
+
+              const interval = window.setInterval(() => {
+                attempts += 1;
+                const followUp = resolveTarget(followUpTarget);
+
+                if (followUp) {
+                  window.clearInterval(interval);
+                  followUp.addEventListener("click", advance, { once: true });
+                  cleanups.push(() =>
+                    followUp.removeEventListener("click", advance)
+                  );
+                } else if (attempts >= 50) {
+                  window.clearInterval(interval);
+                  document.body.classList.remove("onboarding-follow-up-active");
+                }
+              }, 100);
+
+              cleanups.push(() => window.clearInterval(interval));
+            };
+
+            target.addEventListener("click", attachFollowUp, { once: true });
+            cleanups.push(() =>
+              target.removeEventListener("click", attachFollowUp)
+            );
+          } else {
+            target.addEventListener("click", advance, { once: true });
+            cleanups.push(() => target.removeEventListener("click", advance));
+          }
+
+          actionCleanupRef.current = () => {
+            document.body.classList.remove("onboarding-follow-up-active");
+            cleanups.forEach((cleanup) => cleanup());
+          };
         }
-
-        actionCleanupRef.current = () => {
-          document.body.classList.remove("onboarding-follow-up-active");
-          cleanups.forEach((cleanup) => cleanup());
-        };
       }
-    }
 
-    if (event.type === EVENTS.TOUR_END && event.status === STATUS.FINISHED) {
-      window.localStorage.setItem(ONBOARDING_COMPLETED_KEY, "true");
-      setCompleted(true);
-    }
-  }, []);
+      if (event.type === EVENTS.TOUR_END && event.status === STATUS.FINISHED) {
+        window.localStorage.setItem(ONBOARDING_COMPLETED_KEY, "true");
+        setCompleted(true);
+      }
+    },
+    []
+  );
   const { controls, state, Tour } = useJoyride({
     continuous: true,
     locale: {
-      back: "Atrás",
-      close: "Cerrar",
-      last: "Finalizar",
-      next: "Siguiente",
-      nextWithProgress: "Siguiente ({current} de {total})",
-      open: "Abrir explicación",
-      skip: "Saltar tour",
+      back: text.steps.welcome.buttonBack,
+      close: text.controls.close,
+      last: text.steps.welcome.buttonFinish,
+      next: text.steps.welcome.buttonNext,
+      nextWithProgress: `${text.steps.welcome.buttonNext} (${text.controls.progress})`,
+      open: text.controls.open,
+      skip: text.controls.skip,
     },
     onEvent,
     options: {
@@ -311,6 +406,50 @@ export const useOnboardingTour = (): OnboardingTour => {
     };
   }, [controls]);
 
+  useEffect(() => {
+    const onTooltipResize = (event: Event): void => {
+      const { detail } = event as CustomEvent<SizeLike>;
+
+      if (
+        detail &&
+        detail.height > 0 &&
+        detail.width > 0 &&
+        (detail.height !== tooltipSize.height ||
+          detail.width !== tooltipSize.width)
+      ) {
+        setTooltipSize(detail);
+      }
+    };
+
+    window.addEventListener(TOOLTIP_RESIZE_EVENT, onTooltipResize);
+
+    return () =>
+      window.removeEventListener(TOOLTIP_RESIZE_EVENT, onTooltipResize);
+  }, [tooltipSize]);
+
+  useEffect(() => {
+    const step = baseSteps[activeStep];
+    const target = step ? resolveTarget(step.target) : undefined;
+    const resizeObserver =
+      target && typeof ResizeObserver === "function"
+        ? new ResizeObserver(recalculatePlacement)
+        : undefined;
+    const onViewportChange = (): void => recalculatePlacement();
+
+    if (target) resizeObserver?.observe(target);
+    window.addEventListener("orientationchange", onViewportChange);
+    window.addEventListener("resize", onViewportChange, { passive: true });
+    window.addEventListener(TOOLTIP_REPOSITION_EVENT, onViewportChange);
+    recalculatePlacement();
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("orientationchange", onViewportChange);
+      window.removeEventListener("resize", onViewportChange);
+      window.removeEventListener(TOOLTIP_REPOSITION_EVENT, onViewportChange);
+    };
+  }, [activeStep, baseSteps, recalculatePlacement]);
+
   const startTour = useCallback((): void => {
     setCompleted(false);
     controls.reset();
@@ -327,6 +466,7 @@ export const useOnboardingTour = (): OnboardingTour => {
   }, [controls]);
 
   return {
+    Tour,
     completed,
     currentStep: state.index,
     isPaused: state.status === STATUS.PAUSED,
@@ -334,7 +474,7 @@ export const useOnboardingTour = (): OnboardingTour => {
     resetTour,
     resumeTour,
     startTour,
-    Tour,
+    text,
   };
 };
 

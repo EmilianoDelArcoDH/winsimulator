@@ -1,6 +1,8 @@
+import { useEffect, useRef } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import { type TooltipRenderProps } from "react-joyride";
 import { type OnboardingStepData } from "hooks/useOnboardingTour";
+import { TOOLTIP_RESIZE_EVENT } from "components/onboarding/tooltipPlacement";
 
 const FollowUpTooltipPosition = createGlobalStyle`
   body.onboarding-follow-up-active .react-joyride__floater[data-testid="floater"] {
@@ -24,10 +26,12 @@ const StyledTooltip = styled.div`
   color: ${({ theme }) => theme.colors.text};
   font-family: ${({ theme }) => theme.formats.systemFont};
   max-height: calc(100vh - 24px);
-  max-width: min(390px, calc(100vw - 24px));
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  max-width: min(360px, calc(100vw - 24px));
+  overflow: hidden;
   padding: 17px;
-  width: 390px;
+  width: 360px;
 
   h2 {
     font-size: 17px;
@@ -40,6 +44,8 @@ const StyledTooltip = styled.div`
     color: hsl(0 0% 88%);
     font-size: 14px;
     line-height: 1.5;
+    min-height: 0;
+    overflow-y: auto;
     text-align: center;
   }
 
@@ -49,6 +55,17 @@ const StyledTooltip = styled.div`
     flex-wrap: wrap;
     gap: 8px;
     margin-top: 18px;
+    flex-shrink: 0;
+  }
+
+  @media (width > 1024px) {
+    max-height: calc(100vh - 32px);
+    max-width: min(360px, calc(100vw - 32px));
+  }
+
+  @media (width < 600px) {
+    max-height: calc(100vh - 16px);
+    max-width: min(360px, calc(100vw - 16px));
   }
 
   .spacer {
@@ -158,28 +175,82 @@ const OnboardingTooltip: FC<TooltipRenderProps> = ({
   step,
   tooltipProps,
 }) => {
-  const { actionLabel, requiresAction } =
-    (step.data as OnboardingStepData | undefined) || {};
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+  const {
+    actionLabel,
+    buttonBack,
+    buttonFinish,
+    buttonNext,
+    buttonPause,
+    buttonSkip,
+    progress,
+    requiresAction,
+    usesModalFallback = false,
+  } = (step.data as OnboardingStepData | undefined) || {};
+
+  useEffect(() => {
+    const tooltip = tooltipRef.current;
+    const reportSize = (): void => {
+      if (!tooltip) return;
+
+      const { height, width } = tooltip.getBoundingClientRect();
+
+      window.dispatchEvent(
+        new CustomEvent(TOOLTIP_RESIZE_EVENT, {
+          detail: {
+            height: Math.ceil(height),
+            width: Math.ceil(width),
+          },
+        })
+      );
+    };
+
+    const resizeObserver =
+      tooltip && typeof ResizeObserver === "function"
+        ? new ResizeObserver(reportSize)
+        : undefined;
+
+    if (tooltip) {
+      resizeObserver?.observe(tooltip);
+      reportSize();
+    }
+
+    return () => resizeObserver?.disconnect();
+  }, [/* effect dep */ index]);
 
   return (
     <>
       <FollowUpTooltipPosition />
-      <StyledTooltip {...tooltipProps}>
+      <StyledTooltip
+        ref={tooltipRef}
+        data-modal-fallback={usesModalFallback}
+        {...tooltipProps}
+      >
         {step.title && <h2>{step.title}</h2>}
         <div className="content">{step.content}</div>
         <footer>
           {requiresAction && (
             <strong className="action-label">{actionLabel}</strong>
           )}
-          <button {...skipProps}>Saltar</button>
+          <button type="button" {...skipProps}>
+            {buttonSkip}
+          </button>
           <button onClick={() => controls.stop()} type="button">
-            Pausar
+            {buttonPause}
           </button>
           <span className="spacer" />
-          {index > 0 && <button {...backProps}>Atrás</button>}
+          {index > 0 && (
+            <button type="button" {...backProps}>
+              {buttonBack}
+            </button>
+          )}
           {!requiresAction && (
-            <button className="primary" {...primaryProps}>
-              {isLastStep ? "Finalizar" : `Siguiente (${index + 1} de ${size})`}
+            <button className="primary" type="button" {...primaryProps}>
+              {isLastStep
+                ? buttonFinish
+                : `${buttonNext} (${(progress || "{current} de {total}")
+                    .replace("{current}", String(index + 1))
+                    .replace("{total}", String(size))})`}
             </button>
           )}
         </footer>
