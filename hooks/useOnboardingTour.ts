@@ -17,6 +17,14 @@ import {
   type TutorialStepId,
   type TutorialText,
 } from "components/onboarding/translations";
+import {
+  getBestTooltipPlacement,
+  TOOLTIP_REPOSITION_EVENT,
+  TOOLTIP_RESIZE_EVENT,
+  type SizeLike,
+  type TooltipPlacement,
+  type TooltipPosition,
+} from "components/onboarding/tooltipPlacement";
 
 export const ONBOARDING_COMPLETED_KEY = "winsim_onboarding_completed";
 
@@ -30,6 +38,7 @@ export type OnboardingStepData = {
   followUpTarget?: string;
   progress: string;
   requiresAction?: boolean;
+  usesModalFallback?: boolean;
 };
 
 const safeTooltipPosition = {
@@ -50,6 +59,7 @@ const safeTooltipPosition = {
 } satisfies NonNullable<Step["floatingOptions"]>;
 
 const safeStep = (step: Step): Step => ({
+  beaconTrigger: "click",
   isFixed: true,
   offset: 12,
   scrollOffset: 86,
@@ -211,10 +221,88 @@ export const useOnboardingTour = (): OnboardingTour => {
   const locale = getLocaleFromPathname(router.asPath);
   const text = useMemo(() => getTutorialText(locale), [locale]);
   const [completed, setCompleted] = useState(false);
+  const [activeStep, setActiveStep] = useState(0);
+  const [responsivePositions, setResponsivePositions] = useState<
+    Record<number, TooltipPosition>
+  >({});
+  const [tooltipSize, setTooltipSize] = useState<SizeLike>({
+    height: 220,
+    width: 360,
+  });
   const actionCleanupRef = useRef<() => void>(noop);
-  const steps = useMemo(() => getOnboardingTourSteps(locale), [locale]);
+  const baseSteps = useMemo(() => getOnboardingTourSteps(locale), [locale]);
+  const steps = useMemo(
+    () =>
+      baseSteps.map((step, index) => {
+        const responsivePosition = responsivePositions[index];
+
+        if (!responsivePosition) return step;
+
+        return {
+          ...step,
+          data: {
+            ...(step.data as OnboardingStepData),
+            usesModalFallback: responsivePosition.isFallback,
+          } satisfies OnboardingStepData,
+          floatingOptions: {
+            ...step.floatingOptions,
+            flipOptions:
+              step.floatingOptions?.flipOptions === false
+                ? false
+                : {
+                    ...step.floatingOptions?.flipOptions,
+                    fallbackPlacements: ["bottom", "top", "right", "left"],
+                    padding: responsivePosition.margin,
+                  },
+            hideArrow: responsivePosition.placement === "center",
+            shiftOptions: {
+              ...step.floatingOptions?.shiftOptions,
+              padding: responsivePosition.margin,
+            },
+          },
+          placement: responsivePosition.placement,
+        } satisfies Step;
+      }),
+    [baseSteps, responsivePositions]
+  );
+  const recalculatePlacement = useCallback((): void => {
+    const step = baseSteps[activeStep];
+    const target = step ? resolveTarget(step.target) : undefined;
+
+    if (!step || !target) return;
+
+    const viewportSize = {
+      height: window.innerHeight,
+      width: window.innerWidth,
+    };
+    const preferredPlacement = step.placement as TooltipPlacement | undefined;
+    const nextPosition = getBestTooltipPlacement(
+      target.getBoundingClientRect(),
+      tooltipSize,
+      viewportSize,
+      preferredPlacement
+    );
+
+    setResponsivePositions((currentPositions) => {
+      const currentPosition = currentPositions[activeStep];
+
+      if (
+        currentPosition?.placement === nextPosition.placement &&
+        currentPosition.isFallback === nextPosition.isFallback &&
+        currentPosition.margin === nextPosition.margin
+      ) {
+        return currentPositions;
+      }
+
+      return {
+        ...currentPositions,
+        [activeStep]: nextPosition,
+      };
+    });
+  }, [activeStep, baseSteps, tooltipSize]);
   const onEvent = useCallback(
     (event: EventData, eventControls: Controls): void => {
+      setActiveStep(event.index);
       actionCleanupRef.current();
       actionCleanupRef.current = noop;
 
@@ -317,6 +405,50 @@ export const useOnboardingTour = (): OnboardingTour => {
       controls.stop();
     };
   }, [controls]);
+
+  useEffect(() => {
+    const onTooltipResize = (event: Event): void => {
+      const { detail } = event as CustomEvent<SizeLike>;
+
+      if (
+        detail &&
+        detail.height > 0 &&
+        detail.width > 0 &&
+        (detail.height !== tooltipSize.height ||
+          detail.width !== tooltipSize.width)
+      ) {
+        setTooltipSize(detail);
+      }
+    };
+
+    window.addEventListener(TOOLTIP_RESIZE_EVENT, onTooltipResize);
+
+    return () =>
+      window.removeEventListener(TOOLTIP_RESIZE_EVENT, onTooltipResize);
+  }, [tooltipSize]);
+
+  useEffect(() => {
+    const step = baseSteps[activeStep];
+    const target = step ? resolveTarget(step.target) : undefined;
+    const resizeObserver =
+      target && typeof ResizeObserver === "function"
+        ? new ResizeObserver(recalculatePlacement)
+        : undefined;
+    const onViewportChange = (): void => recalculatePlacement();
+
+    if (target) resizeObserver?.observe(target);
+    window.addEventListener("orientationchange", onViewportChange);
+    window.addEventListener("resize", onViewportChange, { passive: true });
+    window.addEventListener(TOOLTIP_REPOSITION_EVENT, onViewportChange);
+    recalculatePlacement();
+
+    return () => {
+      resizeObserver?.disconnect();
+      window.removeEventListener("orientationchange", onViewportChange);
+      window.removeEventListener("resize", onViewportChange);
+      window.removeEventListener(TOOLTIP_REPOSITION_EVENT, onViewportChange);
+    };
+  }, [activeStep, baseSteps, recalculatePlacement]);
 
   const startTour = useCallback((): void => {
     setCompleted(false);

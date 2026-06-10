@@ -52,21 +52,21 @@ const tutorialEs: TutorialText = {
       ...navigation,
       description:
         "Abre Inicio 🏠 y selecciona Documents para conocer el Explorador de Archivos.",
-      optionalHint: "Haz clic en Inicio y luego en Documents",
+      optionalHint: "Haz clic en Inicio 🏠 y luego en Documents",
       title: "Abre Documents",
     },
     "open-terminal": {
       ...navigation,
       description:
         "Haz clic en Inicio 🏠 y luego en Terminal. La ventana solo se abrirá cuando selecciones la aplicación.",
-      optionalHint: "Haz clic en Inicio y luego en Terminal",
+      optionalHint: "Haz clic en Inicio 🏠 y luego en Terminal",
       title: "Abre Terminal",
     },
     "open-vscode": {
       ...navigation,
       description:
         "Abre Inicio 🏠 y selecciona Visual Studio Code para conocer el editor real.",
-      optionalHint: "Haz clic en Inicio y luego en Visual Studio Code",
+      optionalHint: "Haz clic en Inicio 🏠 y luego en Visual Studio Code",
       title: "Abre Visual Studio Code",
     },
     terminal: {

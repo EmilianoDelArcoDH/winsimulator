@@ -11,12 +11,24 @@ import { minMaxSize } from "components/system/Window/functions";
 import { useProcesses } from "contexts/process";
 import { useSession } from "contexts/session";
 import { getWindowViewport, pxToNum } from "utils/functions";
+import { TOOLTIP_REPOSITION_EVENT } from "components/onboarding/tooltipPlacement";
 
 const enableIframeCapture = (enable = true): void =>
   document.querySelectorAll("iframe").forEach((iframe) => {
     // eslint-disable-next-line no-param-reassign
     iframe.style.pointerEvents = enable ? "initial" : "none";
   });
+
+let tooltipRepositionFrame: number | undefined;
+
+const notifyTooltipReposition = (): void => {
+  if (tooltipRepositionFrame !== undefined) return;
+
+  tooltipRepositionFrame = window.requestAnimationFrame(() => {
+    tooltipRepositionFrame = undefined;
+    window.dispatchEvent(new Event(TOOLTIP_REPOSITION_EVENT));
+  });
+};
 
 const useRnd = (id: string): Props => {
   const {
@@ -45,11 +57,11 @@ const useRnd = (id: string): Props => {
   const clampPosition = useCallback(
     (
       desiredPosition: { x: number; y: number },
-      currentSize: { width: number; height: number }
+      currentSize: { height: number; width: number }
     ) => {
-      const viewport = getWindowViewport();
-      const maxX = Math.max(0, viewport.x - currentSize.width);
-      const maxY = Math.max(0, viewport.y - currentSize.height);
+      const viewportBounds = getWindowViewport();
+      const maxX = Math.max(0, viewportBounds.x - currentSize.width);
+      const maxY = Math.max(0, viewportBounds.y - currentSize.height);
 
       return {
         x: Math.max(0, Math.min(desiredPosition.x, maxX)),
@@ -78,6 +90,7 @@ const useRnd = (id: string): Props => {
           position: clampedPosition,
         },
       }));
+      notifyTooltipReposition();
     },
     [clampPosition, id, setPosition, setWindowStates, size]
   );
@@ -123,6 +136,7 @@ const useRnd = (id: string): Props => {
           size: boundedSize,
         },
       }));
+      notifyTooltipReposition();
     },
     [clampPosition, id, lockAspectRatio, setPosition, setSize, setWindowStates]
   );
@@ -140,8 +154,10 @@ const useRnd = (id: string): Props => {
     lockAspectRatio,
     maxHeight: viewport.y,
     maxWidth: viewport.x,
+    onDrag: notifyTooltipReposition,
     onDragStart: disableIframeCapture,
     onDragStop,
+    onResize: notifyTooltipReposition,
     onResizeStart: disableIframeCapture,
     onResizeStop,
     position,

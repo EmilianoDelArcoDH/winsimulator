@@ -51,21 +51,21 @@ const tutorialEn: TutorialTranslation = {
     "open-files": {
       ...navigation,
       description: "Open Start 🏠 and select Documents to explore File Explorer.",
-      optionalHint: "Click Start, then Documents",
+      optionalHint: "Click Start 🏠, then Documents",
       title: "Open Documents",
     },
     "open-terminal": {
       ...navigation,
       description:
         "Click Start 🏠 and then Terminal. The window opens only after you select the application.",
-      optionalHint: "Click Start, then Terminal",
+      optionalHint: "Click Start 🏠, then Terminal",
       title: "Open Terminal",
     },
     "open-vscode": {
       ...navigation,
       description:
         "Open Start 🏠 and select Visual Studio Code to explore the actual editor.",
-      optionalHint: "Click Start, then Visual Studio Code",
+      optionalHint: "Click Start 🏠, then Visual Studio Code",
       title: "Open Visual Studio Code",
     },
     terminal: {
