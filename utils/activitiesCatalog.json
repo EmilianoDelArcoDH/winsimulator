@@ -708,7 +708,9 @@
       }
     ]
   }
-},
+        }
+      ]
+    },
     {
       "classId": "sch_git_c03",
       "title": "Revisar historial y versiones",
