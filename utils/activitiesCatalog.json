@@ -211,16 +211,21 @@
               { "id": "t4", "text": "Mejoré estilos del botón principal." },
               { "id": "t5", "text": "Publiqué la primera versión estable." }
             ],
+            "initialOrder": ["t3", "t1", "t5", "t2", "t4"],
             "answerOrder": ["t1", "t2", "t3", "t4", "t5"],
             "question": {
               "id": "culpable",
-              "label": "¿Cuál cambio podría haber roto algo? (elegí 1) ",
-              "options": ["t2", "t3", "t4"]
+              "label": "¿Cuál cambio podría haber roto algo? (elegí 1)",
+              "options": [
+                { "id": "t2", "label": "Agregué una sección de contacto." },
+                { "id": "t3", "label": "Corregí un error en el formulario." },
+                { "id": "t4", "label": "Mejoré estilos del botón principal." }
+              ]
             },
             "freeText": {
               "id": "justificacion",
-              "label": "Justificá tu elección (mínimo 15 caracteres).",
-              "minLength": 15
+              "label": "Justificá qué podría fallar con ese cambio (mínimo 30 caracteres).",
+              "minLength": 30
             }
           },
           "validation": {
@@ -233,12 +238,93 @@
                 "messageFail": "El orden no refleja una historia coherente. Revisá la secuencia."
               },
               {
+                "checkId": "c01_a03_culpable_required",
+                "type": "REQUIRED_SELECTION",
+                "target": "culpable",
+                "messageOk": "Elegiste un cambio para analizar.",
+                "messageFail": "Elegí cuál cambio podría haber introducido un problema."
+              },
+              {
                 "checkId": "c01_a03_justificacion_min",
                 "type": "TEXT_MIN_LENGTH",
                 "target": "justificacion",
-                "rules": { "minLength": 15 },
+                "rules": { "minLength": 30 },
                 "messageOk": "Justificación completa.",
-                "messageFail": "Justificá un poco más (mínimo 15 caracteres)."
+                "messageFail": "Explicá con más detalle qué podría fallar (mínimo 30 caracteres)."
+              },
+              {
+                "checkId": "c01_a03_justificacion_alineada",
+                "type": "TEXT_MATCHES_SELECTION",
+                "target": "justificacion",
+                "rules": {
+                  "selectionTarget": "culpable",
+                  "commonAny": [
+                    "romper",
+                    "roto",
+                    "fallar",
+                    "falla",
+                    "error",
+                    "problema",
+                    "riesgo",
+                    "dejar de funcionar",
+                    "break",
+                    "broken",
+                    "fail",
+                    "failure",
+                    "bug",
+                    "issue",
+                    "risk",
+                    "not work",
+                    "stop working",
+                    "quebrar",
+                    "quebrado",
+                    "falhar",
+                    "falha",
+                    "erro",
+                    "problema",
+                    "risco",
+                    "deixar de funcionar"
+                  ],
+                  "keywordsBySelection": {
+                    "t2": [
+                      "contacto",
+                      "sección",
+                      "seccion",
+                      "enlace",
+                      "contact",
+                      "section",
+                      "link",
+                      "contato",
+                      "seção"
+                    ],
+                    "t3": [
+                      "formulario",
+                      "validación",
+                      "validacion",
+                      "campo",
+                      "form",
+                      "validation",
+                      "field",
+                      "formulário",
+                      "validação",
+                      "campo"
+                    ],
+                    "t4": [
+                      "estilo",
+                      "botón",
+                      "boton",
+                      "css",
+                      "visual",
+                      "style",
+                      "button",
+                      "visual",
+                      "estilo",
+                      "botão"
+                    ]
+                  }
+                },
+                "messageOk": "La justificación explica un riesgo del cambio elegido.",
+                "messageFail": "Relacioná tu explicación con el cambio elegido e indicá qué podría fallar."
               }
             ]
           }
@@ -266,8 +352,8 @@
             },
             "freeText": {
               "id": "explicacion",
-              "label": "Explicá por qué tu resolución tiene sentido (mínimo 20 caracteres).",
-              "minLength": 20
+              "label": "Explicá por qué esa resolución sirve para este conflicto (mínimo 40 caracteres).",
+              "minLength": 40
             }
           },
           "validation": {
@@ -290,24 +376,86 @@
                 "checkId": "c01_a04_text_min",
                 "type": "TEXT_MIN_LENGTH",
                 "target": "explicacion",
-                "rules": { "minLength": 20 },
+                "rules": { "minLength": 40 },
                 "messageOk": "Explicación completa.",
-                "messageFail": "Tu explicación es muy corta. Sumá detalles."
+                "messageFail": "Explicá con más detalle por qué la estrategia elegida resuelve este conflicto."
               },
               {
-                "checkId": "c01_a04_text_keywords",
-                "type": "TEXT_KEYWORDS",
+                "checkId": "c01_a04_text_aligned",
+                "type": "TEXT_MATCHES_SELECTION",
                 "target": "explicacion",
                 "rules": {
-                  "mustIncludeAny": [
-                    "conflicto",
-                    "resolver",
-                    "decidir",
-                    "combinar"
-                  ]
+                  "selectionTarget": "resolution",
+                  "commonAny": [
+                    "misma línea",
+                    "misma linea",
+                    "mismo título",
+                    "mismo titulo",
+                    "dos personas",
+                    "ambas personas",
+                    "same line",
+                    "same title",
+                    "two people",
+                    "both people",
+                    "mesma linha",
+                    "mesmo título",
+                    "mesmo titulo",
+                    "duas pessoas",
+                    "ambas pessoas"
+                  ],
+                  "forbiddenAny": [
+                    "lorem ipsum",
+                    "dummy text",
+                    "texto de relleno",
+                    "texto relleno",
+                    "texto ficticio",
+                    "texto fictício"
+                  ],
+                  "keywordsBySelection": {
+                    "keepA": [
+                      "versión a",
+                      "version a",
+                      "cambio a",
+                      "opción a",
+                      "opcion a",
+                      "version a",
+                      "change a",
+                      "option a",
+                      "versão a",
+                      "alteração a",
+                      "opção a"
+                    ],
+                    "keepB": [
+                      "versión b",
+                      "version b",
+                      "cambio b",
+                      "opción b",
+                      "opcion b",
+                      "version b",
+                      "change b",
+                      "option b",
+                      "versão b",
+                      "alteração b",
+                      "opção b"
+                    ],
+                    "combine": [
+                      "combinar",
+                      "ambas ideas",
+                      "integrar",
+                      "fusionar",
+                      "combine",
+                      "both ideas",
+                      "integrate",
+                      "merge",
+                      "combinar",
+                      "ambas ideias",
+                      "integrar",
+                      "mesclar"
+                    ]
+                  }
                 },
-                "messageOk": "Explicación alineada al concepto.",
-                "messageFail": "Mencioná la idea de conflicto/resolución en tu explicación."
+                "messageOk": "La explicación se relaciona con el conflicto y la resolución elegida.",
+                "messageFail": "Explicá que dos personas cambiaron la misma línea y relacioná la respuesta con la estrategia elegida, usando tus palabras."
               }
             ]
           }
@@ -630,8 +778,9 @@
   "mode": "terminal",
   "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
   "data": {
-    "scenario": "En un proyecto web con index.html, style.css y app.js, evitá incluir notes.tmp en el commit final.",
+    "scenario": "En el proyecto miProyecto, evitá incluir el archivo temporal notes.tmp en el commit final.",
     "instructions": [
+      "Trabajá dentro de /miProyecto, la misma carpeta usada en las actividades anteriores.",
       "Hacé cambios en archivos web (html/css/js).",
       "Existe un archivo basura **notes.tmp** que NO debe entrar al commit.",
       "Revisá con `git status` antes de commitear.",
@@ -639,25 +788,25 @@
       "**NO uses** `git add .` ni `git add *`."
     ],
     "workspace": {
-      "rootPath": "/repo",
+      "rootPath": "/miProyecto",
       "openInVscode": true,
       "overwriteFiles": true,
       "resetOnEnter": true,
       "files": [
         {
-          "path": "/repo/index.html",
+          "path": "/miProyecto/index.html",
           "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Repo Clase</title>\n  </head>\n  <body>\n    <h1>Control de staging</h1>\n  </body>\n</html>\n"
         },
         {
-          "path": "/repo/style.css",
+          "path": "/miProyecto/style.css",
           "content": "h1 {\n  color: #0f172a;\n}\n"
         },
         {
-          "path": "/repo/app.js",
+          "path": "/miProyecto/app.js",
           "content": "console.log('Selecciona archivos explicitamente');\n"
         },
         {
-          "path": "/repo/notes.tmp",
+          "path": "/miProyecto/notes.tmp",
           "content": "archivo temporal - no debe ir al commit\n"
         }
       ]

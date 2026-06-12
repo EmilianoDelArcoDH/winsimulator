@@ -638,6 +638,27 @@ const evaluateCheck = (
       };
     }
 
+    case "TEXT_MATCHES_SELECTION": {
+      const text = asString(answers[check.target]);
+      const selection = asString(answers[asString(rules.selectionTarget)]);
+      const keywordsBySelection = asRecord(rules.keywordsBySelection);
+      const selectionKeywords = asStringArray(keywordsBySelection[selection]);
+      const commonKeywords = asStringArray(rules.commonAny);
+      const forbiddenKeywords = asStringArray(rules.forbiddenAny);
+      const passed =
+        Boolean(selection) &&
+        selectionKeywords.length > 0 &&
+        containsAny(text, selectionKeywords) &&
+        containsAny(text, commonKeywords) &&
+        !containsAny(text, forbiddenKeywords);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
     case "ORDER_EXACT": {
       const expected = asStringArray(activity.data.answerOrder);
       const actual = asStringArray(answers.itemsOrder);

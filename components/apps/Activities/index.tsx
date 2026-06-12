@@ -37,7 +37,7 @@ type FreeTextConfig = {
 
 type QuestionData = {
   label?: string;
-  options?: string[];
+  options?: (ActivityOption | string)[];
 };
 
 type FormField = {
@@ -57,6 +57,7 @@ type WorkspaceSeed = {
     initialCommit: boolean;
     message: string;
   };
+  openFile: string;
   openInVscode: boolean;
   overwriteFiles: boolean;
   resetOnEnter: boolean;
@@ -283,6 +284,19 @@ const resolveWorkspaceSeed = (
     .map((entry) => normalizeWorkspacePath(entry))
     .filter(Boolean);
   const gitConfig = asRecord(workspace.git);
+  const configuredOpenFile = normalizeWorkspacePath(
+    asString(workspace.openFile)
+  );
+  const defaultOpenFile =
+    files.find(
+      ({ path }) =>
+        typeof path === "string" &&
+        getParentPath(path) === rootPath &&
+        path.toLowerCase().endsWith("/index.html")
+    )?.path ||
+    files.find(({ path }) => getParentPath(path) === rootPath)?.path ||
+    files[0]?.path ||
+    "";
 
   return {
     files,
@@ -295,6 +309,7 @@ const resolveWorkspaceSeed = (
               asString(gitConfig.message) || "Initial activity workspace",
           }
         : undefined,
+    openFile: configuredOpenFile || defaultOpenFile,
     openInVscode: workspace.openInVscode !== false,
     overwriteFiles: workspace.overwriteFiles === true,
     resetOnEnter: workspace.resetOnEnter === true,
@@ -317,8 +332,14 @@ const getInitialAnswers = (
 
   if (activity.mode === "order") {
     const items = (activity.data.items || []) as { id: string }[];
+    const initialOrder = asStringArray(activity.data.initialOrder);
 
-    return { itemsOrder: items.map(({ id }) => id) };
+    return {
+      itemsOrder:
+        initialOrder.length === items.length
+          ? initialOrder
+          : items.map(({ id }) => id),
+    };
   }
 
   return {};
@@ -512,14 +533,19 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
         lastPreparedActivityIdRef.current = activity.id;
 
         if (workspaceSeed.openInVscode) {
+          const vscodeUrl =
+            workspaceSeed.openFile &&
+            workspaceSeed.openFile.startsWith(`${workspaceSeed.rootPath}/`)
+              ? workspaceSeed.openFile
+              : workspaceSeed.rootPath;
           const monacoId = Object.keys(processes).find((processId) =>
             processId.startsWith("MonacoEditor")
           );
 
           if (monacoId) {
-            setProcessUrl(monacoId, workspaceSeed.rootPath);
+            setProcessUrl(monacoId, vscodeUrl);
           } else {
-            openProcess("MonacoEditor", { url: workspaceSeed.rootPath });
+            openProcess("MonacoEditor", { url: vscodeUrl });
           }
         }
       } catch {
@@ -758,11 +784,18 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
                       value={asString(answers.culpable)}
                     >
                       <option value="">{uiText.select}</option>
-                      {question.options.map((optionId) => (
-                        <option key={optionId} value={optionId}>
-                          {optionId}
-                        </option>
-                      ))}
+                      {question.options.map((option) => {
+                        const optionId =
+                          typeof option === "string" ? option : option.id;
+                        const optionLabel =
+                          typeof option === "string" ? option : option.label;
+
+                        return (
+                          <option key={optionId} value={optionId}>
+                            {optionLabel}
+                          </option>
+                        );
+                      })}
                     </select>
                   </label>
                 )}
