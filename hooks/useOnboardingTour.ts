@@ -35,6 +35,7 @@ export type OnboardingStepData = {
   buttonNext: string;
   buttonPause: string;
   buttonSkip: string;
+  buttonSkipStep?: string;
   followUpTarget?: string;
   progress: string;
   requiresAction?: boolean;

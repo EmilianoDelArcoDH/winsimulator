@@ -6,8 +6,127 @@ Este documento resume las actividades implementadas desde `utils/activitiesCatal
 
 - Tour guiado / onboarding: `/tutorial`
 - Tutorial interactivo de Visual Studio Code: `/tutorial/vscode`
+- Tutorial interactivo de GitBash: `/tutorial/gitbash`
 - Tutorial de VS Code localizado: `/es/tutorial/vscode`,
   `/en/tutorial/vscode`, `/pt/tutorial/vscode`
+- Tutorial de GitBash localizado: `/es/tutorial/gitbash`,
+  `/en/tutorial/gitbash`, `/pt/tutorial/gitbash`
+
+## Tutoriales
+
+### Tour guiado / onboarding
+
+- URL ES: `/tutorial`
+- URL EN: `/en/tutorial`
+- URL PT: `/pt/tutorial`
+- Consigna:
+
+<div><div>
+  <style>
+    #dhs-grid{display:grid; grid-template-columns: 2fr 8fr; gap:20px;}
+    #dhs-left img{width:100%;}
+    #dhs-right{border-left:10px solid #b8c0ff; padding-left:15px; display:grid; align-items:center}
+    #consigna-schools p, #consigna-schools li{font-size:18px;}
+    #consigna-schools h2{font-family: SourceSansPro, sans-serif; font-size:24px; font-weight:bold;}
+    #consigna-schools p.contexto-consigna{font-style:italic;}
+  </style>
+  <div id="consigna-schools">
+    <div id="dhs-grid">
+      <div id="dhs-left">
+        <img src="https://assets.digitalhouse.com/content/ar/sch/plataforma.png" alt="web">
+      </div>
+      <div id="dhs-right">
+        <h2>Tour guiado de DH Console</h2>
+        <p class="contexto-consigna">
+          Este recorrido presenta el escritorio, las aplicaciones principales y los controles basicos de la plataforma.
+        </p>
+        <p class="contexto-consigna">
+          Durante el tour vas a abrir Inicio, Terminal, Visual Studio Code y Documents para conocer como se organizan las ventanas y herramientas.
+        </p>
+        <p class="contexto-consigna">
+          No debes modificar archivos ni resolver una actividad. El objetivo es reconocer el entorno antes de empezar a practicar.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+### Tutorial interactivo de Visual Studio Code
+
+- URL ES: `/tutorial/vscode`
+- URL EN: `/en/tutorial/vscode`
+- URL PT: `/pt/tutorial/vscode`
+- Consigna:
+
+<div><div>
+  <style>
+    #dhs-grid{display:grid; grid-template-columns: 2fr 8fr; gap:20px;}
+    #dhs-left img{width:100%;}
+    #dhs-right{border-left:10px solid #b8c0ff; padding-left:15px; display:grid; align-items:center}
+    #consigna-schools p, #consigna-schools li{font-size:18px;}
+    #consigna-schools h2{font-family: SourceSansPro, sans-serif; font-size:24px; font-weight:bold;}
+    #consigna-schools p.contexto-consigna{font-style:italic;}
+  </style>
+  <div id="consigna-schools">
+    <div id="dhs-grid">
+      <div id="dhs-left">
+        <img src="https://assets.digitalhouse.com/content/ar/sch/plataforma.png" alt="web">
+      </div>
+      <div id="dhs-right">
+        <h2>Tutorial de Visual Studio Code</h2>
+        <p class="contexto-consigna">
+          En este recorrido vas a usar Visual Studio Code para crear una carpeta de proyecto llamada <strong>mi-sitio</strong>.
+        </p>
+        <p class="contexto-consigna">
+          Luego vas a crear el archivo <strong>index.html</strong>, abrirlo en el editor y mostrar la terminal integrada.
+        </p>
+        <p class="contexto-consigna">
+          Sigue los pasos indicados por el tutorial en la interfaz. No agregues contenido extra: el avance se valida cuando existen la carpeta, el archivo y la terminal abierta.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+### Tutorial interactivo de GitBash
+
+- URL ES: `/tutorial/gitbash`
+- URL EN: `/en/tutorial/gitbash`
+- URL PT: `/pt/tutorial/gitbash`
+- Consigna:
+
+<div><div>
+  <style>
+    #dhs-grid{display:grid; grid-template-columns: 2fr 8fr; gap:20px;}
+    #dhs-left img{width:100%;}
+    #dhs-right{border-left:10px solid #b8c0ff; padding-left:15px; display:grid; align-items:center}
+    #consigna-schools p, #consigna-schools li{font-size:18px;}
+    #consigna-schools h2{font-family: SourceSansPro, sans-serif; font-size:24px; font-weight:bold;}
+    #consigna-schools p.contexto-consigna{font-style:italic;}
+  </style>
+  <div id="consigna-schools">
+    <div id="dhs-grid">
+      <div id="dhs-left">
+        <img src="https://assets.digitalhouse.com/content/ar/sch/plataforma.png" alt="web">
+      </div>
+      <div id="dhs-right">
+        <h2>Tutorial de GitBash</h2>
+        <p class="contexto-consigna">
+          En este recorrido vas a abrir GitBash desde Inicio y comenzar ubicado en <strong>Desktop</strong>.
+        </p>
+        <p class="contexto-consigna">
+          El primer comando esperado es <strong>ls</strong>, que muestra las carpetas y archivos disponibles en el escritorio.
+        </p>
+        <p class="contexto-consigna">
+          El tutorial avanza cuando detecta que escribiste <strong>ls</strong> y presionaste Enter en GitBash desde la ruta del escritorio.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
 
 ### Traducciones del tutorial
 

@@ -1,6 +1,6 @@
-import { type VscodeTutorialTranslation } from "components/onboarding/vscodeTranslations/types";
+import { type VscodeTutorialText } from "components/onboarding/vscodeTranslations/types";
 
-const vscodeTutorialEn: VscodeTutorialTranslation = {
+const vscodeTutorialEn: VscodeTutorialText = {
   controls: {
     back: "Back",
     finish: "Finish",
@@ -8,12 +8,13 @@ const vscodeTutorialEn: VscodeTutorialTranslation = {
     pause: "Pause",
     progress: "{current} of {total}",
     skip: "Skip",
+    skipStep: "Skip step",
   },
   panel: {
     completed:
-      "Tutorial completed. You created a web project and opened the Visual Studio Code terminal.",
+      "Tutorial completed. You created the mi-sitio project with index.html and opened the Visual Studio Code terminal.",
     description:
-      "Learn to create a folder, an index.html file, and open the integrated terminal.",
+      "Learn to use Visual Studio Code: create folders, HTML files, and open the integrated terminal, step by step.",
     inProgress:
       "Tutorial in progress. Each step advances after you complete the requested action.",
     reset: "Restart",
@@ -23,42 +24,47 @@ const vscodeTutorialEn: VscodeTutorialTranslation = {
   steps: {
     "create-file": {
       description:
-        "With the mi-sitio folder selected, open File > New File and enter index.html. This step advances when the file exists inside the folder.",
-      optionalHint: "Create mi-sitio/index.html",
+        "First, click the mi-sitio folder in the Explorer to select it. Then click the highlighted New File icon (the first of the two icons). Type index.html and press Enter.",
+      optionalHint: "Select mi-sitio, then create index.html",
       title: "Create index.html",
     },
     "create-folder": {
       description:
-        "Open File > New Folder, enter mi-sitio, and confirm with Enter. We will wait until the folder exists.",
+        "In the Explorer panel on the left, click the highlighted New Folder icon (the second icon next to the EXPLORER title). Type mi-sitio and press Enter. The folder will appear in the file tree.",
       optionalHint: "Create the mi-sitio folder",
       title: "Create a folder",
     },
     finish: {
       description:
-        "You created the mi-sitio folder, its index.html file, and opened the integrated terminal. You can start editing your site.",
-      title: "Tutorial completed",
+        "Great work! You learned how to create folders and files in VS Code and how to open the integrated terminal. Your mi-sitio project with index.html is ready to edit.",
+      title: "Tutorial completed!",
     },
     "open-file": {
       description:
-        "index.html must be open in the editor. If it is not open, select it in Explorer.",
-      optionalHint: "Open index.html",
-      title: "Open the file",
+        "The index.html file opened automatically in the editor. You can see its HTML content in the central area. Notice the active tab at the top of the editor. When you are ready, click Next.",
+      title: "Review the editor",
     },
     "open-terminal": {
       description:
-        "Open the Terminal menu and select the option that shows the integrated terminal.",
-      optionalHint: "Open the integrated terminal",
+        "Click the Terminal button highlighted in the top menu bar. In the submenu that appears, select Toggle Terminal. The integrated terminal will open at the bottom of the editor.",
+      optionalHint: "Terminal → Toggle Terminal",
       title: "Open the terminal",
     },
     "open-vscode": {
       description:
-        "Open Start 🏠 and select Visual Studio Code. We will wait until the editor is ready.",
-      optionalHint: "Click Start 🏠, then Visual Studio Code",
-      title: "Open Visual Studio Code",
+        "Click the Start button (🏠) in the taskbar to open the app menu. In the next step you will choose Visual Studio Code.",
+      optionalHint: "Click Start 🏠",
+      title: "Open Start",
+    },
+    "select-vscode": {
+      description:
+        "Now select Visual Studio Code in the Start menu. The tutorial will advance automatically once the editor is ready.",
+      optionalHint: "Select Visual Studio Code",
+      title: "Choose Visual Studio Code",
     },
     welcome: {
       description:
-        "In this tour, you will use the real Visual Studio Code to create the mi-sitio folder, add index.html, and open the terminal.",
+        "In this tutorial you will learn to open Visual Studio Code, create a project folder called mi-sitio, create your first HTML file, and open the integrated terminal.",
       title: "Visual Studio Code tutorial",
     },
   },

@@ -14,6 +14,7 @@ import { trackActivityEvent } from "utils/activityRuntime";
 const HISTORY_KEY = "gitbash_history";
 const GIT_CONFIG_KEY = "gitbash_global_config";
 const HOME = "/Users/Public";
+const DEFAULT_CWD = `${HOME}/Desktop`;
 
 type Line = {
   id: number;
@@ -278,14 +279,15 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
   const showFallbackWindowControls = true;
   const isMaximized = Boolean(process?.maximized);
 
-  const [cwd, setCwd] = useState<string>(HOME);
-  const cwdRef = useRef<string>(HOME);
-  const previousCwdRef = useRef<string>(HOME);
+  const [cwd, setCwd] = useState<string>(DEFAULT_CWD);
+  const cwdRef = useRef<string>(DEFAULT_CWD);
+  const previousCwdRef = useRef<string>(DEFAULT_CWD);
   const lineIdRef = useRef(1);
   const [lines, setLines] = useState<Line[]>([
     { id: 0, text: "Welcome to Git Bash (simulated). Type 'help' to begin." },
   ]);
   const [input, setInput] = useState("");
+  const [lastCommand, setLastCommand] = useState("");
   const outputRef = useRef<HTMLDivElement | null>(null);
   const [historyEntries, setHistoryEntries] = useState<string[]>([]);
   const historyCursorRef = useRef<number>(-1);
@@ -2060,6 +2062,15 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     pushHistory(command);
 
     if (trimmedCommand) {
+      setLastCommand(trimmedCommand);
+      window.dispatchEvent(
+        new CustomEvent("winsim:gitbash-command", {
+          detail: {
+            command: trimmedCommand,
+            cwd: cwdRef.current,
+          },
+        })
+      );
       trackActivityEvent({
         command: trimmedCommand,
         cwd: cwdRef.current,
@@ -2114,6 +2125,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
   return (
     <div
+      data-cwd={cwd}
+      data-last-command={lastCommand}
+      data-tour="gitbash-shell"
       style={{
         background: "#1d1f21",
         color: "#c5c8c6",
@@ -2212,6 +2226,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
       <div style={{ alignItems: "center", display: "flex", gap: 8 }}>
         <span style={{ color: "#32cd32" }}>{prompt}</span>
         <input
+          data-tour="gitbash-input"
           onChange={({ target }) => setInput(target.value)}
           onKeyDown={onInputKeyDown}
           spellCheck={false}

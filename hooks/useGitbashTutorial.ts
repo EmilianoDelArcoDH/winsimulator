@@ -5,19 +5,22 @@ import OnboardingTooltip from "components/onboarding/OnboardingTooltip";
 import { type OnboardingStepData } from "hooks/useOnboardingTour";
 import { getLocaleFromPathname } from "components/onboarding/translations";
 import {
-  getVscodeTutorialText,
-  type VscodeTutorialStepId,
-  type VscodeTutorialText,
-} from "components/onboarding/vscodeTranslations";
-import { useFileSystem } from "contexts/fileSystem";
+  getGitbashTutorialText,
+  type GitbashTutorialStepId,
+  type GitbashTutorialText,
+} from "components/onboarding/gitbashTranslations";
 import { DESKTOP_PATH } from "utils/constants";
 
-export const VSCODE_TUTORIAL_COMPLETED_KEY = "winsim_vscode_tutorial_completed";
-export const VSCODE_TUTORIAL_FOLDER = `${DESKTOP_PATH}/mi-sitio`;
-export const VSCODE_TUTORIAL_FILE = `${VSCODE_TUTORIAL_FOLDER}/index.html`;
+export const GITBASH_TUTORIAL_COMPLETED_KEY =
+  "winsim_gitbash_tutorial_completed";
 
-export type VscodeStepData = OnboardingStepData & {
-  validation?: VscodeTutorialStepId;
+type GitbashCommandEvent = CustomEvent<{
+  command: string;
+  cwd: string;
+}>;
+
+export type GitbashStepData = OnboardingStepData & {
+  validation?: GitbashTutorialStepId;
 };
 
 const safeStep = (step: Step): Step => ({
@@ -52,9 +55,11 @@ const safeStep = (step: Step): Step => ({
   },
 });
 
-export const getVscodeTutorialSteps = (text: VscodeTutorialText): Step[] => {
+export const getGitbashTutorialSteps = (
+  text: GitbashTutorialText
+): Step[] => {
   const translatedStep = (
-    id: VscodeTutorialStepId,
+    id: GitbashTutorialStepId,
     step: Omit<Step, "content" | "data" | "id" | "title">,
     requiresAction = false
   ): Step => {
@@ -70,11 +75,10 @@ export const getVscodeTutorialSteps = (text: VscodeTutorialText): Step[] => {
         buttonNext: text.controls.next,
         buttonPause: text.controls.pause,
         buttonSkip: text.controls.skip,
-        buttonSkipStep: requiresAction ? text.controls.skipStep : undefined,
         progress: text.controls.progress,
         requiresAction,
         validation: requiresAction ? id : undefined,
-      } satisfies VscodeStepData,
+      } satisfies GitbashStepData,
       disableFocusTrap: requiresAction,
       hideOverlay: requiresAction,
       id,
@@ -88,61 +92,29 @@ export const getVscodeTutorialSteps = (text: VscodeTutorialText): Step[] => {
       target: '[data-tour="welcome"]',
     }),
     translatedStep(
-      "open-vscode",
+      "open-gitbash",
       {
-        placement: "top",
+        placement: "center",
         target: '[data-tour="taskbar-start-button"]',
       },
       true
     ),
     translatedStep(
-      "select-vscode",
+      "run-ls",
       {
-        placement: "top",
-        target: '[data-tour="start-menu-vscode"]',
-      },
-      true
-    ),
-    translatedStep(
-      "create-folder",
-      {
-        placement: "right",
-        target: '[data-tour="monaco-new-folder"]',
-      },
-      true
-    ),
-    translatedStep(
-      "create-file",
-      {
-        placement: "right",
-        target: '[data-tour="monaco-new-file"]',
-      },
-      true
-    ),
-    translatedStep(
-      "open-file",
-      {
-        placement: "right",
-        target: '[data-tour="monaco-explorer-panel"]',
-      },
-      true
-    ),
-    translatedStep(
-      "open-terminal",
-      {
-        placement: "bottom",
-        target: '[data-tour="monaco-terminal-menu"]',
+        placement: "auto",
+        target: '[data-tour="gitbash-input"]',
       },
       true
     ),
     translatedStep("finish", {
       placement: "center",
-      target: '[data-tour="monaco-workbench"]',
+      target: '[data-tour="welcome"]',
     }),
   ];
 };
 
-export type VscodeTutorial = {
+export type GitbashTutorial = {
   Tour: React.ReactElement | null;
   completed: boolean;
   currentStep: number;
@@ -151,66 +123,33 @@ export type VscodeTutorial = {
   resetTour: () => void;
   resumeTour: () => void;
   startTour: () => void;
-  text: VscodeTutorialText;
-  totalSteps: number;
+  text: GitbashTutorialText;
 };
 
-export const useVscodeTutorial = (): VscodeTutorial => {
+export const useGitbashTutorial = (): GitbashTutorial => {
   const router = useRouter();
-  const { deletePath, exists } = useFileSystem();
   const locale = getLocaleFromPathname(router.asPath);
-  const text = useMemo(() => getVscodeTutorialText(locale), [locale]);
-  const steps = useMemo(() => getVscodeTutorialSteps(text), [text]);
+  const text = useMemo(() => getGitbashTutorialText(locale), [locale]);
+  const steps = useMemo(() => getGitbashTutorialSteps(text), [text]);
   const [completed, setCompleted] = useState(false);
+  const [lsCommandCaptured, setLsCommandCaptured] = useState(false);
   const validateStep = useCallback(
-    async (validation: VscodeTutorialStepId): Promise<boolean> => {
+    async (validation: GitbashTutorialStepId): Promise<boolean> => {
       switch (validation) {
-        case "open-vscode":
-          return Boolean(
-            document.querySelector('[data-tour="start-menu-vscode"]')
-          );
-        case "select-vscode":
-          return Boolean(document.querySelector('[data-tour="monaco-shell"]'));
-        case "create-folder":
-          return (
-            (await exists(VSCODE_TUTORIAL_FOLDER)) ||
-            Boolean(
-              document.querySelector(`[data-path="${VSCODE_TUTORIAL_FOLDER}"]`)
-            ) ||
-            document
-              .querySelector('[data-tour="monaco-shell"]')
-              ?.getAttribute("data-selected-path") === VSCODE_TUTORIAL_FOLDER
-          );
-        case "create-file":
-          return (
-            (await exists(VSCODE_TUTORIAL_FILE)) ||
-            document
-              .querySelector('[data-tour="monaco-shell"]')
-              ?.getAttribute("data-active-file") === VSCODE_TUTORIAL_FILE
-          );
-        case "open-file":
-          return (
-            document
-              .querySelector('[data-tour="monaco-shell"]')
-              ?.getAttribute("data-active-file") === VSCODE_TUTORIAL_FILE
-          );
-        case "open-terminal":
-          return Boolean(
-            document.querySelector('[data-tour="monaco-terminal-panel"]')
-          );
+        case "open-gitbash":
+          return Boolean(document.querySelector('[data-tour="gitbash-shell"]'));
+        case "run-ls":
+          return lsCommandCaptured;
         default:
           return false;
       }
     },
-    [exists]
+    [lsCommandCaptured]
   );
   const onEvent = useCallback((event: EventData): void => {
     if (event.status === STATUS.FINISHED) {
-      window.localStorage.setItem(VSCODE_TUTORIAL_COMPLETED_KEY, "true");
+      window.localStorage.setItem(GITBASH_TUTORIAL_COMPLETED_KEY, "true");
       setCompleted(true);
-    } else if (event.status === STATUS.SKIPPED) {
-      window.localStorage.removeItem(VSCODE_TUTORIAL_COMPLETED_KEY);
-      setCompleted(false);
     }
   }, []);
   const { controls, state, Tour } = useJoyride({
@@ -241,12 +180,30 @@ export const useVscodeTutorial = (): VscodeTutorial => {
   });
 
   useEffect(() => {
+    const onGitbashCommand = (event: Event): void => {
+      const { command, cwd } = (event as GitbashCommandEvent).detail || {};
+
+      if (command === "ls" && cwd === DESKTOP_PATH) {
+        setLsCommandCaptured(true);
+      }
+    };
+
+    window.addEventListener("winsim:gitbash-command", onGitbashCommand);
+
+    return () => {
+      window.removeEventListener("winsim:gitbash-command", onGitbashCommand);
+    };
+  }, []);
+
+  useEffect(() => {
     if (state.status !== STATUS.RUNNING) return undefined;
 
     const { validation } =
-      (steps[state.index]?.data as VscodeStepData | undefined) || {};
+      (steps[state.index]?.data as GitbashStepData | undefined) || {};
 
     if (!validation) return undefined;
+
+    document.body.classList.add("onboarding-follow-up-active");
 
     let cancelled = false;
     let validating = false;
@@ -266,12 +223,13 @@ export const useVscodeTutorial = (): VscodeTutorial => {
           validating = false;
         });
     };
-    const interval = window.setInterval(checkValidation, 500);
+    const interval = window.setInterval(checkValidation, 250);
 
     checkValidation();
 
     return () => {
       cancelled = true;
+      document.body.classList.remove("onboarding-follow-up-active");
       window.clearInterval(interval);
       window.clearTimeout(advanceTimer);
     };
@@ -279,15 +237,17 @@ export const useVscodeTutorial = (): VscodeTutorial => {
 
   useEffect(() => {
     setCompleted(
-      window.localStorage.getItem(VSCODE_TUTORIAL_COMPLETED_KEY) === "true"
+      window.localStorage.getItem(GITBASH_TUTORIAL_COMPLETED_KEY) === "true"
     );
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  useEffect(() => () => controls.stop(), [controls]);
+    return () => {
+      controls.stop();
+    };
+  }, [controls]);
 
   const startTour = useCallback((): void => {
     setCompleted(false);
+    setLsCommandCaptured(false);
     controls.reset();
     controls.start();
   }, [controls]);
@@ -296,17 +256,11 @@ export const useVscodeTutorial = (): VscodeTutorial => {
     [controls, state.index]
   );
   const resetTour = useCallback((): void => {
-    window.localStorage.removeItem(VSCODE_TUTORIAL_COMPLETED_KEY);
+    window.localStorage.removeItem(GITBASH_TUTORIAL_COMPLETED_KEY);
     setCompleted(false);
+    setLsCommandCaptured(false);
     controls.reset();
-    exists(VSCODE_TUTORIAL_FOLDER)
-      .then((folderExists) =>
-        folderExists ? deletePath(VSCODE_TUTORIAL_FOLDER) : false
-      )
-      .catch(() => {
-        // Ignore cleanup failures so the user can still restart the tour.
-      });
-  }, [controls, deletePath, exists]);
+  }, [controls]);
 
   return {
     Tour,
@@ -318,8 +272,7 @@ export const useVscodeTutorial = (): VscodeTutorial => {
     resumeTour,
     startTour,
     text,
-    totalSteps: steps.length,
   };
 };
 
-export default useVscodeTutorial;
+export default useGitbashTutorial;

@@ -591,7 +591,9 @@ const FileEntry: FC<FileEntryProps> = ({
             ? "start-menu-vscode"
             : name === "Terminal"
               ? "start-menu-terminal"
-              : undefined
+              : name === "GitBash"
+                ? "start-menu-gitbash"
+                : undefined
         }
         onMouseOverCapture={onMouseOverButton}
         title={tooltip}

@@ -6,12 +6,20 @@ import { TOOLTIP_RESIZE_EVENT } from "components/onboarding/tooltipPlacement";
 
 const FollowUpTooltipPosition = createGlobalStyle`
   body.onboarding-follow-up-active .react-joyride__floater[data-testid="floater"] {
-    inset: auto 10px 50px 10px !important;
-    max-width: none !important;
-    pointer-events: none;
+    inset: auto 12px 58px auto !important;
+    max-width: min(280px, calc(100vw - 24px)) !important;
+    pointer-events: auto;
     position: fixed !important;
     transform: none !important;
-    width: auto !important;
+    width: max-content !important;
+  }
+
+  @media (width <= 600px) {
+    body.onboarding-follow-up-active .react-joyride__floater[data-testid="floater"] {
+      inset: auto 8px 54px 8px !important;
+      max-width: none !important;
+      width: auto !important;
+    }
   }
 `;
 
@@ -133,34 +141,44 @@ const StyledTooltip = styled.div`
 
   body.onboarding-follow-up-active & {
     align-items: center;
+    background: hsl(0 0% 13% / 88%);
+    border-color: hsl(0 0% 42% / 65%);
     display: flex;
     justify-content: center;
     max-height: none;
-    max-width: none;
-    min-height: 34px;
+    max-width: min(280px, calc(100vw - 24px));
+    min-height: 32px;
     overflow: hidden;
-    padding: 8px 10px;
+    padding: 6px 10px;
     width: auto;
 
     h2,
     .content,
-    footer button,
+    footer button:not(.minimize-toggle),
     .spacer {
       display: none;
     }
 
     footer {
+      align-items: center;
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 6px;
       margin: 0;
       min-width: 0;
+      width: 100%;
     }
 
     .action-label {
-      flex-basis: auto;
+      flex: 1;
+      font-size: 12px;
       margin: 0;
+      min-width: 0;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
     }
+
   }
 `;
 
@@ -183,6 +201,7 @@ const OnboardingTooltip: FC<TooltipRenderProps> = ({
     buttonNext,
     buttonPause,
     buttonSkip,
+    buttonSkipStep,
     progress,
     requiresAction,
     usesModalFallback = false,
@@ -231,6 +250,15 @@ const OnboardingTooltip: FC<TooltipRenderProps> = ({
         <footer>
           {requiresAction && (
             <strong className="action-label">{actionLabel}</strong>
+          )}
+          {requiresAction && buttonSkipStep && (
+            <button
+              className="skip-step"
+              onClick={() => controls.next()}
+              type="button"
+            >
+              {buttonSkipStep}
+            </button>
           )}
           <button type="button" {...skipProps}>
             {buttonSkip}
