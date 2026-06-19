@@ -34,6 +34,22 @@ const StyledOnboarding = styled.aside`
       gap: 8px;
     }
 
+    .progress-bar {
+      background: hsl(0 0% 100% / 12%);
+      border-radius: 2px;
+      flex-basis: 100%;
+      height: 4px;
+      margin-bottom: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      background: #0078d4;
+      border-radius: 2px;
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+
     span {
       color: hsl(0 0% 78%);
       font-size: 12px;

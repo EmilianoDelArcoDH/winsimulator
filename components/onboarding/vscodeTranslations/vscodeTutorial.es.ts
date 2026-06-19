@@ -8,12 +8,13 @@ const vscodeTutorialEs: VscodeTutorialText = {
     pause: "Pausar",
     progress: "{current} de {total}",
     skip: "Saltar",
+    skipStep: "Saltar paso",
   },
   panel: {
     completed:
-      "Tutorial completado. Creaste un proyecto web y abriste la terminal de Visual Studio Code.",
+      "Tutorial completado. Creaste el proyecto mi-sitio con index.html y abriste la terminal de Visual Studio Code.",
     description:
-      "Aprende a crear una carpeta, un archivo index.html y abrir la terminal integrada.",
+      "Aprende a usar Visual Studio Code: crea carpetas, archivos HTML y abre la terminal integrada, paso a paso.",
     inProgress:
       "Tutorial en curso. Cada paso avanza cuando completas la acción indicada.",
     reset: "Reiniciar",
@@ -23,42 +24,47 @@ const vscodeTutorialEs: VscodeTutorialText = {
   steps: {
     "create-file": {
       description:
-        "Con la carpeta mi-sitio seleccionada, abre File > New File y escribe index.html. Este paso avanzará cuando el archivo exista dentro de la carpeta.",
-      optionalHint: "Crea mi-sitio/index.html",
+        "Primero haz clic en la carpeta mi-sitio en el Explorador para seleccionarla. Luego haz clic en el ícono Nuevo Archivo (el primero de los dos íconos resaltados). Escribe index.html y presiona Enter.",
+      optionalHint: "Selecciona mi-sitio, luego crea index.html",
       title: "Crea index.html",
     },
     "create-folder": {
       description:
-        "Abre File > New Folder, escribe mi-sitio y confirma con Enter. Esperaremos hasta que la carpeta exista.",
+        "En el panel Explorador de la izquierda, haz clic en el ícono Nueva Carpeta resaltado (el segundo ícono junto al título EXPLORADOR). Escribe mi-sitio y presiona Enter. La carpeta aparecerá en el árbol de archivos.",
       optionalHint: "Crea la carpeta mi-sitio",
       title: "Crea una carpeta",
     },
     finish: {
       description:
-        "Ya creaste la carpeta mi-sitio, su index.html y abriste la terminal integrada. Puedes comenzar a editar tu sitio.",
-      title: "Tutorial completado",
+        "¡Excelente trabajo! Aprendiste a crear carpetas y archivos en VS Code y a abrir la terminal integrada. Tu proyecto mi-sitio con index.html está listo para editar.",
+      title: "¡Tutorial completado!",
     },
     "open-file": {
       description:
-        "index.html debe quedar abierto en el editor. Si no está abierto, selecciónalo en el Explorador.",
-      optionalHint: "Abre index.html",
-      title: "Abre el archivo",
+        "El archivo index.html se abrió automáticamente en el editor. Puedes ver su contenido HTML en el área central. Observa la pestaña activa en la parte superior del editor. Cuando estés listo, haz clic en Siguiente.",
+      title: "Revisa el editor",
     },
     "open-terminal": {
       description:
-        "Abre el menú Terminal y selecciona la opción para mostrar la terminal integrada.",
-      optionalHint: "Abre la terminal integrada",
+        "Haz clic en el botón Terminal resaltado en la barra de menú superior. En el submenú que aparece, selecciona Toggle Terminal. La terminal integrada se abrirá en la parte inferior del editor.",
+      optionalHint: "Terminal → Toggle Terminal",
       title: "Abre la terminal",
     },
     "open-vscode": {
       description:
-        "Abre Inicio 🏠 y selecciona Visual Studio Code. Esperaremos hasta que el editor esté listo.",
-      optionalHint: "Haz clic en Inicio 🏠 y luego en Visual Studio Code",
-      title: "Abre Visual Studio Code",
+        "Haz clic en el botón Inicio (🏠) de la barra de tareas para abrir el menú de aplicaciones. En el siguiente paso vas a elegir Visual Studio Code.",
+      optionalHint: "Haz clic en Inicio 🏠",
+      title: "Abre Inicio",
+    },
+    "select-vscode": {
+      description:
+        "Ahora selecciona Visual Studio Code en el menú Inicio. El tutorial avanzará automáticamente cuando el editor esté listo.",
+      optionalHint: "Selecciona Visual Studio Code",
+      title: "Elige Visual Studio Code",
     },
     welcome: {
       description:
-        "En este recorrido usarás Visual Studio Code de verdad para crear la carpeta mi-sitio, agregar index.html y abrir la terminal.",
+        "En este tutorial aprenderás a abrir Visual Studio Code, crear una carpeta de proyecto llamada mi-sitio, crear tu primer archivo HTML y abrir la terminal integrada.",
       title: "Tutorial de Visual Studio Code",
     },
   },

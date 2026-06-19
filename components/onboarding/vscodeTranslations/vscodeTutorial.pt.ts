@@ -8,12 +8,13 @@ const vscodeTutorialPt: VscodeTutorialTranslation = {
     pause: "Pausar",
     progress: "{current} de {total}",
     skip: "Pular",
+    skipStep: "Pular etapa",
   },
   panel: {
     completed:
-      "Tutorial concluído. Você criou um projeto web e abriu o terminal do Visual Studio Code.",
+      "Tutorial concluído. Você criou o projeto mi-sitio com index.html e abriu o terminal do Visual Studio Code.",
     description:
-      "Aprenda a criar uma pasta, um arquivo index.html e abrir o terminal integrado.",
+      "Aprenda a usar o Visual Studio Code: crie pastas, arquivos HTML e abra o terminal integrado, passo a passo.",
     inProgress:
       "Tutorial em andamento. Cada etapa avança quando você conclui a ação indicada.",
     reset: "Reiniciar",
@@ -23,42 +24,47 @@ const vscodeTutorialPt: VscodeTutorialTranslation = {
   steps: {
     "create-file": {
       description:
-        "Com a pasta mi-sitio selecionada, abra File > New File e digite index.html. Esta etapa avançará quando o arquivo existir dentro da pasta.",
-      optionalHint: "Crie mi-sitio/index.html",
+        "Primeiro, clique na pasta mi-sitio no Explorador para selecioná-la. Em seguida, clique no ícone Novo Arquivo destacado (o primeiro dos dois ícones). Digite index.html e pressione Enter.",
+      optionalHint: "Selecione mi-sitio e crie index.html",
       title: "Crie index.html",
     },
     "create-folder": {
       description:
-        "Abra File > New Folder, digite mi-sitio e confirme com Enter. Aguardaremos até que a pasta exista.",
+        "No painel Explorador à esquerda, clique no ícone Nova Pasta destacado (o segundo ícone ao lado do título EXPLORADOR). Digite mi-sitio e pressione Enter. A pasta aparecerá na árvore de arquivos.",
       optionalHint: "Crie a pasta mi-sitio",
       title: "Crie uma pasta",
     },
     finish: {
       description:
-        "Você criou a pasta mi-sitio, seu index.html e abriu o terminal integrado. Agora pode começar a editar seu site.",
-      title: "Tutorial concluído",
+        "Ótimo trabalho! Você aprendeu a criar pastas e arquivos no VS Code e a abrir o terminal integrado. Seu projeto mi-sitio com index.html está pronto para editar.",
+      title: "Tutorial concluído!",
     },
     "open-file": {
       description:
-        "index.html deve estar aberto no editor. Se não estiver, selecione-o no Explorador.",
-      optionalHint: "Abra index.html",
-      title: "Abra o arquivo",
+        "O arquivo index.html abriu automaticamente no editor. Você pode ver seu conteúdo HTML na área central. Observe a aba ativa na parte superior do editor. Quando estiver pronto, clique em Próximo.",
+      title: "Revise o editor",
     },
     "open-terminal": {
       description:
-        "Abra o menu Terminal e selecione a opção que mostra o terminal integrado.",
-      optionalHint: "Abra o terminal integrado",
+        "Clique no botão Terminal destacado na barra de menu superior. No submenu que aparece, selecione Toggle Terminal. O terminal integrado abrirá na parte inferior do editor.",
+      optionalHint: "Terminal → Toggle Terminal",
       title: "Abra o terminal",
     },
     "open-vscode": {
       description:
-        "Abra o Iniciar 🏠 e selecione Visual Studio Code. Aguardaremos até que o editor esteja pronto.",
-      optionalHint: "Clique em Iniciar 🏠 e depois em Visual Studio Code",
-      title: "Abra o Visual Studio Code",
+        "Clique no botão Iniciar (🏠) na barra de tarefas para abrir o menu de aplicativos. Na próxima etapa você vai escolher o Visual Studio Code.",
+      optionalHint: "Clique em Iniciar 🏠",
+      title: "Abra o Iniciar",
+    },
+    "select-vscode": {
+      description:
+        "Agora selecione Visual Studio Code no menu Iniciar. O tutorial avançará automaticamente quando o editor estiver pronto.",
+      optionalHint: "Selecione Visual Studio Code",
+      title: "Escolha Visual Studio Code",
     },
     welcome: {
       description:
-        "Neste tour, você usará o Visual Studio Code real para criar a pasta mi-sitio, adicionar index.html e abrir o terminal.",
+        "Neste tutorial você vai aprender a abrir o Visual Studio Code, criar uma pasta de projeto chamada mi-sitio, criar seu primeiro arquivo HTML e abrir o terminal integrado.",
       title: "Tutorial do Visual Studio Code",
     },
   },

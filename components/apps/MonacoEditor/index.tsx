@@ -359,6 +359,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [dragOverPath, setDragOverPath] = useState("");
   const [activityValidationState, setActivityValidationState] =
     useState<ActivityValidationState>();
+  const isVscodeTutorialRoute =
+    typeof window !== "undefined" &&
+    window.location.pathname.endsWith("/tutorial/vscode");
   const [sidePanelWidth, setSidePanelWidth] = useState<number>(() => {
     if (typeof window === "undefined") return DEFAULT_SIDEBAR_WIDTH;
 
@@ -752,8 +755,13 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
         currentCompact === compact ? currentCompact : compact
       );
 
-      if (compact) {
+      if (compact && !isVscodeTutorialRoute) {
         setPanelOpen((currentOpen) => (currentOpen ? false : currentOpen));
+      }
+
+      if (compact && isVscodeTutorialRoute) {
+        setPanelOpen((currentOpen) => (currentOpen ? currentOpen : true));
+        setActiveView("explorer");
       }
 
       if (!compact) {
@@ -775,7 +783,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     observer.observe(currentWorkbench);
 
     return () => observer.disconnect();
-  }, []);
+  }, [isVscodeTutorialRoute]);
 
   useEffect(() => {
     setTerminalCwd((currentCwd) => currentCwd || explorerRoot);
@@ -2266,7 +2274,9 @@ function example() {
           ref={workbenchRef}
           className={`workbench ${panelOpen ? "panel-open" : "panel-closed"} ${
             isCompactLayout ? "compact-layout" : ""
-          } ${creatingEntry ? "creating-entry" : ""} ${
+          } ${isVscodeTutorialRoute ? "vscode-tutorial-active" : ""} ${
+            creatingEntry ? "creating-entry" : ""
+          } ${
             isOpenFolderOpen ? "open-folder-active" : ""
           }`}
           data-tour="monaco-workbench"
@@ -2604,7 +2614,10 @@ function example() {
           </aside>
 
           {(isOpenFolderOpen ||
-            (panelOpen && (!isCompactLayout || creatingEntry))) && (
+            (panelOpen &&
+              (!isCompactLayout ||
+                creatingEntry ||
+                isVscodeTutorialRoute))) && (
             <aside className="side-panel" data-tour="monaco-explorer-panel">
               <header>
                 <div className="panel-header-row">

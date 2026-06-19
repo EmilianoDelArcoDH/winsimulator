@@ -9,6 +9,7 @@ export type VscodeTutorialStepId =
   | "open-file"
   | "open-terminal"
   | "open-vscode"
+  | "select-vscode"
   | "welcome";
 
 export type VscodeTutorialStepText = {
@@ -25,6 +26,7 @@ export type VscodeTutorialText = {
     pause: string;
     progress: string;
     skip: string;
+    skipStep: string;
   };
   panel: {
     completed: string;

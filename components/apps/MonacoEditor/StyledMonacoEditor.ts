@@ -152,6 +152,7 @@ const StyledMonacoEditor = styled.div`
         grid-column: 2;
       }
 
+      &.vscode-tutorial-active .side-panel,
       &.creating-entry .side-panel,
       &.open-folder-active .side-panel {
         bottom: 0;
