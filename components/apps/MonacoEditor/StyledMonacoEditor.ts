@@ -152,7 +152,8 @@ const StyledMonacoEditor = styled.div`
         grid-column: 2;
       }
 
-      &.creating-entry .side-panel {
+      &.creating-entry .side-panel,
+      &.open-folder-active .side-panel {
         bottom: 0;
         display: block;
         left: var(--activity-bar-width);
@@ -1112,6 +1113,36 @@ const StyledMonacoEditor = styled.div`
             background: rgb(17 116 183);
           }
         }
+      }
+    }
+  }
+
+  .open-folder-dialog {
+    .open-folder-browser {
+      background: rgb(30 30 30);
+      border: 1px solid rgb(69 69 69);
+      display: flex;
+      flex-direction: column;
+      margin-top: 8px;
+      max-height: 190px;
+      min-height: 72px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .open-folder-entry {
+      background: transparent;
+      border: 0;
+      color: rgb(220 220 220);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 5px 7px;
+      text-align: left;
+
+      &:hover,
+      &:focus-visible {
+        background: rgb(55 55 61);
+        outline: none;
       }
     }
   }

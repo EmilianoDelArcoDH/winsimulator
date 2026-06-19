@@ -264,6 +264,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const newEntryInputRef = useRef<HTMLInputElement | null>(null);
   const renameInputRef = useRef<HTMLInputElement | null>(null);
   const saveAsInputRef = useRef<HTMLInputElement | null>(null);
+  const openFolderInputRef = useRef<HTMLInputElement | null>(null);
   const terminalHistoryRef = useRef<HTMLDivElement | null>(null);
   const terminalInputRef = useRef<HTMLInputElement | null>(null);
   const renameInProgressRef = useRef(false);
@@ -338,6 +339,12 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [isSaveAsOpen, setIsSaveAsOpen] = useState(false);
   const [saveAsPath, setSaveAsPath] = useState("");
   const [saveAsError, setSaveAsError] = useState("");
+  const [isOpenFolderOpen, setIsOpenFolderOpen] = useState(false);
+  const [openFolderPath, setOpenFolderPath] = useState("");
+  const [openFolderEntries, setOpenFolderEntries] = useState<ExplorerEntry[]>(
+    []
+  );
+  const [openFolderError, setOpenFolderError] = useState("");
   const [terminalHistory, setTerminalHistory] = useState<
     { id: string; value: string }[]
   >([{ id: "terminal-init", value: "VS Code Terminal initialized." }]);
@@ -1464,6 +1471,102 @@ function example() {
     setContextMenu(undefined);
   }, [currentUrl]);
 
+  const loadOpenFolderPath = useCallback(
+    async (folderPath: string): Promise<void> => {
+      const normalizedPath = normalizeFsPath(folderPath.trim() || "/");
+
+      try {
+        const stats = await lstat(normalizedPath);
+
+        if (!stats.isDirectory()) {
+          setOpenFolderError("Choose a folder, not a file.");
+          return;
+        }
+
+        const folderEntries = await readFolderEntries(normalizedPath);
+
+        setOpenFolderPath(normalizedPath);
+        setOpenFolderEntries(
+          folderEntries.filter(({ isDirectory }) => isDirectory)
+        );
+        setOpenFolderError("");
+      } catch {
+        setOpenFolderEntries([]);
+        setOpenFolderError("Folder not found.");
+      }
+    },
+    [lstat, normalizeFsPath, readFolderEntries]
+  );
+
+  const openFolderDialog = useCallback((): void => {
+    const initialPath =
+      selectedPath?.startsWith(explorerRoot)
+        ? selectedPath
+        : explorerRoot || DESKTOP_PATH || "/";
+
+    lstat(initialPath)
+      .then((stats) =>
+        loadOpenFolderPath(
+          stats.isDirectory()
+            ? initialPath
+            : normalizeFsPath(dirname(initialPath))
+        )
+      )
+      .catch(() => loadOpenFolderPath(explorerRoot || DESKTOP_PATH || "/"));
+    setIsOpenFolderOpen(true);
+    setOpenFolderError("");
+    setContextMenu(undefined);
+  }, [
+    explorerRoot,
+    loadOpenFolderPath,
+    lstat,
+    normalizeFsPath,
+    selectedPath,
+  ]);
+
+  const confirmOpenFolder = useCallback(async (): Promise<void> => {
+    const normalizedPath = normalizeFsPath(openFolderPath.trim() || "/");
+
+    try {
+      const stats = await lstat(normalizedPath);
+
+      if (!stats.isDirectory()) {
+        setOpenFolderError("Choose a folder, not a file.");
+        return;
+      }
+
+      const folderEntries = await readFolderEntries(normalizedPath);
+      const preferredFile =
+        folderEntries.find(
+          ({ isDirectory, name }) =>
+            !isDirectory && name.toLowerCase() === "index.html"
+        ) ||
+        folderEntries.find(({ isDirectory }) => !isDirectory);
+      const nextUrl = preferredFile
+        ? normalizeFsPath(`${normalizedPath}/${preferredFile.name}`)
+        : normalizedPath;
+
+      setProcessUrl(id, nextUrl);
+      setPanelOpen(true);
+      setActiveView("explorer");
+      setSelectedPath(nextUrl);
+      setTerminalCwd(normalizedPath);
+      setExpandedFolders([normalizedPath]);
+      setIsOpenFolderOpen(false);
+      setOpenFolderError("");
+    } catch {
+      setOpenFolderError("Folder not found.");
+      requestAnimationFrame(() => openFolderInputRef.current?.focus());
+    }
+  }, [
+    id,
+    lstat,
+    normalizeFsPath,
+    openFolderPath,
+    readFolderEntries,
+    setProcessUrl,
+  ]);
+
   const saveCurrentFileAs = useCallback(async (): Promise<void> => {
     if (!currentEditor) {
       setSaveAsError("No active editor to save.");
@@ -1889,35 +1992,7 @@ function example() {
       }
 
       if (menuAction === "open-folder") {
-        let virtualWorkspacePath = normalizeFsPath(
-          selectedPath || DESKTOP_PATH || "/Users/Documents"
-        );
-
-        try {
-          const selectedStats = await lstat(virtualWorkspacePath);
-
-          if (!selectedStats.isDirectory()) {
-            virtualWorkspacePath = normalizeFsPath(
-              dirname(virtualWorkspacePath)
-            );
-          }
-        } catch {
-          virtualWorkspacePath = normalizeFsPath(
-            DESKTOP_PATH || "/Users/Documents"
-          );
-        }
-
-        await loadFolder(virtualWorkspacePath);
-        setProcessUrl(id, virtualWorkspacePath);
-        setPanelOpen(true);
-        setActiveView("explorer");
-        setSelectedPath(virtualWorkspacePath);
-        setTerminalCwd(virtualWorkspacePath);
-        setExpandedFolders((currentFolders) =>
-          currentFolders.includes(virtualWorkspacePath)
-            ? currentFolders
-            : [virtualWorkspacePath, ...currentFolders]
-        );
+        openFolderDialog();
         return;
       }
 
@@ -2009,6 +2084,7 @@ function example() {
       loadFolder,
       logExplorer,
       normalizeFsPath,
+      openFolderDialog,
       openSaveAsDialog,
       resolveTargetFolder,
       saveCurrentFile,
@@ -2081,6 +2157,15 @@ function example() {
       input?.select();
     });
   }, [isSaveAsOpen]);
+
+  useEffect(() => {
+    if (!isOpenFolderOpen) return;
+
+    requestAnimationFrame(() => {
+      openFolderInputRef.current?.focus();
+      openFolderInputRef.current?.select();
+    });
+  }, [isOpenFolderOpen]);
 
   useEffect(() => {
     if (selectedPath) return;
@@ -2181,7 +2266,9 @@ function example() {
           ref={workbenchRef}
           className={`workbench ${panelOpen ? "panel-open" : "panel-closed"} ${
             isCompactLayout ? "compact-layout" : ""
-          } ${creatingEntry ? "creating-entry" : ""}`}
+          } ${creatingEntry ? "creating-entry" : ""} ${
+            isOpenFolderOpen ? "open-folder-active" : ""
+          }`}
           data-tour="monaco-workbench"
           style={{ ["--side-panel-width" as string]: `${sidePanelWidth}px` }}
         >
@@ -2231,7 +2318,8 @@ function example() {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-                          runMenuAction("open-folder");
+                          setActiveMenu("");
+                          openFolderDialog();
                         }}
                         onMouseDown={(e) => e.preventDefault()}
                         type="button"
@@ -2515,7 +2603,8 @@ function example() {
             </button>
           </aside>
 
-          {panelOpen && (!isCompactLayout || creatingEntry) && (
+          {(isOpenFolderOpen ||
+            (panelOpen && (!isCompactLayout || creatingEntry))) && (
             <aside className="side-panel" data-tour="monaco-explorer-panel">
               <header>
                 <div className="panel-header-row">
@@ -3066,6 +3155,110 @@ function example() {
                         type="button"
                       >
                         Save
+                      </button>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {isOpenFolderOpen && (
+                <>
+                  <button
+                    aria-label="Close open folder dialog"
+                    className="modal-backdrop"
+                    onClick={() => {
+                      setIsOpenFolderOpen(false);
+                      setOpenFolderError("");
+                    }}
+                    type="button"
+                  />
+                  <div
+                    aria-modal="true"
+                    className="save-as-dialog open-folder-dialog"
+                    role="dialog"
+                  >
+                    <p className="save-as-title">Open Folder</p>
+                    <p className="save-as-subtitle">
+                      Enter a virtual folder path or browse its subfolders.
+                    </p>
+                    <input
+                      ref={openFolderInputRef}
+                      className="save-as-input"
+                      onChange={(event) => {
+                        setOpenFolderPath(event.currentTarget.value);
+                        if (openFolderError) setOpenFolderError("");
+                      }}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          void loadOpenFolderPath(openFolderPath);
+                        } else if (event.key === "Escape") {
+                          setIsOpenFolderOpen(false);
+                          setOpenFolderError("");
+                        }
+                      }}
+                      placeholder="/Users/Public/Desktop"
+                      type="text"
+                      value={openFolderPath}
+                    />
+                    <div className="open-folder-browser">
+                      {openFolderPath !== "/" && (
+                        <button
+                          className="open-folder-entry"
+                          onClick={() =>
+                            void loadOpenFolderPath(
+                              normalizeFsPath(dirname(openFolderPath))
+                            )
+                          }
+                          type="button"
+                        >
+                          ..
+                        </button>
+                      )}
+                      {openFolderEntries.map(({ name }) => {
+                        const childPath = normalizeFsPath(
+                          `${openFolderPath}/${name}`
+                        );
+
+                        return (
+                          <button
+                            key={childPath}
+                            className="open-folder-entry"
+                            onClick={() => void loadOpenFolderPath(childPath)}
+                            type="button"
+                          >
+                            {name}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {openFolderError && (
+                      <p className="save-as-error">{openFolderError}</p>
+                    )}
+                    <div className="save-as-actions">
+                      <button
+                        className="dialog-action"
+                        onClick={() => {
+                          setIsOpenFolderOpen(false);
+                          setOpenFolderError("");
+                        }}
+                        type="button"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="dialog-action"
+                        onClick={() => void loadOpenFolderPath(openFolderPath)}
+                        type="button"
+                      >
+                        Go
+                      </button>
+                      <button
+                        className="dialog-action primary"
+                        onClick={() => void confirmOpenFolder()}
+                        type="button"
+                      >
+                        Open
                       </button>
                     </div>
                   </div>

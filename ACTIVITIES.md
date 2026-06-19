@@ -296,10 +296,11 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   1. Ordenar los cambios desde la creacion inicial del proyecto hasta la publicacion estable.
   2. Dejar la secuencia: proyecto inicial, contacto, correccion de formulario, estilos del boton y publicacion estable.
   3. Elegir uno de los cambios candidatos que podria haber roto algo.
-  4. Escribir una justificacion de al menos 15 caracteres explicando el riesgo del cambio elegido.
+  4. Escribir una justificacion de al menos 30 caracteres explicando que parte concreta podria fallar.
+  5. Relacionar la justificacion con el cambio elegido: contacto, formulario o estilos del boton.
 
 - Solucion esperada:
-  - Ordenar correctamente la secuencia del ejercicio.
+  - Ordenar correctamente la secuencia, elegir un cambio y explicar un riesgo relacionado.
 
 ### `sch_git_c01_a04` - Conflicto no es error
 
@@ -378,11 +379,12 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   1. Leer el escenario e identificar que dos personas cambiaron la misma linea.
   2. Marcar la casilla que indica que hay un conflicto.
   3. Elegir una forma de resolverlo: conservar una version o combinar ambas ideas.
-  4. Escribir una explicacion de al menos 20 caracteres.
-  5. Incluir una idea vinculada con conflicto, resolver, decidir o combinar.
+  4. Escribir una explicacion de al menos 40 caracteres usando palabras propias.
+  5. Explicar que dos personas cambiaron la misma linea o el mismo titulo.
+  6. Relacionar la explicacion con la estrategia elegida: version A, version B o combinacion de ambas ideas.
 
 - Solucion esperada:
-  - Detectar el conflicto y justificar una resolucion valida.
+  - Detectar el conflicto y justificar la estrategia elegida en el contexto concreto.
 
 ## Clase `sch_git_c02` - Crear y guardar cambios
 
@@ -791,28 +793,30 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         <h2>Evitar el git add . ciego</h2>
 
         <p class="contexto-consigna">
-            Vas a practicar la seleccion cuidadosa de archivos antes de un commit. La actividad muestra por que revisar el estado evita subir archivos temporales o basura.
+            Vas a practicar la selecci&oacute;n cuidadosa de archivos antes de un commit. La actividad muestra por qu&eacute; revisar el estado evita subir archivos temporales o basura.
         </p>
 
         <p class="copy-warning">
-            Usa GitBash y no incluyas <input class="texto-copiable" size="9" value="notes.tmp" disabled> en el commit final.
+            Trabaja dentro de <strong>/miProyecto</strong> con GitBash y no incluyas <input class="texto-copiable" size="9" value="notes.tmp" disabled> en el commit final.
         </p>
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
+            <li>Abre la carpeta <strong>/miProyecto</strong>, la misma ubicaci&oacute;n usada en las actividades anteriores.</li>
             <li>Haz cambios en los archivos web del proyecto.</li>
             <li>Revisa el estado del repositorio antes de preparar cambios.</li>
-            <li>Agrega de forma explicita solo los archivos que deben entrar al commit y deja fuera <input class="texto-copiable" size="9" value="notes.tmp" disabled>.</li>
+            <li>Agrega de forma expl&iacute;cita solo los archivos que deben entrar al commit y deja fuera <input class="texto-copiable" size="9" value="notes.tmp" disabled>.</li>
         </ul>
     </article>
 
 </div>
 - Solucion esperada paso a paso:
-  1. Modificar archivos reales del proyecto web; por ejemplo `index.html`, `style.css` o `app.js`.
-  2. Revisar el estado con `git status` antes de commitear.
-  3. Preparar archivos de forma explicita, por ejemplo `git add index.html style.css app.js`, en lugar de usar `git add .` sin revisar.
-  4. No agregar `notes.tmp` al staging.
-  5. Hacer el commit final con un mensaje claro, dejando `notes.tmp` fuera del repositorio confirmado.
+  1. Trabajar dentro de `/miProyecto`, donde estan `index.html`, `style.css`, `app.js` y `notes.tmp`.
+  2. Modificar archivos reales del proyecto web; por ejemplo `index.html`, `style.css` o `app.js`.
+  3. Revisar el estado con `git status` antes de commitear.
+  4. Preparar archivos de forma explicita, por ejemplo `git add index.html style.css app.js`, en lugar de usar `git add .` sin revisar.
+  5. No agregar `notes.tmp` al staging.
+  6. Hacer el commit final con un mensaje claro, dejando `notes.tmp` fuera del repositorio confirmado.
 
 - Solucion esperada:
   - Revisar el estado antes de commitear y evitar sumar basura al repo.
