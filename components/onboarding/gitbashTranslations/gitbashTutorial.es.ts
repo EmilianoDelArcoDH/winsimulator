@@ -28,15 +28,21 @@ const gitbashTutorialEs: GitbashTutorialText = {
     },
     "open-gitbash": {
       description:
-        "Abre Inicio y selecciona GitBash. La consola debe iniciar ubicada en el escritorio.",
-      optionalHint: "Haz clic en Inicio y luego en GitBash",
-      title: "Abre GitBash",
+        "Haz clic en el botón Inicio de la barra de tareas para abrir el menú de aplicaciones. En el siguiente paso vas a elegir GitBash.",
+      optionalHint: "Haz clic en Inicio",
+      title: "Abre Inicio",
     },
     "run-ls": {
       description:
         "En la consola escribe ls y presiona Enter para mostrar las carpetas y archivos que se encuentran en el escritorio.",
       optionalHint: "Escribe ls y presiona Enter",
       title: "Lista el escritorio",
+    },
+    "select-gitbash": {
+      description:
+        "Ahora selecciona GitBash en el menú Inicio. La consola se abrirá ubicada en Desktop para que puedas ejecutar tu primer comando.",
+      optionalHint: "Selecciona GitBash",
+      title: "Elige GitBash",
     },
     welcome: {
       description:

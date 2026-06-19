@@ -25,15 +25,21 @@ const gitbashTutorialPt: GitbashTutorialTranslation = {
     },
     "open-gitbash": {
       description:
-        "Abra o Inicio e selecione GitBash. O console deve iniciar na pasta da area de trabalho.",
-      optionalHint: "Clique em Inicio e depois em GitBash",
-      title: "Abra o GitBash",
+        "Clique no botão Inicio na barra de tarefas para abrir o menu de aplicativos. Na próxima etapa você vai escolher o GitBash.",
+      optionalHint: "Clique em Inicio",
+      title: "Abra o Inicio",
     },
     "run-ls": {
       description:
         "No console, digite ls e pressione Enter para mostrar as pastas e arquivos que estao na area de trabalho.",
       optionalHint: "Digite ls e pressione Enter",
       title: "Liste a area de trabalho",
+    },
+    "select-gitbash": {
+      description:
+        "Agora selecione GitBash no menu Inicio. O console abrirá em Desktop para que você possa executar seu primeiro comando.",
+      optionalHint: "Selecione GitBash",
+      title: "Escolha GitBash",
     },
     welcome: {
       description:
