@@ -6,6 +6,7 @@ export type GitbashTutorialStepId =
   | "finish"
   | "open-gitbash"
   | "run-ls"
+  | "select-gitbash"
   | "welcome";
 
 export type GitbashTutorialStepText = {

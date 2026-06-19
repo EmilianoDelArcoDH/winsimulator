@@ -24,15 +24,21 @@ const gitbashTutorialEn: GitbashTutorialTranslation = {
     },
     "open-gitbash": {
       description:
-        "Open Start and select GitBash. The console should start in the desktop folder.",
-      optionalHint: "Click Start, then GitBash",
-      title: "Open GitBash",
+        "Click the Start button in the taskbar to open the app menu. In the next step you will choose GitBash.",
+      optionalHint: "Click Start",
+      title: "Open Start",
     },
     "run-ls": {
       description:
         "In the console, type ls and press Enter to show the folders and files on the desktop.",
       optionalHint: "Type ls and press Enter",
       title: "List the desktop",
+    },
+    "select-gitbash": {
+      description:
+        "Now select GitBash in the Start menu. The console will open in Desktop so you can run your first command.",
+      optionalHint: "Select GitBash",
+      title: "Choose GitBash",
     },
     welcome: {
       description:

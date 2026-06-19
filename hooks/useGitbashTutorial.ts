@@ -94,22 +94,30 @@ export const getGitbashTutorialSteps = (
     translatedStep(
       "open-gitbash",
       {
-        placement: "center",
+        placement: "top",
         target: '[data-tour="taskbar-start-button"]',
+      },
+      true
+    ),
+    translatedStep(
+      "select-gitbash",
+      {
+        placement: "right",
+        target: '[data-tour="start-menu-gitbash"]',
       },
       true
     ),
     translatedStep(
       "run-ls",
       {
-        placement: "auto",
+        placement: "top",
         target: '[data-tour="gitbash-input"]',
       },
       true
     ),
     translatedStep("finish", {
       placement: "center",
-      target: '[data-tour="welcome"]',
+      target: '[data-tour="gitbash-shell"]',
     }),
   ];
 };
@@ -137,6 +145,10 @@ export const useGitbashTutorial = (): GitbashTutorial => {
     async (validation: GitbashTutorialStepId): Promise<boolean> => {
       switch (validation) {
         case "open-gitbash":
+          return Boolean(
+            document.querySelector('[data-tour="start-menu-gitbash"]')
+          );
+        case "select-gitbash":
           return Boolean(document.querySelector('[data-tour="gitbash-shell"]'));
         case "run-ls":
           return lsCommandCaptured;
@@ -203,8 +215,6 @@ export const useGitbashTutorial = (): GitbashTutorial => {
 
     if (!validation) return undefined;
 
-    document.body.classList.add("onboarding-follow-up-active");
-
     let cancelled = false;
     let validating = false;
     let advanceTimer = 0;
@@ -229,7 +239,6 @@ export const useGitbashTutorial = (): GitbashTutorial => {
 
     return () => {
       cancelled = true;
-      document.body.classList.remove("onboarding-follow-up-active");
       window.clearInterval(interval);
       window.clearTimeout(advanceTimer);
     };
