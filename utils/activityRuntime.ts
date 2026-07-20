@@ -229,10 +229,10 @@ const toRepoPath = (path: string, rootPath: string): string => {
 
 const getWorkspaceFiles = (
   activity: ActivityDefinition | undefined,
-  telemetry: ActivityTelemetry
+  telemetry: ActivityTelemetry,
+  rootPath = getWorkspaceRoot(activity)
 ): Record<string, string> => {
   const workspace = getWorkspace(activity);
-  const rootPath = getWorkspaceRoot(activity);
   const seededFiles = Array.isArray(workspace.files)
     ? Object.fromEntries(
         workspace.files
@@ -337,6 +337,7 @@ const readVirtualRepo = (value: unknown): VirtualGitRepository | undefined => {
         (entry): entry is [string, string] => typeof entry[1] === "string"
       )
     ),
+    rootPath: asString(parsed.rootPath) || undefined,
     staged: asStringArray(parsed.staged),
     stagedFiles: Object.fromEntries(
       Object.entries(asRecord(parsed.stagedFiles)).filter(
@@ -468,6 +469,23 @@ const countCommand = (commands: TrackedCommand[], fragment: string): number =>
   commands.filter(({ command }) =>
     normalize(command).includes(normalize(fragment))
   ).length;
+
+const getLastCommitCommandMessage = (commands: TrackedCommand[]): string => {
+  for (const { command } of [...commands].reverse()) {
+    const normalizedCommand = normalize(command);
+
+    if (
+      normalizedCommand.startsWith("git commit ") &&
+      normalizedCommand.includes(" -m")
+    ) {
+      const message = parseCommitMessage(command);
+
+      if (message) return message;
+    }
+  }
+
+  return "";
+};
 
 const hasSavedPath = (savedPaths: string[], expectedPath: string): boolean => {
   const normalizedExpected = normalizePath(expectedPath);
@@ -758,8 +776,12 @@ const evaluateCheck = (
     }
 
     case "TERMINAL_IN_DIR": {
-      const expectedDir = normalizePath(asString(rules.equals));
-      const expectedDirSuffix = normalizePath(asString(rules.endsWith));
+      const expectedDir = normalizePath(
+        asString(rules.equals) || asString(rules.expectedWorkingDir)
+      );
+      const expectedDirSuffix = normalizePath(
+        asString(rules.endsWith) || asString(rules.expectedWorkingDir)
+      );
       const commandEvent = commands.find(
         ({ command }) => normalize(command) === "git init"
       );
@@ -948,7 +970,8 @@ const evaluateCheck = (
     }
 
     case "COMMIT_MESSAGE_RULES": {
-      const message = repo.lastCommitMessage;
+      const message =
+        getLastCommitCommandMessage(commands) || repo.lastCommitMessage;
       const minLength = asNumber(rules.minLength);
       const mustStartWithAny = translateRuleWords(
         language,
@@ -975,11 +998,14 @@ const evaluateCheck = (
     }
 
     case "REPO_STATE": {
+      const filesMustExist = asStringArray(rules.filesMustExist);
+      const filesMustNotExist = asStringArray(rules.filesMustNotExist);
       const stagedIncludes = asStringArray(rules.stagedIncludes);
       const stagedExcludes = asStringArray(rules.stagedExcludes);
       const lastCommitIncludes = asStringArray(rules.lastCommitIncludes);
       const lastCommitExcludes = asStringArray(rules.lastCommitExcludes);
       const remotesIncludes = asStringArray(rules.remotesIncludes);
+      const repoFiles = telemetry.virtualRepo?.files || {};
       const hasTrackingRule = Boolean(rules.branchTracking);
       const trackingRule = asRecord(rules.branchTracking);
       const trackingOk =
@@ -990,6 +1016,13 @@ const evaluateCheck = (
       const passed =
         (typeof rules.initialized !== "boolean" ||
           repo.initialized === rules.initialized) &&
+        filesMustExist.every((entry) =>
+          Object.hasOwn(repoFiles, normalizePath(entry).replace(/^\/+/, ""))
+        ) &&
+        filesMustNotExist.every(
+          (entry) =>
+            !Object.hasOwn(repoFiles, normalizePath(entry).replace(/^\/+/, ""))
+        ) &&
         stagedIncludes.every((entry) => repo.staged.includes(entry)) &&
         stagedExcludes.every((entry) => !repo.staged.includes(entry)) &&
         lastCommitIncludes.every((entry) =>
@@ -1309,7 +1342,12 @@ export const trackActivityEvent = (
       telemetry.virtualRepo = applyGitCommand(
         telemetry.virtualRepo,
         command,
-        getWorkspaceFiles(activity, telemetry)
+        getWorkspaceFiles(
+          activity,
+          telemetry,
+          telemetry.virtualRepo.rootPath || event.cwd || "/"
+        ),
+        event.cwd || "/"
       );
     }
   }
@@ -1327,7 +1365,11 @@ export const trackActivityEvent = (
       telemetry.fileContents[normalizePath(event.path)] = "";
     }
 
-    telemetry.virtualRepo.files = getWorkspaceFiles(activity, telemetry);
+    telemetry.virtualRepo.files = getWorkspaceFiles(
+      activity,
+      telemetry,
+      telemetry.virtualRepo.rootPath || getWorkspaceRoot(activity)
+    );
   }
 
   if (event.type === "pagesPublished" && event.url) {
