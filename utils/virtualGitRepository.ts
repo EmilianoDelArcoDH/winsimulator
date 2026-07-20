@@ -27,6 +27,7 @@ export type VirtualGitRepository = {
   };
   lastStatus?: VirtualGitStatus;
   remotes: Record<string, string>;
+  rootPath?: string;
   staged: string[];
   stagedFiles?: Record<string, string>;
 };
@@ -371,7 +372,8 @@ export const gitPush = (
 export const applyGitCommand = (
   repo: VirtualGitRepository,
   command: string,
-  files: Record<string, string> = repo.files
+  files: Record<string, string> = repo.files,
+  cwd = ""
 ): VirtualGitRepository => {
   const tokens = parseCommand(command.trim());
 
@@ -380,8 +382,13 @@ export const applyGitCommand = (
   const action = tokens[1]?.toLowerCase();
 
   switch (action) {
-    case "init":
-      return gitInit(repo);
+    case "init": {
+      const next = gitInit(repo);
+
+      next.rootPath = normalizePath(cwd);
+
+      return next;
+    }
     case "add":
       return gitAdd(repo, tokens.slice(2).join(" ") || ".", files);
     case "commit":

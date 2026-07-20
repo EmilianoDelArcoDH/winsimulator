@@ -51,14 +51,33 @@ describe("activityRuntime virtual Git integration", () => {
 
   test("a legacy catalog activity still completes", () => {
     const activityId = "sch_git_c02_a01";
-    const commands = [
-      ["mkdir miProyecto", "/"],
-      ["cd miProyecto", "/"],
-      ["touch index.html style.css app.js", "/miProyecto"],
-      ["git init", "/miProyecto"],
+    const setupCommands = [
+      ["mkdir miProyecto", "/Users/Public/Desktop"],
+      ["cd miProyecto", "/Users/Public/Desktop"],
+      ["git init", "/Users/Public/Desktop/miProyecto"],
+      ["touch index.html", "/Users/Public/Desktop/miProyecto"],
     ] as const;
 
-    commands.forEach(([command, cwd]) =>
+    setupCommands.forEach(([command, cwd]) =>
+      trackActivityEvent({
+        activityId,
+        command,
+        cwd,
+        type: "commandExecuted",
+      })
+    );
+    trackActivityEvent({
+      activityId,
+      path: "/Users/Public/Desktop/miProyecto/index.html",
+      type: "fileSaved",
+    });
+    [
+      ["git add index.html", "/Users/Public/Desktop/miProyecto"],
+      [
+        'git commit -m "Crear archivo index.html"',
+        "/Users/Public/Desktop/miProyecto",
+      ],
+    ].forEach(([command, cwd]) =>
       trackActivityEvent({
         activityId,
         command,
@@ -69,6 +88,15 @@ describe("activityRuntime virtual Git integration", () => {
 
     expect(getActivityById(activityId, "es")).toBeDefined();
     expect(validateActivity(activityId, "es").completed).toBe(true);
+  });
+
+  test("the first local repository activity starts from Desktop without seeded files", () => {
+    const activity = getActivityById("sch_git_c02_a01", "es");
+
+    expect(activity?.data.workspace).toMatchObject({
+      files: [],
+      rootPath: "/Users/Public/Desktop",
+    });
   });
 
   test("saved workspace files can be staged and committed as real snapshots", () => {
@@ -102,6 +130,61 @@ describe("activityRuntime virtual Git integration", () => {
     expect(commit.files["index.html"]).toBe("<h1>Contenido actualizado</h1>");
     expect(commit.changedFiles).toEqual(["index.html"]);
     expect(telemetry.virtualRepo.staged).toEqual([]);
+  });
+
+  test("commit message rules use the latest commit -m command message", () => {
+    const activityId = "sch_git_c02_a03";
+
+    trackActivityEvent({
+      activityId,
+      content: "<h1>Contenido actualizado</h1>",
+      path: "/repo/index.html",
+      type: "fileSaved",
+    });
+    trackActivityEvent({
+      activityId,
+      command: "git add index.html",
+      cwd: "/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      command: 'git commit -m "Agrega commit"',
+      cwd: "/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      command: 'git commit -m "Elimina h2 de los encabezados principales"',
+      cwd: "/repo",
+      type: "commandExecuted",
+    });
+
+    const result = validateActivity(activityId, "es");
+
+    expect(
+      result.results.find(
+        ({ checkId }) => checkId === "c02_a03_message_quality"
+      )?.passed
+    ).toBe(true);
+  });
+
+  test("commit -m with only dots is not accepted as a real message", () => {
+    const activityId = "sch_git_c02_a03";
+
+    trackActivityEvent({
+      activityId,
+      command: 'git commit -m "..."',
+      cwd: "/repo",
+      type: "commandExecuted",
+    });
+
+    const result = validateActivity(activityId, "es");
+
+    expect(
+      result.results.find(({ checkId }) => checkId === "c02_a03_commit_with_m")
+        ?.passed
+    ).toBe(false);
   });
 
   test("legacy telemetry without virtualRepo keeps validating", () => {
@@ -146,17 +229,11 @@ describe("activityRuntime virtual Git integration", () => {
     const activity = getActivityById(activityId, "es");
     const englishActivity = getActivityById(activityId, "en");
 
-    expect(activity?.data.initialOrder).toEqual([
-      "t3",
-      "t1",
-      "t5",
-      "t2",
-      "t4",
-    ]);
+    expect(activity?.data.initialOrder).toEqual(["t3", "t1", "t5", "t2", "t4"]);
     expect(activity?.data.initialOrder).not.toEqual(activity?.data.answerOrder);
-    expect(
-      (englishActivity?.data.question as { label: string }).label
-    ).toBe("Which change could have broken something? (choose 1)");
+    expect((englishActivity?.data.question as { label: string }).label).toBe(
+      "Which change could have broken something? (choose 1)"
+    );
     expect(
       (
         englishActivity?.data.question as {
@@ -230,9 +307,8 @@ describe("activityRuntime virtual Git integration", () => {
 
     expect(result.completed).toBe(false);
     expect(
-      result.results.find(
-        ({ checkId }) => checkId === "c01_a04_text_aligned"
-      )?.passed
+      result.results.find(({ checkId }) => checkId === "c01_a04_text_aligned")
+        ?.passed
     ).toBe(false);
   });
 
