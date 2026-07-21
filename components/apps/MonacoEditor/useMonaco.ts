@@ -11,6 +11,7 @@ import {
 import {
   detectLanguage,
   getSaveFileInfo,
+  isImageFile,
 } from "components/apps/MonacoEditor/functions";
 import { registerEmmetSnippets } from "components/apps/MonacoEditor/emmet";
 import { type Model } from "components/apps/MonacoEditor/types";
@@ -124,10 +125,12 @@ const useMonaco = ({
   const createModel = useCallback(async () => {
     let fileContent = "";
 
-    try {
-      fileContent = (await readFile(url)).toString();
-    } catch {
-      fileContent = "";
+    if (!isImageFile(url)) {
+      try {
+        fileContent = (await readFile(url)).toString();
+      } catch {
+        fileContent = "";
+      }
     }
 
     const newModel = monaco?.editor.createModel(
@@ -225,7 +228,7 @@ const useMonaco = ({
 
         const [saveUrl, saveData] = getSaveFileInfo(url, editor);
 
-        if (saveUrl && typeof saveData === "string") {
+        if (saveUrl && typeof saveData === "string" && !isImageFile(saveUrl)) {
           await writeFile(saveUrl, saveData, true);
           updateFolder(dirname(saveUrl), basename(saveUrl));
           prependFileToTitle(basename(saveUrl));

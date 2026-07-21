@@ -17,7 +17,10 @@ import AudiotrackRoundedIcon from "@mui/icons-material/AudiotrackRounded";
 import MovieRoundedIcon from "@mui/icons-material/MovieRounded";
 import NoteAddRoundedIcon from "@mui/icons-material/NoteAddRounded";
 import CreateNewFolderRoundedIcon from "@mui/icons-material/CreateNewFolderRounded";
-import { getSaveFileInfo } from "components/apps/MonacoEditor/functions";
+import {
+  getSaveFileInfo,
+  isImageFile,
+} from "components/apps/MonacoEditor/functions";
 import StatusBar from "components/apps/MonacoEditor/StatusBar";
 import StyledMonacoEditor from "components/apps/MonacoEditor/StyledMonacoEditor";
 import useMonaco from "components/apps/MonacoEditor/useMonaco";
@@ -42,6 +45,7 @@ import {
   updatePublishedSite,
 } from "utils/pagesRuntime";
 import { DEFAULT_TEXT_FILE_SAVE_PATH, DESKTOP_PATH } from "utils/constants";
+import { getMimeType } from "utils/functions";
 
 type ExplorerEntry = {
   isDirectory: boolean;
@@ -300,6 +304,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [currentUrlTargetType, setCurrentUrlTargetType] =
     useState<UrlTargetType>("none");
   const activeFileUrl = currentUrlTargetType === "file" ? currentUrl : "";
+  const activeFileIsImage = isImageFile(activeFileUrl);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const currentEditor = process?.editor;
   const explorerRoot = useMemo(
     () =>
@@ -318,6 +324,31 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     explorerRoot,
   ]);
   const [openFiles, setOpenFiles] = useState<string[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (!activeFileIsImage || !activeFileUrl) {
+      setImagePreviewUrl("");
+      return undefined;
+    }
+
+    readFile(activeFileUrl)
+      .then((buffer) => {
+        if (!cancelled) {
+          setImagePreviewUrl(
+            `data:${getMimeType(activeFileUrl)};base64,${buffer.toString("base64")}`
+          );
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setImagePreviewUrl("");
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeFileIsImage, activeFileUrl, readFile]);
   const [panelOpen, setPanelOpen] = useState(true);
   const [isTerminalPanelOpen, setIsTerminalPanelOpen] = useState(false);
   const [selectedPath, setSelectedPath] = useState<string>("");
@@ -426,9 +457,9 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
       normalizeFsPath,
     ]
   );
-  const isActiveFileEditable = activeFileUrl
-    ? isEditableActivityPath(activeFileUrl)
-    : !hasWorkspaceEditRestrictions;
+  const isActiveFileEditable = Boolean(activeFileUrl) &&
+    !activeFileIsImage &&
+    isEditableActivityPath(activeFileUrl);
   const canMutateSelectedPath = selectedPath
     ? isEditableActivityPath(selectedPath)
     : !hasWorkspaceEditRestrictions;
@@ -3462,11 +3493,25 @@ function example() {
                     </div>
                   ))}
                 </header>
-                <div
-                  className="editor-host"
-                  data-tour="monaco-editor-host"
-                  data-monaco-editor-host
-                />
+                <div className="editor-stage">
+                  <div
+                    className={`editor-host ${activeFileIsImage ? "image-active" : ""}`}
+                    data-tour="monaco-editor-host"
+                    data-monaco-editor-host
+                  />
+                  {activeFileIsImage && (
+                    <section className="image-preview" aria-label="Image preview">
+                      {imagePreviewUrl ? (
+                        <img
+                          alt={basename(activeFileUrl)}
+                          src={imagePreviewUrl}
+                        />
+                      ) : (
+                        <p>No se pudo mostrar la imagen.</p>
+                      )}
+                    </section>
+                  )}
+                </div>
               </>
             ) : (
               <section aria-label="No file open" className="editor-empty-state">
