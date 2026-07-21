@@ -43,7 +43,6 @@ import {
 import {
   GOOGLE_SEARCH_QUERY,
   LOCAL_HOST,
-  bufferToUrl,
   getExtension,
   getMimeType,
   getUrlOrSearch,
@@ -229,10 +228,9 @@ const Browser: FC<ComponentProcessProps> = ({ id }) => {
 
         try {
           const imageBuffer = await readFile(localImagePath);
-          const imageUrl = bufferToUrl(
-            imageBuffer,
-            getMimeType(localImagePath)
-          );
+          const imageUrl = `data:${getMimeType(
+            localImagePath
+          )};base64,${imageBuffer.toString("base64")}`;
 
           dependencies.add(localImagePath);
           previewHtml = previewHtml.replace(
