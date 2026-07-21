@@ -815,13 +815,56 @@ const StyledMonacoEditor = styled.div`
     }
   }
 
-  .editor-host {
+  .editor-stage {
     flex: 1 1 auto;
     height: 100%;
     min-height: 0;
     min-width: 0;
     overflow: hidden;
     position: relative;
+  }
+
+  .editor-host {
+    height: 100%;
+    min-height: 0;
+    min-width: 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .editor-host.image-active > .monaco-editor {
+    display: none;
+  }
+
+  .image-preview {
+    align-items: center;
+    background:
+      linear-gradient(45deg, rgb(38 38 38) 25%, transparent 25%),
+      linear-gradient(-45deg, rgb(38 38 38) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgb(38 38 38) 75%),
+      linear-gradient(-45deg, transparent 75%, rgb(38 38 38) 75%),
+      rgb(30 30 30);
+    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+    background-size: 16px 16px;
+    display: flex;
+    inset: 0;
+    justify-content: center;
+    overflow: auto;
+    padding: 32px;
+    position: absolute;
+    z-index: 2;
+  }
+
+  .image-preview img {
+    box-shadow: 0 8px 32px rgb(0 0 0 / 45%);
+    display: block;
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  .image-preview p {
+    color: rgb(204 204 204);
   }
 
   .editor-empty-state {

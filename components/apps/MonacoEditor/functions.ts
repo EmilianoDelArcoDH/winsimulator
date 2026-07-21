@@ -6,6 +6,22 @@ import {
 import { monacoExtensions } from "components/apps/MonacoEditor/extensions";
 import { DEFAULT_TEXT_FILE_SAVE_PATH } from "utils/constants";
 
+const IMAGE_EXTENSIONS = new Set([
+  ".avif",
+  ".bmp",
+  ".gif",
+  ".heic",
+  ".ico",
+  ".jpeg",
+  ".jpg",
+  ".png",
+  ".svg",
+  ".webp",
+]);
+
+export const isImageFile = (url: string): boolean =>
+  IMAGE_EXTENSIONS.has(url.slice(url.lastIndexOf(".")).toLowerCase());
+
 export const detectLanguage = (ext: string): string => {
   const extension = customExtensionLanguages[ext] || ext;
   const monaco = window.monaco;
