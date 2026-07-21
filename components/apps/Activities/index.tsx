@@ -48,6 +48,7 @@ type FormField = {
 type WorkspaceSeedFile = {
   content: string;
   path: string;
+  source?: string;
 };
 
 type WorkspaceSeed = {
@@ -278,6 +279,7 @@ const resolveWorkspaceSeed = (
     .map((entry) => ({
       content: asString(entry.content),
       path: normalizeWorkspacePath(asString(entry.path)),
+      source: asString(entry.source) || undefined,
     }))
     .filter((entry) => Boolean(entry.path)) as WorkspaceSeedFile[];
   const folders = asStringArray(workspace.folders)
@@ -490,9 +492,25 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
         );
 
         await Promise.all(
-          workspaceSeed.files.map(({ content, path }) =>
-            writeFile(path, content, workspaceSeed.overwriteFiles)
-          )
+          workspaceSeed.files.map(async ({ content, path, source }) => {
+            let fileContent: Buffer | string = content;
+
+            if (source) {
+              const response = await fetch(source);
+
+              if (!response.ok) {
+                throw new Error(`Unable to load workspace asset: ${source}`);
+              }
+
+              fileContent = Buffer.from(await response.arrayBuffer());
+            }
+
+            return writeFile(
+              path,
+              fileContent,
+              workspaceSeed.overwriteFiles
+            );
+          })
         );
 
         if (workspaceSeed.git?.initialCommit && fs) {
