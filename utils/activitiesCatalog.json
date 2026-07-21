@@ -2402,14 +2402,12 @@
             "scenario": "Ya con el proyecto listo, publica el sitio con Pages simulado desde la terminal de Visual Studio Code.",
             "instructions": [
               "Abre la carpeta del proyecto en Visual Studio Code.",
+              "Puedes personalizar la imagen editando y guardando index.html: usa una URL en el atributo src o sube un archivo de imagen a la carpeta img y referencia su nombre.",
               "En la terminal, ejecuta pages publish mi-sitio.",
               "Cuando se abra el navegador interno, copia la URL publica en /Users/Public/Desktop/pages-c01-a03/url-publica.txt y guardala."
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/pages-c01-a03",
-              "editablePaths": [
-                "/Users/Public/Desktop/pages-c01-a03/url-publica.txt"
-              ],
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
@@ -2421,19 +2419,19 @@
               "files": [
                 {
                   "path": "/Users/Public/Desktop/pages-c01-a03/index.html",
-                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Mi sitio publicado</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <h1>Portfolio</h1>\n    <img src=\"img/logo.png\" alt=\"Logo\" />\n    <script src=\"js/app.js\"></script>\n  </body>\n</html>\n"
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Mi sitio publicado</title>\n    <link rel=\"stylesheet\" href=\"css/estilos.css\" />\n  </head>\n  <body>\n    <h1>Portfolio</h1>\n    <img src=\"img/perro.jpg\" alt=\"Perro pug\" />\n    <script src=\"js/app.js\"></script>\n  </body>\n</html>\n"
                 },
                 {
                   "path": "/Users/Public/Desktop/pages-c01-a03/css/estilos.css",
-                  "content": "body { color: #111; }\n"
+                  "content": "body { color: #111; font-family: sans-serif; }\nimg { display: block; height: auto; max-width: 100%; }\n"
                 },
                 {
                   "path": "/Users/Public/Desktop/pages-c01-a03/js/app.js",
                   "content": "console.log('pages publish');\n"
                 },
                 {
-                  "path": "/Users/Public/Desktop/pages-c01-a03/img/logo.png",
-                  "content": "placeholder-logo\n"
+                  "path": "/Users/Public/Desktop/pages-c01-a03/img/perro.jpg",
+                  "source": "/activity-assets/sch_pages_c01_a03/perro.jpg"
                 },
                 {
                   "path": "/Users/Public/Desktop/pages-c01-a03/url-publica.txt",
