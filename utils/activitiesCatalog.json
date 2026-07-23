@@ -657,10 +657,9 @@
                 "type": "REPO_STATE",
                 "target": "repo",
                 "rules": {
-                  "stagedIncludes": ["index.html"],
                   "stagedExcludes": ["style.css"]
                 },
-                "messageOk": "Staging correcto: solo index.html.",
+                "messageOk": "No incluiste style.css en staging.",
                 "messageFail": "Staging incorrecto: no debe entrar style.css."
               },
               {

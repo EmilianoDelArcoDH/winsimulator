@@ -90,6 +90,51 @@ describe("activityRuntime virtual Git integration", () => {
     expect(validateActivity(activityId, "es").completed).toBe(true);
   });
 
+  test("the three Git states activity accepts the normal post-commit empty staging area", () => {
+    const activityId = "sch_git_c02_a02";
+
+    [
+      {
+        content: "<h1>Contenido actualizado</h1>",
+        path: "/miProyecto/index.html",
+        type: "fileSaved" as const,
+      },
+      {
+        content: "body { color: #222; }",
+        path: "/miProyecto/style.css",
+        type: "fileSaved" as const,
+      },
+    ].forEach((event) => trackActivityEvent({ activityId, ...event }));
+
+    [
+      "git status",
+      "git add index.html",
+      "git status",
+      'git commit -m "Actualiza contenido principal"',
+    ].forEach((command) =>
+      trackActivityEvent({
+        activityId,
+        command,
+        cwd: "/miProyecto",
+        type: "commandExecuted",
+      })
+    );
+
+    const result = validateActivity(activityId, "es");
+    const telemetry = JSON.parse(
+      window.localStorage.getItem(`winsim_activity_telemetry_${activityId}`) ||
+        "{}"
+    ) as Record<string, any>;
+
+    expect(telemetry.virtualRepo.staged).toEqual([]);
+    expect(
+      result.results.find(
+        ({ checkId }) => checkId === "c02_a02_not_added_other"
+      )?.passed
+    ).toBe(true);
+    expect(result.completed).toBe(true);
+  });
+
   test("the first local repository activity starts from Desktop without seeded files", () => {
     const activity = getActivityById("sch_git_c02_a01", "es");
 
