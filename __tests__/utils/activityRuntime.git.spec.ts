@@ -227,6 +227,105 @@ describe("activityRuntime virtual Git integration", () => {
     expect(validateActivity(activityId, "es").completed).toBe(true);
   });
 
+  test("the git log activity starts with a readable commit", () => {
+    const activityId = "sch_git_c03_a01";
+    const activity = getActivityById(activityId, "es");
+
+    expect(activity?.data.workspace).toMatchObject({
+      git: { initialCommit: true },
+      rootPath: "/Users/Public/Desktop/repo",
+    });
+
+    trackActivityEvent({
+      activityId,
+      command: "git log",
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    const telemetry = JSON.parse(
+      window.localStorage.getItem(`winsim_activity_telemetry_${activityId}`) ||
+        "{}"
+    ) as Record<string, any>;
+
+    const commitMessage = telemetry.virtualRepo.commits.at(-1)
+      .message as string;
+
+    expect(commitMessage.length).toBeGreaterThan(10);
+    saveActivityAnswers(activityId, {
+      author: "user",
+      message: commitMessage,
+    });
+
+    expect(validateActivity(activityId, "es").completed).toBe(true);
+  });
+
+  test("the git diff activity can be completed from its seeded workspace", () => {
+    const activityId = "sch_git_c03_a03";
+    const changedContent =
+      "<!doctype html>\n<html><body><h1>Título actualizado</h1></body></html>\n";
+
+    trackActivityEvent({
+      activityId,
+      content: changedContent,
+      path: "/Users/Public/Desktop/repo/index.html",
+      type: "fileSaved",
+    });
+    trackActivityEvent({
+      activityId,
+      command: "git diff",
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      command: "git add index.html",
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      command: 'git commit -m "Actualiza título principal"',
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    saveActivityAnswers(activityId, {
+      linea: "+<html><body><h1>Título actualizado</h1></body></html>",
+    });
+
+    expect(validateActivity(activityId, "es").completed).toBe(true);
+  });
+
+  test("the git show activity starts with a culprit commit to inspect", () => {
+    const activityId = "sch_git_c03_a04";
+
+    trackActivityEvent({
+      activityId,
+      command: "git log --oneline",
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+
+    const telemetry = JSON.parse(
+      window.localStorage.getItem(`winsim_activity_telemetry_${activityId}`) ||
+        "{}"
+    ) as Record<string, any>;
+    const culpritHash = telemetry.virtualRepo.commits.at(-1).id as string;
+
+    trackActivityEvent({
+      activityId,
+      command: `git show ${culpritHash.slice(0, 7)}`,
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    saveActivityAnswers(activityId, {
+      hash: culpritHash.slice(0, 7),
+      queCambio:
+        "El commit agregó un espaciado problemático al título principal.",
+    });
+
+    expect(validateActivity(activityId, "es").completed).toBe(true);
+  });
+
   test("the first local repository activity starts from Desktop without seeded files", () => {
     const activity = getActivityById("sch_git_c02_a01", "es");
 
