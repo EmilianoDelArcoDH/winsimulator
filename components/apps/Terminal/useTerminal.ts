@@ -106,6 +106,19 @@ const useTerminal = ({
       terminal.loadAddon(newLocalEcho);
       terminal.loadAddon(newFitAddon);
       terminal.open(containerRef.current);
+      terminal.attachCustomKeyEventHandler((event) => {
+        const isCopyShortcut =
+          event.code === "KeyC" && (event.ctrlKey || event.metaKey);
+        const textSelection = terminal.getSelection();
+
+        if (event.type === "keydown" && isCopyShortcut && textSelection) {
+          navigator.clipboard?.writeText(textSelection);
+
+          return false;
+        }
+
+        return true;
+      });
       try {
         newFitAddon.fit();
       } catch {}

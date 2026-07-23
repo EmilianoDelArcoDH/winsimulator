@@ -909,13 +909,26 @@ const StyledMonacoEditor = styled.div`
 
     .terminal-history {
       color: rgb(212 212 212);
+      cursor: text;
       font-family: monospace;
       font-size: 12px;
       min-height: 0;
       overflow: auto;
       padding: 8px 10px;
+      user-select: text;
+      -webkit-touch-callout: default;
       white-space: pre-wrap;
       word-break: break-word;
+
+      * {
+        cursor: text;
+        user-select: text;
+      }
+
+      ::selection {
+        background: rgb(38 79 120);
+        color: #ffffff;
+      }
     }
 
     .terminal-line {

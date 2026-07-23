@@ -90,6 +90,143 @@ describe("activityRuntime virtual Git integration", () => {
     expect(validateActivity(activityId, "es").completed).toBe(true);
   });
 
+  test("the three Git states activity accepts the normal post-commit empty staging area", () => {
+    const activityId = "sch_git_c02_a02";
+
+    [
+      {
+        content: "<h1>Contenido actualizado</h1>",
+        path: "/miProyecto/index.html",
+        type: "fileSaved" as const,
+      },
+      {
+        content: "body { color: #222; }",
+        path: "/miProyecto/style.css",
+        type: "fileSaved" as const,
+      },
+    ].forEach((event) => trackActivityEvent({ activityId, ...event }));
+
+    [
+      "git status",
+      "git add index.html",
+      "git status",
+      'git commit -m "Actualiza contenido principal"',
+    ].forEach((command) =>
+      trackActivityEvent({
+        activityId,
+        command,
+        cwd: "/miProyecto",
+        type: "commandExecuted",
+      })
+    );
+
+    const result = validateActivity(activityId, "es");
+    const telemetry = JSON.parse(
+      window.localStorage.getItem(`winsim_activity_telemetry_${activityId}`) ||
+        "{}"
+    ) as Record<string, any>;
+
+    expect(telemetry.virtualRepo.staged).toEqual([]);
+    expect(
+      result.results.find(
+        ({ checkId }) => checkId === "c02_a02_not_added_other"
+      )?.passed
+    ).toBe(true);
+    expect(result.completed).toBe(true);
+  });
+
+  test("the three Git states activity rejects adding style.css explicitly", () => {
+    const activityId = "sch_git_c02_a02";
+
+    trackActivityEvent({
+      activityId,
+      command: "git add style.css",
+      cwd: "/miProyecto",
+      type: "commandExecuted",
+    });
+
+    const result = validateActivity(activityId, "es");
+
+    expect(
+      result.results.find(
+        ({ checkId }) => checkId === "c02_a02_not_added_other"
+      )?.passed
+    ).toBe(false);
+  });
+
+  test("the oneline history activity seeds a repository and requires two new commits", () => {
+    const activityId = "sch_git_c03_a02";
+    const activity = getActivityById(activityId, "es");
+
+    expect(activity?.data.form).toEqual([
+      { id: "commit1", label: "Primer commit (hash + mensaje)" },
+      { id: "commit2", label: "Segundo commit (hash + mensaje)" },
+    ]);
+    expect(activity?.data.workspace).toMatchObject({
+      git: { initialCommit: true },
+      resetOnEnter: true,
+      rootPath: "/Users/Public/Desktop/repo",
+    });
+    expect(
+      (activity?.data.workspace as { files: unknown[] }).files
+    ).toHaveLength(3);
+
+    trackActivityEvent({
+      activityId,
+      command: "cd repo",
+      cwd: "/Users/Public/Desktop",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      content: "<h1>Primer cambio</h1>",
+      path: "/Users/Public/Desktop/repo/index.html",
+      type: "fileSaved",
+    });
+    trackActivityEvent({
+      activityId,
+      command: "git add index.html",
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      command: 'git commit -m "Actualiza contenido principal"',
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      content: "body { color: #222; }",
+      path: "/Users/Public/Desktop/repo/style.css",
+      type: "fileSaved",
+    });
+    trackActivityEvent({
+      activityId,
+      command: "git add style.css",
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      command: 'git commit -m "Mejora estilos principales"',
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      command: "git log --oneline",
+      cwd: "/Users/Public/Desktop/repo",
+      type: "commandExecuted",
+    });
+    saveActivityAnswers(activityId, {
+      commit1: "abcdef1 Mejora estilos principales",
+      commit2: "1234567 Actualiza contenido principal",
+    });
+
+    expect(validateActivity(activityId, "es").completed).toBe(true);
+  });
+
   test("the first local repository activity starts from Desktop without seeded files", () => {
     const activity = getActivityById("sch_git_c02_a01", "es");
 

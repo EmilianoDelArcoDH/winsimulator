@@ -16,6 +16,12 @@ const StyledTerminal = styled.div`
   }
 
   .xterm-screen {
+    cursor: text;
+
+    canvas {
+      cursor: text;
+    }
+
     .xterm-rows {
       .xterm-cursor-underline {
         border-bottom-color: #f3f3f3 !important;
