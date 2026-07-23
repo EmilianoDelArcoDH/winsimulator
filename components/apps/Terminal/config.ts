@@ -15,6 +15,8 @@ export const config: ITerminalOptions & { cols: number; rows: number } = {
   theme: {
     background: processDirectory.Terminal.backgroundColor,
     foreground: "rgb(204, 204, 204)",
+    selectionBackground: "rgb(38, 79, 120)",
+    selectionForeground: "rgb(255, 255, 255)",
   },
 };
 

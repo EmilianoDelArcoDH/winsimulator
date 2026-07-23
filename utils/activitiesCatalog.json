@@ -654,12 +654,12 @@
               },
               {
                 "checkId": "c02_a02_not_added_other",
-                "type": "REPO_STATE",
-                "target": "repo",
+                "type": "TERMINAL_WARNING_IF_MATCH",
+                "target": "commands",
                 "rules": {
-                  "stagedExcludes": ["style.css"]
+                  "pattern": "^\\s*git\\s+add\\s+(?:\\.|-A|--all)(?:\\s|$)|^\\s*git\\s+add\\s+.*\\bstyle\\.css\\b"
                 },
-                "messageOk": "No incluiste style.css en staging.",
+                "messageOk": "Preparaste solamente index.html.",
                 "messageFail": "Staging incorrecto: no debe entrar style.css."
               },
               {
@@ -947,18 +947,45 @@
           "data": {
             "scenario": "Creá al menos dos commits y luego revisá el historial resumido.",
             "instructions": [
-              "Accedé a la carpeta del proyecto con: cd /repo",
+              "Accedé a la carpeta del proyecto con: cd repo",
               "Modificá archivos desde Visual Studio Code (index.html, style.css o app.js).",
               "Hacé git add + git commit (al menos DOS commits con mensajes claros).",
               "Ejecutá: git log --oneline",
               "Copiá exactamente las primeras dos líneas (hash + mensaje)."
             ],
+            "form": [
+              {
+                "id": "commit1",
+                "label": "Primer commit (hash + mensaje)"
+              },
+              {
+                "id": "commit2",
+                "label": "Segundo commit (hash + mensaje)"
+              }
+            ],
             "workspace": {
-              "rootPath": "/repo",
+              "rootPath": "/Users/Public/Desktop/repo",
               "openInVscode": true,
               "overwriteFiles": true,
-              "resetOnEnter": false,
-              "files": []
+              "resetOnEnter": true,
+              "git": {
+                "initialCommit": true,
+                "message": "Proyecto base para revisar el historial"
+              },
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/repo/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <title>Historial resumido</title>\n    <link rel=\"stylesheet\" href=\"style.css\" />\n  </head>\n  <body>\n    <h1>Mi proyecto Git</h1>\n    <script src=\"app.js\"></script>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/repo/style.css",
+                  "content": "body {\n  font-family: sans-serif;\n  margin: 0;\n  padding: 24px;\n}\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/repo/app.js",
+                  "content": "console.log('Actividad revisar el historial');\n"
+                }
+              ]
             }
           },
           "validation": {
@@ -967,8 +994,13 @@
                 "checkId": "c03_a02_cd_repo",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
-                "rules": { "mustInclude": ["cd /repo", "cd repo"] },
-                "messageFail": "Primero accedé a la carpeta del proyecto con: cd /repo"
+                "rules": {
+                  "mustIncludeAny": [
+                    "cd repo",
+                    "cd /Users/Public/Desktop/repo"
+                  ]
+                },
+                "messageFail": "Primero accedé a la carpeta del proyecto con: cd repo"
               },
               {
                 "checkId": "c03_a02_used_oneline",
@@ -981,20 +1013,20 @@
                 "checkId": "c03_a02_at_least_two_commits",
                 "type": "REPO_STATE",
                 "target": "repo",
-                "rules": { "hasAtLeastCommits": 2 },
+                "rules": { "hasAtLeastCommits": 3 },
                 "messageFail": "Necesitás hacer al menos 2 commits para esta actividad."
               },
               {
                 "checkId": "c03_a02_hash_format_1",
                 "type": "TEXT_REGEX",
-                "target": "form.commit1",
+                "target": "commit1",
                 "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
                 "messageFail": "Formato incorrecto. Debe ser: <hash> <mensaje>"
               },
               {
                 "checkId": "c03_a02_hash_format_2",
                 "type": "TEXT_REGEX",
-                "target": "form.commit2",
+                "target": "commit2",
                 "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
                 "messageFail": "Formato incorrecto. Debe ser: <hash> <mensaje>"
               }
