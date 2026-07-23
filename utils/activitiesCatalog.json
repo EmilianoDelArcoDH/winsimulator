@@ -1493,11 +1493,13 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Cloná un laboratorio remoto simulado y entrá al proyecto clonado.",
+            "scenario": "Desde la carpeta /git-labs, cloná el laboratorio remoto simulado, entrá al proyecto creado y comprobá que contiene styles.css.",
             "instructions": [
-              "Ejecutá: git clone https://github.com/winsim-labs/css-pull-lab.git",
-              "Entrá al repo: cd css-pull-lab",
-              "Verificá que exista styles.css con: ls"
+              "La terminal comienza en /git-labs. No crees la carpeta css-pull-lab manualmente.",
+              "Cloná el proyecto con: git clone https://github.com/winsim-labs/css-pull-lab.git",
+              "Cuando el clonado termine, entrá con: cd css-pull-lab",
+              "Ya dentro del repositorio, ejecutá: ls",
+              "Comprobá que la lista incluya styles.css y luego presioná Validar."
             ],
             "workspace": {
               "rootPath": "/git-labs",
@@ -1544,6 +1546,17 @@
                 },
                 "messageOk": "Orden correcto: primero clone y luego cd.",
                 "messageFail": "Primero hacé clone y después entrá al repo."
+              },
+              {
+                "checkId": "c04_a05_list_files",
+                "type": "TERMINAL_COMMAND_EXECUTED_AFTER",
+                "target": "commands",
+                "rules": {
+                  "afterMustIncludeAny": ["cd css-pull-lab"],
+                  "mustInclude": ["ls"]
+                },
+                "messageOk": "Revisaste los archivos del repositorio.",
+                "messageFail": "Dentro de css-pull-lab, ejecutá ls para comprobar que existe styles.css."
               },
               {
                 "checkId": "c04_a05_remote_present",

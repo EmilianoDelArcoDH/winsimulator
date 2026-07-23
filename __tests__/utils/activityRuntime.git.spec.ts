@@ -49,6 +49,41 @@ describe("activityRuntime virtual Git integration", () => {
     );
   });
 
+  test("the clone lab records origin and completes the expected workflow", () => {
+    const activityId = "sch_git_c04_a05";
+
+    [
+      [
+        "git clone https://github.com/winsim-labs/css-pull-lab.git",
+        "/git-labs",
+      ],
+      ["cd css-pull-lab", "/git-labs"],
+      ["ls", "/git-labs/css-pull-lab"],
+    ].forEach(([command, cwd]) =>
+      trackActivityEvent({
+        activityId,
+        command,
+        cwd,
+        type: "commandExecuted",
+      })
+    );
+
+    const result = validateActivity(activityId, "es");
+    const telemetry = JSON.parse(
+      window.localStorage.getItem(`winsim_activity_telemetry_${activityId}`) ||
+        "{}"
+    ) as Record<string, any>;
+
+    expect(telemetry.virtualRepo).toMatchObject({
+      initialized: true,
+      remotes: {
+        origin: "https://github.com/winsim-labs/css-pull-lab.git",
+      },
+      rootPath: "git-labs/css-pull-lab",
+    });
+    expect(result.completed).toBe(true);
+  });
+
   test("a legacy catalog activity still completes", () => {
     const activityId = "sch_git_c02_a01";
     const setupCommands = [
