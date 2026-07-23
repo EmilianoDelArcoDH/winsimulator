@@ -345,6 +345,35 @@ export const gitRemoteAdd = (
   return next;
 };
 
+export const gitClone = (
+  repo: VirtualGitRepository,
+  source: string,
+  destination: string,
+  cwd: string
+): VirtualGitRepository => {
+  if (!source) {
+    return withError(repo, "fatal: repository URL required");
+  }
+
+  const sourceName =
+    source
+      .replace(/\/+$/, "")
+      .split("/")
+      .pop()
+      ?.replace(/\.git$/, "") || "repository";
+  const destinationName = normalizePath(destination || sourceName);
+  const rootPath = normalizePath(
+    [normalizePath(cwd), destinationName].filter(Boolean).join("/")
+  );
+  const next = createInitialGitRepository();
+
+  next.initialized = true;
+  next.remotes.origin = source;
+  next.rootPath = rootPath;
+
+  return next;
+};
+
 export const gitPush = (
   repo: VirtualGitRepository,
   remote: string,
@@ -389,6 +418,8 @@ export const applyGitCommand = (
 
       return next;
     }
+    case "clone":
+      return gitClone(repo, tokens[2] || "", tokens[3] || "", cwd);
     case "add":
       return gitAdd(repo, tokens.slice(2).join(" ") || ".", files);
     case "commit":
