@@ -519,9 +519,7 @@ const resolveExpectedRepoValue = (
       .map(({ command }) => command)
       .find((command) => normalize(command).startsWith("git show "));
 
-    if (!showCommand) return "";
-
-    return showCommand.split(/\s+/)[2] || "";
+    return showCommand?.split(/\s+/)[2] || "";
   }
 
   return "";
@@ -946,9 +944,12 @@ const evaluateCheck = (
       const key = check.target.replace("form.", "");
       const answerValue = asString(answers[key]);
       const expected = resolveExpectedRepoValue(repoPath, telemetry);
+      const normalizedAnswer = normalize(answerValue);
+      const normalizedExpected = normalize(expected);
       const passed = normalizeHash
-        ? normalize(answerValue).startsWith(normalize(expected))
-        : normalize(answerValue) === normalize(expected);
+        ? normalizedAnswer.length >= 7 &&
+          normalizedExpected.startsWith(normalizedAnswer)
+        : normalizedAnswer === normalizedExpected;
 
       return {
         checkId: check.checkId,
@@ -959,8 +960,13 @@ const evaluateCheck = (
 
     case "ANSWER_INCLUDES_REPO_DIFF_SNIPPET": {
       const answerText = asString(answers[check.target.replace("form.", "")]);
+      const snippet = answerText.trim().replace(/^\+\s?/, "");
       const passed =
-        hasCommand(commands, "git diff") && normalize(answerText).length > 1;
+        hasCommand(commands, "git diff") &&
+        normalize(snippet).length > 1 &&
+        Object.values(fileContents).some((content) =>
+          normalize(content).includes(normalize(snippet))
+        );
 
       return {
         checkId: check.checkId,

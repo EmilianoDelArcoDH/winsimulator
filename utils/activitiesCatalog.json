@@ -877,6 +877,11 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
+            "instructions": [
+              "Accedé a la carpeta del proyecto con: cd repo",
+              "Ejecutá git log.",
+              "Copiá el nombre del autor y el mensaje del último commit."
+            ],
             "expected": {
               "lastCommit": {
                 "author": "__FROM_REPO__",
@@ -888,21 +893,25 @@
               { "id": "message", "label": "Mensaje del último commit" }
             ],
             "workspace": {
-              "rootPath": "/repo",
+              "rootPath": "/Users/Public/Desktop/repo",
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
+              "git": {
+                "initialCommit": true,
+                "message": "Crea proyecto para revisar el historial"
+              },
               "files": [
                 {
-                  "path": "/repo/index.html",
+                  "path": "/Users/Public/Desktop/repo/index.html",
                   "content": "<!doctype html>\n<html><body><h1>Historial de cambios</h1></body></html>\n"
                 },
                 {
-                  "path": "/repo/style.css",
+                  "path": "/Users/Public/Desktop/repo/style.css",
                   "content": "h1 { color: #0ea5e9; }\n"
                 },
                 {
-                  "path": "/repo/app.js",
+                  "path": "/Users/Public/Desktop/repo/app.js",
                   "content": "console.log('Actividad c03_a01');\n"
                 }
               ]
@@ -921,7 +930,7 @@
               {
                 "checkId": "c03_a01_answer_author",
                 "type": "ANSWER_EQUALS_REPO_VALUE",
-                "target": "form.author",
+                "target": "author",
                 "rules": { "repoPath": "repo.lastCommit.author" },
                 "messageOk": "Autor correcto.",
                 "messageFail": "Autor incorrecto. Revisá el output de git log."
@@ -929,7 +938,7 @@
               {
                 "checkId": "c03_a01_answer_message",
                 "type": "ANSWER_EQUALS_REPO_VALUE",
-                "target": "form.message",
+                "target": "message",
                 "rules": { "repoPath": "repo.lastCommit.message" },
                 "messageOk": "Mensaje correcto.",
                 "messageFail": "Mensaje incorrecto. Revisá el output de git log."
@@ -1041,25 +1050,35 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
+            "instructions": [
+              "Accedé a la carpeta del proyecto con: cd repo",
+              "Modificá una línea de index.html y guardá el archivo.",
+              "Ejecutá git diff y copiá una línea agregada que comience con +.",
+              "Después ejecutá git add index.html y git commit -m \"Actualiza título principal\"."
+            ],
             "form": [
               { "id": "linea", "label": "¿Qué línea cambió? (copiala)" }
             ],
             "workspace": {
-              "rootPath": "/repo",
+              "rootPath": "/Users/Public/Desktop/repo",
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
+              "git": {
+                "initialCommit": true,
+                "message": "Crea base para comparar cambios"
+              },
               "files": [
                 {
-                  "path": "/repo/index.html",
+                  "path": "/Users/Public/Desktop/repo/index.html",
                   "content": "<!doctype html>\n<html><body><h1>Diff practice</h1></body></html>\n"
                 },
                 {
-                  "path": "/repo/style.css",
+                  "path": "/Users/Public/Desktop/repo/style.css",
                   "content": "h1 { color: #1f2937; }\n"
                 },
                 {
-                  "path": "/repo/app.js",
+                  "path": "/Users/Public/Desktop/repo/app.js",
                   "content": "console.log('Actividad c03_a03');\n"
                 }
               ]
@@ -1086,7 +1105,7 @@
               {
                 "checkId": "c03_a03_line_matches_expected",
                 "type": "ANSWER_INCLUDES_REPO_DIFF_SNIPPET",
-                "target": "form.linea",
+                "target": "linea",
                 "rules": { "repoPath": "repo.currentDiff.expectedLine" },
                 "messageOk": "Línea correcta.",
                 "messageFail": "No coincide la línea. Revisá el output de git diff."
@@ -1102,26 +1121,36 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
+            "instructions": [
+              "Accedé a la carpeta del proyecto con: cd repo",
+              "Ejecutá git log --oneline para encontrar el commit problemático.",
+              "Inspeccioná el commit con git show <hash>.",
+              "Pegá el hash inspeccionado y explicá qué cambió."
+            ],
             "form": [
               { "id": "hash", "label": "Pegá el hash del commit culpable" },
               { "id": "queCambio", "label": "¿Qué cambió? (2 ideas)" }
             ],
             "workspace": {
-              "rootPath": "/repo",
+              "rootPath": "/Users/Public/Desktop/repo",
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
+              "git": {
+                "initialCommit": true,
+                "message": "Introduce espaciado problemático en el título"
+              },
               "files": [
                 {
-                  "path": "/repo/index.html",
+                  "path": "/Users/Public/Desktop/repo/index.html",
                   "content": "<!doctype html>\n<html><body><h1>Debug historico</h1></body></html>\n"
                 },
                 {
-                  "path": "/repo/style.css",
+                  "path": "/Users/Public/Desktop/repo/style.css",
                   "content": "h1 { letter-spacing: 0.01em; }\n"
                 },
                 {
-                  "path": "/repo/app.js",
+                  "path": "/Users/Public/Desktop/repo/app.js",
                   "content": "console.log('Actividad c03_a04');\n"
                 }
               ]
@@ -1148,7 +1177,7 @@
               {
                 "checkId": "c03_a04_hash_correct",
                 "type": "ANSWER_EQUALS_REPO_VALUE",
-                "target": "form.hash",
+                "target": "hash",
                 "rules": {
                   "repoPath": "repo.exercise.culpritHash",
                   "normalizeHash": true
@@ -1159,7 +1188,7 @@
               {
                 "checkId": "c03_a04_explanation_min",
                 "type": "TEXT_MIN_LENGTH",
-                "target": "form.queCambio",
+                "target": "queCambio",
                 "rules": { "minLength": 30 },
                 "messageOk": "Explicación completa.",
                 "messageFail": "Explicá un poco más qué cambió (mínimo 30 caracteres)."

@@ -29,12 +29,14 @@ export const commands: Record<string, string> = {
   checkout: "Checkout a branch",
   clone: "Clone a repository",
   commit: "Create a new commit",
+  diff: "Show changes between the working tree and the last commit",
   fetch: "Fetch commits from a remote repository",
   init: "Initialize a new repository",
   log: "Get commit descriptions from the git history",
   merge: "Merge two branches",
   pull: "Fetch and merge commits from a remote repository",
   push: "Push a branch or tag",
+  show: "Show a commit and its changed files",
   status: "Tell whether a file has been changed",
   tag: "Create a lightweight tag",
   version: "Return the version number of isomorphic-git",
@@ -177,6 +179,27 @@ const printCommit = (
   );
   printLn("");
   printLn(`    ${entry.commit.message.trim()}`);
+};
+
+const printFileDiff = (
+  printLn: (message: string) => void,
+  filepath: string,
+  previousContent: string,
+  nextContent: string
+): void => {
+  printLn(`diff --git a/${filepath} b/${filepath}`);
+  printLn(previousContent ? `--- a/${filepath}` : "--- /dev/null");
+  printLn(nextContent ? `+++ b/${filepath}` : "+++ /dev/null");
+  printLn("@@");
+
+  previousContent
+    .split("\n")
+    .filter(Boolean)
+    .forEach((line) => printLn(`-${line}`));
+  nextContent
+    .split("\n")
+    .filter(Boolean)
+    .forEach((line) => printLn(`+${line}`));
 };
 
 const ensureRepoRoot = async (
@@ -354,6 +377,50 @@ const processCliGit = async (
       return true;
     }
 
+    case "diff": {
+      const repoRoot = await repoCommand();
+
+      if (!repoRoot) return true;
+
+      const matrix = (await git.statusMatrix({
+        dir: repoRoot,
+        fs,
+      })) as StatusMatrixRow[];
+      const changedFiles = matrix.filter(
+        ([, head, workdir]) => head !== workdir
+      );
+
+      for (const [filepath, head, workdir] of changedFiles) {
+        let previousContent = "";
+        let nextContent = "";
+
+        if (head !== 0) {
+          const { blob } = await git.readBlob({
+            dir: repoRoot,
+            filepath,
+            fs,
+            oid: "HEAD",
+          });
+
+          previousContent = new TextDecoder().decode(blob);
+        }
+
+        if (workdir !== 0) {
+          nextContent = await new Promise<string>((resolve, reject) => {
+            fs.readFile(joinPath(repoRoot, filepath), (error, content) =>
+              error
+                ? reject(error)
+                : resolve(content?.toString("utf8") || "")
+            );
+          });
+        }
+
+        printFileDiff(printLn, filepath, previousContent, nextContent);
+      }
+
+      return true;
+    }
+
     case "log": {
       const repoRoot = await repoCommand();
 
@@ -377,6 +444,48 @@ const processCliGit = async (
           printLn("");
         }
       });
+
+      return true;
+    }
+
+    case "show": {
+      const repoRoot = await repoCommand();
+
+      if (!repoRoot) return true;
+
+      const requestedOid = args.find((arg) => !arg.startsWith("-"));
+
+      if (!requestedOid) {
+        printLn("usage: git show <hash>");
+        return true;
+      }
+
+      const oid = await git.expandOid({
+        dir: repoRoot,
+        fs,
+        oid: requestedOid,
+      });
+      const entry = await git.readCommit({ dir: repoRoot, fs, oid });
+
+      printCommit(printLn, entry);
+
+      const filepaths = await git.listFiles({ dir: repoRoot, fs, ref: oid });
+
+      for (const filepath of filepaths) {
+        const { blob } = await git.readBlob({
+          dir: repoRoot,
+          filepath,
+          fs,
+          oid,
+        });
+
+        printFileDiff(
+          printLn,
+          filepath,
+          "",
+          new TextDecoder().decode(blob)
+        );
+      }
 
       return true;
     }
