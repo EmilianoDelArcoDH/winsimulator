@@ -18,9 +18,14 @@
           "mode": "classify",
           "ui": {
             "submitLabel": "Validar",
-            "retryLabel": "Reintentar"
+            "retryLabel": "Borrar respuestas y reintentar"
           },
           "data": {
+            "instructions": [
+              "Leé cada situación y elegí en su menú si corresponde a Control de versiones o a Copias/caos.",
+              "Escribí dos ejemplos propios relacionados con Git, versiones, cambios, copias o trabajo colaborativo. No necesitás usar palabras exactas.",
+              "Tus elecciones y textos se guardan automáticamente en este dispositivo."
+            ],
             "columns": ["Control de versiones", "Copias/caos"],
             "cards": [
               {
@@ -91,19 +96,34 @@
                 "messageFail": "Escribí 2 justificaciones, con al menos 20 caracteres cada una."
               },
               {
-                "checkId": "c01_a01_keywords",
-                "type": "TEXT_KEYWORDS",
+                "checkId": "c01_a01_relevancia",
+                "type": "TEXT_LIST_RELEVANT",
                 "target": "justificacion",
                 "rules": {
-                  "mustIncludeAny": [
+                  "relevantTerms": [
+                    "git",
+                    "control de versiones",
                     "historia",
+                    "historial",
                     "version",
                     "cambio",
-                    "decisión"
+                    "decisión",
+                    "commit",
+                    "equipo",
+                    "amigo",
+                    "colabor",
+                    "proyecto",
+                    "archivo",
+                    "copia",
+                    "trabaj",
+                    "compar",
+                    "volver",
+                    "recuper",
+                    "autor"
                   ]
                 },
-                "messageOk": "Tus justificaciones reflejan el concepto.",
-                "messageFail": "Sumá idea de historia/versiones/cambios en tu justificación."
+                "messageOk": "Tus ejemplos se relacionan con el tema.",
+                "messageFail": "Relacioná cada ejemplo con Git, el trabajo en equipo, los cambios, las versiones o las copias. Podés expresarlo con tus propias palabras."
               }
             ]
           }
@@ -114,8 +134,17 @@
           "title": "Git vs GitHub",
           "objective": "Diferenciar herramienta (Git) de plataforma (GitHub).",
           "mode": "classify",
-          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "ui": {
+            "submitLabel": "Validar",
+            "retryLabel": "Borrar respuestas y reintentar"
+          },
           "data": {
+            "instructions": [
+              "Asigná una posición del 1 al 5 a cada cambio. El proyecto inicial debe quedar primero y la publicación estable, última.",
+              "Los tres cambios intermedios pueden estar en cualquier orden coherente: no hay una única respuesta correcta entre ellos.",
+              "Elegí uno de esos tres cambios y explicá qué parte concreta podría dejar de funcionar. Por ejemplo: «Al corregir el formulario podría fallar la validación de un campo».",
+              "Tus elecciones y el texto se guardan automáticamente."
+            ],
             "columns": ["Git", "GitHub"],
             "cards": [
               {
@@ -232,10 +261,11 @@
             "checks": [
               {
                 "checkId": "c01_a03_order_exact",
-                "type": "ORDER_EXACT",
+                "type": "ORDER_ENDPOINTS",
                 "target": "items",
+                "rules": { "first": "t1", "last": "t5" },
                 "messageOk": "Orden correcto.",
-                "messageFail": "El orden no refleja una historia coherente. Revisá la secuencia."
+                "messageFail": "El proyecto inicial debe ocupar la posición 1 y la publicación estable, la posición 5. Los cambios intermedios pueden ir en cualquier orden."
               },
               {
                 "checkId": "c01_a03_culpable_required",
@@ -335,9 +365,18 @@
           "title": "Conflicto no es “error”",
           "objective": "Identificar conflictos y elegir una estrategia de resolución.",
           "mode": "decision",
-          "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
+          "ui": {
+            "submitLabel": "Validar",
+            "retryLabel": "Borrar respuestas y reintentar"
+          },
           "data": {
-            "scenario": "Dos personas cambiaron la misma línea del título.",
+            "scenario": "Dos personas cambiaron la misma línea del título. No hay información suficiente para saber cuál versión es la correcta: resolver el conflicto puede requerir consultar al equipo y acordar el resultado.",
+            "instructions": [
+              "Marca la casilla para indicar que reconoces un conflicto.",
+              "Elige una estrategia. Cualquiera de las tres puede ser válida si explicas cómo decidirías o acordarías el resultado con el equipo.",
+              "Explica por qué tu estrategia permite resolver el conflicto. No necesitas repetir que dos personas cambiaron la misma línea.",
+              "Tus elecciones y el texto se guardan automáticamente."
+            ],
             "options": [
               { "id": "keepA", "label": "Me quedo con la versión A" },
               { "id": "keepB", "label": "Me quedo con la versión B" },
@@ -352,7 +391,7 @@
             },
             "freeText": {
               "id": "explicacion",
-              "label": "Explicá por qué esa resolución sirve para este conflicto (mínimo 40 caracteres).",
+              "label": "Explica por qué esa estrategia permite resolver el conflicto (mínimo 40 caracteres). Puedes mencionar una consulta o un acuerdo con el equipo.",
               "minLength": 40
             }
           },
@@ -362,15 +401,15 @@
                 "checkId": "c01_a04_checkbox",
                 "type": "BOOLEAN_TRUE",
                 "target": "detectoConflicto",
-                "messageOk": "Correcto: identificaste el conflicto.",
-                "messageFail": "Marcá la casilla indicando que identificás el conflicto."
+                "messageOk": "Correcto: detectaste el conflicto.",
+                "messageFail": "Marca la casilla para indicar que detectas el conflicto."
               },
               {
                 "checkId": "c01_a04_option_selected",
                 "type": "REQUIRED_SELECTION",
                 "target": "resolution",
-                "messageOk": "Elegiste una resolución.",
-                "messageFail": "Elegí una forma de resolver el conflicto."
+                "messageOk": "Seleccionaste una estrategia.",
+                "messageFail": "Elige una estrategia para resolver el conflicto."
               },
               {
                 "checkId": "c01_a04_text_min",
@@ -378,7 +417,7 @@
                 "target": "explicacion",
                 "rules": { "minLength": 40 },
                 "messageOk": "Explicación completa.",
-                "messageFail": "Explicá con más detalle por qué la estrategia elegida resuelve este conflicto."
+                "messageFail": "Explica con más detalle por qué la estrategia elegida permite resolver el conflicto."
               },
               {
                 "checkId": "c01_a04_text_aligned",
@@ -387,6 +426,16 @@
                 "rules": {
                   "selectionTarget": "resolution",
                   "commonAny": [
+                    "equipo",
+                    "hablar",
+                    "consult",
+                    "contact",
+                    "acord",
+                    "consenso",
+                    "correct",
+                    "decidir",
+                    "definir",
+                    "publicar",
                     "misma línea",
                     "misma linea",
                     "mismo título",
@@ -413,6 +462,9 @@
                   ],
                   "keywordsBySelection": {
                     "keepA": [
+                      "quedo con",
+                      "conservar",
+                      "mantener",
                       "versión a",
                       "version a",
                       "cambio a",
@@ -426,6 +478,9 @@
                       "opção a"
                     ],
                     "keepB": [
+                      "quedo con",
+                      "conservar",
+                      "mantener",
                       "versión b",
                       "version b",
                       "cambio b",
@@ -439,6 +494,7 @@
                       "opção b"
                     ],
                     "combine": [
+                      "combin",
                       "combinar",
                       "ambas ideas",
                       "integrar",
@@ -455,7 +511,7 @@
                   }
                 },
                 "messageOk": "La explicación se relaciona con el conflicto y la resolución elegida.",
-                "messageFail": "Explicá que dos personas cambiaron la misma línea y relacioná la respuesta con la estrategia elegida, usando tus palabras."
+                "messageFail": "Relaciona la explicación con la estrategia seleccionada e indica cómo llegarías a una decisión o acuerdo."
               }
             ]
           }
@@ -684,19 +740,23 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Con el proyecto web abierto en GitBash, hacé un commit con mensaje profesional sobre cambios en html/css/js.",
+            "scenario": "El proyecto /repo ya está abierto e inicializado. Modifica un archivo y crea un commit con un mensaje que indique concretamente qué cambiaste.",
             "instructions": [
-              "Trabajá dentro de /repo.",
-              "Prepará cambios del proyecto web con git add (evitá agregar basura).",
-              "Ejecutá git commit -m con un mensaje real, por ejemplo: git commit -m \"Actualiza estilos principales\".",
-              "Usá un mensaje de al menos 15 caracteres.",
-              "Empezá con: Agrega, Corrige, Elimina, Actualiza, Mejora o Refactoriza."
+              "La terminal integrada de VS Code y GitBash se abren en /repo y comparten el mismo repositorio.",
+              "Modifica index.html, style.css o app.js y guarda el archivo.",
+              "Prepara el archivo con git add y crea el commit con git commit -m.",
+              "Describe el cambio con un verbo y un elemento concreto. Por ejemplo: \"Corregido el h1\" o \"Actualiza el color del título\".",
+              "No se exige una cantidad específica de caracteres; evita únicamente mensajes genéricos como \"cambios\" o \"fix\"."
             ],
             "workspace": {
               "rootPath": "/repo",
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
+              "git": {
+                "initialCommit": true,
+                "message": "Crea proyecto web inicial"
+              },
               "files": [
                 {
                   "path": "/repo/index.html",
@@ -728,7 +788,7 @@
                 "Mejora",
                 "Refactoriza"
               ],
-              "minLength": 15
+              "minLength": 8
             }
           },
           "validation": {
@@ -748,14 +808,20 @@
                 "type": "COMMIT_MESSAGE_RULES",
                 "target": "repo.lastCommit.message",
                 "rules": {
-                  "minLength": 15,
+                  "minLength": 8,
                   "mustStartWithAny": [
                     "Agrega",
+                    "Agregado",
                     "Corrige",
+                    "Corregido",
                     "Elimina",
+                    "Eliminado",
                     "Actualiza",
+                    "Actualizado",
                     "Mejora",
-                    "Refactoriza"
+                    "Mejorado",
+                    "Refactoriza",
+                    "Refactorizado"
                   ],
                   "forbiddenExact": [
                     "cambios",
@@ -766,7 +832,7 @@
                   ]
                 },
                 "messageOk": "Mensaje de commit claro.",
-                "messageFail": "Tu mensaje debe ser específico, empezar con un verbo (Agrega/Corrige/...) y no ser genérico."
+                "messageFail": "Describe qué cambiaste con un verbo y un elemento concreto, por ejemplo: \"Corregido el h1\". Evita mensajes genéricos como \"cambios\" o \"fix\"."
               }
             ]
           }

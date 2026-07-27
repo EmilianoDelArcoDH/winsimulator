@@ -66,6 +66,7 @@ const EXACT_TEXT: Record<SessionLanguage, Record<string, string>> = {
     "No hay actividades cargadas.": "No activities loaded.",
     Posición: "Position",
     Reintentar: "Retry",
+    "Borrar respuestas y reintentar": "Clear answers and retry",
     Seleccionar: "Select",
     Validar: "Validate",
     Actualiza: "Update",
@@ -111,6 +112,12 @@ const EXACT_TEXT: Record<SessionLanguage, Record<string, string>> = {
       "Each member saves their own copy and later everything is merged however possible.",
     "Explicá 2 casos (mínimo 20 caracteres cada uno).":
       "Explain 2 cases (at least 20 characters each).",
+    "Leé cada situación y elegí en su menú si corresponde a Control de versiones o a Copias/caos.":
+      "Read each situation and use its menu to choose Version control or Copies/chaos.",
+    "Escribí dos ejemplos propios relacionados con Git, versiones, cambios, copias o trabajo colaborativo. No necesitás usar palabras exactas.":
+      "Write two examples related to Git, versions, changes, copies, or collaborative work. You do not need exact words.",
+    "Tus elecciones y textos se guardan automáticamente en este dispositivo.":
+      "Your choices and text are saved automatically on this device.",
     "Clasificación correcta.": "Correct classification.",
     "Revisá: algunas tarjetas quedaron en la columna equivocada.":
       "Review: some cards are in the wrong column.",
@@ -121,6 +128,19 @@ const EXACT_TEXT: Record<SessionLanguage, Record<string, string>> = {
       "Your justifications reflect the concept.",
     "Sumá idea de historia/versiones/cambios en tu justificación.":
       "Add an idea about history/versions/changes to your justification.",
+    "Tus ejemplos se relacionan con el tema.": "Your examples relate to the topic.",
+    "Relacioná cada ejemplo con Git, el trabajo en equipo, los cambios, las versiones o las copias. Podés expresarlo con tus propias palabras.":
+      "Relate each example to Git, teamwork, changes, versions, or copies. You can use your own words.",
+    "Asigná una posición del 1 al 5 a cada cambio. El proyecto inicial debe quedar primero y la publicación estable, última.":
+      "Assign each change a position from 1 to 5. The initial project must be first and the stable release last.",
+    "Los tres cambios intermedios pueden estar en cualquier orden coherente: no hay una única respuesta correcta entre ellos.":
+      "The three intermediate changes may appear in any coherent order; there is no single correct order among them.",
+    "Elegí uno de esos tres cambios y explicá qué parte concreta podría dejar de funcionar. Por ejemplo: «Al corregir el formulario podría fallar la validación de un campo».":
+      "Choose one of those three changes and explain what specific part could stop working. For example: “Fixing the form could break a field's validation.”",
+    "Tus elecciones y el texto se guardan automáticamente.":
+      "Your choices and text are saved automatically.",
+    "El proyecto inicial debe ocupar la posición 1 y la publicación estable, la posición 5. Los cambios intermedios pueden ir en cualquier orden.":
+      "The initial project must be in position 1 and the stable release in position 5. Intermediate changes may appear in any order.",
   },
   es: {},
   pt: {
@@ -134,6 +154,7 @@ const EXACT_TEXT: Record<SessionLanguage, Record<string, string>> = {
     "No hay actividades cargadas.": "Nenhuma atividade carregada.",
     Posición: "Posicao",
     Reintentar: "Tentar novamente",
+    "Borrar respuestas y reintentar": "Limpar respostas e tentar novamente",
     Seleccionar: "Selecionar",
     Validar: "Validar",
     Actualiza: "Atualiza",
@@ -179,6 +200,12 @@ const EXACT_TEXT: Record<SessionLanguage, Record<string, string>> = {
       "Cada integrante salva sua cópia e depois tudo é juntado como der.",
     "Explicá 2 casos (mínimo 20 caracteres cada uno).":
       "Explique 2 casos (mínimo de 20 caracteres cada um).",
+    "Leé cada situación y elegí en su menú si corresponde a Control de versiones o a Copias/caos.":
+      "Leia cada situação e use o menu para escolher Controle de versões ou Cópias/caos.",
+    "Escribí dos ejemplos propios relacionados con Git, versiones, cambios, copias o trabajo colaborativo. No necesitás usar palabras exactas.":
+      "Escreva dois exemplos relacionados a Git, versões, alterações, cópias ou trabalho colaborativo. Não é necessário usar palavras exatas.",
+    "Tus elecciones y textos se guardan automáticamente en este dispositivo.":
+      "Suas escolhas e textos são salvos automaticamente neste dispositivo.",
     "Clasificación correcta.": "Classificação correta.",
     "Revisá: algunas tarjetas quedaron en la columna equivocada.":
       "Revise: alguns cartões ficaram na coluna errada.",
@@ -189,6 +216,19 @@ const EXACT_TEXT: Record<SessionLanguage, Record<string, string>> = {
       "Suas justificativas refletem o conceito.",
     "Sumá idea de historia/versiones/cambios en tu justificación.":
       "Inclua uma ideia de histórico/versões/alterações na sua justificativa.",
+    "Tus ejemplos se relacionan con el tema.": "Seus exemplos estão relacionados ao tema.",
+    "Relacioná cada ejemplo con Git, el trabajo en equipo, los cambios, las versiones o las copias. Podés expresarlo con tus propias palabras.":
+      "Relacione cada exemplo ao Git, ao trabalho em equipe, às alterações, às versões ou às cópias. Você pode usar suas próprias palavras.",
+    "Asigná una posición del 1 al 5 a cada cambio. El proyecto inicial debe quedar primero y la publicación estable, última.":
+      "Atribua a cada alteração uma posição de 1 a 5. O projeto inicial deve ficar primeiro e a publicação estável por último.",
+    "Los tres cambios intermedios pueden estar en cualquier orden coherente: no hay una única respuesta correcta entre ellos.":
+      "As três alterações intermediárias podem aparecer em qualquer ordem coerente; não existe uma única ordem correta entre elas.",
+    "Elegí uno de esos tres cambios y explicá qué parte concreta podría dejar de funcionar. Por ejemplo: «Al corregir el formulario podría fallar la validación de un campo».":
+      "Escolha uma dessas três alterações e explique qual parte específica poderia parar de funcionar. Por exemplo: “Ao corrigir o formulário, a validação de um campo poderia falhar.”",
+    "Tus elecciones y el texto se guardan automáticamente.":
+      "Suas escolhas e o texto são salvos automaticamente.",
+    "El proyecto inicial debe ocupar la posición 1 y la publicación estable, la posición 5. Los cambios intermedios pueden ir en cualquier orden.":
+      "O projeto inicial deve ocupar a posição 1 e a publicação estável, a posição 5. As alterações intermediárias podem aparecer em qualquer ordem.",
   },
 };
 

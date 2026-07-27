@@ -842,9 +842,12 @@ const StyledMonacoEditor = styled.div`
       linear-gradient(45deg, rgb(38 38 38) 25%, transparent 25%),
       linear-gradient(-45deg, rgb(38 38 38) 25%, transparent 25%),
       linear-gradient(45deg, transparent 75%, rgb(38 38 38) 75%),
-      linear-gradient(-45deg, transparent 75%, rgb(38 38 38) 75%),
-      rgb(30 30 30);
-    background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+      linear-gradient(-45deg, transparent 75%, rgb(38 38 38) 75%), rgb(30 30 30);
+    background-position:
+      0 0,
+      0 8px,
+      8px -8px,
+      -8px 0;
     background-size: 16px 16px;
     display: flex;
     inset: 0;

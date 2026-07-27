@@ -6,15 +6,38 @@ import {
   useState,
   type KeyboardEvent,
 } from "react";
+import processGit from "components/apps/Terminal/processGit";
 import { useFileSystem } from "contexts/fileSystem";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useProcesses } from "contexts/process";
-import { trackActivityEvent } from "utils/activityRuntime";
+import {
+  getActivityById,
+  getCurrentActivityId,
+  trackActivityEvent,
+} from "utils/activityRuntime";
 
 const HISTORY_KEY = "gitbash_history";
 const GIT_CONFIG_KEY = "gitbash_global_config";
 const HOME = "/Users/Public";
 const DEFAULT_CWD = `${HOME}/Desktop`;
+const SHARED_LOCAL_GIT_COMMANDS = new Set([
+  "add",
+  "branch",
+  "checkout",
+  "commit",
+  "diff",
+  "init",
+  "log",
+  "merge",
+  "rebase",
+  "reset",
+  "restore",
+  "rev-parse",
+  "rm",
+  "status",
+  "switch",
+  "tag",
+]);
 
 type Line = {
   id: number;
@@ -324,6 +347,21 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
   useEffect(() => {
     fsRef.current = fs;
   }, [fs]);
+
+  useEffect(() => {
+    const activity = getActivityById(getCurrentActivityId());
+    const workspace =
+      activity?.data.workspace && typeof activity.data.workspace === "object"
+        ? (activity.data.workspace as Record<string, unknown>)
+        : undefined;
+    const workspaceRoot =
+      typeof workspace?.rootPath === "string" ? workspace.rootPath : "";
+
+    if (workspaceRoot) {
+      cwdRef.current = workspaceRoot;
+      setCwd(workspaceRoot);
+    }
+  }, []);
 
   useEffect(() => {
     try {
@@ -868,6 +906,26 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
               print(
                 "Config soportado: user.name, user.email, color.ui (solo --global)"
+              );
+              break;
+            }
+
+            if (
+              subCommand &&
+              SHARED_LOCAL_GIT_COMMANDS.has(subCommand) &&
+              fileSystem.fs
+            ) {
+              await processGit(
+                params,
+                currentCwd,
+                print,
+                fileSystem.fs,
+                (folder) => {
+                  fileSystem.updateFolder(folder).catch(() => {
+                    // Git metadata is already persisted; a refresh failure
+                    // should not make the command appear to have failed.
+                  });
+                }
               );
               break;
             }

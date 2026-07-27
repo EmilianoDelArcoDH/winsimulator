@@ -613,6 +613,23 @@ const evaluateCheck = (
       };
     }
 
+    case "TEXT_LIST_RELEVANT": {
+      const list = asStringArray(answers[check.target]);
+      const relevantTerms = translateRuleWords(
+        language,
+        asStringArray(rules.relevantTerms)
+      );
+      const passed =
+        list.length > 0 &&
+        list.every((value) => containsAny(value, relevantTerms));
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
     case "TEXT_KEYWORDS": {
       const textValue = asString(answers[check.target]);
       const listValue = asStringArray(answers[check.target]).join(" ");
@@ -681,6 +698,27 @@ const evaluateCheck = (
       const passed =
         expected.length === actual.length &&
         expected.every((value, index) => value === actual[index]);
+
+      return {
+        checkId: check.checkId,
+        message: passed ? check.messageOk : check.messageFail,
+        passed,
+      };
+    }
+
+    case "ORDER_ENDPOINTS": {
+      const actual = asStringArray(answers.itemsOrder);
+      const expectedItems = (
+        (activity.data.items || []) as { id?: unknown }[]
+      ).map(({ id }) => asString(id));
+      const hasEveryItemExactlyOnce =
+        actual.length === expectedItems.length &&
+        new Set(actual).size === expectedItems.length &&
+        expectedItems.every((itemId) => actual.includes(itemId));
+      const passed =
+        hasEveryItemExactlyOnce &&
+        actual[0] === asString(rules.first) &&
+        actual[actual.length - 1] === asString(rules.last);
 
       return {
         checkId: check.checkId,
@@ -989,7 +1027,9 @@ const evaluateCheck = (
       );
       const startsOk =
         mustStartWithAny.length === 0 ||
-        mustStartWithAny.some((prefix) => message.startsWith(prefix));
+        mustStartWithAny.some((prefix) =>
+          normalize(message).startsWith(normalize(prefix))
+        );
       const forbidden = forbiddenExact.some(
         (word) => normalize(word) === normalize(message)
       );

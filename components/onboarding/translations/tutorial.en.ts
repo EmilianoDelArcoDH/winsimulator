@@ -50,7 +50,8 @@ const tutorialEn: TutorialTranslation = {
     },
     "open-files": {
       ...navigation,
-      description: "Open Start 🏠 and select Documents to explore File Explorer.",
+      description:
+        "Open Start 🏠 and select Documents to explore File Explorer.",
       optionalHint: "Click Start 🏠, then Documents",
       title: "Open Documents",
     },

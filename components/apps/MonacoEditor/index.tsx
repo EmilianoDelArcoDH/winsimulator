@@ -457,7 +457,8 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
       normalizeFsPath,
     ]
   );
-  const isActiveFileEditable = Boolean(activeFileUrl) &&
+  const isActiveFileEditable =
+    Boolean(activeFileUrl) &&
     !activeFileIsImage &&
     isEditableActivityPath(activeFileUrl);
   const canMutateSelectedPath = selectedPath
@@ -1538,10 +1539,9 @@ function example() {
   );
 
   const openFolderDialog = useCallback((): void => {
-    const initialPath =
-      selectedPath?.startsWith(explorerRoot)
-        ? selectedPath
-        : explorerRoot || DESKTOP_PATH || "/";
+    const initialPath = selectedPath?.startsWith(explorerRoot)
+      ? selectedPath
+      : explorerRoot || DESKTOP_PATH || "/";
 
     lstat(initialPath)
       .then((stats) =>
@@ -1555,13 +1555,7 @@ function example() {
     setIsOpenFolderOpen(true);
     setOpenFolderError("");
     setContextMenu(undefined);
-  }, [
-    explorerRoot,
-    loadOpenFolderPath,
-    lstat,
-    normalizeFsPath,
-    selectedPath,
-  ]);
+  }, [explorerRoot, loadOpenFolderPath, lstat, normalizeFsPath, selectedPath]);
 
   const confirmOpenFolder = useCallback(async (): Promise<void> => {
     const normalizedPath = normalizeFsPath(openFolderPath.trim() || "/");
@@ -1579,8 +1573,7 @@ function example() {
         folderEntries.find(
           ({ isDirectory, name }) =>
             !isDirectory && name.toLowerCase() === "index.html"
-        ) ||
-        folderEntries.find(({ isDirectory }) => !isDirectory);
+        ) || folderEntries.find(({ isDirectory }) => !isDirectory);
       const nextUrl = preferredFile
         ? normalizeFsPath(`${normalizedPath}/${preferredFile.name}`)
         : normalizedPath;
@@ -2307,9 +2300,7 @@ function example() {
             isCompactLayout ? "compact-layout" : ""
           } ${isVscodeTutorialRoute ? "vscode-tutorial-active" : ""} ${
             creatingEntry ? "creating-entry" : ""
-          } ${
-            isOpenFolderOpen ? "open-folder-active" : ""
-          }`}
+          } ${isOpenFolderOpen ? "open-folder-active" : ""}`}
           data-tour="monaco-workbench"
           style={{ ["--side-panel-width" as string]: `${sidePanelWidth}px` }}
         >
@@ -3500,7 +3491,10 @@ function example() {
                     data-monaco-editor-host
                   />
                   {activeFileIsImage && (
-                    <section className="image-preview" aria-label="Image preview">
+                    <section
+                      className="image-preview"
+                      aria-label="Image preview"
+                    >
                       {imagePreviewUrl ? (
                         <img
                           alt={basename(activeFileUrl)}

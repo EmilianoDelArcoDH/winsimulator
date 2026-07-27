@@ -232,24 +232,24 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </p>
 
         <p class="copy-warning">
-            Clasifica cada tarjeta con atencion y escribe justificaciones propias. No agregues contenido extra fuera de los campos de la actividad.
+            Clasifica cada situacion con atencion y escribe ejemplos propios. Tus respuestas se guardan automaticamente en este dispositivo.
         </p>
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>No edites archivos del proyecto; resuelve la clasificacion en la interfaz de la actividad.</li>
-            <li>Ubica cada tarjeta en la columna que corresponda: control de versiones o copias desordenadas.</li>
-            <li>Completa las justificaciones minimas explicando por que esos casos representan historial, versiones o cambios.</li>
+            <li>Lee cada situacion y elige en su menu si corresponde a <strong>Control de versiones</strong> o a <strong>Copias/caos</strong>.</li>
+            <li>Completa los dos campos de texto con ejemplos propios relacionados con Git, versiones, cambios, copias o trabajo colaborativo.</li>
+            <li>Puedes expresarte con tus propias palabras: no es necesario incluir palabras exactas.</li>
         </ul>
     </article>
 
 </div>
 - Solucion esperada paso a paso:
-  1. Leer todas las tarjetas antes de arrastrarlas.
-  2. Ubicar en `Control de versiones` las tarjetas sobre historial, comparacion de cambios, autor, commits y trabajo sin pisarse.
-  3. Ubicar en `Copias/caos` las tarjetas sobre archivos final_final, carpetas por dia, dudas sobre la ultima version y copias separadas.
+  1. Leer todas las situaciones antes de responder.
+  2. Elegir `Control de versiones` en los casos sobre historial, comparacion de cambios, autor, commits y trabajo sin pisarse.
+  3. Elegir `Copias/caos` en los casos sobre archivos final_final, carpetas por dia, dudas sobre la ultima version y copias separadas.
   4. Escribir al menos 2 justificaciones con 20 caracteres o mas cada una.
-  5. Incluir en la justificacion una idea relacionada con historia, version, cambio o decision.
+  5. Relacionar cada ejemplo con el tema usando palabras propias; no se exigen terminos literales.
 
 - Solucion esperada:
   - Clasificar correctamente las tarjetas entre control de versiones y caos por copias.
@@ -399,21 +399,22 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </p>
 
         <p class="copy-warning">
-            Respeta el orden logico de los cambios y justifica tu eleccion sin escribir contenido fuera de los campos de la actividad.
+            El proyecto inicial debe quedar primero y la publicacion estable, ultima. Los tres cambios intermedios pueden tener cualquier orden coherente.
         </p>
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>No edites archivos del proyecto; resuelve el ordenamiento en la interfaz de la actividad.</li>
-            <li>Ordena las tarjetas para que formen una historia coherente desde el inicio del proyecto hasta la version estable.</li>
-            <li>Elige el cambio que podria haber roto algo y justifica brevemente tu decision.</li>
+            <li>Asigna una posicion del 1 al 5 a cada cambio usando los menus de la actividad.</li>
+            <li>Deja el proyecto inicial en la posicion 1 y la publicacion estable en la posicion 5.</li>
+            <li>Elige uno de los tres cambios intermedios y explica que parte concreta podria dejar de funcionar.</li>
+            <li>Ejemplo: <em>Al corregir el formulario podria fallar la validacion de un campo.</em></li>
         </ul>
     </article>
 
 </div>
 - Solucion esperada paso a paso:
   1. Ordenar los cambios desde la creacion inicial del proyecto hasta la publicacion estable.
-  2. Dejar la secuencia: proyecto inicial, contacto, correccion de formulario, estilos del boton y publicacion estable.
+  2. Dejar primero el proyecto inicial y ultima la publicacion estable; los tres cambios intermedios admiten cualquier orden.
   3. Elegir uno de los cambios candidatos que podria haber roto algo.
   4. Escribir una justificacion de al menos 30 caracteres explicando que parte concreta podria fallar.
   5. Relacionar la justificacion con el cambio elegido: contacto, formulario o estilos del boton.
@@ -478,7 +479,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         <h2>Conflicto no es error</h2>
 
         <p class="contexto-consigna">
-            Vas a analizar un caso donde dos personas cambiaron la misma linea. La actividad sirve para reconocer un conflicto y elegir una forma razonable de resolverlo.
+            Vas a analizar un caso donde dos personas cambiaron la misma linea. No hay informacion suficiente para saber cual version es correcta: puede ser necesario consultar al equipo y acordar el resultado.
         </p>
 
         <p class="copy-warning">
@@ -487,9 +488,10 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>No edites archivos del proyecto; resuelve la decision en la interfaz de la actividad.</li>
             <li>Marca que identificas un conflicto porque hay cambios sobre la misma linea.</li>
-            <li>Elige una estrategia de resolucion y explica por que tiene sentido en ese caso.</li>
+            <li>Elige una estrategia; cualquiera puede ser valida con una explicacion coherente.</li>
+            <li>Explica como decidirias o acordarias el resultado. Puedes proponer hablar con el equipo.</li>
+            <li>No necesitas repetir la informacion que ya aparece en el escenario.</li>
         </ul>
     </article>
 
@@ -499,8 +501,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
   2. Marcar la casilla que indica que hay un conflicto.
   3. Elegir una forma de resolverlo: conservar una version o combinar ambas ideas.
   4. Escribir una explicacion de al menos 40 caracteres usando palabras propias.
-  5. Explicar que dos personas cambiaron la misma linea o el mismo titulo.
-  6. Relacionar la explicacion con la estrategia elegida: version A, version B o combinacion de ambas ideas.
+  5. Relacionar la explicacion con la estrategia elegida: conservar una version, combinar ideas o consultar al equipo para acordar el resultado.
 
 - Solucion esperada:
   - Detectar el conflicto y justificar la estrategia elegida en el contexto concreto.
@@ -832,25 +833,25 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         </p>
 
         <p class="copy-warning">
-            Usa GitBash y evita mensajes vagos. El mensaje debe ser descriptivo y tener la longitud minima esperada.
+            El proyecto /repo ya esta inicializado. Puedes usar GitBash o la terminal de VS Code: ambas comparten el mismo repositorio.
         </p>
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
-            <li>Trabaja dentro del repositorio indicado por la actividad.</li>
+            <li>El repositorio /repo se abre automaticamente.</li>
             <li>Prepara los cambios del proyecto antes de confirmar la version.</li>
-            <li>Escribe un mensaje de commit claro, relacionado con los cambios realizados y con la longitud minima esperada.</li>
+            <li>Escribe un mensaje con un verbo y un elemento concreto, por ejemplo: <em>Corregido el h1</em>.</li>
+            <li>No hay una longitud exacta obligatoria; evita mensajes genericos como cambios o fix.</li>
         </ul>
     </article>
 
 </div>
 - Solucion esperada paso a paso:
-  1. Entrar o confirmar que estas dentro de `/repo`.
+  1. Usar `/repo`, que ya se encuentra abierto e inicializado.
   2. Preparar los cambios del proyecto web con `git add <archivo>` o `git add index.html style.css app.js`, sin agregar archivos basura.
   3. Ejecutar `git commit -m "..."` con un mensaje descriptivo.
-  4. Usar un mensaje de al menos 15 caracteres.
-  5. Comenzar el mensaje con un verbo valido como Agrega, Corrige, Elimina, Actualiza, Mejora o Refactoriza.
-  6. Evitar mensajes genericos como cambios, fix, arreglo, asdf o update.
+  4. Comenzar con un verbo y mencionar el elemento modificado; se aceptan formas como `Corrige` y `Corregido`.
+  5. Evitar mensajes genericos como cambios, fix, arreglo, asdf o update.
 
 - Solucion esperada:
   - Ejecutar `git commit -m "..."` con un mensaje claro y suficientemente descriptivo.
