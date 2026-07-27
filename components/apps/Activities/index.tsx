@@ -505,11 +505,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
               fileContent = Buffer.from(await response.arrayBuffer());
             }
 
-            return writeFile(
-              path,
-              fileContent,
-              workspaceSeed.overwriteFiles
-            );
+            return writeFile(path, fileContent, workspaceSeed.overwriteFiles);
           })
         );
 
@@ -615,7 +611,6 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
   const validate = (): void => {
     if (!activity) return;
 
-    saveActivityAnswers(activity.id, answers);
     const output = validateActivity(activity.id, language);
 
     setResults(output.results);

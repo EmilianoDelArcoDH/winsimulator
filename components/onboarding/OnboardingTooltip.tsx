@@ -178,7 +178,6 @@ const StyledTooltip = styled.div`
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-
   }
 `;
 

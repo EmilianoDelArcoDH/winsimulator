@@ -170,6 +170,57 @@ describe("activityRuntime virtual Git integration", () => {
     expect(result.completed).toBe(true);
   });
 
+  test("activity 1 accepts relevant examples without hidden required words", () => {
+    const activityId = "sch_git_c01_a01";
+
+    saveActivityAnswers(activityId, {
+      cards: {
+        c1: "Control de versiones",
+        c2: "Copias/caos",
+        c3: "Control de versiones",
+        c4: "Copias/caos",
+        c5: "Control de versiones",
+        c6: "Copias/caos",
+        c7: "Control de versiones",
+        c8: "Copias/caos",
+        c9: "Control de versiones",
+        c10: "Copias/caos",
+      },
+      justificacion: [
+        "Trabajamos en un cuento con varios amigos y usamos git.",
+        "Estoy construyendo un contrato de negocio con el equipo y usamos git.",
+      ],
+    });
+
+    const result = validateActivity(activityId, "es");
+
+    expect(
+      result.results.find(
+        ({ checkId }) => checkId === "c01_a01_relevancia"
+      )?.passed
+    ).toBe(true);
+    expect(result.completed).toBe(true);
+  });
+
+  test("activity 1 rejects unrelated filler text", () => {
+    const activityId = "sch_git_c01_a01";
+
+    saveActivityAnswers(activityId, {
+      justificacion: [
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      ],
+    });
+
+    const result = validateActivity(activityId, "es");
+
+    expect(
+      result.results.find(
+        ({ checkId }) => checkId === "c01_a01_relevancia"
+      )?.passed
+    ).toBe(false);
+  });
+
   test("the three Git states activity rejects adding style.css explicitly", () => {
     const activityId = "sch_git_c02_a02";
 
@@ -372,6 +423,14 @@ describe("activityRuntime virtual Git integration", () => {
 
   test("saved workspace files can be staged and committed as real snapshots", () => {
     const activityId = "sch_git_c02_a03";
+    const activity = getActivityById(activityId, "es");
+
+    expect(activity?.data.workspace).toMatchObject({
+      git: {
+        initialCommit: true,
+      },
+      rootPath: "/repo",
+    });
 
     trackActivityEvent({
       activityId,
@@ -564,6 +623,44 @@ describe("activityRuntime virtual Git integration", () => {
     ).toBe(false);
   });
 
+  test("activity 2.3 accepts a concise and specific commit message", () => {
+    const activityId = "sch_git_c02_a03";
+
+    trackActivityEvent({
+      activityId,
+      content: "<h1>Título corregido</h1>",
+      path: "/repo/index.html",
+      type: "fileSaved",
+    });
+    trackActivityEvent({
+      activityId,
+      command: "git add index.html",
+      cwd: "/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      command: 'git commit -m "Corregido el h1"',
+      cwd: "/repo",
+      type: "commandExecuted",
+    });
+
+    expect(validateActivity(activityId, "es").completed).toBe(true);
+  });
+
+  test("activity 3 accepts any coherent order for the intermediate changes", () => {
+    const activityId = "sch_git_c01_a03";
+
+    saveActivityAnswers(activityId, {
+      culpable: "t3",
+      itemsOrder: ["t1", "t4", "t3", "t2", "t5"],
+      justificacion:
+        "Puedo cometer un error en el formulario al corregir uno, por eso pienso que este puede ser el error.",
+    });
+
+    expect(validateActivity(activityId, "es").completed).toBe(true);
+  });
+
   test("activity 4 rejects filler text with isolated keywords", () => {
     const activityId = "sch_git_c01_a04";
 
@@ -609,5 +706,18 @@ describe("activityRuntime virtual Git integration", () => {
         ({ checkId }) => checkId === "c01_a04_text_aligned"
       )?.passed
     ).toBe(false);
+  });
+
+  test("activity 4 accepts combining provisionally and consulting the team", () => {
+    const activityId = "sch_git_c01_a04";
+
+    saveActivityAnswers(activityId, {
+      detectoConflicto: true,
+      explicacion:
+        "Combino ambas para poder publicar pero me pongo en contacto con ellos para ver cuál es la correcta",
+      resolution: "combine",
+    });
+
+    expect(validateActivity(activityId, "es").completed).toBe(true);
   });
 });

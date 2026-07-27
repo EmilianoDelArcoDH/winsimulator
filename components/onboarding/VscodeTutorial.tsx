@@ -41,10 +41,7 @@ const VscodeTutorial: FC = () => {
                   />
                 </div>
                 <button className="primary" onClick={resumeTour} type="button">
-                  {text.panel.resume.replace(
-                    "{step}",
-                    String(currentStep + 1)
-                  )}
+                  {text.panel.resume.replace("{step}", String(currentStep + 1))}
                 </button>
               </>
             )}
@@ -60,7 +57,7 @@ const VscodeTutorial: FC = () => {
             </strong>
           )}
         </div>
-        )}
+      )}
     </>
   );
 };

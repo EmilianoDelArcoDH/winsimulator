@@ -55,9 +55,7 @@ const safeStep = (step: Step): Step => ({
   },
 });
 
-export const getGitbashTutorialSteps = (
-  text: GitbashTutorialText
-): Step[] => {
+export const getGitbashTutorialSteps = (text: GitbashTutorialText): Step[] => {
   const translatedStep = (
     id: GitbashTutorialStepId,
     step: Omit<Step, "content" | "data" | "id" | "title">,

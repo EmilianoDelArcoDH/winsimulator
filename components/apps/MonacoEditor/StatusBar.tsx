@@ -77,7 +77,7 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
     const updateModel = (): void => {
       const model = editor?.getModel() as Model;
       const modelLanguage = model?.getLanguageId();
-      const {monaco} = window;
+      const { monaco } = window;
 
       if (modelLanguage) {
         setLanguage(
@@ -193,7 +193,7 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
             <li className="clickable">
               <Button
                 onClick={() => {
-                  const {monaco} = window;
+                  const { monaco } = window;
 
                   if (!monaco) return;
 
@@ -216,7 +216,7 @@ const StatusBar: FC<ComponentProcessProps> = ({ id }) => {
             <li className="clickable">
               <Button
                 onClick={() => {
-                  const {monaco} = window;
+                  const { monaco } = window;
 
                   if (!monaco) return;
 

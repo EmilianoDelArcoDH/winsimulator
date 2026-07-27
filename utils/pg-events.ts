@@ -14,7 +14,8 @@ export const sendActivityPgEvent = ({
   state,
 }: ActivityPgEventPayload): void => {
   const eventMessage =
-    message || (completed ? "Ejercicio resuelto" : "Hay errores en tu actividad");
+    message ||
+    (completed ? "Ejercicio resuelto" : "Hay errores en tu actividad");
 
   globalThis.console?.log?.("[sendActivityPgEvent]", {
     completed,
