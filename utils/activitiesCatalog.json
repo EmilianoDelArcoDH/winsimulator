@@ -946,7 +946,7 @@
             "instructions": [
               "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
               "Ejecutá git log.",
-              "Copiá el nombre del autor y el mensaje del último commit."
+              "Copiá el nombre del autor (sin agregar lo que se encuentra entre <..>) y el mensaje del último commit."
             ],
             "expected": {
               "lastCommit": {
@@ -1022,7 +1022,7 @@
           "data": {
             "scenario": "Creá al menos dos commits y luego revisá el historial resumido.",
             "instructions": [
-              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
+              "La terminal de Git Bash y la terminal integrada de Visual Studio Code ya abren en /Users/Public/Desktop/repo.",
               "Modificá archivos desde Visual Studio Code (index.html, style.css o app.js).",
               "Hacé git add + git commit (al menos DOS commits con mensajes claros).",
               "Ejecutá: git log --oneline",
@@ -1065,15 +1065,6 @@
           },
           "validation": {
             "checks": [
-              {
-                "checkId": "c03_a02_cd_repo",
-                "type": "TERMINAL_COMMAND_EXECUTED",
-                "target": "commands",
-                "rules": {
-                  "mustIncludeAny": ["cd repo", "cd /Users/Public/Desktop/repo"]
-                },
-                "messageFail": "Primero accedé a la carpeta del proyecto con: cd repo"
-              },
               {
                 "checkId": "c03_a02_used_oneline",
                 "type": "TERMINAL_COMMAND_EXECUTED",

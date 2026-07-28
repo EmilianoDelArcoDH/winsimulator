@@ -259,12 +259,6 @@ describe("activityRuntime virtual Git integration", () => {
 
     trackActivityEvent({
       activityId,
-      command: "cd repo",
-      cwd: "/Users/Public/Desktop",
-      type: "commandExecuted",
-    });
-    trackActivityEvent({
-      activityId,
       content: "<h1>Primer cambio</h1>",
       path: "/Users/Public/Desktop/repo/index.html",
       type: "fileSaved",
