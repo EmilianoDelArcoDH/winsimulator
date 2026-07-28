@@ -395,8 +395,14 @@ const processCliGit = async (
 
       if (!repoRoot) return true;
 
+      let headOid = "";
+
       try {
-        await git.resolveRef({ dir: repoRoot, fs, ref: "HEAD" });
+        headOid = await git.resolveRef({
+          dir: repoRoot,
+          fs,
+          ref: "HEAD",
+        });
       } catch {
         printLn("fatal: the activity repository has no initial commit (HEAD)");
         printLn(
@@ -432,7 +438,7 @@ const processCliGit = async (
             dir: repoRoot,
             filepath,
             fs,
-            oid: "HEAD",
+            oid: headOid,
           });
 
           previousContent = new TextDecoder().decode(blob);
