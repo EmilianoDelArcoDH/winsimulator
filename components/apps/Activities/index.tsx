@@ -467,6 +467,13 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
       return;
     }
 
+    // A seeded Git activity must wait for BrowserFS before it can be marked as
+    // prepared. Otherwise VS Code can open after git init but before the base
+    // commit exists, leaving main without a resolvable HEAD.
+    if (workspaceSeed.git?.initialCommit && !fs) {
+      return;
+    }
+
     if (
       preparedWorkspaceRef.current[activity.id] &&
       (!workspaceSeed.resetOnEnter ||
@@ -548,6 +555,12 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             dir: workspaceSeed.rootPath,
             fs,
             message: workspaceSeed.git.message,
+          });
+
+          await git.resolveRef({
+            dir: workspaceSeed.rootPath,
+            fs,
+            ref: "HEAD",
           });
         }
 
