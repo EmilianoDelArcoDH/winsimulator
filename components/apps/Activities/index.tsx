@@ -264,6 +264,23 @@ const toWorkspaceRelativePath = (
   return normalizedPath.replace(/^\/+/, "");
 };
 
+const gitHeadExists = async (
+  fs: NonNullable<ReturnType<typeof useFileSystem>["fs"]>,
+  rootPath: string
+): Promise<boolean> => {
+  try {
+    await git.resolveRef({
+      dir: rootPath,
+      fs,
+      ref: "HEAD",
+    });
+
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 const resolveWorkspaceSeed = (
   activity: ActivityDefinition
 ): WorkspaceSeed | undefined => {
@@ -487,6 +504,14 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
 
     const prepareWorkspace = async (): Promise<void> => {
       try {
+        if (
+          workspaceSeed.resetOnEnter &&
+          workspaceSeed.git?.initialCommit &&
+          (await exists(workspaceSeed.rootPath))
+        ) {
+          await deletePath(workspaceSeed.rootPath);
+        }
+
         const folderSet = new Set<string>([
           workspaceSeed.rootPath,
           ...workspaceSeed.folders,
@@ -498,14 +523,6 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             .filter(Boolean)
             .map((folderPath) => mkdirRecursive(folderPath))
         );
-
-        if (workspaceSeed.resetOnEnter && workspaceSeed.git?.initialCommit) {
-          const gitDirectory = `${workspaceSeed.rootPath}/.git`;
-
-          if (await exists(gitDirectory)) {
-            await deletePath(gitDirectory);
-          }
-        }
 
         await Promise.all(
           workspaceSeed.files.map(async ({ content, path, source }) => {
@@ -532,30 +549,32 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             fs,
           });
 
-          await workspaceSeed.files.reduce<Promise<void>>(
-            (previousAdd, { path }) =>
-              previousAdd.then(async () => {
-                await git.add({
-                  dir: workspaceSeed.rootPath,
-                  filepath: toWorkspaceRelativePath(
-                    workspaceSeed.rootPath,
-                    path
-                  ),
-                  fs,
-                });
-              }),
-            Promise.resolve()
-          );
+          if (!(await gitHeadExists(fs, workspaceSeed.rootPath))) {
+            await workspaceSeed.files.reduce<Promise<void>>(
+              (previousAdd, { path }) =>
+                previousAdd.then(async () => {
+                  await git.add({
+                    dir: workspaceSeed.rootPath,
+                    filepath: toWorkspaceRelativePath(
+                      workspaceSeed.rootPath,
+                      path
+                    ),
+                    fs,
+                  });
+                }),
+              Promise.resolve()
+            );
 
-          await git.commit({
-            author: {
-              email: "user@winsim.local",
-              name: "user",
-            },
-            dir: workspaceSeed.rootPath,
-            fs,
-            message: workspaceSeed.git.message,
-          });
+            await git.commit({
+              author: {
+                email: "user@winsim.local",
+                name: "user",
+              },
+              dir: workspaceSeed.rootPath,
+              fs,
+              message: workspaceSeed.git.message,
+            });
+          }
 
           await git.resolveRef({
             dir: workspaceSeed.rootPath,
