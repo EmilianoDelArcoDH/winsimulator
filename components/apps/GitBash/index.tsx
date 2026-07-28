@@ -15,6 +15,12 @@ import {
   getCurrentActivityId,
   trackActivityEvent,
 } from "utils/activityRuntime";
+import {
+  getPagesUsername,
+  getPublishedSitesBySourceRoot,
+  registerPublishedSite,
+  updatePublishedSite,
+} from "utils/pagesRuntime";
 
 const HISTORY_KEY = "gitbash_history";
 const GIT_CONFIG_KEY = "gitbash_global_config";
@@ -296,6 +302,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     closeWithTransition,
     maximize,
     minimize,
+    open,
     processes: { [id]: process },
   } = useProcesses();
   const fsRef = useRef(fs);
@@ -622,7 +629,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
       ): Promise<void> => {
         await ensureDir(destinationDir);
 
-        const entries = await fileSystem.readdir(sourceDir);
+        const entries = (await fileSystem.readdir(sourceDir)).filter(
+          (entry) => entry !== ".git"
+        );
 
         await Promise.all(
           entries.map(async (entry) => {
@@ -1629,6 +1638,25 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
               print(`To ${repo.remotes[remoteName]}`);
               print(` * [new branch]      ${branchName} -> ${branchName}`);
+
+              const publishedSites = getPublishedSitesBySourceRoot(repoRoot);
+
+              if (publishedSites.length > 0) {
+                await Promise.all(
+                  publishedSites.map(async (site) => {
+                    await copyDirectoryRecursive(
+                      site.sourceRoot,
+                      site.snapshotRoot
+                    );
+                    updatePublishedSite(site.publicUrl, {
+                      snapshotRoot: site.snapshotRoot,
+                      sourceRoot: site.sourceRoot,
+                    });
+                  })
+                );
+                print("Pages updated from latest push.");
+                open("Browser", { url: publishedSites[0].publicUrl });
+              }
               break;
             }
 
@@ -2057,6 +2085,38 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
             );
             break;
           }
+          case "pages": {
+            if (params[0] !== "publish") {
+              print("Uso: pages publish [nombre-del-proyecto]");
+              break;
+            }
+
+            const projectName =
+              params.slice(1).join("-").trim() ||
+              currentCwd.split("/").findLast(Boolean) ||
+              "mi-proyecto";
+            const snapshotRoot = normalizePath(
+              `/Users/Public/Pages/${projectName}-${Date.now()}`
+            );
+
+            await copyDirectoryRecursive(currentCwd, snapshotRoot);
+
+            const publishedSite = registerPublishedSite({
+              projectName,
+              snapshotRoot,
+              sourceRoot: currentCwd,
+              username: getPagesUsername(),
+            });
+
+            trackActivityEvent({
+              type: "pagesPublished",
+              url: publishedSite.publicUrl,
+            });
+            print("Pages published successfully.");
+            print(`Public URL: ${publishedSite.publicUrl}`);
+            open("Browser", { url: publishedSite.publicUrl });
+            break;
+          }
           case "help":
             [
               "Comandos básicos disponibles:",
@@ -2084,6 +2144,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
               "  git remote / git push / git pull / git fetch / git merge / git rebase",
               "  git tag / git rm",
               "  git rev-parse --show-toplevel",
+              "  pages publish [nombre-del-proyecto]",
             ].forEach((helpLine) => {
               print(helpLine);
             });
@@ -2107,7 +2168,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
         print(`Error: ${message}`);
       }
     },
-    [appendLine, historyEntries]
+    [appendLine, historyEntries, open]
   );
 
   const runInput = useCallback(async (): Promise<void> => {
