@@ -1108,16 +1108,18 @@
         {
           "id": "sch_git_c03_a03",
           "classId": "sch_git_c03",
-          "title": "git diff antes del commit",
-          "objective": "Usar diff para entender cambios antes de confirmar.",
+          "title": "Comparar un cambio con git diff",
+          "objective": "Usar git diff para identificar exactamente qué cambió en un archivo guardado.",
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
+            "scenario": "El proyecto ya tiene un commit base preparado automáticamente. Tu única tarea es modificar index.html y usar git diff para reconocer la línea que cambió.",
             "instructions": [
-              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
-              "Modificá una línea de index.html y guardá el archivo.",
-              "Ejecutá git diff y copiá una línea agregada que comience con +.",
-              "Después ejecutá git add index.html y git commit -m \"Actualiza título principal\"."
+              "Paso 1 — Esperá a que Visual Studio Code abra el proyecto. El commit base ya está creado: no ejecutes git init, git add ni git commit.",
+              "Paso 2 — En index.html cambiá Diff practice por Título actualizado y guardá con Ctrl+S.",
+              "Paso 3 — Ejecutá git diff.",
+              "Paso 4 — Copiá la línea de contenido que comienza con un solo +; no copies la cabecera +++ b/index.html.",
+              "Paso 5 — Pegá la línea copiada en el campo y presioná Validar."
             ],
             "form": [
               { "id": "linea", "label": "¿Qué línea cambió? (copiala)" }
@@ -1150,20 +1152,23 @@
           "validation": {
             "checks": [
               {
+                "checkId": "c03_a03_saved_expected_change",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": {
+                  "path": "/Users/Public/Desktop/repo/index.html",
+                  "pattern": "<h1>\\s*(Título actualizado|Updated title|Título atualizado)\\s*</h1>"
+                },
+                "messageOk": "Guardaste el cambio solicitado en index.html.",
+                "messageFail": "Editá index.html, cambiá el h1 a Título actualizado y guardá el archivo antes de ejecutar git diff."
+              },
+              {
                 "checkId": "c03_a03_used_diff",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["git diff"] },
                 "messageOk": "Usaste git diff.",
-                "messageFail": "Tenés que usar git diff para ver cambios antes de commitear."
-              },
-              {
-                "checkId": "c03_a03_diff_before_commit",
-                "type": "TERMINAL_ORDER",
-                "target": "commands",
-                "rules": { "before": "git commit", "mustAppear": "git diff" },
-                "messageOk": "Primero comparaste cambios y después commiteaste.",
-                "messageFail": "Usá git diff antes de hacer git commit."
+                "messageFail": "Después de guardar el cambio en index.html, ejecutá git diff."
               },
               {
                 "checkId": "c03_a03_line_matches_expected",
@@ -1171,7 +1176,7 @@
                 "target": "linea",
                 "rules": { "repoPath": "repo.currentDiff.expectedLine" },
                 "messageOk": "Línea correcta.",
-                "messageFail": "No coincide la línea. Revisá el output de git diff."
+                "messageFail": "La línea no coincide. Copiá la línea de contenido que empieza con un solo +, no la cabecera +++ b/index.html."
               }
             ]
           }

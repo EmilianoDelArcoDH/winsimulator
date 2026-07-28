@@ -362,18 +362,6 @@ describe("activityRuntime virtual Git integration", () => {
       cwd: "/Users/Public/Desktop/repo",
       type: "commandExecuted",
     });
-    trackActivityEvent({
-      activityId,
-      command: "git add index.html",
-      cwd: "/Users/Public/Desktop/repo",
-      type: "commandExecuted",
-    });
-    trackActivityEvent({
-      activityId,
-      command: 'git commit -m "Actualiza título principal"',
-      cwd: "/Users/Public/Desktop/repo",
-      type: "commandExecuted",
-    });
     saveActivityAnswers(activityId, {
       linea: "+<html><body><h1>Título actualizado</h1></body></html>",
     });

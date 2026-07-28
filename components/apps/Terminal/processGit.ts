@@ -348,6 +348,19 @@ const processCliGit = async (
 
       if (!repoRoot) return true;
 
+      const statusMatrix = (await git.statusMatrix({
+        dir: repoRoot,
+        fs,
+      })) as StatusMatrixRow[];
+      const hasStagedChanges = statusMatrix.some(
+        ([, head, , stage]) => stage !== head
+      );
+
+      if (!hasStagedChanges) {
+        printLn("nothing to commit, working tree clean");
+        return true;
+      }
+
       const messageFlag = args.findIndex(
         (arg) => arg === "-m" || arg === "--message"
       );
@@ -382,6 +395,23 @@ const processCliGit = async (
 
       if (!repoRoot) return true;
 
+      let headOid = "";
+
+      try {
+        headOid = await git.resolveRef({
+          dir: repoRoot,
+          fs,
+          ref: "HEAD",
+        });
+      } catch {
+        printLn("fatal: the activity repository has no initial commit (HEAD)");
+        printLn(
+          "hint: reopen the activity or press Retry and wait for the project to finish loading"
+        );
+        printLn("hint: do not run git add before git diff");
+        return true;
+      }
+
       const matrix = (await git.statusMatrix({
         dir: repoRoot,
         fs,
@@ -389,6 +419,15 @@ const processCliGit = async (
       const changedFiles = matrix.filter(
         ([, head, workdir]) => head !== workdir
       );
+
+      if (changedFiles.length === 0) {
+        printLn("No unstaged changes to show.");
+        printLn(
+          "hint: edit and save index.html, then run git status --short"
+        );
+        printLn("hint: git diff must run before git add");
+        return true;
+      }
 
       for (const [filepath, head, workdir] of changedFiles) {
         let previousContent = "";
@@ -399,7 +438,7 @@ const processCliGit = async (
             dir: repoRoot,
             filepath,
             fs,
-            oid: "HEAD",
+            oid: headOid,
           });
 
           previousContent = new TextDecoder().decode(blob);

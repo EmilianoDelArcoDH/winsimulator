@@ -467,6 +467,13 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
       return;
     }
 
+    // A seeded Git activity must wait for BrowserFS before it can be marked as
+    // prepared. Otherwise VS Code can open after git init but before the base
+    // commit exists, leaving main without a resolvable HEAD.
+    if (workspaceSeed.git?.initialCommit && !fs) {
+      return;
+    }
+
     if (
       preparedWorkspaceRef.current[activity.id] &&
       (!workspaceSeed.resetOnEnter ||
@@ -475,7 +482,8 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
       return;
     }
 
-    let cancelled = false;
+    preparedWorkspaceRef.current[activity.id] = true;
+    lastPreparedActivityIdRef.current = activity.id;
 
     const prepareWorkspace = async (): Promise<void> => {
       try {
@@ -524,35 +532,39 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             fs,
           });
 
-          await Promise.all(
-            workspaceSeed.files.map(({ path }) =>
-              git.add({
-                dir: workspaceSeed.rootPath,
-                filepath: toWorkspaceRelativePath(workspaceSeed.rootPath, path),
-                fs,
-              })
-            )
+          await workspaceSeed.files.reduce<Promise<void>>(
+            (previousAdd, { path }) =>
+              previousAdd.then(async () => {
+                await git.add({
+                  dir: workspaceSeed.rootPath,
+                  filepath: toWorkspaceRelativePath(
+                    workspaceSeed.rootPath,
+                    path
+                  ),
+                  fs,
+                });
+              }),
+            Promise.resolve()
           );
 
-          try {
-            await git.commit({
-              author: {
-                email: "user@winsim.local",
-                name: "user",
-              },
-              dir: workspaceSeed.rootPath,
-              fs,
-              message: workspaceSeed.git.message,
-            });
-          } catch {
-            // Existing initialized workspaces may already have this base commit.
-          }
+          await git.commit({
+            author: {
+              email: "user@winsim.local",
+              name: "user",
+            },
+            dir: workspaceSeed.rootPath,
+            fs,
+            message: workspaceSeed.git.message,
+          });
+
+          await git.resolveRef({
+            dir: workspaceSeed.rootPath,
+            fs,
+            ref: "HEAD",
+          });
         }
 
-        if (cancelled) return;
-
-        preparedWorkspaceRef.current[activity.id] = true;
-        lastPreparedActivityIdRef.current = activity.id;
+        if (lastPreparedActivityIdRef.current !== activity.id) return;
 
         if (workspaceSeed.openInVscode) {
           const vscodeUrl =
@@ -571,15 +583,15 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
           }
         }
       } catch {
+        if (lastPreparedActivityIdRef.current === activity.id) {
+          delete preparedWorkspaceRef.current[activity.id];
+        }
+
         // Ignore workspace seeding failures to avoid blocking activity flow.
       }
     };
 
-    prepareWorkspace();
-
-    return () => {
-      cancelled = true;
-    };
+    void prepareWorkspace();
   }, [
     activity,
     deletePath,
