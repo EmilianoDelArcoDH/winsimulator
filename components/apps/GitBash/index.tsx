@@ -2414,17 +2414,27 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
         style={{
           flex: 1,
           overflowY: "auto",
+          userSelect: "text",
           whiteSpace: "pre-wrap",
           wordBreak: "break-word",
         }}
       >
         {lines.map((line) => (
-          <div key={line.id}>{line.text}</div>
+          <div key={line.id} style={{ userSelect: "text" }}>
+            {line.text}
+          </div>
         ))}
       </div>
 
-      <div style={{ alignItems: "center", display: "flex", gap: 8 }}>
-        <span style={{ color: "#32cd32" }}>{prompt}</span>
+      <div
+        style={{
+          alignItems: "center",
+          display: "flex",
+          gap: 8,
+          userSelect: "text",
+        }}
+      >
+        <span style={{ color: "#32cd32", userSelect: "text" }}>{prompt}</span>
         <input
           data-tour="gitbash-input"
           onChange={({ target }) => setInput(target.value)}
