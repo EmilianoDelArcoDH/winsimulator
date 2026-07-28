@@ -1,6 +1,7 @@
 {
   "en": {
     "Accedé a la carpeta del proyecto con: cd repo": "Open the project folder with: cd repo",
+    "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo": "Check that you are in /Users/Public/Desktop/repo with pwd. If you are in a different folder, run: cd /Users/Public/Desktop/repo",
     "Copiá el nombre del autor y el mensaje del último commit.": "Copy the author name and the latest commit message.",
     "Crea base para comparar cambios": "Creates a base for comparing changes",
     "Crea proyecto para revisar el historial": "Creates a project for reviewing history",
@@ -477,6 +478,7 @@
     "Primero hacé pull y recién después push.": "First do pull and then push.",
     "Primero publica el sitio con Pages.": "First publish the site with Pages.",
     "Primero usá git log --oneline para encontrar el commit.": "First use git log --oneline to find the commit.",
+    "Primero ejecutá git log --oneline para encontrar el commit. Es --oneline (one line), no --online.": "First run git log --oneline to find the commit. It is --oneline (one line), not --online.",
     "Propone banner-home.png como nombre seguro para el banner.": "Proposes banner-home.png as a safe name for the banner.",
     "Propone estilos-finales.css como nombre seguro para la hoja de estilos.": "Proposes final-styles.css as a strong name for the style sheet.",
     "Propone mi-foto-final.png como nombre seguro para la foto.": "Proposes my-final-photo.png as a safe name for the photo.",
@@ -644,6 +646,7 @@
   },
   "pt": {
     "Accedé a la carpeta del proyecto con: cd repo": "Acesse a pasta do projeto com: cd repo",
+    "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo": "Verifique se você está em /Users/Public/Desktop/repo com pwd. Se estiver em outra pasta, execute: cd /Users/Public/Desktop/repo",
     "Copiá el nombre del autor y el mensaje del último commit.": "Copie o nome do autor e a mensagem do último commit.",
     "Crea base para comparar cambios": "Cria uma base para comparar alterações",
     "Crea proyecto para revisar el historial": "Cria um projeto para revisar o histórico",
@@ -1120,6 +1123,7 @@
     "Primero hacé pull y recién después push.": "Primeiro puxe e depois empurre.",
     "Primero publica el sitio con Pages.": "Primeiro publique o site com Pages.",
     "Primero usá git log --oneline para encontrar el commit.": "Primeiro use git log --oneline para encontrar o commit.",
+    "Primero ejecutá git log --oneline para encontrar el commit. Es --oneline (one line), no --online.": "Primeiro execute git log --oneline para encontrar o commit. É --oneline (one line), não --online.",
     "Propone banner-home.png como nombre seguro para el banner.": "Propõe banner-home.png como um nome seguro para o banner.",
     "Propone estilos-finales.css como nombre seguro para la hoja de estilos.": "Propõe final-styles.css como um nome forte para a folha de estilos.",
     "Propone mi-foto-final.png como nombre seguro para la foto.": "Propõe my-final-photo.png como um nome seguro para a foto.",

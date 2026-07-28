@@ -944,7 +944,7 @@
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
             "instructions": [
-              "Accedé a la carpeta del proyecto con: cd repo",
+              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
               "Ejecutá git log.",
               "Copiá el nombre del autor y el mensaje del último commit."
             ],
@@ -1022,7 +1022,7 @@
           "data": {
             "scenario": "Creá al menos dos commits y luego revisá el historial resumido.",
             "instructions": [
-              "Accedé a la carpeta del proyecto con: cd repo",
+              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
               "Modificá archivos desde Visual Studio Code (index.html, style.css o app.js).",
               "Hacé git add + git commit (al menos DOS commits con mensajes claros).",
               "Ejecutá: git log --oneline",
@@ -1114,7 +1114,7 @@
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
             "instructions": [
-              "Accedé a la carpeta del proyecto con: cd repo",
+              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
               "Modificá una línea de index.html y guardá el archivo.",
               "Ejecutá git diff y copiá una línea agregada que comience con +.",
               "Después ejecutá git add index.html y git commit -m \"Actualiza título principal\"."
@@ -1185,7 +1185,7 @@
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
             "instructions": [
-              "Accedé a la carpeta del proyecto con: cd repo",
+              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
               "Ejecutá git log --oneline para encontrar el commit problemático.",
               "Inspeccioná el commit con git show <hash>.",
               "Pegá el hash inspeccionado y explicá qué cambió."
@@ -1227,7 +1227,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git log --oneline"] },
                 "messageOk": "Usaste git log --oneline.",
-                "messageFail": "Primero usá git log --oneline para encontrar el commit."
+                "messageFail": "Primero ejecutá git log --oneline para encontrar el commit. Es --oneline (one line), no --online."
               },
               {
                 "checkId": "c03_a04_used_show",
