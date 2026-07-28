@@ -475,7 +475,8 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
       return;
     }
 
-    let cancelled = false;
+    preparedWorkspaceRef.current[activity.id] = true;
+    lastPreparedActivityIdRef.current = activity.id;
 
     const prepareWorkspace = async (): Promise<void> => {
       try {
@@ -550,10 +551,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
           });
         }
 
-        if (cancelled) return;
-
-        preparedWorkspaceRef.current[activity.id] = true;
-        lastPreparedActivityIdRef.current = activity.id;
+        if (lastPreparedActivityIdRef.current !== activity.id) return;
 
         if (workspaceSeed.openInVscode) {
           const vscodeUrl =
@@ -572,15 +570,15 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
           }
         }
       } catch {
+        if (lastPreparedActivityIdRef.current === activity.id) {
+          delete preparedWorkspaceRef.current[activity.id];
+        }
+
         // Ignore workspace seeding failures to avoid blocking activity flow.
       }
     };
 
-    prepareWorkspace();
-
-    return () => {
-      cancelled = true;
-    };
+    void prepareWorkspace();
   }, [
     activity,
     deletePath,
