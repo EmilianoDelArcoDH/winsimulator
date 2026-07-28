@@ -506,7 +506,6 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
       try {
         if (
           workspaceSeed.resetOnEnter &&
-          workspaceSeed.git?.initialCommit &&
           (await exists(workspaceSeed.rootPath))
         ) {
           await deletePath(workspaceSeed.rootPath);
