@@ -724,13 +724,13 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
           )}
 
           {instructions.length > 0 && (
-            <div style={{ marginBottom: 16 }}>
+            <div style={{ marginBottom: 16, userSelect: "text" }}>
               <div style={sectionTitleStyle}>{uiText.instructions}</div>
-              <ol style={{ margin: 0, paddingLeft: 20 }}>
+              <ol style={{ margin: 0, paddingLeft: 20, userSelect: "text" }}>
                 {instructions.map((instruction, index) => (
                   <li
                     key={`${activity.id}-instruction-${index + 1}`}
-                    style={{ marginBottom: 6 }}
+                    style={{ marginBottom: 6, userSelect: "text" }}
                   >
                     {instruction}
                   </li>
