@@ -946,7 +946,7 @@
             "instructions": [
               "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
               "Ejecutá git log.",
-              "Copiá el nombre del autor y el mensaje del último commit."
+              "Copiá el nombre del autor (sin agregar lo que se encuentra entre <..>) y el mensaje del último commit."
             ],
             "expected": {
               "lastCommit": {
@@ -1020,13 +1020,15 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Creá al menos dos commits y luego revisá el historial resumido.",
+            "scenario": "Crea al menos dos commits y luego revisa el historial resumido.",
             "instructions": [
-              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
-              "Modificá archivos desde Visual Studio Code (index.html, style.css o app.js).",
-              "Hacé git add + git commit (al menos DOS commits con mensajes claros).",
-              "Ejecutá: git log --oneline",
-              "Copiá exactamente las primeras dos líneas (hash + mensaje)."
+              "La terminal de Git Bash y la terminal integrada de Visual Studio Code ya abren en /Users/Public/Desktop/repo.",
+              "Modifica un archivo desde Visual Studio Code (index.html, style.css o app.js) y guarda el cambio con Ctrl+S o File -> Save.",
+              "Agrega ese archivo al staging con git add y crea un commit con un mensaje claro.",
+              "Repite el proceso con otro cambio para crear un segundo commit.",
+              "Ejemplo: modifica index.html, ejecuta git add index.html y luego git commit -m \"Actualiza contenido principal\". Después modifica style.css, ejecuta git add style.css y luego git commit -m \"Mejora estilos principales\".",
+              "Ejecuta: git log --oneline",
+              "Copia exactamente las primeras dos líneas (hash + mensaje)."
             ],
             "form": [
               {
@@ -1065,15 +1067,6 @@
           },
           "validation": {
             "checks": [
-              {
-                "checkId": "c03_a02_cd_repo",
-                "type": "TERMINAL_COMMAND_EXECUTED",
-                "target": "commands",
-                "rules": {
-                  "mustIncludeAny": ["cd repo", "cd /Users/Public/Desktop/repo"]
-                },
-                "messageFail": "Primero accedé a la carpeta del proyecto con: cd repo"
-              },
               {
                 "checkId": "c03_a02_used_oneline",
                 "type": "TERMINAL_COMMAND_EXECUTED",
@@ -1116,7 +1109,7 @@
             "scenario": "El proyecto ya tiene un commit base preparado automáticamente. Tu única tarea es modificar index.html y usar git diff para reconocer la línea que cambió.",
             "instructions": [
               "Paso 1 — Esperá a que Visual Studio Code abra el proyecto. El commit base ya está creado: no ejecutes git init, git add ni git commit.",
-              "Paso 2 — En index.html cambiá Diff practice por Título actualizado y guardá con Ctrl+S.",
+              "Paso 2 — En index.html cambiá Diff practice por Título actualizado y guardá desde FILE -> Save.",
               "Paso 3 — Ejecutá git diff.",
               "Paso 4 — Copiá la línea de contenido que comienza con un solo +; no copies la cabecera +++ b/index.html.",
               "Paso 5 — Pegá la línea copiada en el campo y presioná Validar."
@@ -1278,6 +1271,12 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
+            "instructions": [
+              "El proyecto ya está inicializado como repositorio Git. No ejecutes git init, git add ni git commit en esta actividad.",
+              "Verificá que estás dentro de /repo. Si hace falta, ejecutá: cd /repo",
+              "Agregá un remoto llamado origin ejecutando: git remote add origin https://github.com/estudiante/remote-setup.git",
+              "Comprobá que quedó registrado ejecutando: git remote -v"
+            ],
             "remote": {
               "requiredName": "origin",
               "urlPattern": "^(https://|git@).+"
@@ -1287,6 +1286,10 @@
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
+              "git": {
+                "initialCommit": true,
+                "message": "Prepara proyecto para configurar remoto"
+              },
               "files": [
                 {
                   "path": "/repo/index.html",

@@ -13,6 +13,66 @@ import { help } from "components/apps/Terminal/functions";
 
 const corsProxy = "https://cors.isomorphic-git.org";
 const GIT_CONFIG_KEY = "gitbash_global_config";
+const CSS_PULL_LAB_REMOTE = "https://github.com/winsim-labs/css-pull-lab.git";
+const CSS_PULL_LAB_FILES: Record<string, string> = {
+  "README.md":
+    "# css-pull-lab\n\nSimulador para practicar `git pull` y ver cambios reales en styles.css.\n",
+  "index.html": `<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Landing Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="hero">
+      <h1>Curso Git Pull Lab</h1>
+      <p>Version inicial del estilo.</p>
+      <button>Ver cambios</button>
+    </main>
+  </body>
+</html>
+`,
+  "styles.css": `:root {
+  --bg: #f7f7f7;
+  --card: #ffffff;
+  --text: #1f2430;
+  --accent: #2d7ff9;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: var(--bg);
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  color: var(--text);
+}
+
+.hero {
+  background: var(--card);
+  border: 1px solid #d8dce4;
+  border-radius: 12px;
+  padding: 28px;
+  width: min(560px, 92vw);
+}
+
+button {
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+  padding: 10px 16px;
+}
+`,
+};
 
 const UPDATE_FOLDER_COMMANDS = new Set([
   "checkout",
@@ -100,6 +160,31 @@ const fsReaddir = (fs: FSModule, path: string): Promise<string[]> =>
       error ? reject(error) : resolve(entries)
     );
   });
+
+const fsMkdir = (fs: FSModule, path: string): Promise<void> =>
+  new Promise((resolve, reject) => {
+    fs.mkdir(path, (error?: unknown) => (error ? reject(error) : resolve()));
+  });
+
+const fsWriteFile = (
+  fs: FSModule,
+  path: string,
+  content: string
+): Promise<void> =>
+  new Promise((resolve, reject) => {
+    fs.writeFile(path, content, (error?: unknown) =>
+      error ? reject(error) : resolve()
+    );
+  });
+
+const mkdirRecursive = async (fs: FSModule, path: string): Promise<void> => {
+  const normalizedPath = normalizePath(path);
+
+  if (normalizedPath === "/" || (await fsExists(fs, normalizedPath))) return;
+
+  await mkdirRecursive(fs, parentPath(normalizedPath));
+  await fsMkdir(fs, normalizedPath);
+};
 
 const findRepoRoot = async (
   fs: FSModule,
@@ -238,6 +323,57 @@ const processCliGit = async (
       await git.init({ defaultBranch: "main", dir: cd, fs });
       printLn(`Initialized empty Git repository in ${joinPath(cd, ".git")}/`);
       return true;
+
+    case "clone": {
+      const [sourceInput, destinationInput] = args;
+
+      if (sourceInput !== CSS_PULL_LAB_REMOTE) return false;
+
+      const destinationName = destinationInput || "css-pull-lab";
+      const destinationPath = joinPath(cd, destinationName);
+
+      if (await fsExists(fs, destinationPath)) {
+        const destinationEntries = await fsReaddir(fs, destinationPath);
+
+        if (destinationEntries.length > 0) {
+          printLn(
+            `fatal: destination path '${destinationName}' already exists and is not an empty directory.`
+          );
+          return true;
+        }
+      } else {
+        await mkdirRecursive(fs, destinationPath);
+      }
+
+      printLn(`Cloning into '${destinationName}'...`);
+      await Promise.all(
+        Object.entries(CSS_PULL_LAB_FILES).map(([filePath, content]) =>
+          fsWriteFile(fs, joinPath(destinationPath, filePath), content)
+        )
+      );
+      await git.init({ defaultBranch: "main", dir: destinationPath, fs });
+      await Promise.all(
+        Object.keys(CSS_PULL_LAB_FILES).map((filepath) =>
+          git.add({ dir: destinationPath, filepath, fs })
+        )
+      );
+      await git.commit({
+        author: getAuthor(),
+        dir: destinationPath,
+        fs,
+        message: "feat: base web styles",
+      });
+      await git.addRemote({
+        dir: destinationPath,
+        fs,
+        remote: "origin",
+        url: sourceInput,
+      });
+      printLn("remote: Enumerating objects: 12, done.");
+      printLn("Receiving objects: 100% (12/12), done.");
+      printLn("done.");
+      return true;
+    }
 
     case "add": {
       const repoRoot = await repoCommand();

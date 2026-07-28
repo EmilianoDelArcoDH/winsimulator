@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   type KeyboardEvent,
+  type MouseEvent,
 } from "react";
 import processGit from "components/apps/Terminal/processGit";
 import { useFileSystem } from "contexts/fileSystem";
@@ -318,7 +319,9 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
   ]);
   const [input, setInput] = useState("");
   const [lastCommand, setLastCommand] = useState("");
+  const shellRef = useRef<HTMLDivElement | null>(null);
   const outputRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLInputElement | null>(null);
   const [historyEntries, setHistoryEntries] = useState<string[]>([]);
   const historyCursorRef = useRef<number>(-1);
   const gitRepos = useRef<Record<string, GitRepoState>>({});
@@ -336,6 +339,53 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     lineIdRef.current += 1;
     setLines((current) => [...current, { id, text: value }]);
   }, []);
+
+  const getShellSelection = useCallback((): Selection | undefined => {
+    const selection = window.getSelection();
+    const shell = shellRef.current;
+
+    if (
+      !selection ||
+      !selection.toString() ||
+      !shell ||
+      (!selection.anchorNode || !shell.contains(selection.anchorNode)) ||
+      (!selection.focusNode || !shell.contains(selection.focusNode))
+    ) {
+      return undefined;
+    }
+
+    return selection;
+  }, []);
+
+  const copySelection = useCallback((): boolean => {
+    const selection = getShellSelection();
+    const text = selection?.toString();
+
+    if (!text) return false;
+
+    navigator.clipboard?.writeText(text);
+    selection?.removeAllRanges();
+
+    return true;
+  }, [getShellSelection]);
+
+  const pasteClipboardToInput = useCallback(async (): Promise<void> => {
+    const clipboardText = await navigator.clipboard?.readText?.();
+
+    if (!clipboardText) return;
+
+    const inputElement = inputRef.current;
+    const selectionStart = inputElement?.selectionStart ?? input.length;
+    const selectionEnd = inputElement?.selectionEnd ?? selectionStart;
+    const nextInput = `${input.slice(0, selectionStart)}${clipboardText}${input.slice(selectionEnd)}`;
+    const cursorPosition = selectionStart + clipboardText.length;
+
+    setInput(nextInput);
+    requestAnimationFrame(() => {
+      inputElement?.focus();
+      inputElement?.setSelectionRange(cursorPosition, cursorPosition);
+    });
+  }, [input]);
 
   const pushHistory = useCallback((command: string): void => {
     if (!command.trim()) return;
@@ -2242,11 +2292,41 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     [appendLine, historyEntries, runInput]
   );
 
+  const onShellKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>): void => {
+      const isCopyShortcut =
+        event.code === "KeyC" && (event.ctrlKey || event.metaKey);
+
+      if (!isCopyShortcut || !getShellSelection()) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      copySelection();
+    },
+    [copySelection, getShellSelection]
+  );
+
+  const onShellContextMenu = useCallback(
+    (event: MouseEvent<HTMLDivElement>): void => {
+      event.preventDefault();
+
+      if (copySelection()) return;
+
+      pasteClipboardToInput().catch(() => {
+        // Clipboard reads can be blocked by the browser outside user gestures.
+      });
+    },
+    [copySelection, pasteClipboardToInput]
+  );
+
   return (
     <div
       data-cwd={cwd}
       data-last-command={lastCommand}
       data-tour="gitbash-shell"
+      onContextMenu={onShellContextMenu}
+      onKeyDownCapture={onShellKeyDown}
+      ref={shellRef}
       style={{
         background: "#1d1f21",
         color: "#c5c8c6",
@@ -2259,6 +2339,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
         padding: 8,
         width: "100%",
       }}
+      tabIndex={-1}
     >
       {showFallbackWindowControls && (
         <div
@@ -2333,21 +2414,32 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
         style={{
           flex: 1,
           overflowY: "auto",
+          userSelect: "text",
           whiteSpace: "pre-wrap",
           wordBreak: "break-word",
         }}
       >
         {lines.map((line) => (
-          <div key={line.id}>{line.text}</div>
+          <div key={line.id} style={{ userSelect: "text" }}>
+            {line.text}
+          </div>
         ))}
       </div>
 
-      <div style={{ alignItems: "center", display: "flex", gap: 8 }}>
-        <span style={{ color: "#32cd32" }}>{prompt}</span>
+      <div
+        style={{
+          alignItems: "center",
+          display: "flex",
+          gap: 8,
+          userSelect: "text",
+        }}
+      >
+        <span style={{ color: "#32cd32", userSelect: "text" }}>{prompt}</span>
         <input
           data-tour="gitbash-input"
           onChange={({ target }) => setInput(target.value)}
           onKeyDown={onInputKeyDown}
+          ref={inputRef}
           spellCheck={false}
           style={{
             background: "transparent",
