@@ -426,6 +426,12 @@ const processCliGit = async (
 
       if (!repoRoot) return true;
 
+      if (args.includes("--online")) {
+        printLn("error: unknown option `online`");
+        printLn("hint: Did you mean `git log --oneline`?");
+        return true;
+      }
+
       const oneline = args.includes("--oneline");
       const depthFlag = args.findIndex(
         (arg) => arg === "-n" || arg === "--max-count"

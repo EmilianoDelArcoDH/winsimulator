@@ -359,7 +359,7 @@ const getFallbackActivity = (
 const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
   const preparedWorkspaceRef = useRef<Record<string, true>>({});
   const lastPreparedActivityIdRef = useRef("");
-  const { fs, mkdirRecursive, writeFile } = useFileSystem();
+  const { deletePath, exists, fs, mkdirRecursive, writeFile } = useFileSystem();
   const { open: openProcess, processes, url: setProcessUrl } = useProcesses();
   const { language, setLanguage } = useSession();
   const uiText = useMemo(() => {
@@ -491,6 +491,14 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             .map((folderPath) => mkdirRecursive(folderPath))
         );
 
+        if (workspaceSeed.resetOnEnter && workspaceSeed.git?.initialCommit) {
+          const gitDirectory = `${workspaceSeed.rootPath}/.git`;
+
+          if (await exists(gitDirectory)) {
+            await deletePath(gitDirectory);
+          }
+        }
+
         await Promise.all(
           workspaceSeed.files.map(async ({ content, path, source }) => {
             let fileContent: Buffer | string = content;
@@ -574,6 +582,8 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     };
   }, [
     activity,
+    deletePath,
+    exists,
     fs,
     mkdirRecursive,
     openProcess,
