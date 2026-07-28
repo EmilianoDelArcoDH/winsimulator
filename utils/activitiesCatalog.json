@@ -1070,10 +1070,7 @@
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": {
-                  "mustIncludeAny": [
-                    "cd repo",
-                    "cd /Users/Public/Desktop/repo"
-                  ]
+                  "mustIncludeAny": ["cd repo", "cd /Users/Public/Desktop/repo"]
                 },
                 "messageFail": "Primero accedé a la carpeta del proyecto con: cd repo"
               },
@@ -3021,6 +3018,192 @@
                 },
                 "messageOk": "El reporte incluye una verificacion concreta para comprobar el cambio.",
                 "messageFail": "Explica como verificarias el cambio, por ejemplo recargando fuerte con Ctrl+Shift+R o Cmd+Shift+R."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "classId": "sch_pages_c03",
+      "title": "Sitio publicado y demo final",
+      "activities": [
+        {
+          "id": "sch_pages_c03_a01",
+          "classId": "sch_pages_c03",
+          "title": "Crear, publicar y actualizar una web funcional",
+          "objective": "Completar el ciclo profesional: desarrollar una web con HTML, CSS y JavaScript, versionarla con Git, subirla al GitHub simulado y mantenerla actualizada en Pages.",
+          "mode": "workspace",
+          "ui": {
+            "submitLabel": "Validar demo final",
+            "retryLabel": "Reintentar"
+          },
+          "data": {
+            "scenario": "Este es el proyecto final. Vas a transformar una base sencilla en una web funcional, probar su interacción, guardar dos versiones con Git y demostrar que la misma URL de Pages se actualiza después del segundo push.",
+            "instructions": [
+              "Paso 1 — Explora el proyecto: abre index.html, css/styles.css y js/app.js en Visual Studio Code. La base incluye una tarjeta, un botón y un mensaje.",
+              "Paso 2 — Completa el HTML: conserva el enlace a css/styles.css, el botón con id=\"action-button\", el mensaje con id=\"status-message\" y el enlace a js/app.js.",
+              "Paso 3 — Personaliza el CSS: modifica y guarda css/styles.css. Mantén una regla para .card y otra para el botón.",
+              "Paso 4 — Completa la funcionalidad: en js/app.js usa addEventListener para que el botón cambie el texto del mensaje mediante textContent. Guarda los tres archivos.",
+              "Paso 5 — Prueba localmente: abre index.html en el navegador interno, presiona el botón y confirma que el mensaje cambia sin recargar la página.",
+              "Paso 6 — Abre Git Bash. Ya estarás ubicado en /Users/Public/Desktop/demo-final. Ejecuta git init y luego git add .",
+              "Paso 7 — Crea la primera versión con git commit -m \"Creo sitio funcional\".",
+              "Paso 8 — Conecta el GitHub simulado con git remote add origin https://github.com/estudiante/demo-final.git y ejecuta git push origin main.",
+              "Paso 9 — Publica desde Git Bash con pages publish demo-final. Se abrirá https://estudiante.pages.dev/demo-final. Prueba nuevamente el botón en la web publicada.",
+              "Paso 10 — Crea una actualización visible: cambia el texto final de js/app.js para que incluya Demo actualizada y realiza también un cambio de color en css/styles.css.",
+              "Paso 11 — Guarda la segunda versión con git add ., git commit -m \"Actualizo demo publicada\" y git push origin main.",
+              "Paso 12 — Comprueba la actualización: Git Bash abrirá la misma URL de Pages. Presiona el botón y verifica que ahora muestre Demo actualizada.",
+              "Paso 13 — Guarda https://estudiante.pages.dev/demo-final en url-demo.txt y presiona Validar demo final."
+            ],
+            "workspace": {
+              "rootPath": "/Users/Public/Desktop/demo-final",
+              "openFile": "/Users/Public/Desktop/demo-final/index.html",
+              "openInVscode": true,
+              "overwriteFiles": true,
+              "resetOnEnter": true,
+              "folders": [
+                "/Users/Public/Desktop/demo-final/css",
+                "/Users/Public/Desktop/demo-final/js"
+              ],
+              "files": [
+                {
+                  "path": "/Users/Public/Desktop/demo-final/index.html",
+                  "content": "<!doctype html>\n<html lang=\"es\">\n  <head>\n    <meta charset=\"UTF-8\" />\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\n    <title>Demo final</title>\n    <link rel=\"stylesheet\" href=\"css/styles.css\" />\n  </head>\n  <body>\n    <main class=\"card\">\n      <p class=\"eyebrow\">Proyecto final</p>\n      <h1>Mi sitio funcional</h1>\n      <p id=\"status-message\" aria-live=\"polite\">La demo está lista para comenzar.</p>\n      <button id=\"action-button\" type=\"button\">Probar interacción</button>\n    </main>\n    <script src=\"js/app.js\"></script>\n  </body>\n</html>\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/demo-final/css/styles.css",
+                  "content": ":root {\n  color-scheme: light;\n  font-family: Arial, sans-serif;\n}\n\nbody {\n  background: #eef2ff;\n  display: grid;\n  margin: 0;\n  min-height: 100vh;\n  place-items: center;\n}\n\n.card {\n  background: white;\n  border-radius: 20px;\n  box-shadow: 0 18px 50px rgba(30, 41, 59, 0.18);\n  max-width: 520px;\n  padding: 40px;\n  text-align: center;\n}\n\nbutton {\n  background: #4f46e5;\n  border: 0;\n  border-radius: 10px;\n  color: white;\n  cursor: pointer;\n  font: inherit;\n  padding: 12px 20px;\n}\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/demo-final/js/app.js",
+                  "content": "const actionButton = document.querySelector('#action-button');\nconst statusMessage = document.querySelector('#status-message');\n\nactionButton.addEventListener('click', () => {\n  statusMessage.textContent = 'La interacción funciona correctamente.';\n});\n"
+                },
+                {
+                  "path": "/Users/Public/Desktop/demo-final/url-demo.txt",
+                  "content": "URL de la demo final:\n\n"
+                }
+              ]
+            }
+          },
+          "validation": {
+            "checks": [
+              {
+                "checkId": "final_html_saved_and_linked",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": {
+                  "path": "/Users/Public/Desktop/demo-final/index.html",
+                  "pattern": "css/styles\\.css[\\s\\S]*id=[\"']action-button[\"'][\\s\\S]*id=[\"']status-message[\"'][\\s\\S]*js/app\\.js"
+                },
+                "messageOk": "El HTML conecta la estructura, los estilos y el script.",
+                "messageFail": "Revisa index.html: debe enlazar css/styles.css y js/app.js, y conservar action-button y status-message."
+              },
+              {
+                "checkId": "final_css_complete",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": {
+                  "path": "/Users/Public/Desktop/demo-final/css/styles.css",
+                  "pattern": "\\.card\\s*\\{[\\s\\S]*button\\s*\\{[\\s\\S]*(background|color)\\s*:"
+                },
+                "messageOk": "La demo tiene estilos propios para la tarjeta y el botón.",
+                "messageFail": "Completa css/styles.css con reglas para .card y button, incluyendo un color."
+              },
+              {
+                "checkId": "final_js_functional",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": {
+                  "path": "/Users/Public/Desktop/demo-final/js/app.js",
+                  "pattern": "action-button[\\s\\S]*status-message[\\s\\S]*addEventListener\\s*\\(\\s*[\"']click[\"'][\\s\\S]*textContent\\s*=[\\s\\S]*(Demo actualizada|Updated demo|Demo atualizada)"
+                },
+                "messageOk": "JavaScript conecta el botón con un cambio visible y contiene la actualización final.",
+                "messageFail": "En js/app.js conecta el clic del botón con statusMessage.textContent y haz que el mensaje final incluya Demo actualizada."
+              },
+              {
+                "checkId": "final_files_saved",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "workspace",
+                "rules": {
+                  "paths": [
+                    "/Users/Public/Desktop/demo-final/index.html",
+                    "/Users/Public/Desktop/demo-final/css/styles.css",
+                    "/Users/Public/Desktop/demo-final/js/app.js",
+                    "/Users/Public/Desktop/demo-final/url-demo.txt"
+                  ]
+                },
+                "messageOk": "Guardaste todos los archivos de la demo.",
+                "messageFail": "Guarda index.html, css/styles.css, js/app.js y url-demo.txt antes de validar."
+              },
+              {
+                "checkId": "final_git_flow",
+                "type": "TERMINAL_COMMAND_EXECUTED",
+                "target": "commands",
+                "rules": {
+                  "mustInclude": [
+                    "git init",
+                    "git remote add origin https://github.com/estudiante/demo-final.git",
+                    "pages publish demo-final"
+                  ]
+                },
+                "messageOk": "Inicializaste Git, conectaste GitHub y publicaste con Pages.",
+                "messageFail": "Completa git init, agrega el remoto indicado y ejecuta pages publish demo-final desde Git Bash."
+              },
+              {
+                "checkId": "final_two_commits",
+                "type": "TERMINAL_COMMAND_COUNT_MIN",
+                "target": "commands",
+                "rules": {
+                  "command": "git commit",
+                  "minCount": 2
+                },
+                "messageOk": "Registraste una versión inicial y una actualización.",
+                "messageFail": "La demo final requiere dos commits: el inicial y la actualización."
+              },
+              {
+                "checkId": "final_two_pushes",
+                "type": "TERMINAL_COMMAND_COUNT_MIN",
+                "target": "commands",
+                "rules": {
+                  "command": "git push",
+                  "minCount": 2
+                },
+                "messageOk": "Subiste las dos versiones al GitHub simulado.",
+                "messageFail": "Realiza dos push: uno antes de publicar y otro después de actualizar la demo."
+              },
+              {
+                "checkId": "final_repo_synced",
+                "type": "REPO_STATE",
+                "target": "repository",
+                "rules": {
+                  "initialized": true,
+                  "hasAtLeastCommits": 2,
+                  "remotesIncludes": ["origin"],
+                  "remoteInSync": true
+                },
+                "messageOk": "El repositorio local y el GitHub simulado están sincronizados.",
+                "messageFail": "Revisa los commits, el remoto origin y el último git push."
+              },
+              {
+                "checkId": "final_pages_url",
+                "type": "PAGES_PUBLISHED_URL_REGEX",
+                "target": "pages",
+                "rules": {
+                  "pattern": "^https://estudiante\\.pages\\.dev/demo-final$"
+                },
+                "messageOk": "Pages mantiene publicada la URL de la demo final.",
+                "messageFail": "Publica el proyecto con pages publish demo-final."
+              },
+              {
+                "checkId": "final_url_saved",
+                "type": "FILE_CONTENT_REGEX",
+                "target": "workspace",
+                "rules": {
+                  "path": "/Users/Public/Desktop/demo-final/url-demo.txt",
+                  "pattern": "https://estudiante\\.pages\\.dev/demo-final"
+                },
+                "messageOk": "Registraste la URL de la presentación final.",
+                "messageFail": "Guarda https://estudiante.pages.dev/demo-final en url-demo.txt."
               }
             ]
           }

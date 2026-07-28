@@ -168,6 +168,117 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 - abre automaticamente esa URL en el navegador interno
 - el navegador renderiza un snapshot publicado del proyecto, incluyendo HTML, CSS, JS e imagenes locales
 - tambien permite navegar links internos basicos dentro de la version publicada
+- ejecuta el JavaScript enlazado por el proyecto dentro del navegador interno
+- permite publicar desde Git Bash con `pages publish [nombre-del-proyecto]`
+- despues de una publicacion inicial, `git push` actualiza el contenido de la misma URL
+
+## Clase `sch_pages_c03` - Sitio publicado y demo final
+
+### `sch_pages_c03_a01` - Crear, publicar y actualizar una web funcional
+
+- Modo: `workspace`
+- URL app ES: `/?app=Activities&activityId=sch_pages_c03_a01&lang=es`
+- URL app EN: `/?app=Activities&activityId=sch_pages_c03_a01&lang=en`
+- URL app PT: `/?app=Activities&activityId=sch_pages_c03_a01&lang=pt`
+- URL standalone ES: `/activities/sch_pages_c03_a01?lang=es`
+- URL standalone EN: `/activities/sch_pages_c03_a01?lang=en`
+- URL standalone PT: `/activities/sch_pages_c03_a01?lang=pt`
+- Objetivo: completar un proyecto guiado con HTML, CSS y JavaScript funcional,
+  registrar dos versiones con Git, subirlas al GitHub simulado y comprobar que
+  `https://estudiante.pages.dev/demo-final` se actualiza despues del segundo
+  `push`.
+- Consigna:
+
+<div>
+    <style>
+        #consigna-schools p,
+        #consigna-schools li {
+            font-size: 18px;
+        }
+
+        #consigna-schools h2 {
+            font-family: SourceSansPro, sans-serif;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #consigna-schools h3 {
+            font-family: SourceSansPro, sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        #consigna-schools p.copy-warning {
+            font-style: italic;
+            font-weight: bold;
+        }
+
+        #consigna-schools p.contexto-consigna {
+            font-style: italic;
+        }
+
+        #consigna-schools .texto-copiable {
+            padding: 2px;
+            background-color: #E0E0E0;
+            border: 1px solid #D9D9D9;
+            font-size: 15px;
+            color: #222;
+            font-style: italic;
+        }
+    </style>
+
+    <article id="consigna-schools">
+        <h2>Sitio publicado y demo final</h2>
+
+        <p class="contexto-consigna">
+            Vas a crear una web funcional con HTML, CSS y JavaScript, guardar
+            dos versiones con Git y demostrar que la misma URL publicada se
+            actualiza despues de hacer push.
+        </p>
+
+        <p class="copy-warning">
+            La actividad se completa cuando la interaccion JavaScript funciona
+            tanto en la vista local como en Pages y la segunda version queda
+            sincronizada con el GitHub simulado.
+        </p>
+
+        <h3>En tu HTML:</h3>
+        <ul>
+            <li>Conserva los enlaces a <span class="texto-copiable">css/styles.css</span> y <span class="texto-copiable">js/app.js</span>.</li>
+            <li>Incluye el boton <span class="texto-copiable">action-button</span> y el mensaje <span class="texto-copiable">status-message</span>.</li>
+        </ul>
+
+        <h3>En tu CSS:</h3>
+        <ul>
+            <li>Personaliza la tarjeta y el boton con estilos propios.</li>
+            <li>Realiza un segundo cambio visual antes de republicar.</li>
+        </ul>
+
+        <h3>En tu JavaScript:</h3>
+        <ul>
+            <li>Usa <span class="texto-copiable">addEventListener</span> para responder al clic del boton.</li>
+            <li>Actualiza el mensaje con <span class="texto-copiable">textContent</span>.</li>
+            <li>En la segunda version, el mensaje debe incluir <span class="texto-copiable">Demo actualizada</span>.</li>
+        </ul>
+
+        <h3>Publicacion:</h3>
+        <ul>
+            <li>Crea dos commits y realiza dos push desde Git Bash.</li>
+            <li>Publica con <span class="texto-copiable">pages publish demo-final</span>.</li>
+            <li>Comprueba el resultado en <span class="texto-copiable">https://estudiante.pages.dev/demo-final</span>.</li>
+        </ul>
+    </article>
+</div>
+
+- Solucion esperada paso a paso:
+  1. Editar y guardar `index.html`, `css/styles.css` y `js/app.js`.
+  2. Probar el boton localmente y comprobar el cambio de mensaje.
+  3. Ejecutar `git init`, `git add .` y el primer `git commit`.
+  4. Agregar `origin` y ejecutar el primer `git push origin main`.
+  5. Ejecutar `pages publish demo-final` y probar la version publicada.
+  6. Cambiar el mensaje JavaScript y un color del CSS.
+  7. Crear el segundo commit y ejecutar el segundo push.
+  8. Comprobar la actualizacion en la misma URL y guardarla en `url-demo.txt`.
 
 ## Clase `sch_git_c01` - Control de versiones y trabajo colaborativo
 
