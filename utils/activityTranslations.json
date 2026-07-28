@@ -2,6 +2,10 @@
   "en": {
     "Accedé a la carpeta del proyecto con: cd repo": "Open the project folder with: cd repo",
     "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo": "Check that you are in /Users/Public/Desktop/repo with pwd. If you are in a different folder, run: cd /Users/Public/Desktop/repo",
+    "En index.html cambiá el texto Diff practice por Título actualizado y guardá el archivo.": "In index.html, change the text Diff practice to Updated title and save the file.",
+    "Antes de ejecutar git add, ejecutá git diff. Copiá la línea de contenido que comienza con un solo +: no copies la cabecera +++ b/index.html.": "Before running git add, run git diff. Copy the content line that starts with a single +; do not copy the +++ b/index.html header.",
+    "Ejecutá git diff después de guardar index.html y antes de ejecutar git add.": "Run git diff after saving index.html and before running git add.",
+    "La línea no coincide. Copiá la línea de contenido que empieza con un solo +, no la cabecera +++ b/index.html.": "The line does not match. Copy the content line that starts with a single +, not the +++ b/index.html header.",
     "Copiá el nombre del autor y el mensaje del último commit.": "Copy the author name and the latest commit message.",
     "Crea base para comparar cambios": "Creates a base for comparing changes",
     "Crea proyecto para revisar el historial": "Creates a project for reviewing history",
@@ -647,6 +651,10 @@
   "pt": {
     "Accedé a la carpeta del proyecto con: cd repo": "Acesse a pasta do projeto com: cd repo",
     "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo": "Verifique se você está em /Users/Public/Desktop/repo com pwd. Se estiver em outra pasta, execute: cd /Users/Public/Desktop/repo",
+    "En index.html cambiá el texto Diff practice por Título actualizado y guardá el archivo.": "Em index.html, altere o texto Diff practice para Título atualizado e salve o arquivo.",
+    "Antes de ejecutar git add, ejecutá git diff. Copiá la línea de contenido que comienza con un solo +: no copies la cabecera +++ b/index.html.": "Antes de executar git add, execute git diff. Copie a linha de conteúdo que começa com um único +; não copie o cabeçalho +++ b/index.html.",
+    "Ejecutá git diff después de guardar index.html y antes de ejecutar git add.": "Execute git diff depois de salvar index.html e antes de executar git add.",
+    "La línea no coincide. Copiá la línea de contenido que empieza con un solo +, no la cabecera +++ b/index.html.": "A linha não corresponde. Copie a linha de conteúdo que começa com um único +, não o cabeçalho +++ b/index.html.",
     "Copiá el nombre del autor y el mensaje del último commit.": "Copie o nome do autor e a mensagem do último commit.",
     "Crea base para comparar cambios": "Cria uma base para comparar alterações",
     "Crea proyecto para revisar el historial": "Cria um projeto para revisar o histórico",

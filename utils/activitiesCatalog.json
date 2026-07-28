@@ -1115,8 +1115,8 @@
           "data": {
             "instructions": [
               "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
-              "Modificá una línea de index.html y guardá el archivo.",
-              "Ejecutá git diff y copiá una línea agregada que comience con +.",
+              "En index.html cambiá el texto Diff practice por Título actualizado y guardá el archivo.",
+              "Antes de ejecutar git add, ejecutá git diff. Copiá la línea de contenido que comienza con un solo +: no copies la cabecera +++ b/index.html.",
               "Después ejecutá git add index.html y git commit -m \"Actualiza título principal\"."
             ],
             "form": [
@@ -1155,7 +1155,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git diff"] },
                 "messageOk": "Usaste git diff.",
-                "messageFail": "Tenés que usar git diff para ver cambios antes de commitear."
+                "messageFail": "Ejecutá git diff después de guardar index.html y antes de ejecutar git add."
               },
               {
                 "checkId": "c03_a03_diff_before_commit",
@@ -1171,7 +1171,7 @@
                 "target": "linea",
                 "rules": { "repoPath": "repo.currentDiff.expectedLine" },
                 "messageOk": "Línea correcta.",
-                "messageFail": "No coincide la línea. Revisá el output de git diff."
+                "messageFail": "La línea no coincide. Copiá la línea de contenido que empieza con un solo +, no la cabecera +++ b/index.html."
               }
             ]
           }
