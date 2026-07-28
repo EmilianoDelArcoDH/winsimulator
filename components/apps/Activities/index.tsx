@@ -524,29 +524,30 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             fs,
           });
 
-          await Promise.all(
-            workspaceSeed.files.map(({ path }) =>
-              git.add({
-                dir: workspaceSeed.rootPath,
-                filepath: toWorkspaceRelativePath(workspaceSeed.rootPath, path),
-                fs,
-              })
-            )
+          await workspaceSeed.files.reduce<Promise<void>>(
+            (previousAdd, { path }) =>
+              previousAdd.then(async () => {
+                await git.add({
+                  dir: workspaceSeed.rootPath,
+                  filepath: toWorkspaceRelativePath(
+                    workspaceSeed.rootPath,
+                    path
+                  ),
+                  fs,
+                });
+              }),
+            Promise.resolve()
           );
 
-          try {
-            await git.commit({
-              author: {
-                email: "user@winsim.local",
-                name: "user",
-              },
-              dir: workspaceSeed.rootPath,
-              fs,
-              message: workspaceSeed.git.message,
-            });
-          } catch {
-            // Existing initialized workspaces may already have this base commit.
-          }
+          await git.commit({
+            author: {
+              email: "user@winsim.local",
+              name: "user",
+            },
+            dir: workspaceSeed.rootPath,
+            fs,
+            message: workspaceSeed.git.message,
+          });
         }
 
         if (cancelled) return;
