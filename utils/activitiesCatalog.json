@@ -1279,6 +1279,7 @@
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
             "instructions": [
+              "El proyecto ya está inicializado como repositorio Git. No ejecutes git init, git add ni git commit en esta actividad.",
               "Verificá que estás dentro de /repo. Si hace falta, ejecutá: cd /repo",
               "Agregá un remoto llamado origin ejecutando: git remote add origin https://github.com/estudiante/remote-setup.git",
               "Comprobá que quedó registrado ejecutando: git remote -v"
@@ -1292,6 +1293,10 @@
               "openInVscode": true,
               "overwriteFiles": true,
               "resetOnEnter": true,
+              "git": {
+                "initialCommit": true,
+                "message": "Prepara proyecto para configurar remoto"
+              },
               "files": [
                 {
                   "path": "/repo/index.html",
