@@ -1020,13 +1020,15 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Creá al menos dos commits y luego revisá el historial resumido.",
+            "scenario": "Crea al menos dos commits y luego revisa el historial resumido.",
             "instructions": [
               "La terminal de Git Bash y la terminal integrada de Visual Studio Code ya abren en /Users/Public/Desktop/repo.",
-              "Modificá archivos desde Visual Studio Code (index.html, style.css o app.js).",
-              "Hacé git add + git commit (al menos DOS commits con mensajes claros).",
-              "Ejecutá: git log --oneline",
-              "Copiá exactamente las primeras dos líneas (hash + mensaje)."
+              "Modifica un archivo desde Visual Studio Code (index.html, style.css o app.js) y guarda el cambio con Ctrl+S o File -> Save.",
+              "Agrega ese archivo al staging con git add y crea un commit con un mensaje claro.",
+              "Repite el proceso con otro cambio para crear un segundo commit.",
+              "Ejemplo: modifica index.html, ejecuta git add index.html y luego git commit -m \"Actualiza contenido principal\". Después modifica style.css, ejecuta git add style.css y luego git commit -m \"Mejora estilos principales\".",
+              "Ejecuta: git log --oneline",
+              "Copia exactamente las primeras dos líneas (hash + mensaje)."
             ],
             "form": [
               {
