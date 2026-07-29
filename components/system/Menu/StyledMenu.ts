@@ -7,11 +7,7 @@ type StyledMenuProps = {
   $y: number;
 };
 
-const StyledMenu = styled(motion.nav).attrs<StyledMenuProps>(({ $x, $y }) => ({
-  style: {
-    transform: `translate(${$x}px, ${$y}px)`,
-  },
-}))<StyledMenuProps>`
+const StyledMenu = styled(motion.nav)<StyledMenuProps>`
   backdrop-filter: ${({ theme }) => `blur(${theme.effects.acrylic.blur})`};
   background-color: ${({ theme }) => theme.effects.acrylic.background};
   border: ${({ theme }) => `1px solid ${theme.effects.border.strong}`};
@@ -25,6 +21,8 @@ const StyledMenu = styled(motion.nav).attrs<StyledMenuProps>(({ $x, $y }) => ({
   padding: 4px;
   pointer-events: none;
   position: fixed;
+  left: ${({ $x }) => `${$x}px`};
+  top: ${({ $y }) => `${$y}px`};
   width: max-content;
   z-index: ${({ $isSubMenu }) => $isSubMenu && 1};
 

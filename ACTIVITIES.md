@@ -1271,18 +1271,19 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         <h2>git diff antes del commit</h2>
 
         <p class="contexto-consigna">
-            Vas a revisar diferencias antes de confirmar cambios. Esto ayuda a detectar que linea cambio y evita commits hechos sin revisar.
+            Vas a revisar diferencias antes de confirmar cambios. Esto ayuda a detectar qué línea cambió y evita commits hechos sin revisar.
         </p>
 
         <p class="copy-warning">
-            Usa la comparacion antes de hacer commit y copia la linea cambiada respetando lo que muestra la terminal.
+            Usa la comparación antes de hacer commit. En el diff, copia la segunda línea que empieza con <code>+</code>: <code>+&lt;html&gt;&lt;body&gt;&lt;h1&gt;Título actualizado&lt;/h1&gt;&lt;/body&gt;&lt;/html&gt;</code>.
         </p>
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
             <li>Consulta las diferencias antes de confirmar cambios.</li>
-            <li>Identifica la linea que cambio segun el diff.</li>
-            <li>Completa el formulario con esa linea respetando lo que muestra la terminal.</li>
+            <li>Identifica las dos líneas que empiezan con <code>+</code>.</li>
+            <li>No copies la primera, <code>+++ b/index.html</code>, porque es la cabecera del diff.</li>
+            <li>Copia la segunda línea completa y pégala en el formulario.</li>
         </ul>
     </article>
 
@@ -1290,8 +1291,8 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 - Solucion esperada paso a paso:
   1. Hacer o revisar el cambio preparado por la actividad.
   2. Ejecutar `git diff` antes de cualquier commit.
-  3. Identificar en el diff la linea que cambio.
-  4. Copiar esa linea en el formulario.
+  3. Identificar en el diff las dos lineas que empiezan con `+`.
+  4. Copiar la segunda linea completa: `+<html><body><h1>Título actualizado</h1></body></html>`.
   5. Solo despues de revisar el diff, continuar con el flujo de commit si la actividad lo pide.
 
 ### `sch_git_c03_a04` - Debugging historico (git show)

@@ -9,6 +9,7 @@ import {
 } from "react";
 import processGit from "components/apps/Terminal/processGit";
 import { useFileSystem } from "contexts/fileSystem";
+import { useMenu } from "contexts/menu";
 import { type ComponentProcessProps } from "components/system/Apps/RenderComponent";
 import { useProcesses } from "contexts/process";
 import {
@@ -306,6 +307,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     open,
     processes: { [id]: process },
   } = useProcesses();
+  const { contextMenu } = useMenu();
   const fsRef = useRef(fs);
   const showFallbackWindowControls = true;
   const isMaximized = Boolean(process?.maximized);
@@ -357,9 +359,19 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     return selection;
   }, []);
 
+  const getInputSelectionText = useCallback((): string => {
+    const inputElement = inputRef.current;
+    const selectionStart = inputElement?.selectionStart ?? 0;
+    const selectionEnd = inputElement?.selectionEnd ?? selectionStart;
+
+    if (!inputElement || selectionStart === selectionEnd) return "";
+
+    return input.slice(selectionStart, selectionEnd);
+  }, [input]);
+
   const copySelection = useCallback((): boolean => {
     const selection = getShellSelection();
-    const text = selection?.toString();
+    const text = selection?.toString() || getInputSelectionText();
 
     if (!text) return false;
 
@@ -367,7 +379,7 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     selection?.removeAllRanges();
 
     return true;
-  }, [getShellSelection]);
+  }, [getInputSelectionText, getShellSelection]);
 
   const pasteClipboardToInput = useCallback(async (): Promise<void> => {
     const clipboardText = await navigator.clipboard?.readText?.();
@@ -2306,27 +2318,57 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     [copySelection, getShellSelection]
   );
 
+  const shellContextMenu = useMemo(
+    () =>
+      contextMenu?.(() => {
+        const hasSelection = Boolean(
+          getShellSelection()?.toString() || getInputSelectionText()
+        );
+
+        return [
+          {
+            action: () => {
+              copySelection();
+            },
+            disabled: !hasSelection,
+            label: "Copy",
+          },
+          {
+            action: () => {
+              pasteClipboardToInput().catch(() => {
+                // Clipboard reads can be blocked by the browser.
+              });
+            },
+            label: "Paste",
+          },
+        ];
+      }),
+    [
+      contextMenu,
+      copySelection,
+      getInputSelectionText,
+      getShellSelection,
+      pasteClipboardToInput,
+    ]
+  );
   const onShellContextMenu = useCallback(
     (event: MouseEvent<HTMLDivElement>): void => {
-      event.preventDefault();
-
-      if (copySelection()) return;
-
-      pasteClipboardToInput().catch(() => {
-        // Clipboard reads can be blocked by the browser outside user gestures.
+      shellContextMenu?.onContextMenuCapture(event, undefined, {
+        staticX: event.clientX,
+        staticY: event.clientY,
       });
     },
-    [copySelection, pasteClipboardToInput]
+    [shellContextMenu]
   );
 
   return (
     <div
+      ref={shellRef}
       data-cwd={cwd}
       data-last-command={lastCommand}
       data-tour="gitbash-shell"
-      onContextMenu={onShellContextMenu}
+      onContextMenuCapture={onShellContextMenu}
       onKeyDownCapture={onShellKeyDown}
-      ref={shellRef}
       style={{
         background: "#1d1f21",
         color: "#c5c8c6",
