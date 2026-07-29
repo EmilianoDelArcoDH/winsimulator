@@ -152,11 +152,15 @@ const StyledMonacoEditor = styled.div`
         grid-column: 2;
       }
 
+      &.compact-panel-open .side-panel,
       &.vscode-tutorial-active .side-panel,
       &.creating-entry .side-panel,
       &.open-folder-active .side-panel {
         bottom: 0;
         display: block;
+        grid-area: auto;
+        grid-column: auto;
+        grid-row: auto;
         left: var(--activity-bar-width);
         max-width: calc(100% - var(--activity-bar-width));
         position: absolute;
@@ -166,7 +170,7 @@ const StyledMonacoEditor = styled.div`
       }
     }
 
-    &.panel-open {
+    &.panel-open:not(.compact-layout) {
       .editor-area {
         grid-column: 4;
       }
@@ -1930,7 +1934,7 @@ const StyledMonacoEditor = styled.div`
       padding: 0 8px 0 10px;
     }
 
-    .tab .open::after {
+    .tab.dirty .open::after {
       color: #c5c5c5;
       content: "•";
       font-size: 18px;
@@ -2165,8 +2169,11 @@ const StyledMonacoEditor = styled.div`
 
   .bottom-panel .terminal-action {
     align-items: center;
+    background: transparent;
+    border: 0;
     border-radius: 3px;
     color: var(--vsc-terminal-text);
+    cursor: default;
     display: inline-flex;
     font-family: "Segoe UI Variable", "Segoe UI", system-ui, sans-serif;
     font-size: 15px;
@@ -2635,8 +2642,11 @@ const StyledMonacoEditor = styled.div`
     color: transparent;
     font-size: 0;
     height: 20px;
+    line-height: 0;
     margin-right: 2px;
+    overflow: hidden;
     position: relative;
+    text-indent: -9999px;
     width: 20px;
   }
 
@@ -2647,6 +2657,7 @@ const StyledMonacoEditor = styled.div`
     height: 1px;
     left: 5px;
     position: absolute;
+    text-indent: 0;
     top: 9px;
     width: 10px;
   }
@@ -2747,7 +2758,7 @@ const StyledMonacoEditor = styled.div`
     color: #ffffff;
   }
 
-  .tabs .tab .open::after {
+  .tabs .tab.dirty .open::after {
     background: #d4d4d4;
     border-radius: 999px;
     content: "";

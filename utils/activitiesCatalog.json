@@ -22,8 +22,8 @@
           },
           "data": {
             "instructions": [
-              "Leé cada situación y elegí en su menú si corresponde a Control de versiones o a Copias/caos.",
-              "Escribí dos ejemplos propios relacionados con Git, versiones, cambios, copias o trabajo colaborativo. No necesitás usar palabras exactas.",
+              "Lee cada situación y elige en su menú si corresponde a Control de versiones o a Copias/caos.",
+              "Escribe dos ejemplos propios relacionados con Git, versiones, cambios, copias o trabajo colaborativo. No necesitas usar palabras exactas.",
               "Tus elecciones y textos se guardan automáticamente en este dispositivo."
             ],
             "columns": ["Control de versiones", "Copias/caos"],
@@ -72,7 +72,7 @@
             },
             "freeText": {
               "id": "justificacion",
-              "label": "Explicá 2 casos (mínimo 20 caracteres cada uno).",
+              "label": "Explica 2 casos (mínimo 20 caracteres cada uno).",
               "minLength": 20,
               "minItems": 2
             }
@@ -85,7 +85,7 @@
                 "type": "CLASSIFY_EXACT",
                 "target": "cards",
                 "messageOk": "Clasificación correcta.",
-                "messageFail": "Revisá: algunas tarjetas quedaron en la columna equivocada."
+                "messageFail": "Revisa: algunas tarjetas quedaron en la columna equivocada."
               },
               {
                 "checkId": "c01_a01_justificacion_min",
@@ -93,7 +93,7 @@
                 "target": "justificacion",
                 "rules": { "minItems": 2, "minLengthEach": 20 },
                 "messageOk": "Justificaciones completas.",
-                "messageFail": "Escribí 2 justificaciones, con al menos 20 caracteres cada una."
+                "messageFail": "Escribe 2 justificaciones, con al menos 20 caracteres cada una."
               },
               {
                 "checkId": "c01_a01_relevancia",
@@ -123,7 +123,7 @@
                   ]
                 },
                 "messageOk": "Tus ejemplos se relacionan con el tema.",
-                "messageFail": "Relacioná cada ejemplo con Git, el trabajo en equipo, los cambios, las versiones o las copias. Podés expresarlo con tus propias palabras."
+                "messageFail": "Relaciona cada ejemplo con Git, el trabajo en equipo, los cambios, las versiones o las copias. Puedes expresarlo con tus propias palabras."
               }
             ]
           }
@@ -140,9 +140,9 @@
           },
           "data": {
             "instructions": [
-              "Asigná una posición del 1 al 5 a cada cambio. El proyecto inicial debe quedar primero y la publicación estable, última.",
+              "Asigna una posición del 1 al 5 a cada cambio. El proyecto inicial debe quedar primero y la publicación estable, última.",
               "Los tres cambios intermedios pueden estar en cualquier orden coherente: no hay una única respuesta correcta entre ellos.",
-              "Elegí uno de esos tres cambios y explicá qué parte concreta podría dejar de funcionar. Por ejemplo: «Al corregir el formulario podría fallar la validación de un campo».",
+              "Elige uno de esos tres cambios y explica qué parte concreta podría dejar de funcionar. Por ejemplo: «Al corregir el formulario podría fallar la validación de un campo».",
               "Tus elecciones y el texto se guardan automáticamente."
             ],
             "columns": ["Git", "GitHub"],
@@ -177,7 +177,7 @@
             },
             "freeText": {
               "id": "explicacion",
-              "label": "Explicá con tus palabras la diferencia (mínimo 30 caracteres).",
+              "label": "Explica con tus palabras la diferencia (mínimo 30 caracteres).",
               "minLength": 30
             }
           },
@@ -198,7 +198,7 @@
                 "target": "explicacion",
                 "rules": { "minLength": 30 },
                 "messageOk": "Explicación completa.",
-                "messageFail": "Tu explicación es muy corta. Sumá un poco más."
+                "messageFail": "Tu explicación es muy corta. Suma un poco más."
               },
               {
                 "checkId": "c01_a02_explicacion_keywords",
@@ -236,7 +236,7 @@
             "items": [
               { "id": "t1", "text": "Creé el proyecto inicial." },
               { "id": "t2", "text": "Agregué una sección de contacto." },
-              { "id": "t3", "text": "Corregí un error en el formulario." },
+              { "id": "t3", "text": "Corrección de un error en el formulario." },
               { "id": "t4", "text": "Mejoré estilos del botón principal." },
               { "id": "t5", "text": "Publiqué la primera versión estable." }
             ],
@@ -244,16 +244,16 @@
             "answerOrder": ["t1", "t2", "t3", "t4", "t5"],
             "question": {
               "id": "culpable",
-              "label": "¿Cuál cambio podría haber roto algo? (elegí 1)",
+              "label": "¿Cuál cambio podría haber roto algo? (elige 1)",
               "options": [
                 { "id": "t2", "label": "Agregué una sección de contacto." },
-                { "id": "t3", "label": "Corregí un error en el formulario." },
+                { "id": "t3", "label": "Corrección de un error en el formulario." },
                 { "id": "t4", "label": "Mejoré estilos del botón principal." }
               ]
             },
             "freeText": {
               "id": "justificacion",
-              "label": "Justificá qué podría fallar con ese cambio (mínimo 30 caracteres).",
+              "label": "Justifica qué podría fallar con ese cambio (mínimo 30 caracteres).",
               "minLength": 30
             }
           },
@@ -272,7 +272,7 @@
                 "type": "REQUIRED_SELECTION",
                 "target": "culpable",
                 "messageOk": "Elegiste un cambio para analizar.",
-                "messageFail": "Elegí cuál cambio podría haber introducido un problema."
+                "messageFail": "Elige cuál cambio podría haber introducido un problema."
               },
               {
                 "checkId": "c01_a03_justificacion_min",
@@ -280,7 +280,7 @@
                 "target": "justificacion",
                 "rules": { "minLength": 30 },
                 "messageOk": "Justificación completa.",
-                "messageFail": "Explicá con más detalle qué podría fallar (mínimo 30 caracteres)."
+                "messageFail": "Explica con más detalle qué podría fallar (mínimo 30 caracteres)."
               },
               {
                 "checkId": "c01_a03_justificacion_alineada",
@@ -354,7 +354,7 @@
                   }
                 },
                 "messageOk": "La justificación explica un riesgo del cambio elegido.",
-                "messageFail": "Relacioná tu explicación con el cambio elegido e indicá qué podría fallar."
+                "messageFail": "Relaciona tu explicación con el cambio elegido e indica qué podría fallar."
               }
             ]
           }
@@ -530,10 +530,10 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Antes de crear repos, configurá tu identidad global de Git en GitBash.",
+            "scenario": "Antes de crear repos, configura tu identidad global de Git en GitBash.",
             "instructions": [
-              "Ejecutá: git config --global user.name \"Tu Nombre\"",
-              "Ejecutá: git config --global user.email \"tu@email.com\""
+              "Ejecuta: git config --global user.name \"Tu Nombre\"",
+              "Ejecuta: git config --global user.email \"tu@email.com\""
             ]
           },
           "validation": {
@@ -569,15 +569,15 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Creá tu primer repositorio Git desde cero.",
+            "scenario": "Crea tu primer repositorio Git desde cero.",
             "instructions": [
-              "Abrí la terminal (Git Bash).",
-              "Creá una carpeta llamada miProyecto con el comando: mkdir miProyecto",
-              "Entrá dentro de esa carpeta: cd miProyecto",
-              "Inicializá el repositorio Git: git init",
-              "Creá un archivo index.html (usá touch index.html o crealo desde VS Code).",
-              "Agregá el archivo al área de preparación con: git add index.html",
-              "Hacé tu primer commit con un mensaje claro: git commit -m \"Crear archivo index.html\""
+              "Abre la terminal (Git Bash).",
+              "Crea una carpeta llamada miProyecto con el comando: mkdir miProyecto",
+              "Entra dentro de esa carpeta: cd miProyecto",
+              "Inicializa el repositorio Git: git init",
+              "Crea un archivo index.html (usa touch index.html o créalo desde VS Code).",
+              "Agrega el archivo al área de preparación con: git add index.html",
+              "Haz tu primer commit con un mensaje claro: git commit -m \"Crear archivo index.html\""
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop",
@@ -594,28 +594,28 @@
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["mkdir miProyecto"] },
-                "messageFail": "Creá la carpeta con: mkdir miProyecto"
+                "messageFail": "Crea la carpeta con: mkdir miProyecto"
               },
               {
                 "checkId": "c02_a01_cd",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["cd miProyecto"] },
-                "messageFail": "Entrá a la carpeta con: cd miProyecto"
+                "messageFail": "Entra a la carpeta con: cd miProyecto"
               },
               {
                 "checkId": "c02_a01_git_init",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["git init"] },
-                "messageFail": "Inicializá el repositorio con: git init"
+                "messageFail": "Inicializa el repositorio con: git init"
               },
               {
                 "checkId": "c02_a01_correct_dir",
                 "type": "TERMINAL_IN_DIR",
                 "target": "terminal",
                 "rules": { "endsWith": "miProyecto" },
-                "messageFail": "Tenés que estar dentro de la carpeta miProyecto"
+                "messageFail": "Tienes que estar dentro de la carpeta miProyecto"
               },
               {
                 "checkId": "c02_a01_file_name",
@@ -636,7 +636,7 @@
                 "type": "REPO_STATE",
                 "target": "repo",
                 "rules": { "hasAtLeastCommits": 1 },
-                "messageFail": "Hacé al menos un commit"
+                "messageFail": "Haz al menos un commit"
               }
             ]
           }
@@ -649,12 +649,12 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "En tu proyecto web (index.html, style.css y app.js), practicá los estados de Git agregando solo el archivo correcto.",
+            "scenario": "En tu proyecto web (index.html, style.css y app.js), practica los estados de Git agregando solo el archivo correcto.",
             "instructions": [
-              "Asegurate de estar dentro de /miProyecto.",
-              "Hacé cambios en index.html y style.css.",
-              "Usá git status antes y después de git add.",
-              "Prepará solo index.html para staging.",
+              "Asegúrate de estar dentro de /miProyecto.",
+              "Haz cambios en index.html y style.css.",
+              "Usa git status antes y después de git add.",
+              "Prepara solo index.html para staging.",
               "No incluyas style.css en staging ni en el commit."
             ],
             "workspace": {
@@ -698,7 +698,7 @@
                 "target": "commands",
                 "rules": { "command": "git status", "minCount": 2 },
                 "messageOk": "Usaste git status en el proceso.",
-                "messageFail": "Usá git status al menos 2 veces (antes y después de add)."
+                "messageFail": "Usa git status al menos 2 veces (antes y después de add)."
               },
               {
                 "checkId": "c02_a02_add_specific",
@@ -706,7 +706,7 @@
                 "target": "commands",
                 "rules": { "mustMatchAny": ["git add index.html"] },
                 "messageOk": "Preparaste el archivo correcto.",
-                "messageFail": "Tenés que preparar solo index.html (git add index.html)."
+                "messageFail": "Tienes que preparar solo index.html (git add index.html)."
               },
               {
                 "checkId": "c02_a02_not_added_other",
@@ -801,7 +801,7 @@
                   "pattern": "git\\s+commit\\s+-m\\s+\"(?=[^\"]*[A-Za-zÁÉÍÓÚáéíóúÑñ])([^\"]+)\""
                 },
                 "messageOk": "Usaste git commit -m correctamente.",
-                "messageFail": "Tenés que commitear con un mensaje real, no con puntos: git commit -m \"Actualiza estilos principales\""
+                "messageFail": "Tienes que hacer commit con un mensaje real, no con puntos: git commit -m \"Actualiza estilos principales\""
               },
               {
                 "checkId": "c02_a03_message_quality",
@@ -841,17 +841,17 @@
           "id": "sch_git_c02_a04",
           "classId": "sch_git_c02",
           "title": "Evitar el git add . ciego",
-          "objective": "No commitear archivos basura. Practicar selección explícita de archivos.",
+          "objective": "No incluir archivos basura en commits. Practicar selección explícita de archivos.",
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "En el proyecto miProyecto, evitá incluir el archivo temporal notes.tmp en el commit final.",
+            "scenario": "En el proyecto miProyecto, evita incluir el archivo temporal notes.tmp en el commit final.",
             "instructions": [
-              "Trabajá dentro de /miProyecto, la misma carpeta usada en las actividades anteriores.",
-              "Hacé cambios en archivos web (html/css/js).",
+              "Trabaja dentro de /miProyecto, la misma carpeta usada en las actividades anteriores.",
+              "Haz cambios en archivos web (html/css/js).",
               "Existe un archivo basura **notes.tmp** que NO debe entrar al commit.",
-              "Revisá con `git status` antes de commitear.",
-              "Seleccioná archivos de forma explícita (`git add index.html`, etc.).",
+              "Revisa con `git status` antes de hacer commit.",
+              "Selecciona archivos de forma explícita (`git add index.html`, etc.).",
               "**NO uses** `git add .` ni `git add *`."
             ],
             "workspace": {
@@ -887,7 +887,7 @@
                 "type": "TERMINAL_COMMAND_FORBIDDEN",
                 "target": "commands",
                 "rules": { "pattern": "git\\s+add\\s+\\." },
-                "messageFail": "❌ No uses 'git add .' en esta actividad. Seleccioná archivos individuales (ej: git add index.html)"
+                "messageFail": "❌ No uses 'git add .' en esta actividad. Selecciona archivos individuales (ej: git add index.html)"
               },
               {
                 "checkId": "c02_a04_no_junk_in_commit",
@@ -897,8 +897,8 @@
                   "lastCommitExcludes": ["notes.tmp"],
                   "stagedExcludes": ["notes.tmp"]
                 },
-                "messageOk": "✅ No commiteaste el archivo basura.",
-                "messageFail": "El commit (o staging) incluye notes.tmp. Excluílo usando git add solo en los archivos correctos."
+                "messageOk": "✅ No incluiste el archivo basura.",
+                "messageFail": "El commit (o staging) incluye notes.tmp. Exclúyelo usando git add solo en los archivos correctos."
               },
               {
                 "checkId": "c02_a04_status_before_commit",
@@ -909,8 +909,8 @@
                   "minCount": 1,
                   "mustOccurBefore": "git commit"
                 },
-                "messageOk": "✅ Verificaste el estado antes de commitear.",
-                "messageFail": "Usá git status antes de hacer git commit."
+                "messageOk": "✅ Verificaste el estado antes de hacer commit.",
+                "messageFail": "Usa git status antes de hacer git commit."
               },
               {
                 "checkId": "c02_a04_add_specific_files",
@@ -944,9 +944,9 @@
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
             "instructions": [
-              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
-              "Ejecutá git log.",
-              "Copiá el nombre del autor (sin agregar lo que se encuentra entre <..>) y el mensaje del último commit."
+              "Verifica que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecuta: cd /Users/Public/Desktop/repo",
+              "Ejecuta git log.",
+              "Copia el nombre del autor (sin agregar lo que se encuentra entre <..>) y el mensaje del último commit."
             ],
             "expected": {
               "lastCommit": {
@@ -991,7 +991,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git log"] },
                 "messageOk": "Usaste git log.",
-                "messageFail": "Tenés que usar git log para ver el historial."
+                "messageFail": "Tienes que usar git log para ver el historial."
               },
               {
                 "checkId": "c03_a01_answer_author",
@@ -999,7 +999,7 @@
                 "target": "author",
                 "rules": { "repoPath": "repo.lastCommit.author" },
                 "messageOk": "Autor correcto.",
-                "messageFail": "Autor incorrecto. Revisá el output de git log."
+                "messageFail": "Autor incorrecto. Revisa la salida de git log."
               },
               {
                 "checkId": "c03_a01_answer_message",
@@ -1007,7 +1007,7 @@
                 "target": "message",
                 "rules": { "repoPath": "repo.lastCommit.message" },
                 "messageOk": "Mensaje correcto.",
-                "messageFail": "Mensaje incorrecto. Revisá el output de git log."
+                "messageFail": "Mensaje incorrecto. Revisa la salida de git log."
               }
             ]
           }
@@ -1072,14 +1072,14 @@
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["git log --oneline"] },
-                "messageFail": "Tenés que usar git log --oneline."
+                "messageFail": "Tienes que usar git log --oneline."
               },
               {
                 "checkId": "c03_a02_at_least_two_commits",
                 "type": "REPO_STATE",
                 "target": "repo",
                 "rules": { "hasAtLeastCommits": 3 },
-                "messageFail": "Necesitás hacer al menos 2 commits para esta actividad."
+                "messageFail": "Necesitas hacer al menos 2 commits para esta actividad."
               },
               {
                 "checkId": "c03_a02_hash_format_1",
@@ -1183,13 +1183,13 @@
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
             "instructions": [
-              "Verificá que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecutá: cd /Users/Public/Desktop/repo",
-              "Ejecutá git log --oneline para encontrar el commit problemático.",
-              "Inspeccioná el commit con git show <hash>.",
-              "Pegá el hash inspeccionado y explicá qué cambió."
+              "Verifica que estás en /Users/Public/Desktop/repo con pwd. Si estás en otra carpeta, ejecuta: cd /Users/Public/Desktop/repo",
+              "Ejecuta git log --oneline para encontrar el commit problemático.",
+              "Inspecciona el commit con git show <hash>.",
+              "Pega el hash inspeccionado y explica qué cambió."
             ],
             "form": [
-              { "id": "hash", "label": "Pegá el hash del commit culpable" },
+              { "id": "hash", "label": "Pega el hash del commit culpable" },
               { "id": "queCambio", "label": "¿Qué cambió? (2 ideas)" }
             ],
             "workspace": {
@@ -1225,7 +1225,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git log --oneline"] },
                 "messageOk": "Usaste git log --oneline.",
-                "messageFail": "Primero ejecutá git log --oneline para encontrar el commit. Es --oneline (one line), no --online."
+                "messageFail": "Primero ejecuta git log --oneline para encontrar el commit. Es --oneline (one line), no --online."
               },
               {
                 "checkId": "c03_a04_used_show",
@@ -1233,7 +1233,7 @@
                 "target": "commands",
                 "rules": { "pattern": "git\\s+show\\s+[0-9a-f]{7,}" },
                 "messageOk": "Usaste git show con un hash.",
-                "messageFail": "Tenés que usar git show <hash> (hash corto o largo)."
+                "messageFail": "Tienes que usar git show <hash> (hash corto o largo)."
               },
               {
                 "checkId": "c03_a04_hash_correct",
@@ -1244,7 +1244,7 @@
                   "normalizeHash": true
                 },
                 "messageOk": "Hash correcto.",
-                "messageFail": "No es el commit culpable. Revisá el show del commit."
+                "messageFail": "No es el commit culpable. Revisa el show del commit."
               },
               {
                 "checkId": "c03_a04_explanation_min",
@@ -1252,7 +1252,7 @@
                 "target": "queCambio",
                 "rules": { "minLength": 30 },
                 "messageOk": "Explicación completa.",
-                "messageFail": "Explicá un poco más qué cambió (mínimo 30 caracteres)."
+                "messageFail": "Explica un poco más qué cambió (mínimo 30 caracteres)."
               }
             ]
           }
@@ -1273,9 +1273,9 @@
           "data": {
             "instructions": [
               "El proyecto ya está inicializado como repositorio Git. No ejecutes git init, git add ni git commit en esta actividad.",
-              "Verificá que estás dentro de /repo. Si hace falta, ejecutá: cd /repo",
-              "Agregá un remoto llamado origin ejecutando: git remote add origin https://github.com/estudiante/remote-setup.git",
-              "Comprobá que quedó registrado ejecutando: git remote -v"
+              "Verifica que estás dentro de /repo. Si hace falta, ejecuta: cd /repo",
+              "Agrega un remoto llamado origin ejecutando: git remote add origin https://github.com/estudiante/remote-setup.git",
+              "Comprueba que quedó registrado ejecutando: git remote -v"
             ],
             "remote": {
               "requiredName": "origin",
@@ -1316,7 +1316,7 @@
                   "pattern": "git\\s+remote\\s+add\\s+origin\\s+(.+)"
                 },
                 "messageOk": "Agregaste origin.",
-                "messageFail": "Usá: git remote add origin <URL>"
+                "messageFail": "Usa: git remote add origin <URL>"
               },
               {
                 "checkId": "c04_a01_remote_v",
@@ -1324,7 +1324,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git remote -v"] },
                 "messageOk": "Verificaste con remote -v.",
-                "messageFail": "Verificá el remoto con: git remote -v"
+                "messageFail": "Verifica el remoto con: git remote -v"
               },
               {
                 "checkId": "c04_a01_origin_registered",
@@ -1380,7 +1380,7 @@
                   ]
                 },
                 "messageOk": "Hiciste el push con upstream.",
-                "messageFail": "Tenés que hacer: git push -u origin main"
+                "messageFail": "Tienes que hacer: git push -u origin main"
               },
               {
                 "checkId": "c04_a02_tracking_set",
@@ -1404,7 +1404,7 @@
                   ]
                 },
                 "messageOk": "Luego pudiste pushear con git push sin argumentos.",
-                "messageFail": "Después del -u, hacé otro push usando solo: git push"
+                "messageFail": "Después del -u, haz otro push usando solo: git push"
               }
             ]
           }
@@ -1450,7 +1450,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git pull"] },
                 "messageOk": "Hiciste pull correctamente.",
-                "messageFail": "Tenés que hacer: git pull"
+                "messageFail": "Tienes que hacer: git pull"
               },
               {
                 "checkId": "c04_a03_pull_before_push",
@@ -1458,7 +1458,7 @@
                 "target": "commands",
                 "rules": { "before": "git push", "mustAppear": "git pull" },
                 "messageOk": "Hiciste pull antes de push.",
-                "messageFail": "Primero hacé pull y después push."
+                "messageFail": "Primero haz pull y después push."
               },
               {
                 "checkId": "c04_a03_remote_updated",
@@ -1466,7 +1466,7 @@
                 "target": "repo",
                 "rules": { "remoteInSync": true },
                 "messageOk": "Quedó sincronizado.",
-                "messageFail": "Aún no está sincronizado. Revisá pull/push."
+                "messageFail": "Aún no está sincronizado. Revisa pull/push."
               }
             ]
           }
@@ -1519,7 +1519,7 @@
                   "mustAppearAny": ["git pull origin main", "git pull"]
                 },
                 "messageOk": "Pull antes de push.",
-                "messageFail": "Primero hacé pull y recién después push."
+                "messageFail": "Primero haz pull y solo después push."
               },
               {
                 "checkId": "c04_a04_status_used",
@@ -1527,7 +1527,7 @@
                 "target": "commands",
                 "rules": { "command": "git status", "minCount": 1 },
                 "messageOk": "Usaste status para chequear el estado.",
-                "messageFail": "Usá git status en algún momento del flujo."
+                "messageFail": "Usa git status en algún momento del flujo."
               },
               {
                 "checkId": "c04_a04_commit_exists",
@@ -1535,7 +1535,7 @@
                 "target": "repo",
                 "rules": { "hasAtLeastCommits": 1 },
                 "messageOk": "Hay un commit realizado.",
-                "messageFail": "No se detecta ningún commit. Hacé git commit."
+                "messageFail": "No se detecta ningún commit. Ejecuta git commit."
               },
               {
                 "checkId": "c04_a04_commit_message_min",
@@ -1551,7 +1551,7 @@
                 "target": "repo",
                 "rules": { "remoteInSync": true },
                 "messageOk": "Repo remoto actualizado.",
-                "messageFail": "El remoto no quedó actualizado. Revisá el push."
+                "messageFail": "El remoto no quedó actualizado. Revisa el push."
               }
             ]
           }
@@ -1564,13 +1564,13 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Desde la carpeta /git-labs, cloná el laboratorio remoto simulado, entrá al proyecto creado y comprobá que contiene styles.css.",
+            "scenario": "Desde la carpeta /git-labs, clona el laboratorio remoto simulado, entra al proyecto creado y comprueba que contiene styles.css.",
             "instructions": [
               "La terminal comienza en /git-labs. No crees la carpeta css-pull-lab manualmente.",
-              "Cloná el proyecto con: git clone https://github.com/winsim-labs/css-pull-lab.git",
-              "Cuando el clonado termine, entrá con: cd css-pull-lab",
-              "Ya dentro del repositorio, ejecutá: ls",
-              "Comprobá que la lista incluya styles.css y luego presioná Validar."
+              "Clona el proyecto con: git clone https://github.com/winsim-labs/css-pull-lab.git",
+              "Cuando el clonado termine, entra con: cd css-pull-lab",
+              "Ya dentro del repositorio, ejecuta: ls",
+              "Comprueba que la lista incluya styles.css y luego presiona Validar."
             ],
             "workspace": {
               "rootPath": "/git-labs",
@@ -1597,7 +1597,7 @@
                   ]
                 },
                 "messageOk": "Clonado realizado.",
-                "messageFail": "Primero hacé el clone del laboratorio remoto."
+                "messageFail": "Primero haz el clone del laboratorio remoto."
               },
               {
                 "checkId": "c04_a05_enter_repo",
@@ -1605,7 +1605,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["cd css-pull-lab"] },
                 "messageOk": "Entraste al repo clonado.",
-                "messageFail": "Entrá al repo con: cd css-pull-lab"
+                "messageFail": "Entra al repo con: cd css-pull-lab"
               },
               {
                 "checkId": "c04_a05_clone_before_cd",
@@ -1616,7 +1616,7 @@
                   "mustAppear": "git clone https://github.com/winsim-labs/css-pull-lab.git"
                 },
                 "messageOk": "Orden correcto: primero clone y luego cd.",
-                "messageFail": "Primero hacé clone y después entrá al repo."
+                "messageFail": "Primero haz clone y después entra al repo."
               },
               {
                 "checkId": "c04_a05_list_files",
@@ -1627,7 +1627,7 @@
                   "mustInclude": ["ls"]
                 },
                 "messageOk": "Revisaste los archivos del repositorio.",
-                "messageFail": "Dentro de css-pull-lab, ejecutá ls para comprobar que existe styles.css."
+                "messageFail": "Dentro de css-pull-lab, ejecuta ls para comprobar que existe styles.css."
               },
               {
                 "checkId": "c04_a05_remote_present",
@@ -1648,11 +1648,11 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Dentro del repo css-pull-lab, ejecutá pull para actualizar styles.css.",
+            "scenario": "Dentro del repo css-pull-lab, ejecuta pull para actualizar styles.css.",
             "instructions": [
-              "Entrá al proyecto: cd css-pull-lab",
-              "Ejecutá: git pull",
-              "Validá que hubo cambios: cat styles.css"
+              "Entra al proyecto: cd css-pull-lab",
+              "Ejecuta: git pull",
+              "Valida que hubo cambios: cat styles.css"
             ],
             "workspace": {
               "rootPath": "/css-pull-lab",
@@ -1683,7 +1683,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git pull"] },
                 "messageOk": "Pull ejecutado.",
-                "messageFail": "Tenés que ejecutar git pull"
+                "messageFail": "Tienes que ejecutar git pull"
               },
               {
                 "checkId": "c04_a06_repo_synced",
@@ -1704,7 +1704,7 @@
           "mode": "terminal",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "Cloná el repo de laboratorio y luego traé actualizaciones remotas con pull simple.",
+            "scenario": "Clona el repo de laboratorio y luego trae actualizaciones remotas con pull simple.",
             "instructions": [
               "git clone https://github.com/winsim-labs/css-pull-lab.git",
               "cd css-pull-lab",
@@ -1736,7 +1736,7 @@
                   ]
                 },
                 "messageOk": "Clone realizado.",
-                "messageFail": "Primero hacé git clone del laboratorio."
+                "messageFail": "Primero haz git clone del laboratorio."
               },
               {
                 "checkId": "c04_a07_pull_done",
@@ -1744,7 +1744,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git pull"] },
                 "messageOk": "Pull realizado.",
-                "messageFail": "Después del clone, ejecutá git pull"
+                "messageFail": "Después del clone, ejecuta git pull"
               },
               {
                 "checkId": "c04_a07_clone_before_pull",
@@ -1755,7 +1755,7 @@
                   "mustAppear": "git clone https://github.com/winsim-labs/css-pull-lab.git"
                 },
                 "messageOk": "Orden correcto: clone antes de pull.",
-                "messageFail": "Hacé clone primero y después pull."
+                "messageFail": "Haz clone primero y después pull."
               },
               {
                 "checkId": "c04_a07_synced",
@@ -1782,7 +1782,7 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "En Visual Studio Code vas a encontrar un proyecto con archivos mezclados en la raiz. Recorre la estructura, ordenala mentalmente y guarda una propuesta corregida editando el archivo de referencia.",
+            "scenario": "En Visual Studio Code vas a encontrar un proyecto con archivos mezclados en la raiz. Recorre la estructura, ordénala mentalmente y guarda una propuesta corregida editando el archivo de referencia.",
             "instructions": [
               "Abre el proyecto semilla que se carga automaticamente en Visual Studio Code.",
               "Revisa la estructura desordenada en la carpeta raiz.",
@@ -1904,7 +1904,7 @@
               "Abre el proyecto semilla en Visual Studio Code.",
               "Revisa que archivos parecen formar parte del sitio y cuales sobran.",
               "Edita y guarda /Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt indicando que se queda y que se elimina.",
-              "Asegurate de justificar por que ciertos archivos no deberian publicarse."
+              "Asegúrate de justificar por que ciertos archivos no deberian publicarse."
             ],
             "workspace": {
               "rootPath": "/Users/Public/Desktop/publish-c01-a02",
@@ -2869,7 +2869,7 @@
           "mode": "workspace",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "El sitio ya esta online. Ahora hay que cambiarlo, commitearlo, hacer push y comprobar que Pages refleja el nuevo estado.",
+            "scenario": "El sitio ya esta online. Ahora hay que cambiarlo, hacer commit, hacer push y comprobar que Pages refleja el nuevo estado.",
             "instructions": [
               "Abre /Users/Public/Desktop/pages-c02-a03/index.html en Visual Studio Code y cambia el h1 a Sitio republicado.",
               "En la terminal ejecuta pages publish ciclo-pages para generar la URL inicial.",
