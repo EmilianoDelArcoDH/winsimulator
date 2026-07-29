@@ -232,7 +232,7 @@ git diff
 
 ### Respuesta del formulario
 
-Copia la linea agregada que empieza con un solo `+`:
+Copia la segunda linea que empieza con `+` (no copies la cabecera `+++ b/index.html`):
 
 ```text
 +<html><body><h1>Título actualizado</h1></body></html>

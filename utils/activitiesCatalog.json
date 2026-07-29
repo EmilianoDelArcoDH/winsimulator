@@ -1106,13 +1106,13 @@
           "mode": "terminal+form",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
-            "scenario": "El proyecto ya tiene un commit base preparado automáticamente. Tu única tarea es modificar index.html y usar git diff para reconocer la línea que cambió.",
+            "scenario": "El proyecto ya tiene un commit base preparado automáticamente. Tu tarea es modificar index.html, ejecutar git diff y copiar la segunda línea que empieza con +, que es la línea de contenido que valida el ejercicio.",
             "instructions": [
-              "Paso 1 — Esperá a que Visual Studio Code abra el proyecto. El commit base ya está creado: no ejecutes git init, git add ni git commit.",
-              "Paso 2 — En index.html cambiá Diff practice por Título actualizado y guardá desde FILE -> Save.",
-              "Paso 3 — Ejecutá git diff.",
-              "Paso 4 — Copiá la línea de contenido que comienza con un solo +; no copies la cabecera +++ b/index.html.",
-              "Paso 5 — Pegá la línea copiada en el campo y presioná Validar."
+              "Paso 1 — Espera a que Visual Studio Code abra el proyecto. El commit base ya está creado: no ejecutes git init, git add ni git commit.",
+              "Paso 2 — En index.html cambia Diff practice por Título actualizado y guarda desde FILE -> Save.",
+              "Paso 3 — Ejecuta git diff.",
+              "Paso 4 — En el resultado vas a ver dos líneas que empiezan con +: la primera es la cabecera +++ b/index.html y no valida; copia la segunda, exactamente: +<html><body><h1>.......",
+              "Paso 5 — Pega la línea copiada en el campo y presiona Validar."
             ],
             "form": [
               { "id": "linea", "label": "¿Qué línea cambió? (copiala)" }
@@ -1153,7 +1153,7 @@
                   "pattern": "<h1>\\s*(Título actualizado|Updated title|Título atualizado)\\s*</h1>"
                 },
                 "messageOk": "Guardaste el cambio solicitado en index.html.",
-                "messageFail": "Editá index.html, cambiá el h1 a Título actualizado y guardá el archivo antes de ejecutar git diff."
+                "messageFail": "Edita index.html, cambia el h1 a Título actualizado y guarda el archivo antes de ejecutar git diff."
               },
               {
                 "checkId": "c03_a03_used_diff",
@@ -1161,7 +1161,7 @@
                 "target": "commands",
                 "rules": { "mustInclude": ["git diff"] },
                 "messageOk": "Usaste git diff.",
-                "messageFail": "Después de guardar el cambio en index.html, ejecutá git diff."
+                "messageFail": "Después de guardar el cambio en index.html, ejecuta git diff."
               },
               {
                 "checkId": "c03_a03_line_matches_expected",
@@ -1169,7 +1169,7 @@
                 "target": "linea",
                 "rules": { "repoPath": "repo.currentDiff.expectedLine" },
                 "messageOk": "Línea correcta.",
-                "messageFail": "La línea no coincide. Copiá la línea de contenido que empieza con un solo +, no la cabecera +++ b/index.html."
+                "messageFail": "La línea no coincide. Copia la segunda línea que empieza con +: +<html><body><h1>Título actualizado</h1></body></html>. No copies la cabecera +++ b/index.html."
               }
             ]
           }
