@@ -139,10 +139,17 @@ const useMonaco = ({
       createModelUri(url)
     );
 
-    newModel?.onDidChangeContent(() => prependFileToTitle(basename(url), true));
+    newModel?.onDidChangeContent(() => {
+      prependFileToTitle(basename(url), true);
+      window.dispatchEvent(
+        new CustomEvent("monaco-file-dirty", {
+          detail: { editorId: id, path: url },
+        })
+      );
+    });
 
     return newModel as Monaco.editor.ITextModel;
-  }, [createModelUri, monaco?.editor, prependFileToTitle, readFile, url]);
+  }, [createModelUri, id, monaco?.editor, prependFileToTitle, readFile, url]);
   const loadFile = useCallback(async () => {
     if (!url || lastLoadedUrlRef.current === url) {
       return;
@@ -237,12 +244,17 @@ const useMonaco = ({
             path: saveUrl,
             type: "fileSaved",
           });
+          window.dispatchEvent(
+            new CustomEvent("monaco-file-saved", {
+              detail: { editorId: id, path: saveUrl },
+            })
+          );
         }
       }
     });
 
     return () => keydownDisposable?.dispose();
-  }, [editor, prependFileToTitle, updateFolder, url, writeFile]);
+  }, [editor, id, prependFileToTitle, updateFolder, url, writeFile]);
 
   useEffect(() => {
     if (monaco && containerRef.current) {

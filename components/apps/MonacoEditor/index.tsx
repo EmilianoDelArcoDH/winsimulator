@@ -7,6 +7,7 @@ import {
   useMemo,
   useRef,
   useState,
+  type KeyboardEvent as ReactKeyboardEvent,
   type ReactElement,
 } from "react";
 import FolderRoundedIcon from "@mui/icons-material/FolderRounded";
@@ -262,6 +263,11 @@ const getEntryIcon = (
   return <DescriptionRoundedIcon sx={{ color: "rgb(188 188 188)" }} />;
 };
 
+type MonacoFileEventDetail = {
+  editorId?: string;
+  path?: string;
+};
+
 const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const workbenchRef = useRef<HTMLDivElement | null>(null);
   const folderEntriesRef = useRef<HTMLOListElement | null>(null);
@@ -324,6 +330,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
     explorerRoot,
   ]);
   const [openFiles, setOpenFiles] = useState<string[]>([]);
+  const [dirtyFiles, setDirtyFiles] = useState<Set<string>>(() => new Set());
 
   useEffect(() => {
     let cancelled = false;
@@ -379,6 +386,11 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [terminalHistory, setTerminalHistory] = useState<
     { id: string; value: string }[]
   >([{ id: "terminal-init", value: "VS Code Terminal initialized." }]);
+  const [terminalCommandHistory, setTerminalCommandHistory] = useState<
+    string[]
+  >([]);
+  const terminalHistoryCursorRef = useRef(-1);
+  const terminalHistoryDraftRef = useRef("");
   const [terminalInput, setTerminalInput] = useState("");
   const [terminalCwd, setTerminalCwd] = useState<string>(explorerRoot);
   const [pendingEditorFocusPath, setPendingEditorFocusPath] =
@@ -498,6 +510,15 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   );
   const closeFile = useCallback(
     (filePath: string): void => {
+      setDirtyFiles((currentDirtyFiles) => {
+        if (!currentDirtyFiles.has(filePath)) return currentDirtyFiles;
+
+        const nextDirtyFiles = new Set(currentDirtyFiles);
+
+        nextDirtyFiles.delete(filePath);
+
+        return nextDirtyFiles;
+      });
       setOpenFiles((currentFiles) => {
         const nextFiles = currentFiles.filter(
           (openFilePath) => openFilePath !== filePath
@@ -1483,8 +1504,17 @@ function example() {
       return;
     }
 
-    if (saveUrl && saveData) {
+    if (saveUrl && saveData !== undefined) {
       await writeFile(saveUrl, saveData, true);
+      setDirtyFiles((currentDirtyFiles) => {
+        if (!currentDirtyFiles.has(saveUrl)) return currentDirtyFiles;
+
+        const nextDirtyFiles = new Set(currentDirtyFiles);
+
+        nextDirtyFiles.delete(saveUrl);
+
+        return nextDirtyFiles;
+      });
       updateFolder(dirname(saveUrl), basename(saveUrl));
       await loadEntries();
       trackActivityEvent({
@@ -1697,6 +1727,13 @@ function example() {
       if (!command) {
         return;
       }
+
+      setTerminalCommandHistory((currentHistory) => [
+        ...currentHistory,
+        command,
+      ]);
+      terminalHistoryCursorRef.current = -1;
+      terminalHistoryDraftRef.current = "";
 
       trackActivityEvent({
         command,
@@ -1971,6 +2008,47 @@ function example() {
     ]
   );
 
+  const onTerminalInputKeyDown = useCallback(
+    (event: ReactKeyboardEvent<HTMLInputElement>): void => {
+      if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+      if (terminalCommandHistory.length === 0) return;
+
+      event.preventDefault();
+
+      if (event.key === "ArrowUp") {
+        if (terminalHistoryCursorRef.current < 0) {
+          terminalHistoryDraftRef.current = terminalInput;
+          terminalHistoryCursorRef.current = terminalCommandHistory.length - 1;
+        } else {
+          terminalHistoryCursorRef.current = Math.max(
+            0,
+            terminalHistoryCursorRef.current - 1
+          );
+        }
+
+        setTerminalInput(
+          terminalCommandHistory[terminalHistoryCursorRef.current] || ""
+        );
+        return;
+      }
+
+      if (terminalHistoryCursorRef.current < 0) return;
+
+      const nextCursor = terminalHistoryCursorRef.current + 1;
+
+      if (nextCursor >= terminalCommandHistory.length) {
+        terminalHistoryCursorRef.current = -1;
+        setTerminalInput(terminalHistoryDraftRef.current);
+        terminalHistoryDraftRef.current = "";
+        return;
+      }
+
+      terminalHistoryCursorRef.current = nextCursor;
+      setTerminalInput(terminalCommandHistory[nextCursor] || "");
+    },
+    [terminalCommandHistory, terminalInput]
+  );
+
   const runMenuAction = useCallback(
     async (menuAction: string): Promise<void> => {
       setActiveMenu("");
@@ -2234,6 +2312,45 @@ function example() {
   }, [currentEditor, isActiveFileEditable]);
 
   useEffect(() => {
+    const getFileEventDetail = (event: Event): MonacoFileEventDetail =>
+      (event as CustomEvent<MonacoFileEventDetail>).detail || {};
+    const markFileDirty = (event: Event): void => {
+      const { editorId, path } = getFileEventDetail(event);
+
+      if (editorId !== id || !path || isImageFile(path)) return;
+
+      setDirtyFiles((currentDirtyFiles) => {
+        if (currentDirtyFiles.has(path)) return currentDirtyFiles;
+
+        return new Set(currentDirtyFiles).add(path);
+      });
+    };
+    const markFileSaved = (event: Event): void => {
+      const { editorId, path } = getFileEventDetail(event);
+
+      if (editorId !== id || !path) return;
+
+      setDirtyFiles((currentDirtyFiles) => {
+        if (!currentDirtyFiles.has(path)) return currentDirtyFiles;
+
+        const nextDirtyFiles = new Set(currentDirtyFiles);
+
+        nextDirtyFiles.delete(path);
+
+        return nextDirtyFiles;
+      });
+    };
+
+    window.addEventListener("monaco-file-dirty", markFileDirty);
+    window.addEventListener("monaco-file-saved", markFileSaved);
+
+    return () => {
+      window.removeEventListener("monaco-file-dirty", markFileDirty);
+      window.removeEventListener("monaco-file-saved", markFileSaved);
+    };
+  }, [id]);
+
+  useEffect(() => {
     if (!currentEditor) return;
     if (creatingEntry || renamingId) return;
 
@@ -2298,7 +2415,9 @@ function example() {
           ref={workbenchRef}
           className={`workbench ${panelOpen ? "panel-open" : "panel-closed"} ${
             isCompactLayout ? "compact-layout" : ""
-          } ${isVscodeTutorialRoute ? "vscode-tutorial-active" : ""} ${
+          } ${isCompactLayout && panelOpen ? "compact-panel-open" : ""} ${
+            isVscodeTutorialRoute ? "vscode-tutorial-active" : ""
+          } ${
             creatingEntry ? "creating-entry" : ""
           } ${isOpenFolderOpen ? "open-folder-active" : ""}`}
           data-tour="monaco-workbench"
@@ -2573,9 +2692,7 @@ function example() {
               className={activeView === "explorer" ? "active" : ""}
               onClick={() => {
                 setActiveView("explorer");
-                if (!isCompactLayout) {
-                  setPanelOpen(true);
-                }
+                setPanelOpen(true);
               }}
               title="Explorer"
               type="button"
@@ -2586,9 +2703,7 @@ function example() {
               className={activeView === "search" ? "active" : ""}
               onClick={() => {
                 setActiveView("search");
-                if (!isCompactLayout) {
-                  setPanelOpen(true);
-                }
+                setPanelOpen(true);
               }}
               title="Search"
               type="button"
@@ -2599,9 +2714,7 @@ function example() {
               className={activeView === "git" ? "active" : ""}
               onClick={() => {
                 setActiveView("git");
-                if (!isCompactLayout) {
-                  setPanelOpen(true);
-                }
+                setPanelOpen(true);
               }}
               title="Source Control"
               type="button"
@@ -2626,7 +2739,7 @@ function example() {
               }}
               title={
                 isCompactLayout
-                  ? "Side Bar hidden in compact layout"
+                  ? "Hide Side Bar"
                   : "Toggle Side Bar"
               }
               type="button"
@@ -2639,6 +2752,9 @@ function example() {
             (panelOpen &&
               (!isCompactLayout ||
                 creatingEntry ||
+                activeView === "explorer" ||
+                activeView === "search" ||
+                activeView === "git" ||
                 isVscodeTutorialRoute))) && (
             <aside className="side-panel" data-tour="monaco-explorer-panel">
               <header>
@@ -3460,7 +3576,9 @@ function example() {
                   {openFiles.map((openFilePath) => (
                     <div
                       key={openFilePath}
-                      className={`tab ${openFilePath === activeFileUrl ? "active" : ""}`}
+                      className={`tab ${openFilePath === activeFileUrl ? "active" : ""} ${
+                        dirtyFiles.has(openFilePath) ? "dirty" : ""
+                      }`}
                     >
                       <button
                         className="open"
@@ -3526,12 +3644,19 @@ function example() {
                 <span className="terminal-tab">PROBLEMS</span>
                 <span className="terminal-tab">OUTPUT</span>
               </div>
-              <div aria-hidden="true" className="terminal-toolbar">
+              <div className="terminal-toolbar">
                 <span className="terminal-shell">powershell</span>
                 <span className="terminal-action add">+</span>
                 <span className="terminal-action dropdown">⌄</span>
                 <span className="terminal-action split">▯</span>
-                <span className="terminal-action close">×</span>
+                <button
+                  className="terminal-action close"
+                  onClick={() => setIsTerminalPanelOpen(false)}
+                  title="Close Terminal"
+                  type="button"
+                >
+                  ×
+                </button>
               </div>
             </div>
             <div ref={terminalHistoryRef} className="terminal-history">
@@ -3562,6 +3687,7 @@ function example() {
                 onChange={(event) =>
                   setTerminalInput(event.currentTarget.value)
                 }
+                onKeyDown={onTerminalInputKeyDown}
                 type="text"
                 value={terminalInput}
               />
