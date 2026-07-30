@@ -1,6 +1,4 @@
-# Soluciones C01 - Control de versiones y trabajo colaborativo
-
-Actividades incluidas: `sch_git_c01_a01` a `sch_git_c01_a04`.
+# Soluciones
 
 ## `sch_git_c01_a01` - Versiones vs copias
 
@@ -82,12 +80,6 @@ Estrategia: Combino ambas ideas en una nueva frase.
 Explicacion: Combinaria ambas ideas despues de hablar con el equipo para acordar cual titulo comunica mejor lo que se quiere publicar.
 ```
 
----
-
-# Soluciones C02 - Crear y guardar cambios
-
-Actividades incluidas: `sch_git_c02_a00` a `sch_git_c02_a04`.
-
 ## `sch_git_c02_a00` - Configuracion inicial de Git
 
 ```bash
@@ -143,11 +135,7 @@ git commit -m "Actualiza contenido web"
 
 Tambien puede usarse `git add style.css` o `git add app.js` si ese fue el archivo modificado. No usar `git add .`.
 
----
-
 # Soluciones C03 - Revisar historial y versiones
-
-Actividades incluidas: `sch_git_c03_a01` a `sch_git_c03_a04`.
 
 > Nota: los hashes de commits pueden variar. Cuando una actividad pide un hash,
 > copia el hash que muestra tu propia terminal.
@@ -213,13 +201,21 @@ Ejemplo de formato esperado:
 Cambia:
 
 ```html
-<html><body><h1>Diff practice</h1></body></html>
+<html>
+  <body>
+    <h1>Diff practice</h1>
+  </body>
+</html>
 ```
 
 por:
 
 ```html
-<html><body><h1>Título actualizado</h1></body></html>
+<html>
+  <body>
+    <h1>Título actualizado</h1>
+  </body>
+</html>
 ```
 
 Guarda el archivo.
@@ -232,7 +228,7 @@ git diff
 
 ### Respuesta del formulario
 
-Copia la segunda linea que empieza con `+` (no copies la cabecera `+++ b/index.html`):
+Copia la linea agregada que empieza con un solo `+`:
 
 ```text
 +<html><body><h1>Título actualizado</h1></body></html>
@@ -268,11 +264,38 @@ Que cambio:
 El commit agregó un espaciado problemático al título principal mediante la regla de CSS letter-spacing.
 ```
 
+## `sch_git_c04_a05` - Lab: solo clone
+
+La terminal comienza en `/git-labs`. Si necesitas verificarlo:
+
+```bash
+pwd
+```
+
+### Comandos
+
+```bash
+git clone https://github.com/winsim-labs/css-pull-lab.git
+cd css-pull-lab
+ls
+```
+
+### Resultado esperado
+
+El comando `ls` debe mostrar, entre otros archivos:
+
+```text
+styles.css
+```
+
+La validacion espera que:
+
+- primero ejecutes `git clone https://github.com/winsim-labs/css-pull-lab.git`;
+- despues entres con `cd css-pull-lab`;
+- dentro del repositorio ejecutes `ls`;
+- el clone deje configurado el remoto `origin`.
+
 ---
-
-# Soluciones C04 - Repositorios remotos y trabajo compartido
-
-Actividades incluidas: `sch_git_c04_a01` a `sch_git_c04_a07`.
 
 ## `sch_git_c04_a01` - Configurar origin
 
@@ -315,37 +338,6 @@ git push
 
 El mensaje del commit debe tener al menos 12 caracteres.
 
-## `sch_git_c04_a05` - Lab: solo clone
-
-La terminal comienza en `/git-labs`. Si necesitas verificarlo:
-
-```bash
-pwd
-```
-
-### Comandos
-
-```bash
-git clone https://github.com/winsim-labs/css-pull-lab.git
-cd css-pull-lab
-ls
-```
-
-### Resultado esperado
-
-El comando `ls` debe mostrar, entre otros archivos:
-
-```text
-styles.css
-```
-
-La validacion espera que:
-
-- primero ejecutes `git clone https://github.com/winsim-labs/css-pull-lab.git`;
-- despues entres con `cd css-pull-lab`;
-- dentro del repositorio ejecutes `ls`;
-- el clone deje configurado el remoto `origin`.
-
 ## `sch_git_c04_a06` - Lab: solo pull
 
 ```bash
@@ -362,12 +354,6 @@ cd css-pull-lab
 git pull
 cat styles.css
 ```
-
----
-
-# Soluciones Publish C01 - Preparar un proyecto para publicacion
-
-Actividades incluidas: `sch_publish_c01_a01` a `sch_publish_c01_a05`.
 
 ## `sch_publish_c01_a01` - Estructura clara vs desordenada
 
@@ -440,12 +426,6 @@ Editar y guardar `checklist-previo.txt` con todos los puntos marcados:
 [x] Confirmar que el sitio se entiende solo
 ```
 
----
-
-# Soluciones Pages C01 - Publicar un sitio con Pages
-
-Actividades incluidas: `sch_pages_c01_a01` a `sch_pages_c01_a04`.
-
 ## `sch_pages_c01_a01` - Antes de publicar: comprobar que esta listo
 
 Editar y guardar `estado-previo.txt`:
@@ -493,12 +473,6 @@ Editar y guardar `checklist-post-publicacion.txt`:
 ```
 
 Tambien valida si en lugar del ultimo punto se marca que se probo desde el celular.
-
----
-
-# Soluciones Pages C02 - Gestionar cambios y republicar
-
-Actividades incluidas: `sch_pages_c02_a01` a `sch_pages_c02_a04`.
 
 ## `sch_pages_c02_a01` - Editar, guardar y dejar listo el cambio
 
@@ -565,12 +539,6 @@ Como lo verificaria:
 - Recargaria fuerte con Ctrl+Shift+R para evitar cache.
 ```
 
----
-
-# Soluciones Pages C03 - Proyecto final de publicacion
-
-Actividades incluidas: `sch_pages_c03_a01`.
-
 ## `sch_pages_c03_a01` - Crear, publicar y actualizar una web funcional
 
 Conservar en `index.html` los enlaces a `css/styles.css` y `js/app.js`, el boton `id="action-button"` y el mensaje `id="status-message"`.
@@ -592,11 +560,12 @@ button {
 En `js/app.js`, dejar el mensaje final con `Demo actualizada`:
 
 ```js
-const actionButton = document.querySelector('#action-button');
-const statusMessage = document.querySelector('#status-message');
+const actionButton = document.querySelector("#action-button");
+const statusMessage = document.querySelector("#status-message");
 
-actionButton.addEventListener('click', () => {
-  statusMessage.textContent = 'Demo actualizada: la interaccion funciona correctamente.';
+actionButton.addEventListener("click", () => {
+  statusMessage.textContent =
+    "Demo actualizada: la interaccion funciona correctamente.";
 });
 ```
 
