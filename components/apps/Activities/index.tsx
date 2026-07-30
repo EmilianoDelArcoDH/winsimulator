@@ -57,6 +57,7 @@ type WorkspaceSeed = {
   git?: {
     initialCommit: boolean;
     message: string;
+    remotes: Record<string, string>;
   };
   openFile: string;
   openInVscode: boolean;
@@ -326,6 +327,13 @@ const resolveWorkspaceSeed = (
             initialCommit: true,
             message:
               asString(gitConfig.message) || "Initial activity workspace",
+            remotes: Object.fromEntries(
+              Object.entries(asRecord(gitConfig.remotes)).filter(
+                (entry): entry is [string, string] =>
+                  typeof entry[0] === "string" &&
+                  typeof entry[1] === "string"
+              )
+            ),
           }
         : undefined,
     openFile: configuredOpenFile || defaultOpenFile,
@@ -547,6 +555,26 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
             dir: workspaceSeed.rootPath,
             fs,
           });
+
+          await Promise.all(
+            Object.entries(workspaceSeed.git.remotes).map(
+              async ([remote, url]) => {
+                const remotes = await git.listRemotes({
+                  dir: workspaceSeed.rootPath,
+                  fs,
+                });
+
+                if (!remotes.some((entry) => entry.remote === remote)) {
+                  await git.addRemote({
+                    dir: workspaceSeed.rootPath,
+                    fs,
+                    remote,
+                    url,
+                  });
+                }
+              }
+            )
+          );
 
           if (!(await gitHeadExists(fs, workspaceSeed.rootPath))) {
             await workspaceSeed.files.reduce<Promise<void>>(

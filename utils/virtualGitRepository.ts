@@ -50,6 +50,40 @@ const normalizeFiles = (
       .filter(([path]) => Boolean(path))
   );
 
+const CSS_PULL_LAB_REMOTE = "https://github.com/winsim-labs/css-pull-lab.git";
+const CSS_PULL_LAB_FILES: Record<string, string> = {
+  "README.md":
+    "# css-pull-lab\n\nSimulador para practicar `git pull` y ver cambios reales en styles.css.\n",
+  "index.html": `<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Landing Demo</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="hero">
+      <h1>Curso Git Pull Lab</h1>
+      <p>Version inicial del estilo.</p>
+      <button>Ver cambios</button>
+    </main>
+  </body>
+</html>
+`,
+  "styles.css": `:root {
+  --bg: #f7f7f7;
+  --card: #ffffff;
+  --text: #1f2430;
+  --accent: #2d7ff9;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+`,
+};
+
 const cloneRepository = (repo: VirtualGitRepository): VirtualGitRepository => ({
   ...repo,
   branchHeads: { ...repo.branchHeads },
@@ -371,6 +405,13 @@ export const gitClone = (
   next.remotes.origin = source;
   next.rootPath = rootPath;
 
+  if (source === CSS_PULL_LAB_REMOTE) {
+    return gitCommit(
+      gitAdd(next, ".", CSS_PULL_LAB_FILES),
+      "feat: base web styles"
+    );
+  }
+
   return next;
 };
 
@@ -390,12 +431,40 @@ export const gitPush = (
     );
   }
 
+  if (!getHeadCommit(repo)) {
+    return withError(repo, "Could not find HEAD.");
+  }
+
   const next = cloneRepository(repo);
 
   next.lastPush = { branch: branch || repo.currentBranch, remote };
   next.lastError = undefined;
 
   return next;
+};
+
+const getPushPositionals = (tokens: string[]): string[] => {
+  const positionals: string[] = [];
+
+  for (let index = 2; index < tokens.length; index += 1) {
+    const token = tokens[index];
+
+    if (token === "-u" || token === "--set-upstream") {
+      continue;
+    }
+
+    if (token.startsWith("--set-upstream=")) {
+      continue;
+    }
+
+    if (token.startsWith("-")) {
+      continue;
+    }
+
+    positionals.push(token);
+  }
+
+  return positionals;
 };
 
 export const applyGitCommand = (
@@ -450,9 +519,7 @@ export const applyGitCommand = (
         ? gitRemoteAdd(repo, tokens[3] || "", tokens[4] || "")
         : cloneRepository(repo);
     case "push": {
-      const positional = tokens
-        .slice(2)
-        .filter((token) => !token.startsWith("-"));
+      const positional = getPushPositionals(tokens);
       const remote = positional[0] || repo.lastPush?.remote || "origin";
       const branch = positional[1] || repo.currentBranch;
 

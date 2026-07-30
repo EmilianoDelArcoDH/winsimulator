@@ -79,6 +79,10 @@ type InferredRepoState = {
   commitsCount: number;
   currentBranch?: string;
   initialized: boolean;
+  lastPush?: {
+    branch: string;
+    remote: string;
+  };
   lastCommitIncludes: string[];
   lastCommitMessage: string;
   remoteInSync: boolean;
@@ -283,6 +287,13 @@ const createActivityGitRepository = (
     repo.files = files;
   }
 
+  repo.remotes = Object.fromEntries(
+    Object.entries(asRecord(gitConfig.remotes)).filter(
+      (entry): entry is [string, string] =>
+        typeof entry[0] === "string" && typeof entry[1] === "string"
+    )
+  );
+
   return repo;
 };
 
@@ -332,6 +343,17 @@ const readVirtualRepo = (value: unknown): VirtualGitRepository | undefined => {
       )
     ),
     initialized: parsed.initialized,
+    lastPush: (() => {
+      const lastPush = asRecord(parsed.lastPush);
+
+      return typeof lastPush.branch === "string" &&
+        typeof lastPush.remote === "string"
+        ? {
+            branch: lastPush.branch,
+            remote: lastPush.remote,
+          }
+        : undefined;
+    })(),
     remotes: Object.fromEntries(
       Object.entries(asRecord(parsed.remotes)).filter(
         (entry): entry is [string, string] => typeof entry[1] === "string"
@@ -376,6 +398,27 @@ const parseCommitMessage = (command: string): string => {
   }
 
   return fromMarker;
+};
+
+const getPushPositionals = (tokens: string[]): string[] => {
+  const positionals: string[] = [];
+
+  for (let index = 2; index < tokens.length; index += 1) {
+    const token = tokens[index];
+
+    if (
+      token === "-u" ||
+      token === "--set-upstream" ||
+      token.startsWith("--set-upstream=") ||
+      token.startsWith("-")
+    ) {
+      continue;
+    }
+
+    positionals.push(token);
+  }
+
+  return positionals;
 };
 
 const inferRepoFromCommand = (
@@ -433,6 +476,7 @@ const inferRepoFromCommand = (
     tokens[4] === "main"
   ) {
     next.tracking = { branch: "main", remote: "origin" };
+    next.lastPush = { branch: "main", remote: "origin" };
     next.remoteInSync = true;
   }
 
@@ -441,6 +485,12 @@ const inferRepoFromCommand = (
   }
 
   if (tokens[0] === "git" && tokens[1] === "push") {
+    const [remote, branch] = getPushPositionals(tokens);
+
+    next.lastPush = {
+      branch: branch || next.currentBranch || "main",
+      remote: remote || next.tracking?.remote || "origin",
+    };
     next.remoteInSync = true;
   }
 
@@ -531,6 +581,7 @@ const getValidationRepo = (telemetry: ActivityTelemetry): InferredRepoState => {
   if (!virtualRepo) return telemetry.inferredRepo;
 
   const lastCommit = virtualRepo.commits[virtualRepo.commits.length - 1];
+  const lastPush = virtualRepo.lastPush || telemetry.inferredRepo.lastPush;
 
   return {
     ...telemetry.inferredRepo,
@@ -539,6 +590,10 @@ const getValidationRepo = (telemetry: ActivityTelemetry): InferredRepoState => {
     initialized: virtualRepo.initialized,
     lastCommitIncludes: lastCommit?.changedFiles || [],
     lastCommitMessage: lastCommit?.message || "",
+    lastPush,
+    remoteInSync:
+      telemetry.inferredRepo.remoteInSync &&
+      (!virtualRepo.lastError || Boolean(lastPush)),
     remotes: virtualRepo.remotes,
     staged: virtualRepo.staged,
   };
@@ -1052,6 +1107,12 @@ const evaluateCheck = (
       const lastCommitExcludes = asStringArray(rules.lastCommitExcludes);
       const remotesIncludes = asStringArray(rules.remotesIncludes);
       const repoFiles = telemetry.virtualRepo?.files || {};
+      const hasLastPushRule = Boolean(rules.lastPush);
+      const lastPushRule = asRecord(rules.lastPush);
+      const lastPushOk =
+        !hasLastPushRule ||
+        (repo.lastPush?.branch === asString(lastPushRule.branch) &&
+          repo.lastPush?.remote === asString(lastPushRule.remote));
       const hasTrackingRule = Boolean(rules.branchTracking);
       const trackingRule = asRecord(rules.branchTracking);
       const trackingOk =
@@ -1086,6 +1147,7 @@ const evaluateCheck = (
           repo.commitsCount >= rules.hasAtLeastCommits) &&
         (typeof rules.currentBranch !== "string" ||
           repo.currentBranch === rules.currentBranch) &&
+        lastPushOk &&
         trackingOk;
 
       return {
