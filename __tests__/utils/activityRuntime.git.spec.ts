@@ -84,6 +84,38 @@ describe("activityRuntime virtual Git integration", () => {
     expect(result.completed).toBe(true);
   });
 
+  test("the upstream push activity starts with HEAD and validates origin/main", () => {
+    const activityId = "sch_git_c04_a02";
+
+    [
+      "git push -u origin main",
+      "git push",
+    ].forEach((command) =>
+      trackActivityEvent({
+        activityId,
+        command,
+        cwd: "/repo",
+        type: "commandExecuted",
+      })
+    );
+
+    const result = validateActivity(activityId, "es");
+    const telemetry = JSON.parse(
+      window.localStorage.getItem(`winsim_activity_telemetry_${activityId}`) ||
+        "{}"
+    ) as Record<string, any>;
+
+    expect(telemetry.virtualRepo.commits).toHaveLength(1);
+    expect(telemetry.virtualRepo.remotes.origin).toBe(
+      "https://github.com/estudiante/push-upstream.git"
+    );
+    expect(telemetry.virtualRepo.lastPush).toEqual({
+      branch: "main",
+      remote: "origin",
+    });
+    expect(result.completed).toBe(true);
+  });
+
   test("a legacy catalog activity still completes", () => {
     const activityId = "sch_git_c02_a01";
     const setupCommands = [

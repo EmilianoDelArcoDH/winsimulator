@@ -756,6 +756,98 @@ const processCliGit = async (
       return true;
     }
 
+    case "push": {
+      const repoRoot = await repoCommand();
+
+      if (!repoRoot) return true;
+
+      const positionals = args.filter(
+        (arg) =>
+          arg !== "-u" &&
+          arg !== "--set-upstream" &&
+          !arg.startsWith("--set-upstream=") &&
+          !arg.startsWith("-")
+      );
+      const remoteName = positionals[0] || "origin";
+      const branchName =
+        positionals[1] ||
+        (await git.currentBranch({
+          dir: repoRoot,
+          fs,
+          fullname: false,
+        })) ||
+        "main";
+      const remotes = await git.listRemotes({ dir: repoRoot, fs });
+      const remote = remotes.find((entry) => entry.remote === remoteName);
+
+      if (!remote) {
+        printLn(
+          `fatal: '${remoteName}' does not appear to be a git repository`
+        );
+        return true;
+      }
+
+      try {
+        await git.resolveRef({
+          dir: repoRoot,
+          fs,
+          ref: "HEAD",
+        });
+      } catch {
+        printLn("Could not find HEAD.");
+        return true;
+      }
+
+      if (args.includes("-u") || args.includes("--set-upstream")) {
+        await git.setConfig({
+          dir: repoRoot,
+          fs,
+          path: `branch.${branchName}.remote`,
+          value: remoteName,
+        });
+        await git.setConfig({
+          dir: repoRoot,
+          fs,
+          path: `branch.${branchName}.merge`,
+          value: `refs/heads/${branchName}`,
+        });
+      }
+
+      printLn(`To ${remote.url}`);
+      printLn(` * [new branch]      ${branchName} -> ${branchName}`);
+      return true;
+    }
+
+    case "pull": {
+      const repoRoot = await repoCommand();
+
+      if (!repoRoot) return true;
+
+      const remoteName = args.find((arg) => !arg.startsWith("-")) || "origin";
+      const branchName =
+        args.find((arg, index) => index > 0 && !arg.startsWith("-")) ||
+        (await git.currentBranch({
+          dir: repoRoot,
+          fs,
+          fullname: false,
+        })) ||
+        "main";
+      const remotes = await git.listRemotes({ dir: repoRoot, fs });
+      const remote = remotes.find((entry) => entry.remote === remoteName);
+
+      if (!remote) {
+        printLn(
+          `fatal: '${remoteName}' does not appear to be a git repository`
+        );
+        return true;
+      }
+
+      printLn(`From ${remote.url}`);
+      printLn(` * branch            ${branchName} -> FETCH_HEAD`);
+      printLn("Already up to date.");
+      return true;
+    }
+
     case "tag": {
       const repoRoot = await repoCommand();
 

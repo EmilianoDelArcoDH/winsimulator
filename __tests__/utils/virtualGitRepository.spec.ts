@@ -148,6 +148,34 @@ describe("VirtualGitRepository", () => {
     expect(repo.lastError).toMatch(/does not appear/i);
   });
 
+  test("git push rejects a branch without commits", () => {
+    const repo = gitRemoteAdd(
+      gitInit(createInitialGitRepository()),
+      "origin",
+      "https://example.com/repo.git"
+    );
+    const pushed = gitPush(repo, "origin", "main");
+
+    expect(pushed.lastPush).toBeUndefined();
+    expect(pushed.lastError).toMatch(/could not find head/i);
+  });
+
+  test("applyGitCommand parses push -u origin main as remote and branch", () => {
+    const committed = gitCommit(
+      gitAdd(gitInit(createInitialGitRepository()), ".", files),
+      "base"
+    );
+    const withRemote = gitRemoteAdd(
+      committed,
+      "origin",
+      "https://example.com/repo.git"
+    );
+    const pushed = applyGitCommand(withRemote, "git push -u origin main");
+
+    expect(pushed.lastPush).toEqual({ branch: "main", remote: "origin" });
+    expect(pushed.lastError).toBeUndefined();
+  });
+
   test("applyGitCommand parses quoted commit messages", () => {
     const initialized = applyGitCommand(
       createInitialGitRepository(),
