@@ -1111,7 +1111,7 @@
               "Paso 1 — Espera a que Visual Studio Code abra el proyecto. El commit base ya está creado: no ejecutes git init, git add ni git commit.",
               "Paso 2 — En index.html cambia Diff practice por Título actualizado y guarda desde FILE -> Save.",
               "Paso 3 — Ejecuta git diff.",
-              "Paso 4 — En el resultado vas a ver dos líneas que empiezan con +: la primera es la cabecera +++ b/index.html y no valida; copia la segunda, exactamente: +<html><body><h1>.......",
+              "Paso 4 — En el resultado vas a ver dos líneas que empiezan con +: la primera es la cabecera +<!doctype html> y no valida; copia la segunda, exactamente: +<html><body><h1>.......",
               "Paso 5 — Pega la línea copiada en el campo y presiona Validar."
             ],
             "form": [
