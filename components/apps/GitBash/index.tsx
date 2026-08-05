@@ -379,6 +379,23 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
     setLines((current) => [...current, { id, text: value }]);
   }, []);
 
+  useEffect(() => {
+    const onActivityRetry = (event: Event): void => {
+      const detail = (event as CustomEvent<{ rootPath?: string }>).detail;
+      const rootPath = detail?.rootPath;
+
+      if (rootPath) {
+        delete gitRepos.current[normalizePath(rootPath)];
+      }
+    };
+
+    window.addEventListener("winsim:activity-retry", onActivityRetry);
+
+    return () => {
+      window.removeEventListener("winsim:activity-retry", onActivityRetry);
+    };
+  }, []);
+
   const getShellSelection = useCallback((): Selection | undefined => {
     const selection = window.getSelection();
     const shell = shellRef.current;

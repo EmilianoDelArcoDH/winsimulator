@@ -449,6 +449,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     forcedActivityId || getSearchParam("activityId") || activities[0]?.id || "";
   const [activityId, setActivityId] = useState(initialActivityId);
   const [results, setResults] = useState<ValidationResult[]>([]);
+  const [workspaceResetNonce, setWorkspaceResetNonce] = useState(0);
   const [answers, setAnswers] = useState<Record<string, unknown>>(() => {
     const selectedActivity =
       getActivityById(initialActivityId, language) ||
@@ -647,6 +648,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     openProcess,
     processes,
     setProcessUrl,
+    workspaceResetNonce,
     writeFile,
   ]);
 
@@ -687,9 +689,25 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
   const retry = (): void => {
     if (!activity) return;
 
+    const workspaceSeed = resolveWorkspaceSeed(activity);
+
     retryActivity(activity.id, language);
+    delete preparedWorkspaceRef.current[activity.id];
+    lastPreparedActivityIdRef.current = "";
     setAnswers(getInitialAnswers(activity));
     setResults([]);
+
+    if (workspaceSeed?.resetOnEnter) {
+      window.dispatchEvent(
+        new CustomEvent("winsim:activity-retry", {
+          detail: {
+            activityId: activity.id,
+            rootPath: workspaceSeed.rootPath,
+          },
+        })
+      );
+      setWorkspaceResetNonce((current) => current + 1);
+    }
   };
 
   if (!activity) {
