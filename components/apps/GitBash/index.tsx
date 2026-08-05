@@ -102,6 +102,8 @@ type SimulatedPull = {
 };
 
 const CSS_PULL_LAB_REMOTE = "https://github.com/winsim-labs/css-pull-lab.git";
+const PULL_BEFORE_PUSH_REMOTE =
+  "https://github.com/estudiante/pull-before-push.git";
 
 const createCssPullLabSeed = (): {
   pendingPulls: SimulatedPull[];
@@ -243,6 +245,41 @@ button {
   };
 };
 
+const createPullBeforePushSeed = (): SimulatedPull => ({
+  branch: "main",
+  changedFiles: [
+    {
+      deletions: 1,
+      insertions: 8,
+      path: "style.css",
+    },
+  ],
+  fromHash: "1d4c0de",
+  objects: {
+    counted: 24,
+    delta: 8,
+    enumerated: 24,
+    packReused: 0,
+    reused: 12,
+    total: 12,
+    unpacked: 12,
+  },
+  speedMiBps: "1.14",
+  targetHash: "8f3a91b",
+  totalSizeMiB: "0.18",
+  updates: {
+    "style.css": `h1 {
+  color: #2563eb;
+  letter-spacing: 0.04em;
+}
+
+body {
+  background: #eef6ff;
+}
+`,
+  },
+});
+
 const parseArgs = (command: string): string[] =>
   (command.match(/(?:[^\s"]|"[^"]*")+/g) || []).map((entry) =>
     entry.replace(/^"|"$/g, "")
@@ -340,6 +377,23 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
 
     lineIdRef.current += 1;
     setLines((current) => [...current, { id, text: value }]);
+  }, []);
+
+  useEffect(() => {
+    const onActivityRetry = (event: Event): void => {
+      const detail = (event as CustomEvent<{ rootPath?: string }>).detail;
+      const rootPath = detail?.rootPath;
+
+      if (rootPath) {
+        delete gitRepos.current[normalizePath(rootPath)];
+      }
+    };
+
+    window.addEventListener("winsim:activity-retry", onActivityRetry);
+
+    return () => {
+      window.removeEventListener("winsim:activity-retry", onActivityRetry);
+    };
   }, []);
 
   const getShellSelection = useCallback((): Selection | undefined => {
@@ -523,6 +577,20 @@ const GitBash: React.FC<ComponentProcessProps> = ({ id }) => {
             tags: {},
             tracked: new Set(),
           };
+        }
+
+        if (
+          getCurrentActivityId() === "sch_git_c04_a03" &&
+          normalizePath(repoRoot) === "/repo" &&
+          gitRepos.current[repoRoot].pendingPulls.length === 0 &&
+          !gitRepos.current[repoRoot].branches.main.some(
+            ({ hash }) => hash === "8f3a91b"
+          )
+        ) {
+          gitRepos.current[repoRoot].remotes.origin = PULL_BEFORE_PUSH_REMOTE;
+          gitRepos.current[repoRoot].pendingPulls = [
+            createPullBeforePushSeed(),
+          ];
         }
 
         return gitRepos.current[repoRoot];

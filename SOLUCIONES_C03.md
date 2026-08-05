@@ -319,10 +319,13 @@ El primer comando configura el seguimiento entre `main` y `origin`. El segundo v
 
 ```bash
 git pull
+git status
+git add index.html
+git commit -m "Actualizo portada despues del pull"
 git push
 ```
 
-La validacion espera que `git pull` ocurra antes de `git push`.
+La validacion espera que `git pull` traiga primero el cambio remoto, luego se haga un cambio local en `index.html`, se commitee y recien despues se ejecute `git push`.
 
 ## `sch_git_c04_a04` - Flujo completo con remoto
 

@@ -1441,7 +1441,10 @@
             "instructions": [
               "El repositorio ya tiene main, un commit inicial y el remoto origin configurado.",
               "Verifica que estas dentro de /repo. Si hace falta, ejecuta: cd /repo",
-              "Trae primero los cambios remotos con: git pull",
+              "Trae primero los cambios remotos con: git pull. Vas a ver una actualizacion en style.css hecha por otra persona.",
+              "Despues de quedar al dia, modifica y guarda index.html para hacer tu propio cambio local sin pisar el cambio remoto.",
+              "Revisa el estado con git status.",
+              "Prepara y guarda tu cambio con git add index.html y git commit -m \"Actualizo portada despues del pull\".",
               "Despues envia la rama actual con: git push"
             ],
             "workspace": {
@@ -1489,6 +1492,49 @@
                 "rules": { "before": "git push", "mustAppear": "git pull" },
                 "messageOk": "Hiciste pull antes de push.",
                 "messageFail": "Primero haz pull y después push."
+              },
+              {
+                "checkId": "c04_a03_index_saved",
+                "type": "FILE_SAVED_PATHS_INCLUDE",
+                "target": "files",
+                "rules": { "paths": ["/repo/index.html"] },
+                "messageOk": "Guardaste tu cambio local en index.html.",
+                "messageFail": "Modifica y guarda index.html antes de commitear."
+              },
+              {
+                "checkId": "c04_a03_status_used",
+                "type": "TERMINAL_COMMAND_COUNT_MIN",
+                "target": "commands",
+                "rules": { "command": "git status", "minCount": 1 },
+                "messageOk": "Revisaste el estado del repo.",
+                "messageFail": "Ejecuta git status antes de preparar el commit."
+              },
+              {
+                "checkId": "c04_a03_commit_before_push",
+                "type": "TERMINAL_ORDER",
+                "target": "commands",
+                "rules": { "before": "git push", "mustAppear": "git commit" },
+                "messageOk": "Commit antes de push.",
+                "messageFail": "Primero crea un commit y luego ejecuta git push."
+              },
+              {
+                "checkId": "c04_a03_commit_exists",
+                "type": "REPO_STATE",
+                "target": "repo",
+                "rules": {
+                  "hasAtLeastCommits": 3,
+                  "lastCommitIncludes": ["index.html"]
+                },
+                "messageOk": "Tu cambio local quedó commiteado.",
+                "messageFail": "Falta un commit propio que incluya index.html."
+              },
+              {
+                "checkId": "c04_a03_commit_message_min",
+                "type": "COMMIT_MESSAGE_RULES",
+                "target": "repo.lastCommit.message",
+                "rules": { "minLength": 12 },
+                "messageOk": "Mensaje de commit ok.",
+                "messageFail": "El mensaje del commit es muy corto (mínimo 12 caracteres)."
               },
               {
                 "checkId": "c04_a03_remote_updated",

@@ -51,6 +51,17 @@ const normalizeFiles = (
   );
 
 const CSS_PULL_LAB_REMOTE = "https://github.com/winsim-labs/css-pull-lab.git";
+const PULL_BEFORE_PUSH_REMOTE =
+  "https://github.com/estudiante/pull-before-push.git";
+const PULL_BEFORE_PUSH_STYLE = `h1 {
+  color: #2563eb;
+  letter-spacing: 0.04em;
+}
+
+body {
+  background: #eef6ff;
+}
+`;
 const CSS_PULL_LAB_FILES: Record<string, string> = {
   "README.md":
     "# css-pull-lab\n\nSimulador para practicar `git pull` y ver cambios reales en styles.css.\n",
@@ -301,6 +312,63 @@ export const gitStatus = (
   return { staged, unstaged, untracked };
 };
 
+export const gitPull = (
+  repo: VirtualGitRepository,
+  remote: string,
+  branch: string
+): VirtualGitRepository => {
+  if (!repo.initialized) {
+    return withError(repo, "fatal: not a git repository");
+  }
+
+  if (!repo.remotes[remote]) {
+    return withError(
+      repo,
+      `fatal: '${remote}' does not appear to be a git repository`
+    );
+  }
+
+  const hasActivityRemote = repo.remotes[remote] === PULL_BEFORE_PUSH_REMOTE;
+  const alreadyPulled = repo.commits.some(
+    ({ message: commitMessage }) =>
+      commitMessage === "style: actualiza estilos remotos"
+  );
+
+  if (!hasActivityRemote || alreadyPulled) {
+    const unchangedRepo = cloneRepository(repo);
+
+    unchangedRepo.lastError = undefined;
+
+    return unchangedRepo;
+  }
+
+  const next = cloneRepository(repo);
+  const headFiles = getHeadCommit(repo)?.files || repo.files;
+  const snapshot = {
+    ...headFiles,
+    "style.css": PULL_BEFORE_PUSH_STYLE,
+  };
+  const message = "style: actualiza estilos remotos";
+  const id = createCommitId(repo, message, snapshot);
+
+  next.commits.push({
+    branch: branch || repo.currentBranch,
+    changedFiles: ["style.css"],
+    createdAt: new Date().toISOString(),
+    files: snapshot,
+    id,
+    message,
+  });
+  next.branchHeads = {
+    ...next.branchHeads,
+    [branch || repo.currentBranch]: id,
+  };
+  next.files = snapshot;
+  next.lastError = undefined;
+
+  return next;
+};
+
 export const gitBranch = (
   repo: VirtualGitRepository,
   branchName: string
@@ -524,6 +592,16 @@ export const applyGitCommand = (
       const branch = positional[1] || repo.currentBranch;
 
       return gitPush(repo, remote, branch);
+    }
+    case "pull": {
+      const remote =
+        tokens.find((token, index) => index > 1 && !token.startsWith("-")) ||
+        "origin";
+      const branch =
+        tokens.find((token, index) => index > 2 && !token.startsWith("-")) ||
+        repo.currentBranch;
+
+      return gitPull(repo, remote, branch);
     }
     default:
       return cloneRepository(repo);
