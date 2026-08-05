@@ -1569,8 +1569,9 @@
             "instructions": [
               "El repositorio ya tiene main, un commit inicial y el remoto origin configurado.",
               "Verifica que estas dentro de /repo. Si hace falta, ejecuta: cd /repo",
-              "Modifica y guarda index.html antes de preparar los cambios.",
-              "Ejecuta el flujo en este orden: git pull, git status, git add, git commit y git push",
+              "Ejecuta primero git pull para trabajar sobre la version mas reciente del remoto.",
+              "Despues modifica y guarda index.html para crear tu cambio local.",
+              "Completa el flujo en este orden: git status, git add, git commit y git push",
               "El commit debe tener un mensaje claro de al menos 12 caracteres."
             ],
             "workspace": {
