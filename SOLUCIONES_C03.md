@@ -329,17 +329,17 @@ La validacion espera que `git pull` traiga primero el cambio remoto, luego se ha
 
 ## `sch_git_c04_a04` - Flujo completo con remoto
 
-Modificar y guardar algun archivo. Luego:
-
 ```bash
 git pull
+git status
+# modificar y guardar index.html
 git status
 git add index.html
 git commit -m "Actualiza contenido remoto"
 git push
 ```
 
-El mensaje del commit debe tener al menos 12 caracteres.
+Primero se sincroniza con `git pull`. Despues se modifica y guarda `index.html`, se revisa el estado, se prepara el archivo, se commitea y se envia con `git push`. El mensaje del commit debe tener al menos 12 caracteres.
 
 ## `sch_git_c04_a06` - Lab: solo pull
 
