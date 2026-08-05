@@ -1441,8 +1441,8 @@
             "instructions": [
               "El repositorio ya tiene main, un commit inicial y el remoto origin configurado.",
               "Verifica que estas dentro de /repo. Si hace falta, ejecuta: cd /repo",
-              "Trae primero los cambios remotos con: git pull. Vas a ver una actualizacion en style.css.",
-              "Modifica y guarda index.html para hacer tu propio cambio local.",
+              "Trae primero los cambios remotos con: git pull. Vas a ver una actualizacion en style.css hecha por otra persona.",
+              "Despues de quedar al dia, modifica y guarda index.html para hacer tu propio cambio local sin pisar el cambio remoto.",
               "Revisa el estado con git status.",
               "Prepara y guarda tu cambio con git add index.html y git commit -m \"Actualizo portada despues del pull\".",
               "Despues envia la rama actual con: git push"

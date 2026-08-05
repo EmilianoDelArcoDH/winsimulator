@@ -1592,7 +1592,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         <h2>Pull antes de push</h2>
 
         <p class="contexto-consigna">
-            Vas a practicar la sincronizacion con cambios remotos antes de enviar los tuyos. El pull traera una actualizacion visible en style.css antes de que hagas tu propio cambio local.
+            Vas a practicar la sincronizacion con cambios remotos antes de enviar los tuyos. El pull traera una actualizacion visible en style.css hecha por otra persona; despues haras tu propio cambio local en index.html.
         </p>
 
         <p class="copy-warning">
@@ -1603,7 +1603,7 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         <ul>
             <li>Trabaja desde la terminal.</li>
             <li>Sincroniza el repositorio local con los cambios remotos antes de trabajar.</li>
-            <li>Modifica y guarda index.html para crear un cambio propio.</li>
+            <li>Modifica y guarda index.html para crear un cambio propio sin pisar el cambio remoto.</li>
             <li>Revisa el estado, prepara el archivo, crea un commit y envia tus cambios.</li>
         </ul>
     </article>
