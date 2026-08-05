@@ -6,6 +6,7 @@ import {
   gitCheckout,
   gitCommit,
   gitInit,
+  gitPull,
   gitPush,
   gitRemoteAdd,
   gitStatus,
@@ -158,6 +159,23 @@ describe("VirtualGitRepository", () => {
 
     expect(pushed.lastPush).toBeUndefined();
     expect(pushed.lastError).toMatch(/could not find head/i);
+  });
+
+  test("git pull applies the pending remote change for pull-before-push", () => {
+    const committed = gitCommit(
+      gitAdd(gitInit(createInitialGitRepository()), ".", files),
+      "base"
+    );
+    const withRemote = gitRemoteAdd(
+      committed,
+      "origin",
+      "https://github.com/estudiante/pull-before-push.git"
+    );
+    const pulled = gitPull(withRemote, "origin", "main");
+
+    expect(pulled.commits).toHaveLength(2);
+    expect(pulled.commits.at(-1)?.changedFiles).toEqual(["style.css"]);
+    expect(pulled.files["style.css"]).toContain("letter-spacing");
   });
 
   test("applyGitCommand parses push -u origin main as remote and branch", () => {

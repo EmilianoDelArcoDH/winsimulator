@@ -1592,18 +1592,19 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
         <h2>Pull antes de push</h2>
 
         <p class="contexto-consigna">
-            Vas a practicar la sincronizacion con cambios remotos antes de enviar los tuyos. Este flujo evita rechazos cuando el repositorio remoto esta mas actualizado.
+            Vas a practicar la sincronizacion con cambios remotos antes de enviar los tuyos. El pull traera una actualizacion visible en style.css antes de que hagas tu propio cambio local.
         </p>
 
         <p class="copy-warning">
-            Usa GitBash o la terminal de la actividad. Primero trae los cambios remotos y recien despues envia los tuyos.
+            Usa GitBash o la terminal de la actividad. Primero trae los cambios remotos, luego modifica index.html, crea un commit y recien despues envia tus cambios.
         </p>
 
         <h3>Qu&eacute; hacer:</h3>
         <ul>
             <li>Trabaja desde la terminal.</li>
-            <li>Sincroniza el repositorio local con los cambios remotos antes de enviar los tuyos.</li>
-            <li>Luego envia tus cambios y verifica que el repositorio quede actualizado.</li>
+            <li>Sincroniza el repositorio local con los cambios remotos antes de trabajar.</li>
+            <li>Modifica y guarda index.html para crear un cambio propio.</li>
+            <li>Revisa el estado, prepara el archivo, crea un commit y envia tus cambios.</li>
         </ul>
     </article>
 
@@ -1611,9 +1612,11 @@ El simulador ahora incluye una primera version de `Pages` para practicar publica
 - Solucion esperada paso a paso:
   1. Reconocer que el remoto tiene cambios nuevos.
   2. Ejecutar `git pull` antes de intentar enviar cambios.
-  3. Resolver o aceptar la actualizacion local segun indique la terminal.
-  4. Ejecutar `git push` despues del pull.
-  5. Validar cuando el repositorio local y remoto queden sincronizados.
+  3. Confirmar que `style.css` se actualizo con el pull.
+  4. Modificar y guardar `index.html`.
+  5. Ejecutar `git status`, `git add index.html` y `git commit -m "Actualizo portada despues del pull"`.
+  6. Ejecutar `git push` despues del commit.
+  7. Validar cuando el repositorio local y remoto queden sincronizados.
 
 ### `sch_git_c04_a04` - Flujo completo con remoto
 

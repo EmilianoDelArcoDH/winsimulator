@@ -14,6 +14,17 @@ import { help } from "components/apps/Terminal/functions";
 const corsProxy = "https://cors.isomorphic-git.org";
 const GIT_CONFIG_KEY = "gitbash_global_config";
 const CSS_PULL_LAB_REMOTE = "https://github.com/winsim-labs/css-pull-lab.git";
+const PULL_BEFORE_PUSH_REMOTE =
+  "https://github.com/estudiante/pull-before-push.git";
+const PULL_BEFORE_PUSH_STYLE = `h1 {
+  color: #2563eb;
+  letter-spacing: 0.04em;
+}
+
+body {
+  background: #eef6ff;
+}
+`;
 const CSS_PULL_LAB_FILES: Record<string, string> = {
   "README.md":
     "# css-pull-lab\n\nSimulador para practicar `git pull` y ver cambios reales en styles.css.\n",
@@ -174,6 +185,13 @@ const fsWriteFile = (
   new Promise((resolve, reject) => {
     fs.writeFile(path, content, (error?: unknown) =>
       error ? reject(error) : resolve()
+    );
+  });
+
+const fsReadFile = (fs: FSModule, path: string): Promise<string> =>
+  new Promise((resolve, reject) => {
+    fs.readFile(path, (error, content) =>
+      error ? reject(error) : resolve(content?.toString() || "")
     );
   });
 
@@ -840,6 +858,41 @@ const processCliGit = async (
           `fatal: '${remoteName}' does not appear to be a git repository`
         );
         return true;
+      }
+
+      if (remote.url === PULL_BEFORE_PUSH_REMOTE) {
+        const stylePath = joinPath(repoRoot, "style.css");
+        const currentStyle = (await fsExists(fs, stylePath))
+          ? await fsReadFile(fs, stylePath)
+          : "";
+
+        if (currentStyle !== PULL_BEFORE_PUSH_STYLE) {
+          await fsWriteFile(fs, stylePath, PULL_BEFORE_PUSH_STYLE);
+          await git.add({
+            dir: repoRoot,
+            filepath: "style.css",
+            fs,
+          });
+          const oid = await git.commit({
+            author: {
+              email: "remote@winsim.local",
+              name: "origin",
+            },
+            dir: repoRoot,
+            fs,
+            message: "style: actualiza estilos remotos",
+          });
+
+          printLn(`From ${remote.url}`);
+          printLn(
+            `   ${oid.slice(0, 7)}..8f3a91b  ${branchName}       -> ${remoteName}/${branchName}`
+          );
+          printLn("Updating local branch");
+          printLn("Fast-forward");
+          printLn(" style.css | 9 ++++++++-");
+          printLn(" 1 file changed, 8 insertions(+), 1 deletion(-)");
+          return true;
+        }
       }
 
       printLn(`From ${remote.url}`);

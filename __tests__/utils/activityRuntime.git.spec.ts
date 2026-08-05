@@ -116,6 +116,69 @@ describe("activityRuntime virtual Git integration", () => {
     expect(result.completed).toBe(true);
   });
 
+  test("pull-before-push requires a real local commit after pulling remote changes", () => {
+    const activityId = "sch_git_c04_a03";
+
+    ["git pull", "git push"].forEach((command) =>
+      trackActivityEvent({
+        activityId,
+        command,
+        cwd: "/repo",
+        type: "commandExecuted",
+      })
+    );
+
+    const emptyFlow = validateActivity(activityId, "es");
+
+    expect(emptyFlow.completed).toBe(false);
+    expect(
+      emptyFlow.results.find(
+        ({ checkId }) => checkId === "c04_a03_commit_exists"
+      )?.passed
+    ).toBe(false);
+
+    window.localStorage.clear();
+
+    trackActivityEvent({
+      activityId,
+      command: "git pull",
+      cwd: "/repo",
+      type: "commandExecuted",
+    });
+    trackActivityEvent({
+      activityId,
+      content:
+        "<!doctype html>\n<html><body><h1>Pull before push actualizado</h1></body></html>\n",
+      path: "/repo/index.html",
+      type: "fileSaved",
+    });
+    [
+      "git status",
+      "git add index.html",
+      'git commit -m "Actualizo portada despues del pull"',
+      "git push",
+    ].forEach((command) =>
+      trackActivityEvent({
+        activityId,
+        command,
+        cwd: "/repo",
+        type: "commandExecuted",
+      })
+    );
+
+    const result = validateActivity(activityId, "es");
+    const telemetry = JSON.parse(
+      window.localStorage.getItem(`winsim_activity_telemetry_${activityId}`) ||
+        "{}"
+    ) as Record<string, any>;
+
+    expect(telemetry.virtualRepo.commits).toHaveLength(3);
+    expect(telemetry.virtualRepo.commits[1].changedFiles).toEqual([
+      "style.css",
+    ]);
+    expect(result.completed).toBe(true);
+  });
+
   test("a legacy catalog activity still completes", () => {
     const activityId = "sch_git_c02_a01";
     const setupCommands = [
