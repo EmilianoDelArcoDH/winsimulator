@@ -330,8 +330,7 @@ const resolveWorkspaceSeed = (
             remotes: Object.fromEntries(
               Object.entries(asRecord(gitConfig.remotes)).filter(
                 (entry): entry is [string, string] =>
-                  typeof entry[0] === "string" &&
-                  typeof entry[1] === "string"
+                  typeof entry[0] === "string" && typeof entry[1] === "string"
               )
             ),
           }
@@ -392,14 +391,14 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
       return {
         activity: "Atividade",
         empty: "Nenhuma atividade carregada.",
-        instructions: "Instrucoes",
-        position: "Posicao",
+        instructions: "Instruções",
+        position: "Posição",
         result: "Resultado",
         runCommandsHint:
-          "Execute os comandos no GitBash e depois valide aqui. A validacao usa historico real de comandos e eventos.",
+          "Execute os comandos no Git Bash e depois valide aqui. A validação considera os comandos executados e as ações realizadas.",
         response: "Resposta",
         workspaceHint:
-          "Para esta atividade, trabalhe o projeto no Visual Studio Code e use o botao Validar no menu superior do editor.",
+          "Nesta atividade, edite o projeto no Visual Studio Code e use o botão Validar no menu superior do editor.",
         select: "Selecionar",
         selectColumn: "Selecionar coluna",
       };
@@ -413,10 +412,10 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
         position: "Position",
         result: "Result",
         runCommandsHint:
-          "Run the commands in GitBash and then validate here. Validation uses real command and event history.",
+          "Run the commands in Git Bash, then select Validate here. Your commands and actions are used to check your work.",
         response: "Answer",
         workspaceHint:
-          "For this activity, work on the project in Visual Studio Code and use the Validate button in the editor top menu.",
+          "Work on the project in Visual Studio Code, then select Validate in the editor’s top menu.",
         select: "Select",
         selectColumn: "Select column",
       };
@@ -486,6 +485,11 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
 
   useEffect(() => {
     if (!activity) return;
+
+    // Wait for a link's language before creating its starter files.
+    const requestedLanguage = getLanguageFromValue(getSearchParam("lang"));
+
+    if (requestedLanguage && requestedLanguage !== language) return;
 
     const workspaceSeed = resolveWorkspaceSeed(activity);
 
@@ -644,6 +648,7 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
     deletePath,
     exists,
     fs,
+    language,
     mkdirRecursive,
     openProcess,
     processes,
@@ -1026,7 +1031,8 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
               style={buttonStyle}
               type="button"
             >
-              {activity.ui?.submitLabel || "Validar"}
+              {activity.ui?.submitLabel ||
+                translateActivityText(language, "Validar")}
             </button>
             <button
               onClick={retry}
@@ -1037,7 +1043,8 @@ const Activities: FC<ActivitiesProps> = ({ forcedActivityId, standalone }) => {
               }}
               type="button"
             >
-              {activity.ui?.retryLabel || "Reintentar"}
+              {activity.ui?.retryLabel ||
+                translateActivityText(language, "Reintentar")}
             </button>
           </div>
         )}

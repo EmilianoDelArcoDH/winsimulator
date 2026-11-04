@@ -140,9 +140,8 @@
           },
           "data": {
             "instructions": [
-              "Asigna una posición del 1 al 5 a cada cambio. El proyecto inicial debe quedar primero y la publicación estable, última.",
-              "Los tres cambios intermedios pueden estar en cualquier orden coherente: no hay una única respuesta correcta entre ellos.",
-              "Elige uno de esos tres cambios y explica qué parte concreta podría dejar de funcionar. Por ejemplo: «Al corregir el formulario podría fallar la validación de un campo».",
+              "Lee cada afirmación y elige si describe Git o GitHub.",
+              "Explica con tus palabras la diferencia entre la herramienta local y la plataforma online.",
               "Tus elecciones y el texto se guardan automáticamente."
             ],
             "columns": ["Git", "GitHub"],
@@ -427,6 +426,14 @@
                   "selectionTarget": "resolution",
                   "commonAny": [
                     "equipo",
+                    "team",
+                    "talk",
+                    "discuss",
+                    "ask",
+                    "agree",
+                    "decid",
+                    "equipe",
+                    "convers",
                     "hablar",
                     "consult",
                     "contact",
@@ -2106,7 +2113,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
-                  "pattern": "Se queda:[\\s\\S]*index\\.html"
+                  "pattern": "(?:Se queda|Keep|Manter):[\\s\\S]*index\\.html"
                 },
                 "messageOk": "Marcaste index.html como archivo que se queda.",
                 "messageFail": "El plan debe dejar claro que index.html se conserva."
@@ -2117,7 +2124,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
-                  "pattern": "Se elimina:[\\s\\S]*notas\\.txt"
+                  "pattern": "(?:Se elimina|Remove|Remover):[\\s\\S]*notas\\.txt"
                 },
                 "messageOk": "Identificaste notas.txt como archivo para eliminar.",
                 "messageFail": "El plan debe indicar que notas.txt se elimina."
@@ -2128,7 +2135,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
-                  "pattern": "Se elimina:[\\s\\S]*prueba-layout-viejo\\.html"
+                  "pattern": "(?:Se elimina|Remove|Remover):[\\s\\S]*prueba-layout-viejo\\.html"
                 },
                 "messageOk": "Identificaste el layout viejo como archivo sobrante.",
                 "messageFail": "El plan debe indicar que prueba-layout-viejo.html se elimina."
@@ -2139,7 +2146,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
-                  "pattern": "Se elimina:[\\s\\S]*copia_final_ahora_si\\.png"
+                  "pattern": "(?:Se elimina|Remove|Remover):[\\s\\S]*copia_final_ahora_si\\.png"
                 },
                 "messageOk": "Identificaste la copia duplicada como archivo para eliminar.",
                 "messageFail": "El plan deberia indicar que copia_final_ahora_si.png tambien se elimina."
@@ -2150,7 +2157,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a02/plan-limpieza.txt",
-                  "pattern": "(funcion|necesit|mostrar|public|sitio|proyecto)"
+                  "pattern": "(funcion|necesit|mostrar|public|sitio|proyecto|work|need|display|site|project|necess|exibir|projeto)"
                 },
                 "messageOk": "La regla de limpieza esta explicada dentro del plan.",
                 "messageFail": "Explica en el plan que solo debe quedar lo que el proyecto necesita para funcionar o mostrarse."
@@ -2365,7 +2372,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a04/renombres-sugeridos.txt",
-                  "pattern": "(minusculas|guiones|espacios|tildes|simbolos|caracteres especiales)"
+                  "pattern": "(min[uú]sculas|guiones|espacios|tildes|s[ií]mbolos|caracteres especiales|lowercase|hyphens|spaces|accents|special characters|h[ií]fens|espaços|acentos|caracteres especiais)"
                 },
                 "messageOk": "La propuesta deja asentado el criterio de renombre.",
                 "messageFail": "En la propuesta menciona el criterio: minusculas, guiones y sin espacios o simbolos."
@@ -2444,7 +2451,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
-                  "pattern": "\\[[xX]\\]\\s*Revisar estructura"
+                  "pattern": "\\[[xX]\\]\\s*(?:Revisar estructura|Review the structure|Revisar a estrutura)"
                 },
                 "messageOk": "Marcaste la revision de estructura.",
                 "messageFail": "Marca con [x] la revision de estructura."
@@ -2455,7 +2462,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
-                  "pattern": "\\[[xX]\\]\\s*Limpiar archivos innecesarios"
+                  "pattern": "\\[[xX]\\]\\s*(?:Limpiar archivos innecesarios|Remove unnecessary files|Remover arquivos desnecessários)"
                 },
                 "messageOk": "Marcaste la limpieza de archivos innecesarios.",
                 "messageFail": "Marca con [x] la limpieza de archivos innecesarios."
@@ -2466,7 +2473,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
-                  "pattern": "\\[[xX]\\]\\s*Corregir rutas"
+                  "pattern": "\\[[xX]\\]\\s*(?:Corregir rutas|Fix file paths|Corrigir caminhos de arquivos)"
                 },
                 "messageOk": "Marcaste la revision de rutas.",
                 "messageFail": "Marca con [x] la revision de rutas."
@@ -2477,7 +2484,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
-                  "pattern": "\\[[xX]\\]\\s*Probar toda la navegacion"
+                  "pattern": "\\[[xX]\\]\\s*(?:Probar toda la navegacion|Test all navigation|Testar toda a navegação)"
                 },
                 "messageOk": "Marcaste la prueba de navegacion.",
                 "messageFail": "Marca con [x] la prueba de navegacion."
@@ -2488,7 +2495,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/publish-c01-a05/checklist-previo.txt",
-                  "pattern": "\\[[xX]\\]\\s*Confirmar que el sitio se entiende solo"
+                  "pattern": "\\[[xX]\\]\\s*(?:Confirmar que el sitio se entiende solo|Make sure the site is easy to understand|Confirmar que o site é fácil de entender)"
                 },
                 "messageOk": "Marcaste la revision de claridad del sitio.",
                 "messageFail": "Marca con [x] la revision de claridad del sitio."
@@ -2568,7 +2575,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt",
-                  "pattern": "(listo|publicar|publicacion)"
+                  "pattern": "(listo|publicar|publicacion|ready|publish|pronto|publicação)"
                 },
                 "messageOk": "El diagnostico deja claro el estado previo a publicar.",
                 "messageFail": "Indica en el diagnostico si el proyecto esta listo para publicar."
@@ -2579,7 +2586,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/pages-c01-a01/estado-previo.txt",
-                  "pattern": "(index\\.html|rutas relativas|imagenes|archivos innecesarios)"
+                  "pattern": "(index\\.html|rutas relativas|imagenes|archivos innecesarios|relative paths|images|unnecessary files|caminhos relativos|imagens|arquivos desnecessários)"
                 },
                 "messageOk": "Mencionaste al menos parte del checklist previo.",
                 "messageFail": "Tu diagnostico debe mencionar elementos del checklist previo: index.html, rutas relativas, imagenes o archivos innecesarios."
@@ -2658,7 +2665,7 @@
                 "type": "TERMINAL_ORDER",
                 "target": "commands",
                 "rules": {
-                  "before": "git commit -m \"Preparar proyecto para publicar\"",
+                  "before": "git commit",
                   "mustAppearAny": ["git init", "git add ."]
                 },
                 "messageOk": "El flujo de repositorio fue en orden logico.",
@@ -2838,7 +2845,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt",
-                  "pattern": "\\[[xX]\\]\\s*La URL abre sin errores"
+                  "pattern": "\\[[xX]\\]\\s*(?:La URL abre sin errores|The URL opens without errors|A URL abre sem erros)"
                 },
                 "messageOk": "Marcaste la revision de la URL.",
                 "messageFail": "Marca con [x] que la URL abre sin errores."
@@ -2849,7 +2856,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt",
-                  "pattern": "\\[[xX]\\]\\s*Las imagenes cargan[\\s\\S]*\\[[xX]\\]\\s*Los estilos se aplican"
+                  "pattern": "\\[[xX]\\]\\s*(?:Las imagenes cargan|Images load|As imagens carregam)[\\s\\S]*\\[[xX]\\]\\s*(?:Los estilos se aplican|Styles are applied|Os estilos são aplicados)"
                 },
                 "messageOk": "Revisaste imagenes y estilos.",
                 "messageFail": "Marca con [x] que las imagenes cargan y que los estilos se aplican."
@@ -2860,7 +2867,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/pages-c01-a04/checklist-post-publicacion.txt",
-                  "pattern": "(\\[[xX]\\]\\s*Los links internos funcionan|\\[[xX]\\]\\s*Lo probe desde el celular)"
+                  "pattern": "(\\[[xX]\\]\\s*(?:Los links internos funcionan|Internal links work|Os links internos funcionam)|\\[[xX]\\]\\s*(?:Lo probe desde el celular|I tested the site on a phone|Testei o site no celular))"
                 },
                 "messageOk": "Completaste parte de la verificacion final.",
                 "messageFail": "Marca al menos la revision de links internos o la prueba desde el celular."
@@ -2924,7 +2931,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/pages-c02-a01/index.html",
-                  "pattern": "<h1>\\s*Sitio actualizado\\s*</h1>"
+                  "pattern": "<h1>\\s*(?:Sitio actualizado|Updated site|Site atualizado)\\s*</h1>"
                 },
                 "messageOk": "El titulo principal ya refleja el cambio pedido.",
                 "messageFail": "Cambia el h1 para que diga Sitio actualizado."
@@ -2967,7 +2974,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/pages-c02-a02/index.html",
-                  "pattern": "Cambios listos para publicar"
+                  "pattern": "(?:Cambios listos para publicar|Changes ready to publish|Alterações prontas para publicar)"
                 },
                 "messageOk": "El cambio local fue agregado al archivo.",
                 "messageFail": "Agrega el texto Cambios listos para publicar dentro de index.html y guardalo."
@@ -3154,7 +3161,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/pages-c02-a04/reporte-errores.txt",
-                  "pattern": "(ctrl\\s*\\+\\s*shift\\s*\\+\\s*r|cmd\\s*\\+\\s*shift\\s*\\+\\s*r|recargar|reload)"
+                  "pattern": "(ctrl\\s*\\+\\s*shift\\s*\\+\\s*r|cmd\\s*\\+\\s*shift\\s*\\+\\s*r|recargar|reload|recarregar)"
                 },
                 "messageOk": "El reporte incluye una verificacion concreta para comprobar el cambio.",
                 "messageFail": "Explica como verificarias el cambio, por ejemplo recargando fuerte con Ctrl+Shift+R o Cmd+Shift+R."

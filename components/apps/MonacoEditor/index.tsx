@@ -87,21 +87,26 @@ const getEditorUiText = (language: "en" | "es" | "pt") => {
   if (language === "pt") {
     return {
       cancel: "Cancelar",
-      closeDeleteConfirmation: "Fechar confirmacao de exclusao",
-      closeSaveAsDialog: "Fechar dialogo Salvar como",
+      closeDeleteConfirmation: "Fechar confirmação de exclusão",
+      closeSaveAsDialog: "Fechar diálogo Salvar como",
+      closeValidation: "Fechar",
       delete: "Excluir",
       deleteEntry: (name: string): string => `Excluir '${name}'?`,
+      editableActivityMessage: "Edite este arquivo para resolver a atividade.",
       fileNamePlaceholder: "Nome do arquivo (ex.: index.html)",
       folderNamePlaceholder: "Nome da pasta",
+      imagePreviewError: "Não foi possível exibir a imagem.",
       readOnlyActivityMessage:
-        "Nesta atividade, voce so pode editar o arquivo de proposta.",
+        "Nesta atividade, você só pode editar o arquivo de proposta.",
       saveAs: "Salvar como",
       saveAsPathPlaceholder: "index.html ou src/app.js",
       saveAsSubtitle: (root: string): string =>
         `Informe um nome de arquivo ou caminho relativo de ${root}`,
       searchPlaceholder: "Use Ctrl+F dentro do editor para pesquisar.",
       sourceControlPlaceholder:
-        "Controle de codigo-fonte simulado neste ambiente.",
+        "Controle de código-fonte simulado neste ambiente.",
+      validate: "Validar",
+      validation: "Resultado da validação",
     };
   }
 
@@ -110,10 +115,13 @@ const getEditorUiText = (language: "en" | "es" | "pt") => {
       cancel: "Cancelar",
       closeDeleteConfirmation: "Cerrar confirmacion de eliminacion",
       closeSaveAsDialog: "Cerrar dialogo Guardar como",
+      closeValidation: "Cerrar",
       delete: "Eliminar",
       deleteEntry: (name: string): string => `Eliminar '${name}'?`,
+      editableActivityMessage: "Archivo editable para resolver la actividad.",
       fileNamePlaceholder: "Nombre de archivo (ej.: index.html)",
       folderNamePlaceholder: "Nombre de carpeta",
+      imagePreviewError: "No se pudo mostrar la imagen.",
       readOnlyActivityMessage:
         "En esta actividad solo puedes editar el archivo de propuesta.",
       saveAs: "Guardar como",
@@ -123,6 +131,8 @@ const getEditorUiText = (language: "en" | "es" | "pt") => {
       searchPlaceholder: "Usa Ctrl+F dentro del editor para buscar.",
       sourceControlPlaceholder:
         "Control de codigo fuente simulado en este entorno.",
+      validate: "Validar",
+      validation: "Validación",
     };
   }
 
@@ -130,10 +140,13 @@ const getEditorUiText = (language: "en" | "es" | "pt") => {
     cancel: "Cancel",
     closeDeleteConfirmation: "Close delete confirmation",
     closeSaveAsDialog: "Close save as dialog",
+    closeValidation: "Close",
     delete: "Delete",
     deleteEntry: (name: string): string => `Delete '${name}'?`,
+    editableActivityMessage: "Edit this file to complete the activity.",
     fileNamePlaceholder: "File name (e.g., index.html)",
     folderNamePlaceholder: "Folder name",
+    imagePreviewError: "The image could not be displayed.",
     readOnlyActivityMessage:
       "In this activity, you can only edit the proposal file.",
     saveAs: "Save As",
@@ -142,6 +155,8 @@ const getEditorUiText = (language: "en" | "es" | "pt") => {
       `Enter a file name or relative path from ${root}`,
     searchPlaceholder: "Use Ctrl+F inside editor to search.",
     sourceControlPlaceholder: "Source control simulated in this workbench.",
+    validate: "Validate",
+    validation: "Validation results",
   };
 };
 
@@ -402,6 +417,10 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   const [dragOverPath, setDragOverPath] = useState("");
   const [activityValidationState, setActivityValidationState] =
     useState<ActivityValidationState>();
+
+  useEffect(() => {
+    setActivityValidationState(undefined);
+  }, [language]);
   const isVscodeTutorialRoute =
     typeof window !== "undefined" &&
     window.location.pathname.endsWith("/tutorial/vscode");
@@ -417,7 +436,7 @@ const MonacoWorkbench: FC<ComponentProcessProps> = ({ id }) => {
   });
   const hasActiveFile = Boolean(activeFileUrl);
   const currentActivityId = getCurrentActivityId();
-  const currentActivity = getActivityById(currentActivityId);
+  const currentActivity = getActivityById(currentActivityId, language);
   const activityWorkspace = currentActivity?.data?.workspace as
     | {
         editablePaths?: string[];
@@ -2170,7 +2189,7 @@ function example() {
       if (menuAction === "validate-activity") {
         if (!canValidateCurrentActivity || !currentActivityId) return;
 
-        const validationOutput = validateActivity(currentActivityId);
+        const validationOutput = validateActivity(currentActivityId, language);
 
         setActivityValidationState({
           activityId: currentActivityId,
@@ -2184,6 +2203,7 @@ function example() {
     [
       currentEditor,
       currentActivityId,
+      language,
       canValidateCurrentActivity,
       canCreateEntriesInWorkspace,
       deleteSelectedEntry,
@@ -2654,7 +2674,7 @@ function example() {
                     onMouseDown={(e) => e.preventDefault()}
                     type="button"
                   >
-                    Validar
+                    {uiText.validate}
                   </button>
                 </li>
               )}
@@ -2663,7 +2683,7 @@ function example() {
           {activityValidationState && (
             <section className="validation-panel">
               <header>
-                <strong>Validacion</strong>
+                <strong>{uiText.validation}</strong>
                 <span>
                   {activityValidationState.progress.completed}/
                   {activityValidationState.progress.total}
@@ -2672,7 +2692,7 @@ function example() {
                   onClick={() => setActivityValidationState(undefined)}
                   type="button"
                 >
-                  Cerrar
+                  {uiText.closeValidation}
                 </button>
               </header>
               <ol>
@@ -3565,7 +3585,7 @@ function example() {
                 {hasWorkspaceEditRestrictions && (
                   <p className="read-only-hint">
                     {isActiveFileEditable
-                      ? "Archivo editable para resolver la actividad."
+                      ? uiText.editableActivityMessage
                       : readOnlyActivityMessage}
                   </p>
                 )}
@@ -3619,7 +3639,7 @@ function example() {
                           src={imagePreviewUrl}
                         />
                       ) : (
-                        <p>No se pudo mostrar la imagen.</p>
+                        <p>{uiText.imagePreviewError}</p>
                       )}
                     </section>
                   )}
