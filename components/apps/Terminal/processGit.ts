@@ -10,6 +10,8 @@ import {
 } from "isomorphic-git";
 import { type ParsedArgs } from "minimist";
 import { help } from "components/apps/Terminal/functions";
+import { translateActivityText } from "utils/activityI18n";
+import { getActiveLanguage } from "utils/i18n";
 
 const corsProxy = "https://cors.isomorphic-git.org";
 const GIT_CONFIG_KEY = "gitbash_global_config";
@@ -366,7 +368,11 @@ const processCliGit = async (
       printLn(`Cloning into '${destinationName}'...`);
       await Promise.all(
         Object.entries(CSS_PULL_LAB_FILES).map(([filePath, content]) =>
-          fsWriteFile(fs, joinPath(destinationPath, filePath), content)
+          fsWriteFile(
+            fs,
+            joinPath(destinationPath, filePath),
+            translateActivityText(getActiveLanguage(), content)
+          )
         )
       );
       await git.init({ defaultBranch: "main", dir: destinationPath, fs });

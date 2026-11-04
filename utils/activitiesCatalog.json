@@ -232,6 +232,12 @@
           "mode": "order",
           "ui": { "submitLabel": "Validar", "retryLabel": "Reintentar" },
           "data": {
+            "instructions": [
+              "Asigna una posición del 1 al 5 a cada cambio. El proyecto inicial debe quedar primero y la publicación estable, última.",
+              "Los tres cambios intermedios pueden estar en cualquier orden coherente: no hay una única respuesta correcta entre ellos.",
+              "Elige uno de esos tres cambios y explica qué parte concreta podría dejar de funcionar. Por ejemplo: «Al corregir el formulario podría fallar la validación de un campo».",
+              "Tus elecciones y el texto se guardan automáticamente."
+            ],
             "items": [
               { "id": "t1", "text": "Creé el proyecto inicial." },
               { "id": "t2", "text": "Agregué una sección de contacto." },
@@ -598,6 +604,7 @@
             "checks": [
               {
                 "checkId": "c02_a01_mkdir",
+                "messageOk": "Creaste la carpeta miProyecto.",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["mkdir miProyecto"] },
@@ -605,6 +612,7 @@
               },
               {
                 "checkId": "c02_a01_cd",
+                "messageOk": "Entraste a la carpeta miProyecto.",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["cd miProyecto"] },
@@ -612,6 +620,7 @@
               },
               {
                 "checkId": "c02_a01_git_init",
+                "messageOk": "Inicializaste el repositorio con git init.",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["git init"] },
@@ -619,6 +628,7 @@
               },
               {
                 "checkId": "c02_a01_correct_dir",
+                "messageOk": "Inicializaste Git dentro de miProyecto.",
                 "type": "TERMINAL_IN_DIR",
                 "target": "terminal",
                 "rules": { "endsWith": "miProyecto" },
@@ -626,6 +636,7 @@
               },
               {
                 "checkId": "c02_a01_file_name",
+                "messageOk": "El archivo se llama index.html.",
                 "type": "REPO_STATE",
                 "target": "repo",
                 "rules": {
@@ -640,6 +651,7 @@
               },
               {
                 "checkId": "c02_a01_at_least_one_commit",
+                "messageOk": "Creaste tu primer commit.",
                 "type": "REPO_STATE",
                 "target": "repo",
                 "rules": { "hasAtLeastCommits": 1 },
@@ -891,6 +903,7 @@
             "checks": [
               {
                 "checkId": "c02_a04_forbid_add_dot",
+                "messageOk": "Seleccionaste archivos sin usar git add .",
                 "type": "TERMINAL_COMMAND_FORBIDDEN",
                 "target": "commands",
                 "rules": { "pattern": "git\\s+add\\s+\\." },
@@ -1076,6 +1089,7 @@
             "checks": [
               {
                 "checkId": "c03_a02_used_oneline",
+                "messageOk": "Consultaste el historial con git log --oneline.",
                 "type": "TERMINAL_COMMAND_EXECUTED",
                 "target": "commands",
                 "rules": { "mustInclude": ["git log --oneline"] },
@@ -1083,6 +1097,7 @@
               },
               {
                 "checkId": "c03_a02_at_least_two_commits",
+                "messageOk": "Creaste los dos commits solicitados.",
                 "type": "REPO_STATE",
                 "target": "repo",
                 "rules": { "hasAtLeastCommits": 3 },
@@ -1090,6 +1105,7 @@
               },
               {
                 "checkId": "c03_a02_hash_format_1",
+                "messageOk": "La primera línea tiene el formato hash y mensaje.",
                 "type": "TEXT_REGEX",
                 "target": "commit1",
                 "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
@@ -1097,6 +1113,7 @@
               },
               {
                 "checkId": "c03_a02_hash_format_2",
+                "messageOk": "La segunda línea tiene el formato hash y mensaje.",
                 "type": "TEXT_REGEX",
                 "target": "commit2",
                 "rules": { "pattern": "^[0-9a-f]{7,}\\s+.+$" },
@@ -2992,7 +3009,7 @@
                 "type": "TERMINAL_REGEX",
                 "target": "commands",
                 "rules": {
-                  "pattern": "^git commit -m \\\"(?!cambios$|arregle cosas$|arreglé cosas$).+\\\"$"
+                  "pattern": "^git commit -m \\\"(?!(?:cambios|arregl[eé] cosas|changes|fixed stuff|fix|update|alterações|alteracoes|corrigi coisas)\\\"$).+\\\"$"
                 },
                 "messageOk": "Registraste un commit con mensaje descriptivo.",
                 "messageFail": "Haz git commit -m con un mensaje mas descriptivo que cambios o arregle cosas."
@@ -3240,7 +3257,7 @@
                 "target": "workspace",
                 "rules": {
                   "path": "/Users/Public/Desktop/demo-final/index.html",
-                  "pattern": "css/styles\\.css[\\s\\S]*id=[\"']action-button[\"'][\\s\\S]*id=[\"']status-message[\"'][\\s\\S]*js/app\\.js"
+                  "pattern": "^(?=[\\s\\S]*css/styles\\.css)(?=[\\s\\S]*id=[\"']action-button[\"'])(?=[\\s\\S]*id=[\"']status-message[\"'])(?=[\\s\\S]*js/app\\.js)"
                 },
                 "messageOk": "El HTML conecta la estructura, los estilos y el script.",
                 "messageFail": "Revisa index.html: debe enlazar css/styles.css y js/app.js, y conservar action-button y status-message."

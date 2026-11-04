@@ -23,6 +23,8 @@ import {
   registerPublishedSite,
   updatePublishedSite,
 } from "utils/pagesRuntime";
+import { translateActivityText } from "utils/activityI18n";
+import { getActiveLanguage } from "utils/i18n";
 
 const HISTORY_KEY = "gitbash_history";
 const GIT_CONFIG_KEY = "gitbash_global_config";
@@ -239,9 +241,16 @@ button {
         },
       },
     ],
-    readme:
-      "# css-pull-lab\n\nSimulador para practicar `git pull` y ver cambios reales en styles.css.\n",
-    snapshot: baseSnapshot,
+    readme: translateActivityText(
+      getActiveLanguage(),
+      "# css-pull-lab\n\nSimulador para practicar `git pull` y ver cambios reales en styles.css.\n"
+    ),
+    snapshot: Object.fromEntries(
+      Object.entries(baseSnapshot).map(([path, content]) => [
+        path,
+        translateActivityText(getActiveLanguage(), content),
+      ])
+    ),
   };
 };
 

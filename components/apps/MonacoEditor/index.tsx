@@ -2674,7 +2674,7 @@ function example() {
                     onMouseDown={(e) => e.preventDefault()}
                     type="button"
                   >
-                    {uiText.validate}
+                    {currentActivity?.ui?.submitLabel || uiText.validate}
                   </button>
                 </li>
               )}

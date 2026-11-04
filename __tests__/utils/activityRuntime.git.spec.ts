@@ -639,7 +639,7 @@ describe("activityRuntime virtual Git integration", () => {
     expect(activity?.data.initialOrder).toEqual(["t3", "t1", "t5", "t2", "t4"]);
     expect(activity?.data.initialOrder).not.toEqual(activity?.data.answerOrder);
     expect((englishActivity?.data.question as { label: string }).label).toBe(
-      "Which change could have broken something? (choose 1)"
+      "Which change could have introduced a problem? (choose one)"
     );
     expect(
       (

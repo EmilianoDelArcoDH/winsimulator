@@ -1,3 +1,6 @@
+import { translateActivityText } from "utils/activityI18n";
+import { getActiveLanguage } from "utils/i18n";
+
 export type VirtualGitCommit = {
   branch: string;
   changedFiles?: string[];
@@ -475,7 +478,16 @@ export const gitClone = (
 
   if (source === CSS_PULL_LAB_REMOTE) {
     return gitCommit(
-      gitAdd(next, ".", CSS_PULL_LAB_FILES),
+      gitAdd(
+        next,
+        ".",
+        Object.fromEntries(
+          Object.entries(CSS_PULL_LAB_FILES).map(([path, content]) => [
+            path,
+            translateActivityText(getActiveLanguage(), content),
+          ])
+        )
+      ),
       "feat: base web styles"
     );
   }
